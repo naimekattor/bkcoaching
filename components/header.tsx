@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import Link from "next/link";
 
 const navigationLinks = [
   { name: "Home", href: "/" },
@@ -88,7 +89,7 @@ const Header = () => {
                     "shadow-md hover:shadow-lg"
                   )}
                 >
-                  Login
+                  <Link href={"/auth/login"}>Login</Link>
                 </Button>
               </motion.div>
             </div>

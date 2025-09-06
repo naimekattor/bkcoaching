@@ -1,0 +1,157 @@
+"use client";
+
+import type React from "react";
+
+import { useState } from "react";
+import Link from "next/link";
+import { Eye, EyeOff } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+export default function ResetPasswordPage() {
+  const [formData, setFormData] = useState({
+    password: "",
+    confirmPassword: "",
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newErrors: { [key: string]: string } = {};
+
+    if (!formData.password) newErrors.password = "Password is required";
+    if (!formData.confirmPassword)
+      newErrors.confirmPassword = "Please confirm your password";
+    if (formData.password !== formData.confirmPassword)
+      newErrors.confirmPassword = "Passwords do not match";
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length === 0) {
+      // Handle password reset - redirect to success page
+      window.location.href = "/auth/password-changed";
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-50 flex">
+      {/* Left Side - Form */}
+      <div className="w-full lg:w-1/2 bg-slate-800 flex flex-col">
+        {/* Header */}
+        <div className="flex justify-between items-center p-6">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
+              <div className="w-4 h-4 bg-slate-800 rounded-full"></div>
+            </div>
+            <span className="text-white font-semibold">The Social Market</span>
+          </div>
+          <Button
+            variant="outline"
+            className="bg-yellow-500 text-slate-800 border-yellow-500 hover:bg-yellow-600"
+            asChild
+          >
+            <Link href="/">Back to website →</Link>
+          </Button>
+        </div>
+
+        {/* Form Content */}
+        <div className="flex-1 flex items-center justify-center px-6">
+          <div className="w-full max-w-md">
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-bold text-white mb-2">
+                Set new password
+              </h1>
+              <p className="text-slate-300">
+                Secure Your Account With A New Password
+              </p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
+                  className="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-500 pr-12"
+                  value={formData.password}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+                {errors.password && (
+                  <p className="text-red-400 text-sm mt-1">{errors.password}</p>
+                )}
+              </div>
+
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="Confirm password"
+                  className="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-500 pr-12"
+                  value={formData.confirmPassword}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      confirmPassword: e.target.value,
+                    })
+                  }
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff size={20} />
+                  ) : (
+                    <Eye size={20} />
+                  )}
+                </button>
+                {errors.confirmPassword && (
+                  <p className="text-red-400 text-sm mt-1">
+                    {errors.confirmPassword}
+                  </p>
+                )}
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full bg-yellow-500 hover:bg-yellow-600 text-slate-800 font-semibold py-3 rounded-lg"
+              >
+                Reset Password
+              </Button>
+
+              <div className="text-center">
+                <Button
+                  variant="outline"
+                  className="border-slate-600 text-white hover:bg-slate-700 bg-transparent"
+                  asChild
+                >
+                  <Link href="/auth/login">← Back to Log in</Link>
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Side - Illustration */}
+      <div className="hidden lg:flex lg:w-1/2 bg-slate-100 items-center justify-center p-8">
+        <div className="max-w-md">
+          <img
+            src="/person-at-desk-with-security-elements-and-password.jpg"
+            alt="Password reset illustration"
+            className="w-full h-auto"
+          />
+        </div>
+      </div>
+    </div>
+  );
+}

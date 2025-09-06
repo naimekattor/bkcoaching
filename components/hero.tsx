@@ -40,7 +40,7 @@ const Hero = () => {
             <Image
               width={365}
               height={393}
-              src="/images/hero-img.png"
+              src={"/images/hero-img.png"}
               alt="Two stylish women representing micro-influencers"
               className="w-full h-auto max-w-md mx-auto lg:max-w-full"
             />

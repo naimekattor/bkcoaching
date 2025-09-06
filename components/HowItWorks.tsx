@@ -34,7 +34,7 @@ const HowItWorks = () => {
     <section id="HowItWorks" className="relative ">
       <div className="relative z-10 py-20 px-4 max-w-7xl mx-auto">
         <div className="max-w-7xl mx-auto text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#004D40]">
+          <h2 className="text-3xl md:text-4xl font-bold text-primary">
             How It Works
           </h2>
         </div>
@@ -42,21 +42,28 @@ const HowItWorks = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-center">
           {/* Left side boxes */}
           <div className="">
-            <div className="flex items-center gap-2 bg-primary">
-              <Image
-                src={"/images/work-icon1.png"}
-                width={56}
-                height={32}
-                alt="work icon"
-              />
-              <h2 className="text-[25px] font-medium text-accent">
-                Businessess
-              </h2>
+            <div className="bg-white rounded shadow-md  text-left">
+              <div className="flex gap-4 items-center justify-center bg-primary py-2 px-2 rounded">
+                <Image
+                  src={"/images/work-icon1.png"}
+                  width={62}
+                  height={41}
+                  alt="icon"
+                />
+                <h3 className="text-xl font-bold text-[#ffffff] mb-2">
+                  Businessess
+                </h3>
+              </div>
+              <div className="px-6 pb-6">
+                <p className="text-[#838689] text-sm md:text-[19px] text-center px-4 py-6">
+                   Run authentic campaigns that build trust and drive sales.
+                </p>
+
+                <button className="bg-secondary w-full py-2 font-[600] text-[16px] text-primary rounded cursor-pointer">
+                  Start Here
+                </button>
+              </div>
             </div>
-            <span className="text-[19px] text-[#838689]">
-               Run authentic campaigns that build trust and drive sales.
-            </span>
-            <Button>Text Here</Button>
           </div>
 
           {/* Center image */}
@@ -72,16 +79,27 @@ const HowItWorks = () => {
 
           {/* Right side boxes */}
           <div className="">
-            <div className="bg-orange-50 rounded-xl shadow-md p-6 text-left">
-              <h3 className="text-xl font-bold text-[#FF6F61] mb-2">
-                Smart Routine Builder
-              </h3>
-              <p className="text-gray-700 text-sm md:text-base">
-                Visually monitor your hair’s progress with the comprehensive
-                hair-health dashboard. Track length, elasticity, strength, scalp
-                health, and more! Celebrate your growth and identify areas for
-                improvement.
-              </p>
+            <div className="bg-white rounded shadow-md  text-left">
+              <div className="flex gap-4 items-center justify-center bg-primary py-2 px-2 rounded">
+                <Image
+                  src={"/images/work-icon2.png"}
+                  width={62}
+                  height={41}
+                  alt="icon"
+                />
+                <h3 className="text-xl font-bold text-[#ffffff] mb-2">
+                  Micro- Influencers
+                </h3>
+              </div>
+              <div className="px-6 pb-6">
+                <p className="text-[#838689] text-sm md:text-[19px] text-center px-4 py-6">
+                  Monetize your influence by sharing products you love.
+                </p>
+
+                <button className="bg-secondary w-full py-2 font-[600] text-[16px] text-primary rounded cursor-pointer">
+                  Start Here
+                </button>
+              </div>
             </div>
           </div>
         </div>
