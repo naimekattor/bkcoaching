@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { IoIosNotificationsOutline } from "react-icons/io";
+import Image from "next/image";
 
 // Mock data for creators - easily replaceable with API calls
 const mockCreators = [
@@ -261,7 +262,9 @@ export default function MicroInfluencersPage() {
                 >
                   {/* Profile Image */}
                   <div className="flex justify-center mb-4">
-                    <img
+                    <Image
+                      width={80}
+                      height={80}
                       src={creator.profileImage || "/placeholder.svg"}
                       alt={creator.name}
                       className="w-20 h-20 rounded-full object-cover"

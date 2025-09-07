@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { FaStar } from "react-icons/fa";
 
 type Brand = {
@@ -29,7 +30,9 @@ export default function BrandCard({
       {/* Image Section */}
       <div className="w-auto flex-shrink-0 relative">
         <div className="relative w-full h-80 lg:h-full rounded overflow-hidden">
-          <img
+          <Image
+            width={392}
+            height={431}
             src={image}
             alt={name}
             className="w-[392px] h-[431px] object-cover "
@@ -76,7 +79,9 @@ export default function BrandCard({
                 ))}
               </div>
             </div>
-            <img
+            <Image
+              width={83}
+              height={83}
               src={logo}
               alt={`${name} Logo`}
               className=" w-[83px] h-[83px]  ml-auto hidden lg:block"

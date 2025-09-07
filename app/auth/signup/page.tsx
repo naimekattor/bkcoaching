@@ -296,7 +296,9 @@ export default function SignupPage() {
       {/* Right Side - Illustration */}
       <div className="hidden lg:flex lg:w-1/2 bg-slate-100 items-center justify-center p-8">
         <div className="max-w-md text-center">
-          <img
+          <Image
+            width={600}
+            height={600}
             src="/images/signup-illustration.png"
             alt="Signup illustration"
             className="w-full h-auto mb-6"

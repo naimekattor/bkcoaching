@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Bell, Search, ChevronDown, MoreHorizontal, X } from "lucide-react";
-
+import Image from "next/image";
 const mockCampaigns = [
   {
     id: 1,
@@ -152,7 +152,9 @@ export default function CampaignDashboard() {
               <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full"></span>
             </button>
             <div className="w-8 h-8 rounded-full bg-gray-300 overflow-hidden">
-              <img
+              <Image
+                width={600}
+                height={600}
                 src="/user-profile-illustration.png"
                 alt="User"
                 className="w-full h-full object-cover"
@@ -226,7 +228,9 @@ export default function CampaignDashboard() {
               onClick={() => openCampaignModal(campaign)}
             >
               <div className="relative">
-                <img
+                <Image
+                  width={600}
+                  height={192}
                   src={campaign.image || "/placeholder.svg"}
                   alt={campaign.title}
                   className="w-full h-48 object-cover rounded-t-lg"
@@ -273,7 +277,9 @@ export default function CampaignDashboard() {
                           key={idx}
                           className="w-6 h-6 rounded-full border-2 border-white overflow-hidden bg-gray-300"
                         >
-                          <img
+                          <Image
+                            width={600}
+                            height={600}
                             src={creator.avatar || "/placeholder.svg"}
                             alt={creator.name}
                             className="w-full h-full object-cover"
@@ -327,7 +333,9 @@ export default function CampaignDashboard() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
             <div className="relative">
-              <img
+              <Image
+                width={600}
+                height={192}
                 src={selectedCampaign.image || "/placeholder.svg"}
                 alt={selectedCampaign.title}
                 className="w-full h-48 object-cover rounded-t-lg"
@@ -382,7 +390,9 @@ export default function CampaignDashboard() {
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-300">
-                          <img
+                          <Image
+                            height={600}
+                            width={600}
                             src={creator.avatar || "/placeholder.svg"}
                             alt={creator.name}
                             className="w-full h-full object-cover"

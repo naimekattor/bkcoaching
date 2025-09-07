@@ -10,6 +10,7 @@ import {
   Bell,
   ArrowLeft,
 } from "lucide-react";
+import Image from "next/image";
 
 // Types
 interface Contact {
@@ -297,7 +298,9 @@ export default function MessagesDashboard() {
               <div className="flex items-center gap-3">
                 <div className="relative">
                   <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-300 shadow-sm">
-                    <img
+                    <Image
+                      width={48}
+                      height={48}
                       src={contact.avatar || "/placeholder.svg"}
                       alt={contact.name}
                       className="w-full h-full object-cover"
@@ -348,7 +351,9 @@ export default function MessagesDashboard() {
                     <MoreHorizontal className="h-5 w-5" />
                   </button>
                   <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-300 shadow-sm">
-                    <img
+                    <Image
+                      width={48}
+                      height={48}
                       src={selectedContact.avatar || "/placeholder.svg"}
                       alt={selectedContact.name}
                       className="w-full h-full object-cover"
@@ -438,7 +443,9 @@ export default function MessagesDashboard() {
                     <div className="flex items-end gap-2 max-w-[85%] sm:max-w-xs lg:max-w-md">
                       {!message.isOwn && (
                         <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-300 flex-shrink-0 shadow-sm">
-                          <img
+                          <Image
+                            width={32}
+                            height={32}
                             src={selectedContact.avatar || "/placeholder.svg"}
                             alt={selectedContact.name}
                             className="w-full h-full object-cover"

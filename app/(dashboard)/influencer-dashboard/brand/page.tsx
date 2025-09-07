@@ -6,6 +6,7 @@ import { mockCreators } from "@/lib/mocks/creators";
 import Link from "next/link";
 import { FaInstagram } from "react-icons/fa";
 import { MdInsertEmoticon } from "react-icons/md";
+import Image from "next/image";
 
 export default function MicroinfluencersPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -96,7 +97,9 @@ export default function MicroinfluencersPage() {
               className="bg-white rounded-lg border border-gray-200 p-6 text-center"
             >
               <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center">
-                <img
+                <Image
+                  width={64}
+                  height={64}
                   src={creator.image || "/placeholder.svg"}
                   alt={creator.name}
                   className="w-full h-full rounded-full object-cover"

@@ -46,14 +46,15 @@ export default function AboutPage() {
               <div className="space-y-6 text-[20px] text-primary leading-relaxed">
                 <p>
                   At The Social Market, we connect brands and micro-influencers
-                  to create authentic growth. Whether you're a brand looking to
-                  expand your reach or a micro-influencer wanting to monetize
-                  your influence, our platform makes it easy.
+                  to create authentic growth. Whether you&apos;re a brand
+                  looking to expand your reach or a micro-influencer wanting to
+                  monetize your influence, our platform makes it easy.
                 </p>
 
                 <p>
                   Brands share their products, and micro-influencers share their
-                  passion—it&apos;s that simple. By working together, everyone grows.
+                  passion—it&apos;s that simple. By working together, everyone
+                  grows.
                 </p>
               </div>
 

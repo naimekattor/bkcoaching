@@ -90,15 +90,18 @@ export default function VerifyEmailPage() {
               <div className="flex justify-center gap-4">
                 {code.map((digit, index) => (
                   <input
-                    key={index}
-                    ref={(el) => (inputRefs.current[index] = el)}
-                    type="text"
-                    maxLength={1}
-                    value={digit}
-                    onChange={(e) => handleInputChange(index, e.target.value)}
-                    onKeyDown={(e) => handleKeyDown(index, e)}
-                    className="w-12 h-12 text-center text-xl font-semibold bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                  />
+              key={index}
+-             ref={(el) => (inputRefs.current[index] = el)}
++             ref={(el) => {
++               inputRefs.current[index] = el;
++             }}
+              type="text"
+              maxLength={1}
+              value={digit}
+              onChange={(e) => handleInputChange(index, e.target.value)}
+              onKeyDown={(e) => handleKeyDown(index, e)}
+              className="w-12 h-12 text-center rounded-md border"
+            />
                 ))}
                 <Button
                   type="button"
@@ -137,7 +140,9 @@ export default function VerifyEmailPage() {
       {/* Right Side - Illustration */}
       <div className="hidden lg:flex lg:w-1/2 bg-slate-100 items-center justify-center p-8">
         <div className="max-w-md">
-          <img
+          <Image
+            width={500}
+            height={600}
             src="/images/verify-illustration.png"
             alt="Email verification illustration"
             className="w-full h-auto"

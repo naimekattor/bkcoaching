@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams, useParams } from "next/navigation";
 import { Search, MoreHorizontal, Paperclip, Send, Bell } from "lucide-react";
+import Image from "next/image";
 
 // Mock data structure - easily replaceable with backend data
 const mockContacts = [
@@ -237,7 +238,9 @@ export default function MessagesPage() {
               <div className="flex items-center gap-3">
                 <div className="relative">
                   <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-300">
-                    <img
+                    <Image
+                      height={40}
+                      width={40}
                       src={contact.avatar || "/placeholder.svg"}
                       alt={contact.name}
                       className="w-full h-full object-cover"
@@ -275,7 +278,9 @@ export default function MessagesPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-300">
-                    <img
+                    <Image
+                      width={40}
+                      height={40}
                       src={selectedContact.avatar || "/placeholder.svg"}
                       alt={selectedContact.name}
                       className="w-full h-full object-cover"
@@ -291,7 +296,9 @@ export default function MessagesPage() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => {
-                      router.push(`/brand-dashboard/influencers/${id}/send-proposal`);
+                      router.push(
+                        `/brand-dashboard/influencers/${id}/send-proposal`
+                      );
                     }}
                     className="px-4 py-2 bg-orange-400 hover:bg-orange-500 text-white rounded-md font-medium transition-colors cursor-pointer"
                   >
@@ -360,8 +367,10 @@ export default function MessagesPage() {
                     </div>
                     {!message.isOwn && (
                       <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-300 ml-2 mt-2">
-                        <img
-                          src={selectedContact.avatar || "/placeholder.svg"}
+                        <Image
+                          src={message}
+                          width={32}
+                          height={32}
                           alt={selectedContact.name}
                           className="w-full h-full object-cover"
                         />

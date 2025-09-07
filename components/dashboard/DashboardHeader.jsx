@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { FaEdit } from "react-icons/fa";
 export function DashboardHeader() {
   return (
@@ -5,7 +6,7 @@ export function DashboardHeader() {
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <div className="w-16 h-16 bg-slate-800 rounded-lg flex items-center justify-center">
-            <img src={"/images/logo.png"} alt="logo" />
+            <Image width={64} height={64} src={"/images/logo.png"} alt="logo" />
           </div>
           <div>
             <h2 className="text-xl font-bold text-slate-800">

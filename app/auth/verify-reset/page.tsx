@@ -140,7 +140,9 @@ export default function VerifyResetPage() {
       {/* Right Side - Illustration */}
       <div className="hidden lg:flex lg:w-1/2 bg-slate-100 items-center justify-center p-8">
         <div className="max-w-md">
-          <img
+          <Image
+            width={600}
+            height={600}
             src="/images/verify-illustration.png"
             alt="Email verification illustration"
             className="w-full h-auto"

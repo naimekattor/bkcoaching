@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { CiStar } from "react-icons/ci";
 
 export function RecentCollaborations() {
@@ -29,7 +30,9 @@ export function RecentCollaborations() {
           <div key={index} className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               {/* ✅ Avatar image instead of span */}
-              <img
+              <Image
+                width={40}
+                height={40}
                 src={collab.avatar}
                 alt={collab.username}
                 className="w-10 h-10 rounded-full object-cover"

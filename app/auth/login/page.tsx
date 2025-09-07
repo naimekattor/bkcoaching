@@ -6,6 +6,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -175,7 +176,9 @@ export default function LoginPage() {
               </Button>
 
               <div className="text-center">
-                <span className="text-slate-400">Don&apos;t have an account? </span>
+                <span className="text-slate-400">
+                  Don&apos;t have an account?{" "}
+                </span>
                 <Link
                   href="/auth/signup"
                   className="text-yellow-500 hover:text-yellow-400"
@@ -191,7 +194,9 @@ export default function LoginPage() {
       {/* Right Side - Illustration */}
       <div className="hidden lg:flex lg:w-1/2 bg-slate-100 items-center justify-center p-8">
         <div className="max-w-md">
-          <img
+          <Image
+            height={600}
+            width={600}
             src="/images/login-illustration.png"
             alt="Welcome illustration"
             className="w-full h-auto"

@@ -1,5 +1,6 @@
 // app/brand-dashboard/page.js
 
+import Image from "next/image";
 import { FaEdit } from "react-icons/fa";
 // Removed unused dashboard imports to satisfy lint rules
 const analyticsData = [
@@ -15,7 +16,12 @@ export default function Page() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="w-16 h-16 bg-slate-800 rounded-lg flex items-center justify-center">
-                <img src={"/images/logo.png"} alt="logo" />
+                <Image
+                  width={64}
+                  height={64}
+                  src={"/images/logo.png"}
+                  alt="logo"
+                />
               </div>
               <div>
                 <h2 className="text-xl font-bold text-slate-800">
@@ -135,7 +141,9 @@ export default function Page() {
                 <h2 className="text-xl font-bold text-gray-900">Media Kit</h2>
               </div>
               <div className="flex-grow flex flex-col items-center justify-center p-4 border-2 border-dashed bg-[#f9fafb] rounded-xl w-full mb-4">
-                <img
+                <Image
+                  width={48}
+                  height={48}
                   src="https://placehold.co/60x80/e5e7eb/6b7280?text=PDF"
                   alt="PDF icon"
                   className="w-12 h-16 mb-2"
@@ -176,7 +184,9 @@ export default function Page() {
               <div className="space-y-4">
                 {/* Message Item 1 */}
                 <div className="flex items-start space-x-4">
-                  <img
+                  <Image
+                    width={40}
+                    height={40}
                     className="h-10 w-10 rounded-full"
                     src="https://placehold.co/40x40/e0e9d6/658e65?text=TB"
                     alt="TechBusiness Inc. avatar"
@@ -195,7 +205,9 @@ export default function Page() {
                 </div>
                 {/* Message Item 2 */}
                 <div className="flex items-start space-x-4">
-                  <img
+                  <Image
+                    width={40}
+                    height={40}
                     className="h-10 w-10 rounded-full"
                     src="https://placehold.co/40x40/e0e9d6/658e65?text=FF"
                     alt="Fashion Forward avatar"

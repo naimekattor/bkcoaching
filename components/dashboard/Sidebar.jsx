@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -15,7 +16,12 @@ export function Sidebar({ links = [] }) {
       <div className="p-6 border-b border-slate-700">
         <div className="flex items-center space-x-3">
           <div className="w-auto h-auto rounded-lg flex items-center justify-center">
-            <img src={"/images/logo.png"} alt="logo" />
+            <Image
+              width={100}
+              height={100}
+              src={"/images/logo.png"}
+              alt="logo"
+            />
           </div>
         </div>
       </div>

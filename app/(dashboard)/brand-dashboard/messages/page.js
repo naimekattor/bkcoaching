@@ -10,6 +10,7 @@ import {
   Bell,
   ArrowLeft,
 } from "lucide-react";
+import Image from "next/image";
 
 // Mock data structure - easily replaceable with backend data
 const mockContacts = [
@@ -207,7 +208,9 @@ export default function MessagesDashboard() {
       {/* Left Sidebar - Contacts */}
       <div
         className={`w-80 sm:w-72 bg-white border-r border-gray-200 flex flex-col absolute md:relative z-20 md:z-auto h-full transform transition-all duration-300 ease-in-out ${
-          showSidebar ? "translate-x-0" : "-translate-x-[1000px] md:translate-x-0"
+          showSidebar
+            ? "translate-x-0"
+            : "-translate-x-[1000px] md:translate-x-0"
         }`}
       >
         {/* Header */}
@@ -258,7 +261,9 @@ export default function MessagesDashboard() {
               <span className="text-white text-sm">💬</span>
             </div>
             <div className="flex-1">
-              <span className="text-sm font-semibold text-blue-900">1 request</span>
+              <span className="text-sm font-semibold text-blue-900">
+                1 request
+              </span>
               <p className="text-xs text-blue-600">Tap to view</p>
             </div>
             <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
@@ -280,7 +285,9 @@ export default function MessagesDashboard() {
               <div className="flex items-center gap-3">
                 <div className="relative">
                   <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-300 shadow-sm">
-                    <img
+                    <Image
+                      width={48}
+                      height={48}
                       src={contact.avatar || "/placeholder.svg"}
                       alt={contact.name}
                       className="w-full h-full object-cover"
@@ -292,8 +299,12 @@ export default function MessagesDashboard() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
-                    <p className="font-semibold text-sm truncate text-gray-900">{contact.name}</p>
-                    <span className="text-xs text-gray-400">{contact.lastSeen}</span>
+                    <p className="font-semibold text-sm truncate text-gray-900">
+                      {contact.name}
+                    </p>
+                    <span className="text-xs text-gray-400">
+                      {contact.lastSeen}
+                    </span>
                   </div>
                   <p className="text-xs text-gray-500 truncate mt-1">
                     {contact.lastMessage}
@@ -327,7 +338,9 @@ export default function MessagesDashboard() {
                     <MoreHorizontal className="h-5 w-5" />
                   </button>
                   <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-300 shadow-sm">
-                    <img
+                    <Image
+                      width={48}
+                      height={48}
                       src={selectedContact.avatar || "/placeholder.svg"}
                       alt={selectedContact.name}
                       className="w-full h-full object-cover"
@@ -338,7 +351,13 @@ export default function MessagesDashboard() {
                       {selectedContact.name}
                     </p>
                     <div className="flex items-center gap-2">
-                      <div className={`w-2 h-2 rounded-full ${selectedContact.isOnline ? 'bg-green-500' : 'bg-gray-400'}`}></div>
+                      <div
+                        className={`w-2 h-2 rounded-full ${
+                          selectedContact.isOnline
+                            ? "bg-green-500"
+                            : "bg-gray-400"
+                        }`}
+                      ></div>
                       <p className="text-sm text-gray-500 truncate">
                         {selectedContact.lastSeen}
                       </p>
@@ -411,7 +430,9 @@ export default function MessagesDashboard() {
                     <div className="flex items-end gap-2 max-w-[85%] sm:max-w-xs lg:max-w-md">
                       {!message.isOwn && (
                         <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-300 flex-shrink-0 shadow-sm">
-                          <img
+                          <Image
+                            width={32}
+                            height={32}
                             src={selectedContact.avatar || "/placeholder.svg"}
                             alt={selectedContact.name}
                             className="w-full h-full object-cover"
@@ -425,10 +446,14 @@ export default function MessagesDashboard() {
                             : "bg-white text-gray-900 rounded-bl-md border border-gray-200"
                         }`}
                       >
-                        <p className="text-sm break-words leading-relaxed">{message.content}</p>
-                        <p className={`text-xs mt-1 ${
-                          message.isOwn ? "text-blue-100" : "text-gray-400"
-                        }`}>
+                        <p className="text-sm break-words leading-relaxed">
+                          {message.content}
+                        </p>
+                        <p
+                          className={`text-xs mt-1 ${
+                            message.isOwn ? "text-blue-100" : "text-gray-400"
+                          }`}
+                        >
                           {message.timestamp}
                         </p>
                       </div>
@@ -475,7 +500,8 @@ export default function MessagesDashboard() {
                 Welcome to Messages
               </h3>
               <p className="text-sm text-gray-500 mb-6">
-                Select a conversation from the sidebar to start messaging with your contacts
+                Select a conversation from the sidebar to start messaging with
+                your contacts
               </p>
               <button
                 onClick={() => setShowSidebar(true)}

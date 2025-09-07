@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 
 export default function ProposalsPage() {
@@ -342,7 +343,9 @@ export default function ProposalsPage() {
               {/* Left Side - Creator Info */}
               <div className="border-2 border-[#E5E7EB] rounded-xl ">
                 <div className="flex items-center gap-3 mb-4  px-3">
-                  <img
+                  <Image
+                    width={60}
+                    height={60}
                     src="/maya-fashionista-profile.jpg"
                     alt="Maya Fashionista"
                     className="w-15 h-15 rounded-full"

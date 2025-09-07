@@ -16,13 +16,13 @@ interface Subscription {
   status: Status;
 }
 
-interface Plan {
-  id: string;
-  name: string;
-  price: number;
-  billingCycle: BillingCycle;
-  features: string[];
-}
+// interface Plan {
+//   id: string;
+//   name: string;
+//   price: number;
+//   billingCycle: BillingCycle;
+//   features: string[];
+// }
 
 const mockCurrentSubscription: Subscription = {
   id: "sub_123",
@@ -33,29 +33,29 @@ const mockCurrentSubscription: Subscription = {
   status: "active",
 };
 
-const mockPlans: Plan[] = [
-  {
-    id: "basic",
-    name: "Basic",
-    price: 10,
-    billingCycle: "monthly",
-    features: ["1 Campaign", "Basic Analytics", "Email Support"],
-  },
-  {
-    id: "pro",
-    name: "Pro",
-    price: 20,
-    billingCycle: "monthly",
-    features: ["Unlimited Campaigns", "Advanced Analytics", "Priority Support"],
-  },
-  {
-    id: "enterprise",
-    name: "Enterprise",
-    price: 50,
-    billingCycle: "monthly",
-    features: ["Custom Solutions", "Dedicated Manager", "24/7 Support"],
-  },
-];
+// const mockPlans: Plan[] = [
+//   {
+//     id: "basic",
+//     name: "Basic",
+//     price: 10,
+//     billingCycle: "monthly",
+//     features: ["1 Campaign", "Basic Analytics", "Email Support"],
+//   },
+//   {
+//     id: "pro",
+//     name: "Pro",
+//     price: 20,
+//     billingCycle: "monthly",
+//     features: ["Unlimited Campaigns", "Advanced Analytics", "Priority Support"],
+//   },
+//   {
+//     id: "enterprise",
+//     name: "Enterprise",
+//     price: 50,
+//     billingCycle: "monthly",
+//     features: ["Custom Solutions", "Dedicated Manager", "24/7 Support"],
+//   },
+// ];
 
 export default function SubscriptionPage() {
   const [currentSubscription, setCurrentSubscription] = useState<Subscription>(

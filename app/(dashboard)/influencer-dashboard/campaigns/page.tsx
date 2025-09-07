@@ -5,6 +5,7 @@ import { Search, MoreHorizontal } from "lucide-react";
 import { mockCampaigns } from "@/lib/mocks/campaigns";
 import { StatCard } from "@/components/cards/stat-card";
 import { Megaphone, Users, Play, Rocket } from "lucide-react";
+import Image from "next/image";
 
 export default function CampaignsPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -107,7 +108,9 @@ export default function CampaignsPage() {
             className="bg-white rounded-lg border border-gray-200 overflow-hidden"
           >
             <div className="relative">
-              <img
+              <Image
+                width={500}
+                height={192}
                 src={campaign.image || "/placeholder.svg"}
                 alt={campaign.title}
                 className="w-full h-48 object-cover"

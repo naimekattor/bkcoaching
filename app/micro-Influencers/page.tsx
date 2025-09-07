@@ -94,7 +94,10 @@ export default function InfluencersPage() {
 
           <div className="grid md:grid-cols-2 gap-8">
             {influencers.map((influencer, index) => (
-              <div key={index} className="max-w-md bg-white rounded-xl shadow-lg overflow-hidden border">
+              <div
+                key={index}
+                className="max-w-md bg-white rounded-xl shadow-lg overflow-hidden border"
+              >
                 {/* Top Section */}
                 <div className="flex items-center">
                   <div className="px-4">
@@ -116,7 +119,9 @@ export default function InfluencersPage() {
                     </div>
                   </div>
                   <div className="relative">
-                    <img
+                    <Image
+                      width={600}
+                      height={600}
                       src={influencer.image}
                       alt="Creator"
                       className="w-full h-60 object-cover"

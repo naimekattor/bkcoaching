@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Bell, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const mockNotifications = [
   {
@@ -141,7 +142,9 @@ export default function MessageRequest() {
               <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full"></span>
             </button>
             <div className="w-8 h-8 rounded-full bg-gray-300 overflow-hidden">
-              <img
+              <Image
+                width={600}
+                height={600}
                 src="/user-profile-illustration.png"
                 alt="User"
                 className="w-full h-full object-cover"
@@ -191,7 +194,9 @@ export default function MessageRequest() {
             >
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
-                  <img
+                  <Image
+                    width={100}
+                    height={60}
                     src={notification.avatar || "/placeholder.svg"}
                     alt={`${notification.brand} logo`}
                     className="w-full h-15 object-cover"
