@@ -46,11 +46,11 @@ export function PricingSection() {
   const currentPlans = isYearly ? yearlyPlans : monthlyPlans;
 
   return (
-    <section className="py-16 lg:py-24 bg-gray-50">
+    <section className="py-16 lg:py-24 ">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-primary mb-4">
             Flexible Plans For Everyone
           </h2>
           <p className="text-lg text-gray-600 mb-8">
@@ -63,7 +63,7 @@ export function PricingSection() {
               onClick={() => setIsYearly(false)}
               className={`px-6 py-2 rounded-md font-medium transition-all duration-200 ${
                 !isYearly
-                  ? "bg-slate-800 text-white shadow-sm"
+                  ? "bg-primary text-white shadow-sm"
                   : "text-gray-600 hover:text-gray-800"
               }`}
             >
@@ -73,7 +73,7 @@ export function PricingSection() {
               onClick={() => setIsYearly(true)}
               className={`px-6 py-2 rounded-md font-medium transition-all duration-200 ${
                 isYearly
-                  ? "bg-slate-800 text-white shadow-sm"
+                  ? "bg-primary text-white shadow-sm"
                   : "text-gray-600 hover:text-gray-800"
               }`}
             >
@@ -87,15 +87,15 @@ export function PricingSection() {
           {currentPlans.map((plan, index) => (
             <div
               key={index}
-              className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-shadow duration-300"
+              className="bg-[#f6f8fa] rounded-2xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-shadow duration-300"
             >
               <div className="p-8 text-center">
-                <h3 className="text-2xl font-bold text-slate-800 mb-8">
+                <h3 className="text-2xl font-bold text-primary mb-8">
                   {plan.title}
                 </h3>
 
                 <div className="mb-6">
-                  <span className="text-5xl font-bold text-slate-800">
+                  <span className="text-5xl font-bold text-primary">
                     ${plan.price}
                   </span>
                   <span className="text-lg text-gray-600 ml-1">
@@ -115,7 +115,7 @@ export function PricingSection() {
                   {plan.description}
                 </p>
 
-                <button className="w-full bg-slate-800 hover:bg-slate-700 text-white font-semibold py-4 rounded-lg transition-colors duration-200">
+                <button className="w-full bg-primary hover:bg-slate-700 text-white font-semibold py-4 rounded-lg transition-colors duration-200">
                   Select
                 </button>
               </div>

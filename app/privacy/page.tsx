@@ -179,7 +179,7 @@ export default function PrivacyPage() {
               </h2>
               <p className="text-gray-700">
                 We may update this Privacy Policy from time to time. Changes
-                will be posted on this page with an updated "Effective Date."
+                will be posted on this page with an updated &quot;Effective Date.&quot;
               </p>
             </section>
 

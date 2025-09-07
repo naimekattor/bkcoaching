@@ -9,9 +9,9 @@ const GlobalSection = () => {
             Start now. Grow anywhere
           </h2>
           <p className="text-lg md:text-[24px] text-primary leading-relaxed mb-16 max-w-2xl mx-auto">
-            You built something incredible. Now it's about the people - people
+            You built something incredible. Now it&apos;s about the people - people
             seeing your product. People using it. people sharing it because they
-            actually love it. That's why we built The Social Market: to make
+            actually love it. That&apos;s why we built The Social Market: to make
             growth simple, authentic and effective.
           </p>
 

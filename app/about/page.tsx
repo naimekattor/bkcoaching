@@ -53,7 +53,7 @@ export default function AboutPage() {
 
                 <p>
                   Brands share their products, and micro-influencers share their
-                  passion—it's that simple. By working together, everyone grows.
+                  passion—it&apos;s that simple. By working together, everyone grows.
                 </p>
               </div>
 

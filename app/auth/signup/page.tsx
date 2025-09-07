@@ -6,6 +6,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
@@ -48,10 +49,13 @@ export default function SignupPage() {
         {/* Header */}
         <div className="flex justify-between items-center p-6">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
-              <div className="w-4 h-4 bg-slate-800 rounded-full"></div>
-            </div>
-            <span className="text-white font-semibold">The Social Market</span>
+            <Image
+              src={"/images/logo.png"}
+              width={200}
+              height={55}
+              alt="social market"
+              className="w-auto h-auto"
+            />
           </div>
           <Button
             variant="outline"
@@ -232,7 +236,12 @@ export default function SignupPage() {
               </Button>
 
               <div className="text-center">
-                <span className="text-slate-400">Already have an account?</span>
+                <span className="text-slate-400">
+                  Already have an account?{" "}
+                  <Link className="text-secondary" href={"/auth/login"}>
+                    Login
+                  </Link>
+                </span>
               </div>
 
               <div className="text-center">
@@ -288,7 +297,7 @@ export default function SignupPage() {
       <div className="hidden lg:flex lg:w-1/2 bg-slate-100 items-center justify-center p-8">
         <div className="max-w-md text-center">
           <img
-            src="/person-at-computer-with-login-interface-and-clouds.jpg"
+            src="/images/signup-illustration.png"
             alt="Signup illustration"
             className="w-full h-auto mb-6"
           />

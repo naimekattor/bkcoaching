@@ -24,13 +24,13 @@ const Hero = () => {
 
             <div className="flex items-center gap-2 text-[16px] text-primary">
               <span className="text-red-500">♥</span>
-              <span>Free for the first 100 users - "Get in early!"</span>
+              <span>Free for the first 100 users - &quot;Get in early!&quot;</span>
             </div>
 
             <p className="text-primary text-[16px] leading-relaxed max-w-lg">
               The Social Market is where brands and micro-influencers team up.
               Brands get affordable, authentic marketing. Micro-influencers get
-              paid to share services. They actually love. It's word-of-mouth,
+              paid to share services. They actually love. It&apos;s word-of-mouth,
               made smarter, faster, and scalable.
             </p>
           </div>

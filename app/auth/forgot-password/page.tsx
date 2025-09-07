@@ -5,6 +5,7 @@ import type React from "react";
 import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -29,10 +30,13 @@ export default function ForgotPasswordPage() {
         {/* Header */}
         <div className="flex justify-between items-center p-6">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
-              <div className="w-4 h-4 bg-slate-800 rounded-full"></div>
-            </div>
-            <span className="text-white font-semibold">The Social Market</span>
+            <Image
+              src={"/images/logo.png"}
+              width={200}
+              height={55}
+              alt="social market"
+              className="w-auto h-auto"
+            />
           </div>
           <Button
             variant="outline"
@@ -92,7 +96,7 @@ export default function ForgotPasswordPage() {
       <div className="hidden lg:flex lg:w-1/2 bg-slate-100 items-center justify-center p-8">
         <div className="max-w-md">
           <img
-            src="/person-with-laptop-showing-error-screen-and-passwo.jpg"
+            src="/images/forgot-illustration.png"
             alt="Forgot password illustration"
             className="w-full h-auto"
           />

@@ -1,8 +1,9 @@
 import Image from "next/image";
 import React from "react";
-import { Button } from "./ui/button";
+// Removed unused Button import
 
 const HowItWorks = () => {
+  // Removed unused steps to satisfy lint rules
   const steps = [
     {
       id: 1,

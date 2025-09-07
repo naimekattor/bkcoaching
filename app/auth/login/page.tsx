@@ -175,7 +175,7 @@ export default function LoginPage() {
               </Button>
 
               <div className="text-center">
-                <span className="text-slate-400">Don't have an account? </span>
+                <span className="text-slate-400">Don&apos;t have an account? </span>
                 <Link
                   href="/auth/signup"
                   className="text-yellow-500 hover:text-yellow-400"
@@ -192,7 +192,7 @@ export default function LoginPage() {
       <div className="hidden lg:flex lg:w-1/2 bg-slate-100 items-center justify-center p-8">
         <div className="max-w-md">
           <img
-            src="/person-waving-from-window-with-welcome-message-ill.jpg"
+            src="/images/login-illustration.png"
             alt="Welcome illustration"
             className="w-full h-auto"
           />

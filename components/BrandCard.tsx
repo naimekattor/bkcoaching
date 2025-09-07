@@ -79,7 +79,7 @@ export default function BrandCard({
             <img
               src={logo}
               alt={`${name} Logo`}
-              className="rounded-full shadow-lg ml-auto hidden lg:block"
+              className=" w-[83px] h-[83px]  ml-auto hidden lg:block"
             />
           </div>
         </div>

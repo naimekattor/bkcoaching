@@ -1,4 +1,4 @@
-import Hero from "@/components/hero";
+// Removed unused Hero import
 import Image from "next/image";
 import { FaStar } from "react-icons/fa";
 
@@ -13,7 +13,7 @@ export default function InfluencersPage() {
       bio: "John Doe is a trend-savvy fashion Creator known for blending streetwear with high-end style.",
       price: "$150",
       collaborations: "12 Businesses Worked With",
-      image: "/stylish-young-man-in-business-suit-fashion.jpg",
+      image: "/images/influencer/influencer1.jpg",
     },
     {
       name: "Robert Smith",
@@ -24,7 +24,7 @@ export default function InfluencersPage() {
       bio: "Robert Smith is a beauty Creator known for his skincare tips and bold, trendsetting makeup looks.",
       price: "$150",
       collaborations: "12 Businesses Worked With",
-      image: "/professional-man-in-business-attire-beauty.jpg",
+      image: "/images/influencer/influencer2.jpg",
     },
     {
       name: "Johan",
@@ -35,7 +35,7 @@ export default function InfluencersPage() {
       bio: "Johan is a dynamic fitness Creator known for his high-energy workouts and motivational lifestyle content.",
       price: "$150",
       collaborations: "12 Businesses Worked With",
-      image: "/fit-man-smiling-in-casual-shirt-fitness.jpg",
+      image: "/images/influencer/influencer3.jpg",
     },
     {
       name: "Robert Smith",
@@ -46,7 +46,7 @@ export default function InfluencersPage() {
       bio: "Robert Smith is a tech Creator known for breaking down complex innovations into simple insights.",
       price: "$150",
       collaborations: "12 Businesses Worked With",
-      image: "/professional-man-at-desk-with-laptop-technology.jpg",
+      image: "/images/influencer/influencer4.jpg",
     },
   ];
 
@@ -54,10 +54,10 @@ export default function InfluencersPage() {
     <div className="min-h-screen bg-gray-50">
       {/* for hero */}
       <section className="bg-gradient-to-b from-[#ffffff] to-[#E9F4FF]">
-        <main className="container mx-auto px-4 py-16 lg:py-24">
-          <div className="grid lg:grid-cols-3 gap-12 lg:gap-16 items-center">
+        <main className="container mx-auto px-4 pt-16 lg:pt-24">
+          <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             {/* Left Content */}
-            <div className="lg:col-span-2 space-y-8 flex-1">
+            <div className="lg:col-span-6 space-y-8 flex-1">
               <div className="space-y-4">
                 <h1 className="text-4xl md:text-5xl  font-bold text-primary leading-tight">
                   Micro-influencers.{" "}
@@ -68,13 +68,13 @@ export default function InfluencersPage() {
               <p className="text-primary text-[16px] leading-relaxed max-w-lg">
                 The Social Market is where brands and micro-influencers team up.
                 Brands get affordable, authentic marketing. Micro-influencers
-                get paid to share services. They actually love. It's
+                get paid to share services. They actually love. It&apos;s
                 word-of-mouth, made smarter, faster, and scalable.
               </p>
             </div>
 
             {/* Right Image (1/3) */}
-            <div className="relative">
+            <div className="relative lg:col-span-6">
               <Image
                 width={833}
                 height={519}
@@ -88,13 +88,13 @@ export default function InfluencersPage() {
       </section>
       <main className="container mx-auto px-4 py-16 lg:py-24">
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold text-center mb-16">
+          {/* <h1 className="text-4xl md:text-5xl font-bold text-center mb-16">
             Browse Influencers
-          </h1>
+          </h1> */}
 
           <div className="grid md:grid-cols-2 gap-8">
             {influencers.map((influencer, index) => (
-              <div className="max-w-md bg-white rounded-xl shadow-lg overflow-hidden border">
+              <div key={index} className="max-w-md bg-white rounded-xl shadow-lg overflow-hidden border">
                 {/* Top Section */}
                 <div className="flex items-center">
                   <div className="px-4">
@@ -117,7 +117,7 @@ export default function InfluencersPage() {
                   </div>
                   <div className="relative">
                     <img
-                      src="https://placehold.co/600x400"
+                      src={influencer.image}
                       alt="Creator"
                       className="w-full h-60 object-cover"
                     />
@@ -153,7 +153,7 @@ export default function InfluencersPage() {
 
                   {/* Buttons */}
                   <div className="flex space-x-3 mt-5">
-                    <button className="flex-1 bg-blue-900 text-white font-semibold py-2 rounded-md shadow hover:bg-blue-800 transition">
+                    <button className="flex-1 bg-primary text-white font-semibold py-2 rounded-md shadow cursor-pointer transition">
                       View Profile
                     </button>
                     <button className="flex-1 border border-gray-400 text-gray-800 font-semibold py-2 rounded-md hover:bg-gray-100 transition">

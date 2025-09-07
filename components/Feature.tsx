@@ -1,10 +1,11 @@
 import React from "react";
+import { IoPersonOutline } from "react-icons/io5";
 
 const Feature = () => {
   return (
-    <section className="py-16 lg:py-24">
+    <section className="py-16 lg:py-24 bg-gradient-to-b from-[#F5FAFF] to-[#F4FAFF]">
       <div className="text-center mb-16">
-        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground">
+        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary">
           Simple. <span className="text-yellow-500">Authentic.</span> Effective
         </h2>
       </div>
@@ -12,29 +13,17 @@ const Feature = () => {
       <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
         {/* For Brands Card */}
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-          <div className="bg-slate-800 text-white text-center py-6">
+          <div className="bg-primary text-white text-center py-6">
             <h3 className="text-2xl font-bold">For Brands</h3>
           </div>
           <div className="p-8 space-y-6">
-            <div className="flex items-center gap-4 text-gray-600">
+            <div className="flex items-center gap-4 bg-[#F7F8F9] shadow p-1 rounded border-white border-3 text-[#838689] text-[24px]">
               <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                </svg>
+                <IoPersonOutline />
               </div>
               <span className="text-lg">Create your free profile</span>
             </div>
-            <div className="flex items-center gap-4 text-gray-600">
+            <div className="flex items-center gap-4 bg-[#F7F8F9] shadow p-1 rounded border-white border-3 text-[#838689] text-[24px]">
               <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
                 <svg
                   className="w-5 h-5"
@@ -54,7 +43,7 @@ const Feature = () => {
                 Post a campaign or browse influencers
               </span>
             </div>
-            <div className="flex items-center gap-4 text-gray-600">
+            <div className="flex items-center gap-4 bg-[#F7F8F9] shadow p-1 rounded border-white border-3 text-[#838689] text-[24px]">
               <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
                 <svg
                   className="w-5 h-5"
@@ -74,7 +63,7 @@ const Feature = () => {
                 Match instantly with the right people
               </span>
             </div>
-            <div className="flex items-center gap-4 text-gray-600">
+            <div className="flex items-center gap-4 bg-[#F7F8F9] shadow p-1 rounded border-white border-3 text-[#838689] text-[24px]">
               <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
                 <svg
                   className="w-5 h-5"
@@ -102,11 +91,11 @@ const Feature = () => {
 
         {/* For Micro-Influencer Card */}
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-          <div className="bg-slate-800 text-white text-center py-6">
+          <div className="bg-primary text-white text-center py-6">
             <h3 className="text-2xl font-bold">For Micro-Influencer</h3>
           </div>
           <div className="p-8 space-y-6">
-            <div className="flex items-center gap-4 text-gray-600">
+            <div className="flex items-center gap-4 bg-[#F7F8F9] shadow p-1 rounded border-white border-3 text-[#838689] text-[24px]">
               <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
                 <svg
                   className="w-5 h-5"
@@ -124,7 +113,7 @@ const Feature = () => {
               </div>
               <span className="text-lg">Create your free profile</span>
             </div>
-            <div className="flex items-center gap-4 text-gray-600">
+            <div className="flex items-center gap-4 bg-[#F7F8F9] shadow p-1 rounded border-white border-3 text-[#838689] text-[24px]">
               <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
                 <svg
                   className="w-5 h-5"
@@ -144,7 +133,7 @@ const Feature = () => {
                 Post a campaign or browse influencers
               </span>
             </div>
-            <div className="flex items-center gap-4 text-gray-600">
+            <div className="flex items-center gap-4 bg-[#F7F8F9] shadow p-1 rounded border-white border-3 text-[#838689] text-[24px]">
               <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
                 <svg
                   className="w-5 h-5"
@@ -164,7 +153,7 @@ const Feature = () => {
                 Match instantly with the right people
               </span>
             </div>
-            <div className="flex items-center gap-4 text-gray-600">
+            <div className="flex items-center gap-4 bg-[#F7F8F9] shadow p-1 rounded border-white border-3 text-[#838689] text-[24px]">
               <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
                 <svg
                   className="w-5 h-5"
