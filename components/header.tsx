@@ -24,7 +24,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full   pt-6">
+      <header className="sticky top-0 z-40 w-full pt-6">
         <div className="container mx-auto px-4 py-2 sm:px-6 lg:px-8 bg-primary backdrop-blur rounded-md">
           <div className="flex h-16 items-center justify-between">
             {/* Logo */}
@@ -48,28 +48,31 @@ const Header = () => {
             {/* Desktop Navigation */}
             <nav className="hidden md:flex md:items-center md:space-x-8">
               {navigationLinks.map((link, index) => (
-                <motion.a
+                <motion.div
                   key={link.name}
-                  href={link.href}
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className={cn(
-                    "relative text-sm font-medium text-navlink-primary transition-colors duration-300",
-                    "hover:text-[#F6FBFF] hover:bg-[#002140] hover:border-[#F7FBFF] hover:border-1 hover:scale-105 transform",
-                    "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-md px-2 py-1"
-                  )}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  {link.name}
-                  <motion.div
-                    className="absolute -bottom-1 left-0 h-0.5 bg-primary"
-                    initial={{ width: 0 }}
-                    whileHover={{ width: "100%" }}
-                    transition={{ duration: 0.3 }}
-                  />
-                </motion.a>
+                  <Link
+                    href={link.href}
+                    className={cn(
+                      "relative text-sm font-medium text-navlink-primary transition-colors duration-300",
+                      "hover:text-[#F6FBFF] hover:bg-[#002140] hover:border-[#F7FBFF] hover:border-1 hover:scale-105 transform",
+                      "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-md px-2 py-1 block"
+                    )}
+                  >
+                    {link.name}
+                    <motion.div
+                      className="absolute -bottom-1 left-0 h-0.5 bg-primary"
+                      initial={{ width: 0 }}
+                      whileHover={{ width: "100%" }}
+                      transition={{ duration: 0.3 }}
+                    />
+                  </Link>
+                </motion.div>
               ))}
             </nav>
 
@@ -80,17 +83,19 @@ const Header = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.6 }}
               >
-                <Button
-                  variant="default"
-                  size="sm"
-                  className={cn(
-                    "bg-primary text-secondary border-secondary border-1 hover:bg-background px-6 py-4 cursor-pointer",
-                    "transition-all duration-300 transform hover:scale-105",
-                    "shadow-md hover:shadow-lg"
-                  )}
-                >
-                  <Link href={"/auth/login"}>Login</Link>
-                </Button>
+                <Link href="/auth/login">
+                  <Button
+                    variant="default"
+                    size="sm"
+                    className={cn(
+                      "bg-primary text-secondary border-secondary border-1 hover:bg-background px-6 py-4 cursor-pointer",
+                      "transition-all duration-300 transform hover:scale-105",
+                      "shadow-md hover:shadow-lg"
+                    )}
+                  >
+                    Login
+                  </Button>
+                </Link>
               </motion.div>
             </div>
 
@@ -159,22 +164,25 @@ const Header = () => {
               {/* Navigation Links */}
               <nav className="flex flex-1 flex-col items-center justify-center space-y-8 px-6">
                 {navigationLinks.map((link, index) => (
-                  <motion.a
+                  <motion.div
                     key={link.name}
-                    href={link.href}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: 0.1 + index * 0.1 }}
-                    className={cn(
-                      "text-2xl font-semibold text-foreground transition-colors duration-300",
-                      "hover:text-accent focus:outline-none focus:ring-2 focus:ring-ring rounded-md px-4 py-2"
-                    )}
-                    onClick={() => setIsMobileMenuOpen(false)}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    {link.name}
-                  </motion.a>
+                    <Link
+                      href={link.href}
+                      className={cn(
+                        "text-2xl font-semibold text-foreground transition-colors duration-300",
+                        "hover:text-accent focus:outline-none focus:ring-2 focus:ring-ring rounded-md px-4 py-2 block"
+                      )}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {link.name}
+                    </Link>
+                  </motion.div>
                 ))}
               </nav>
 
@@ -185,18 +193,20 @@ const Header = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: 0.6 }}
                 >
-                  <Button
-                    variant="default"
-                    size="lg"
-                    className={cn(
-                      "bg-primary text-primary-foreground hover:bg-accent",
-                      "transition-all duration-300 transform hover:scale-105",
-                      "shadow-lg hover:shadow-xl px-8 py-3 text-lg"
-                    )}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Login
-                  </Button>
+                  <Link href="/auth/login">
+                    <Button
+                      variant="default"
+                      size="lg"
+                      className={cn(
+                        "bg-primary text-primary-foreground hover:bg-accent",
+                        "transition-all duration-300 transform hover:scale-105",
+                        "shadow-lg hover:shadow-xl px-8 py-3 text-lg"
+                      )}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Login
+                    </Button>
+                  </Link>
                 </motion.div>
               </div>
             </div>
@@ -206,4 +216,5 @@ const Header = () => {
     </>
   );
 };
+
 export default Header;
