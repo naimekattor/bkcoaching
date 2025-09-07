@@ -95,8 +95,19 @@ const mockMessages = [
     isOwn: true,
   },
 ];
+
+type Contact = {
+  id: number;
+  name: string;
+  lastMessage: string;
+  avatar: string;
+  isOnline: boolean;
+  lastSeen: string;
+  hasUnread: boolean;
+};
+
 export default function MessagesPage() {
-  const [selectedContact, setSelectedContact] = useState(null);
+  const [selectedContact, setSelectedContact] = useState<Contact | null >(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showChatRequest, setShowChatRequest] = useState(true);
   const [newMessage, setNewMessage] = useState("");
@@ -138,7 +149,7 @@ export default function MessagesPage() {
     }
   }, [searchParams]);
 
-  const handleContactSelect = (contact) => {
+  const handleContactSelect = (contact:Contact) => {
     setSelectedContact(contact);
     setShowChatRequest(false);
   };
@@ -368,7 +379,7 @@ export default function MessagesPage() {
                     {!message.isOwn && (
                       <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-300 ml-2 mt-2">
                         <Image
-                          src={message}
+                          src={selectedContact.avatar}
                           width={32}
                           height={32}
                           alt={selectedContact.name}

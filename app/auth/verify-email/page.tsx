@@ -87,52 +87,53 @@ export default function VerifyEmailPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="flex justify-center gap-4">
-                {code.map((digit, index) => (
-                  <input
-              key={index}
--             ref={(el) => (inputRefs.current[index] = el)}
-+             ref={(el) => {
-+               inputRefs.current[index] = el;
-+             }}
-              type="text"
-              maxLength={1}
-              value={digit}
-              onChange={(e) => handleInputChange(index, e.target.value)}
-              onKeyDown={(e) => handleKeyDown(index, e)}
-              className="w-12 h-12 text-center rounded-md border"
-            />
-                ))}
-                <Button
-                  type="button"
-                  onClick={handleResendCode}
-                  className="bg-yellow-500 hover:bg-yellow-600 text-slate-800 font-semibold px-4 py-2 rounded-lg text-sm"
-                >
-                  Resend
-                </Button>
-              </div>
+  <div className="flex justify-center gap-4">
+    {code.map((digit, index) => (
+      <input
+        key={index}
+        ref={(el) => {
+          inputRefs.current[index] = el;
+        }}
+        type="text"
+        maxLength={1}
+        value={digit}
+        onChange={(e) => handleInputChange(index, e.target.value)}
+        onKeyDown={(e) => handleKeyDown(index, e)}
+        className="w-12 h-12 text-center rounded-md border"
+      />
+    ))}
 
-              {error && (
-                <p className="text-red-400 text-center text-sm">{error}</p>
-              )}
+    <Button
+      type="button"
+      onClick={handleResendCode}
+      className="bg-yellow-500 hover:bg-yellow-600 text-slate-800 font-semibold px-4 py-2 rounded-lg text-sm"
+    >
+      Resend
+    </Button>
+  </div>
 
-              <Button
-                type="submit"
-                className="w-full bg-yellow-500 hover:bg-yellow-600 text-slate-800 font-semibold py-3 rounded-lg"
-              >
-                Verify
-              </Button>
+  {error && (
+    <p className="text-red-400 text-center text-sm">{error}</p>
+  )}
 
-              <div className="text-center">
-                <Button
-                  variant="outline"
-                  className="border-slate-600 text-white hover:bg-slate-700 bg-transparent"
-                  asChild
-                >
-                  <Link href="/auth/login">← Back to Log in</Link>
-                </Button>
-              </div>
-            </form>
+  <Button
+    type="submit"
+    className="w-full bg-yellow-500 hover:bg-yellow-600 text-slate-800 font-semibold py-3 rounded-lg"
+  >
+    Verify
+  </Button>
+
+  <div className="text-center">
+    <Button
+      variant="outline"
+      className="border-slate-600 text-white hover:bg-slate-700 bg-transparent"
+      asChild
+    >
+      <Link href="/auth/login">← Back to Log in</Link>
+    </Button>
+  </div>
+</form>
+
           </div>
         </div>
       </div>
