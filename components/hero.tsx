@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
 const Hero = () => {
@@ -19,7 +20,7 @@ const Hero = () => {
             </div>
 
             <button className="bg-secondary hover:bg-yellow-500 text-primary font-semibold px-8 py-4 rounded-lg transition-colors duration-200 text-lg">
-              Sign up for free
+            <Link  href={'/auth/signup'}> Sign up for free</Link> 
             </button>
 
             <div className="flex items-center gap-2 text-[16px] text-primary">

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 // Removed unused Button import
 
@@ -61,7 +62,7 @@ const HowItWorks = () => {
                 </p>
 
                 <button className="bg-secondary w-full py-2 font-[600] text-[16px] text-primary rounded cursor-pointer">
-                  Start Here
+                 <Link  href={'/auth/signup'}> Start Here</Link>  
                 </button>
               </div>
             </div>
@@ -98,7 +99,7 @@ const HowItWorks = () => {
                 </p>
 
                 <button className="bg-secondary w-full py-2 font-[600] text-[16px] text-primary rounded cursor-pointer">
-                  Start Here
+                 <Link  href={'/auth/signup'}>  Start Here</Link> 
                 </button>
               </div>
             </div>
