@@ -36,8 +36,9 @@ const HowItWorks = () => {
     <section id="HowItWorks" className="relative ">
       <div className="relative z-10 py-20 px-4 max-w-7xl mx-auto">
         <div className="max-w-7xl mx-auto text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-primary">
-            How It Works
+          <h2 className="text-3xl md:text-[40px] font-bold text-primary">
+            Where brands and micro- <br />
+            influencers "Grow Together"
           </h2>
         </div>
 
@@ -62,7 +63,7 @@ const HowItWorks = () => {
                 </p>
 
                 <button className="bg-secondary w-full py-2 font-[600] text-[16px] text-primary rounded cursor-pointer">
-                 <Link  href={'/auth/signup'}> Start Here</Link>  
+                  <Link href={"/auth/signup"}> Start Here</Link>
                 </button>
               </div>
             </div>
@@ -99,7 +100,7 @@ const HowItWorks = () => {
                 </p>
 
                 <button className="bg-secondary w-full py-2 font-[600] text-[16px] text-primary rounded cursor-pointer">
-                 <Link  href={'/auth/signup'}>  Start Here</Link> 
+                  <Link href={"/auth/signup"}> Start Here</Link>
                 </button>
               </div>
             </div>

@@ -58,7 +58,7 @@ export function PricingSection() {
           </p>
 
           {/* Toggle */}
-          <div className="inline-flex bg-gray-200 rounded-lg p-1">
+          <div className="inline-flex bg-gray-200 rounded-lg ">
             <button
               onClick={() => setIsYearly(false)}
               className={`px-6 py-2 rounded-md font-medium transition-all duration-200 ${
