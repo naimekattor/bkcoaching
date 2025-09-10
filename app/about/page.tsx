@@ -36,9 +36,9 @@ export default function AboutPage() {
       </section>
       <main className="container mx-auto px-4 py-16 lg:py-24">
         <div className="container  mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          <div className="grid lg:grid-cols-2  items-center">
             {/* Left Content */}
-            <div className="space-y-8">
+            <div className="space-y-8 lg:col-span-1">
               <h1 className="text-3xl md:text-4xl font-semibold text-primary leading-tight">
                 Start Earning by Joining The Social Market
               </h1>
@@ -90,7 +90,7 @@ export default function AboutPage() {
                       height={800}
                       src="/images/about-img3.jpg"
                       alt="Professional working"
-                      className="w-[375px] h-[550px] object-cover"
+                      className="w-full h-full object-cover"
                     />
                   </div>
                 </div>

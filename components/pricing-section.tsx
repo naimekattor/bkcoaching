@@ -10,11 +10,13 @@ export function PricingSection() {
       title: "I'm a Micro-Influencer",
       price: 100,
       description: "Ideal for individual Micro-Influencer",
+      savings: "",
     },
     {
       title: "I'm a Brand",
       price: 100,
       description: "Perfect for small businesses",
+      savings: "",
     },
     {
       title: "I'm Both",
@@ -89,16 +91,16 @@ export function PricingSection() {
               key={index}
               className="bg-[#f6f8fa] rounded-2xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-shadow duration-300"
             >
-              <div className="p-8 text-center">
-                <h3 className="text-2xl font-bold text-primary mb-8">
+              <div className="p-8 text-center flex flex-col h-full justify-between">
+                <h3 className="text-[40px] font-semibold text-primary mb-8">
                   {plan.title}
                 </h3>
 
                 <div className="mb-6">
-                  <span className="text-5xl font-bold text-primary">
+                  <span className="md:text-[64px] text-3xl font-semibold text-primary">
                     ${plan.price}
                   </span>
-                  <span className="text-lg text-gray-600 ml-1">
+                  <span className="text-[28px] text-primary font-semibold ml-1">
                     /{isYearly ? "Year" : "month"}
                   </span>
                 </div>
@@ -111,7 +113,7 @@ export function PricingSection() {
                   </div>
                 )}
 
-                <p className="text-gray-600 mb-8 leading-relaxed">
+                <p className="text-primary text-[24px] mb-8 leading-relaxed">
                   {plan.description}
                 </p>
 

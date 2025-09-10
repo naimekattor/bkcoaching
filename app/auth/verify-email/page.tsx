@@ -64,13 +64,6 @@ export default function VerifyEmailPage() {
               className="w-auto h-auto"
             />
           </div>
-          <Button
-            variant="outline"
-            className="bg-yellow-500 text-slate-800 border-yellow-500 hover:bg-yellow-600"
-            asChild
-          >
-            <Link href="/">Back to website →</Link>
-          </Button>
         </div>
 
         {/* Form Content */}
@@ -87,59 +80,65 @@ export default function VerifyEmailPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-  <div className="flex justify-center gap-4">
-    {code.map((digit, index) => (
-      <input
-        key={index}
-        ref={(el) => {
-          inputRefs.current[index] = el;
-        }}
-        type="text"
-        maxLength={1}
-        value={digit}
-        onChange={(e) => handleInputChange(index, e.target.value)}
-        onKeyDown={(e) => handleKeyDown(index, e)}
-        className="w-12 h-12 text-center rounded-md border"
-      />
-    ))}
+              <div className="flex justify-center gap-4">
+                {code.map((digit, index) => (
+                  <input
+                    key={index}
+                    ref={(el) => {
+                      inputRefs.current[index] = el;
+                    }}
+                    type="text"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => handleInputChange(index, e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(index, e)}
+                    className="w-12 h-12 text-center rounded-md border"
+                  />
+                ))}
 
-    <Button
-      type="button"
-      onClick={handleResendCode}
-      className="bg-yellow-500 hover:bg-yellow-600 text-slate-800 font-semibold px-4 py-2 rounded-lg text-sm"
-    >
-      Resend
-    </Button>
-  </div>
+                <Button
+                  type="button"
+                  onClick={handleResendCode}
+                  className="bg-yellow-500 hover:bg-yellow-600 text-slate-800 font-semibold px-4 py-2 rounded-lg text-sm"
+                >
+                  Resend
+                </Button>
+              </div>
 
-  {error && (
-    <p className="text-red-400 text-center text-sm">{error}</p>
-  )}
+              {error && (
+                <p className="text-red-400 text-center text-sm">{error}</p>
+              )}
 
-  <Button
-    type="submit"
-    className="w-full bg-yellow-500 hover:bg-yellow-600 text-slate-800 font-semibold py-3 rounded-lg"
-  >
-    Verify
-  </Button>
+              <Button
+                type="submit"
+                className="w-full bg-yellow-500 hover:bg-yellow-600 text-slate-800 font-semibold py-3 rounded-lg"
+              >
+                Verify
+              </Button>
 
-  <div className="text-center">
-    <Button
-      variant="outline"
-      className="border-slate-600 text-white hover:bg-slate-700 bg-transparent"
-      asChild
-    >
-      <Link href="/auth/login">← Back to Log in</Link>
-    </Button>
-  </div>
-</form>
-
+              <div className="text-center">
+                <Button
+                  variant="outline"
+                  className="border-slate-600 text-white hover:bg-slate-700 bg-transparent"
+                  asChild
+                >
+                  <Link href="/auth/login">← Back to Log in</Link>
+                </Button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
 
       {/* Right Side - Illustration */}
-      <div className="hidden lg:flex lg:w-1/2 bg-slate-100 items-center justify-center p-8">
+      <div className="hidden relative lg:flex lg:w-1/2 bg-slate-100 items-center justify-center p-8">
+        <Button
+          variant="outline"
+          className="absolute top-4 right-4 bg-yellow-500 text-slate-800 border-yellow-500 hover:bg-yellow-600"
+          asChild
+        >
+          <Link href="/">Back to website →</Link>
+        </Button>
         <div className="max-w-md">
           <Image
             width={500}

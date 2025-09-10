@@ -38,13 +38,6 @@ export default function ForgotPasswordPage() {
               className="w-auto h-auto"
             />
           </div>
-          <Button
-            variant="outline"
-            className="bg-yellow-500 text-slate-800 border-yellow-500 hover:bg-yellow-600"
-            asChild
-          >
-            <Link href="/">Back to website →</Link>
-          </Button>
         </div>
 
         {/* Form Content */}
@@ -93,7 +86,14 @@ export default function ForgotPasswordPage() {
       </div>
 
       {/* Right Side - Illustration */}
-      <div className="hidden lg:flex lg:w-1/2 bg-slate-100 items-center justify-center p-8">
+      <div className="hidden relative lg:flex lg:w-1/2 bg-slate-100 items-center justify-center p-8">
+        <Button
+          variant="outline"
+          className="absolute top-4 right-4 bg-yellow-500 text-slate-800 border-yellow-500 hover:bg-yellow-600"
+          asChild
+        >
+          <Link href="/">Back to website →</Link>
+        </Button>
         <div className="max-w-md">
           <Image
             width={600}

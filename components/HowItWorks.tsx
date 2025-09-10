@@ -34,17 +34,17 @@ const HowItWorks = () => {
 
   return (
     <section id="HowItWorks" className="relative ">
-      <div className="relative z-10 py-20 px-4 max-w-7xl mx-auto">
+      <div className="relative z-10 py-[130px] px-4 max-w-7xl mx-auto">
         <div className="max-w-7xl mx-auto text-center mb-12">
           <h2 className="text-3xl md:text-[40px] font-bold text-primary">
             Where brands and micro- <br />
-            influencers "Grow Together"
+            influencers &quot;Grow Together&quot;
           </h2>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-center">
           {/* Left side boxes */}
-          <div className="">
+          <div className="w-[326px]">
             <div className="bg-white rounded shadow-md  text-left">
               <div className="flex gap-4 items-center justify-center bg-primary py-2 px-2 rounded">
                 <Image
@@ -58,8 +58,8 @@ const HowItWorks = () => {
                 </h3>
               </div>
               <div className="px-6 pb-6">
-                <p className="text-[#838689] text-sm md:text-[19px] text-center px-4 py-6">
-                   Run authentic campaigns that build trust and drive sales.
+                <p className="text-[#838689] text-sm md:text-[19px] text-center  py-6">
+                    Run authentic campaigns that build trust and drive sales.
                 </p>
 
                 <button className="bg-secondary w-full py-2 font-[600] text-[16px] text-primary rounded cursor-pointer">
@@ -76,12 +76,12 @@ const HowItWorks = () => {
               alt="How it works illustration"
               width={400}
               height={400}
-              className="object-contain"
+              className=" w-auto h-auto"
             />
           </div>
 
           {/* Right side boxes */}
-          <div className="">
+          <div className="w-[326px]">
             <div className="bg-white rounded shadow-md  text-left">
               <div className="flex gap-4 items-center justify-center bg-primary py-2 px-2 rounded">
                 <Image
@@ -95,7 +95,7 @@ const HowItWorks = () => {
                 </h3>
               </div>
               <div className="px-6 pb-6">
-                <p className="text-[#838689] text-sm md:text-[19px] text-center px-4 py-6">
+                <p className="text-[#838689] text-sm md:text-[19px] text-center  py-6">
                   Monetize your influence by sharing products you love.
                 </p>
 

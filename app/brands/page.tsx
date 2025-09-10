@@ -62,12 +62,12 @@ export default function BrandsPage() {
     <section>
       <section className="bg-gradient-to-b from-[#ffffff] to-[#E9F4FF]">
         <main className="container mx-auto px-4 ">
-          <div className="grid lg:grid-cols-3 gap-12 lg:gap-16 items-center">
+          <div className="grid lg:grid-cols-2 gap-2 items-center">
             {/* Left Content */}
-            <div className="lg:col-span-2 space-y-8 flex-1">
+            <div className="lg:col-span-1 space-y-8 flex-1 ">
               <div className="space-y-4">
                 <h1 className="text-4xl md:text-5xl  font-bold text-primary leading-tight">
-                  Grow Your Brand with Micro-Influencers
+                  Grow Your Brand with Micro- Influencers
                 </h1>
               </div>
 

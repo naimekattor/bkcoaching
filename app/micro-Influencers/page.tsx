@@ -55,9 +55,9 @@ export default function InfluencersPage() {
       {/* for hero */}
       <section className="bg-gradient-to-b from-[#ffffff] to-[#E9F4FF]">
         <main className="container mx-auto px-4 pt-16 lg:pt-24">
-          <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          <div className="grid lg:grid-cols-12 items-center">
             {/* Left Content */}
-            <div className="lg:col-span-6 space-y-8 flex-1">
+            <div className="lg:col-span-6 space-y-8 flex-1 pb-10">
               <div className="space-y-4">
                 <h1 className="text-4xl md:text-5xl  font-bold text-primary leading-tight">
                   Micro-influencers.{" "}
@@ -96,10 +96,10 @@ export default function InfluencersPage() {
             {influencers.map((influencer, index) => (
               <div
                 key={index}
-                className="max-w-md bg-white rounded-xl shadow-lg overflow-hidden border"
+                className=" bg-white rounded-xl shadow-lg overflow-hidden border"
               >
                 {/* Top Section */}
-                <div className="flex items-center">
+                <div className="flex items-center justify-between">
                   <div className="px-4">
                     {/* Name + Followers */}
                     <h2 className="text-xl font-bold text-gray-900">

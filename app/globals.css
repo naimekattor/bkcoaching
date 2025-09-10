@@ -42,6 +42,7 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --color-navlink-primary: var(--navlink-primary);
+  --breakpoint-maxWidth: 1305px;
 }
 
 :root {
@@ -120,5 +121,20 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  @media (min-width: 1305px) {
+    .container {
+      max-width: 1305px !important;
+    }
   }
 }
