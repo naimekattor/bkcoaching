@@ -4,11 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import { Sidebar } from "../../../components/dashboard/Sidebar";
 import { HiMenu, HiX } from "react-icons/hi";
 import { influencerLinks } from "../../../config/sidebarLinks";
+import { usePathname } from "next/navigation";
+import DashboardTopHeader from "../../../components/dashboard/DashboardTopHeader";
 
 export default function BrandDashboardLayout({ children }) {
   const [showSideBar, setShowSideBar] = useState(false);
   const sideBarRef = useRef(null);
-
+  const path = usePathname();
   useEffect(() => {
     const clickOutSideSideBar = (event) => {
       if (sideBarRef.current && !sideBarRef.current.contains(event.target)) {
@@ -54,6 +56,7 @@ export default function BrandDashboardLayout({ children }) {
 
       {/* Main content */}
       <main className="flex-1 ml-0 md:ml-64 p-6 overflow-y-auto min-h-screen">
+        {path != "/influencer-dashboard/messages" && <DashboardTopHeader />}
         {children}
       </main>
     </div>

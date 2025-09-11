@@ -146,7 +146,7 @@ export default function CampaignDashboard() {
               Create, manage and collaborate with campaigns
             </p>
           </div>
-          <div className="flex items-center gap-4">
+          {/* <div className="flex items-center gap-4">
             <button className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors">
               <Bell className="h-5 w-5" />
               <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full"></span>
@@ -160,7 +160,7 @@ export default function CampaignDashboard() {
                 className="w-full h-full object-cover"
               />
             </div>
-          </div>
+          </div> */}
         </div>
       </header>
 

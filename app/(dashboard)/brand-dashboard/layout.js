@@ -4,10 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import { Sidebar } from "../../../components/dashboard/Sidebar";
 import { HiMenu, HiX } from "react-icons/hi";
 import { brandLinks } from "../../../config/sidebarLinks";
+import DashboardTopHeader from "../../../components/dashboard/DashboardTopHeader";
+import { usePathname } from "next/navigation";
 
 export default function BrandDashboardLayout({ children }) {
   const [showSideBar, setShowSideBar] = useState(false);
   const sideBarRef = useRef(null);
+  const path = usePathname();
 
   useEffect(() => {
     const clickOutSideSideBar = (event) => {
@@ -54,6 +57,7 @@ export default function BrandDashboardLayout({ children }) {
 
       {/* Main content */}
       <main className="flex-1 ml-0 md:ml-64 p-6 overflow-y-auto min-h-screen">
+        {path != "/brand-dashboard/messages" && <DashboardTopHeader />}
         {children}
       </main>
     </div>

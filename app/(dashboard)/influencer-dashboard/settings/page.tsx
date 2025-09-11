@@ -72,7 +72,7 @@ export default function ProfilePage() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen p-6">
       <div className="container mx-auto">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">

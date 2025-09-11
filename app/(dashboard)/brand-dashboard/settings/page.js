@@ -58,7 +58,7 @@ export default function BrandSetupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen  p-6">
       {/* Header */}
       <div className=" mx-auto">
         <div className="flex items-center justify-between mb-8">
@@ -70,14 +70,14 @@ export default function BrandSetupPage() {
               Complete your Brands profile to connect with Micro-Influencers
             </p>
           </div>
-          <div className="flex items-center gap-4">
+          {/* <div className="flex items-center gap-4">
             <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
               <span className="text-gray-600">🔔</span>
             </div>
             <div className="w-8 h-8 bg-blue-900 rounded-full flex items-center justify-center">
               <span className="text-white text-sm font-medium">M</span>
             </div>
-          </div>
+          </div> */}
         </div>
 
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
