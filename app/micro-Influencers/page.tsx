@@ -1,5 +1,6 @@
 // Removed unused Hero import
 import Image from "next/image";
+import Link from "next/link";
 import { FaStar } from "react-icons/fa";
 
 export default function InfluencersPage() {
@@ -157,13 +158,13 @@ export default function InfluencersPage() {
                   </div>
 
                   {/* Buttons */}
-                  <div className="flex space-x-3 mt-5">
-                    <button className="flex-1 bg-primary text-white font-semibold py-2 rounded-md shadow cursor-pointer transition">
+                  <div className="w-48 h-12 p-2.5 bg-sky-950 rounded-md inline-flex justify-center items-center gap-2.5 mt-4 cursor-pointer">
+                    <Link
+                      href={"/brand-dashboard/influencers/1"}
+                      className="justify-start text-white text-2xl font-normal font-['Istok_Web'] leading-[71px]"
+                    >
                       View Profile
-                    </button>
-                    <button className="flex-1 border border-gray-400 text-gray-800 font-semibold py-2 rounded-md hover:bg-gray-100 transition">
-                      Comment
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </div>

@@ -215,7 +215,7 @@ export default function InfluencerProfile() {
               </button>
             </div>
 
-            <div className="flex items-center space-x-4">
+            {/* <div className="flex items-center space-x-4">
               <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
                 <svg
                   className="w-4 h-4 text-gray-600"
@@ -228,7 +228,7 @@ export default function InfluencerProfile() {
               <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-medium">
                 M
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
 
