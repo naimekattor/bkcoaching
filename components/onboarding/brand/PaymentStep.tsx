@@ -15,58 +15,50 @@ const PaymentStep = ({ onNext, onBack }: PaymentStepProps) => {
   const [selectedPlan, setSelectedPlan] = useState<PlanId>("growth");
   const [acceptedTOS, setAcceptedTOS] = useState(false);
 
-  const plans = [
+  const [isYearly, setIsYearly] = useState(false);
+
+  const yearlyPlans = [
     {
-      id: "starter",
-      name: "Starter",
-      price: "$49",
-      period: "/month",
-      description: "Perfect for small businesses getting started",
-      features: [
-        "Up to 5 active campaigns",
-        "Basic creator matching",
-        "Email support",
-        "Campaign analytics",
-        "Secure payments",
-      ],
-      badge: null,
+      title: "I'm a Micro-Influencer",
+      price: 100,
+      description: "Ideal for individual Micro-Influencer",
+      savings: "",
     },
     {
-      id: "growth",
-      name: "Growth",
-      price: "$149",
-      period: "/month",
-      description: "For growing brands with multiple campaigns",
-      features: [
-        "Unlimited campaigns",
-        "Advanced AI matching",
-        "Priority support",
-        "Advanced analytics",
-        "Custom contract templates",
-        "Team collaboration",
-        "API access",
-      ],
-      badge: "Most Popular",
+      title: "I'm a Brand",
+      price: 100,
+      description: "Perfect for small businesses",
+      savings: "",
     },
     {
-      id: "enterprise",
-      name: "Enterprise",
-      price: "Custom",
-      period: "",
-      description: "For large organizations with complex needs",
-      features: [
-        "Everything in Growth",
-        "Dedicated account manager",
-        "Custom integrations",
-        "White-label options",
-        "Advanced security",
-        "Custom reporting",
-        "SLA guarantee",
-      ],
-      badge: "Best Value",
+      title: "I'm Both",
+      price: 180,
+      description: "Bundle of both plans",
+      savings: "Save 20%",
     },
   ] as const;
-  type PlanId = (typeof plans)[number]["id"];
+
+  const monthlyPlans = [
+    {
+      title: "I'm a Micro-Influencer",
+      price: 12,
+      description: "Ideal for individual Micro-Influencer",
+    },
+    {
+      title: "I'm a Brand",
+      price: 12,
+      description: "Perfect for small businesses",
+    },
+    {
+      title: "I'm Both",
+      price: 20,
+      description: "Bundle of both plans",
+      savings: "Save 20%",
+    },
+  ] as const;
+
+  const currentPlans = isYearly ? yearlyPlans : monthlyPlans;
+  type PlanId = (typeof yearlyPlans)[number]["title"];
 
   const trialFeatures = [
     {
@@ -113,58 +105,70 @@ const PaymentStep = ({ onNext, onBack }: PaymentStepProps) => {
         ))}
       </div>
 
-      {/* Plan Selection */}
-      <div className="grid md:grid-cols-3 gap-6">
-        {plans.map((plan) => (
-          <Card
-            key={plan.id}
-            className={`cursor-pointer transition-all hover-lift ${
-              selectedPlan === plan.id ? "ring-2 ring-primary bg-primary/5" : ""
+      {/* Toggle */}
+      <div className="flex justify-center">
+        <div className="inline-flex justify-center bg-gray-200 rounded-lg ">
+          <button
+            onClick={() => setIsYearly(false)}
+            className={`px-6 py-2 rounded-md font-medium transition-all duration-200 ${
+              !isYearly
+                ? "bg-primary text-white shadow-sm"
+                : "text-gray-600 hover:text-gray-800"
             }`}
-            onClick={() => setSelectedPlan(plan.id)}
           >
-            <CardHeader className="text-center space-y-4">
-              <div className="space-y-2">
-                {plan.badge && (
-                  <Badge variant="secondary" className="mx-auto">
-                    {plan.badge}
-                  </Badge>
-                )}
-                <h3 className="text-xl font-semibold">{plan.name}</h3>
-                <div className="space-y-1">
-                  <div className="text-3xl font-bold">
-                    {plan.price}
-                    <span className="text-lg font-normal text-muted-foreground">
-                      {plan.period}
-                    </span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    {plan.description}
-                  </p>
-                </div>
+            Monthly
+          </button>
+          <button
+            onClick={() => setIsYearly(true)}
+            className={`px-6 py-2 rounded-md font-medium transition-all duration-200 ${
+              isYearly
+                ? "bg-primary text-white shadow-sm"
+                : "text-gray-600 hover:text-gray-800"
+            }`}
+          >
+            Yearly
+          </button>
+        </div>
+      </div>
+
+      {/* Pricing Cards */}
+      <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        {currentPlans.map((plan, index) => (
+          <div
+            key={index}
+            className="bg-[#f6f8fa] rounded-2xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-shadow duration-300"
+          >
+            <div className="p-8 text-center flex flex-col h-full justify-between">
+              <h3 className="text-[40px] font-semibold text-primary mb-8">
+                {plan.title}
+              </h3>
+
+              <div className="mb-6">
+                <span className="md:text-[64px] text-3xl font-semibold text-primary">
+                  ${plan.price}
+                </span>
+                <span className="text-[28px] text-primary font-semibold ml-1">
+                  /{isYearly ? "Year" : "month"}
+                </span>
               </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <ul className="space-y-3">
-                {plan.features.map((feature, index) => (
-                  <li key={index} className="flex items-center gap-3">
-                    <Check className="w-4 h-4 text-primary flex-shrink-0" />
-                    <span className="text-sm">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-              {selectedPlan === plan.id && (
-                <div className="pt-4">
-                  <Badge
-                    variant="outline"
-                    className="w-full justify-center text-primary border-primary"
-                  >
-                    Selected Plan
-                  </Badge>
+
+              {plan.savings && (
+                <div className="mb-4">
+                  <span className="text-red-500 font-semibold text-sm">
+                    {plan.savings}
+                  </span>
                 </div>
               )}
-            </CardContent>
-          </Card>
+
+              <p className="text-primary text-[24px] mb-8 leading-relaxed">
+                {plan.description}
+              </p>
+
+              <button className="w-full bg-primary hover:bg-slate-700 text-white font-semibold py-4 rounded-lg transition-colors duration-200">
+                Select
+              </button>
+            </div>
+          </div>
         ))}
       </div>
 

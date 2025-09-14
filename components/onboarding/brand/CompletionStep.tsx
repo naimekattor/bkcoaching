@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
+import Link from "next/link";
 
 interface CompletionStepProps {
   onComplete: () => void;
@@ -63,7 +64,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
           <CheckCircle className="w-10 h-10 text-primary" />
         </div>
         <h1 className="text-4xl font-bold">
-          Welcome to <span className="gradient-text">CreatorHub</span>!
+          Welcome to <span className="gradient-text">The Social Market</span>!
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
           Your brand profile is complete and your first campaign is ready.
@@ -139,7 +140,9 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
           Go to Dashboard
         </Button>
         <Button variant="outline" size="lg">
-          Browse Creators
+          <Link href={"/brand-dashboard/microinfluencerspage"}>
+            Browse Creators
+          </Link>
         </Button>
       </div>
     </div>

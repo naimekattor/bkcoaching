@@ -5,10 +5,12 @@ import { usePathname } from "next/navigation";
 
 export default function Footer() {
   const pathName = usePathname();
+  console.log(pathName);
+
   return (
     <footer className=" ">
       {/* CTA Section */}
-      {pathName != "/influencer-onboarding" && "/brand-onboarding" && (
+      {pathName != "/influencer-onboarding" || "/brand-onboarding" || (
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
           <h2 className="text-2xl md:text-3xl font-semibold text-primary mb-6">
             Ready to grow smarter?
