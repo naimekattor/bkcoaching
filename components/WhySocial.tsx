@@ -8,7 +8,7 @@ const WhySocial = () => {
         Why The Social Market?
       </h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 max-w-6xl mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 container mx-auto">
         {/* Affordable Section */}
         <div className="flex flex-col items-center text-center">
           <div className="flex items-center justify-center w-20 h-20 mb-6">

@@ -6,8 +6,10 @@ import { useState, useRef } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function VerifyEmailPage() {
+  const router = useRouter();
   const [code, setCode] = useState(["", "", "", ""]);
   const [error, setError] = useState("");
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -39,9 +41,20 @@ export default function VerifyEmailPage() {
       setError("Please enter the complete verification code");
       return;
     }
+    localStorage.setItem("emailVerified", "true");
 
-    // Handle verification - redirect to success page
-    window.location.href = "/auth/success";
+    // Get stored role
+    const role = localStorage.getItem("userRole");
+
+    // Redirect to correct onboarding
+    if (role === "brand") {
+      router.push("/brand-onboarding");
+    } else {
+      router.push("/influencer-onboarding");
+    }
+
+    // Handle verification - redirect to success page 1234
+    // window.location.href = "/auth/success";
   };
 
   const handleResendCode = () => {

@@ -7,8 +7,12 @@ import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 
 export default function SignupPage() {
+  const searchParam = useSearchParams();
+  const role = searchParam.get("role");
+  const userRole = role === "brand" ? "brand" : "influencer";
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -35,6 +39,8 @@ export default function SignupPage() {
       newErrors.agreeToTerms = "You must agree to the terms";
 
     setErrors(newErrors);
+    localStorage.setItem("userRole", userRole);
+    localStorage.setItem("emailVerified", "false");
 
     if (Object.keys(newErrors).length === 0) {
       // Handle successful signup - redirect to email verification

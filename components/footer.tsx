@@ -1,27 +1,31 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Footer() {
+  const pathName = usePathname();
   return (
     <footer className=" ">
       {/* CTA Section */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-        <h2 className="text-2xl md:text-3xl font-semibold text-primary mb-6">
-          Ready to grow smarter?
-        </h2>
+      {pathName != "/influencer-onboarding" && "/brand-onboarding" && (
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+          <h2 className="text-2xl md:text-3xl font-semibold text-primary mb-6">
+            Ready to grow smarter?
+          </h2>
 
-        <Link
-          href="/auth/signup"
-          className="inline-block bg-secondary hover:bg-yellow-600 text-primary font-semibold px-8 py-3 rounded-lg transition-colors duration-200 mb-4"
-        >
-          Sign Up Free Today
-        </Link>
+          <Link
+            href="/auth/signup"
+            className="inline-block bg-secondary hover:bg-yellow-600 text-primary font-semibold px-8 py-3 rounded-lg transition-colors duration-200 mb-4"
+          >
+            Sign Up Free Today
+          </Link>
 
-        <p className="text-sm text-gray-600 italic">
-          Free for the first 100 users - claim your spot now
-        </p>
-      </div>
+          <p className="text-sm text-gray-600 italic">
+            Free for the first 100 users - claim your spot now
+          </p>
+        </div>
+      )}
 
       {/* Navigation Links */}
       <div className=" py-8">
