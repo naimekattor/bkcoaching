@@ -37,9 +37,9 @@ const WelcomeStep = ({ onNext }: WelcomeStepProps) => {
           Welcome to <span className="">The Social Market</span>
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          You're about to join thousands of brands who've discovered the power
-          of authentic creator partnerships. Let's get your brand set up for
-          success.
+          You&apos;re about to join thousands of brands who&apos;ve discovered
+          the power of authentic creator partnerships. Let&apos;s get your brand
+          set up for success.
         </p>
       </div>
 

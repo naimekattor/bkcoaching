@@ -67,7 +67,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
           Your brand profile is complete and your first campaign is ready.
-          You're all set to start collaborating with amazing creators!
+          You&apos;re all set to start collaborating with amazing creators!
         </p>
       </div>
 
@@ -87,7 +87,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
 
       {/* Next Steps */}
       <div className="space-y-6">
-        <h2 className="text-2xl font-bold">What's Next?</h2>
+        <h2 className="text-2xl font-bold">What&apos;s Next?</h2>
         <div className="grid md:grid-cols-2 gap-6">
           {nextSteps.map((step, index) => (
             <Card key={index} className="hover-lift cursor-pointer">
@@ -119,7 +119,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
           </div>
           <p className="text-sm text-muted-foreground">
             Share CreatorHub with other brands and earn $20 when they sign up.
-            They'll get 25% off their first month too!
+            They&apos;ll get 25% off their first month too!
           </p>
           <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
             <code className="flex-1 text-center font-mono text-sm bg-background px-3 py-2 rounded">

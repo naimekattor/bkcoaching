@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Bell, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";

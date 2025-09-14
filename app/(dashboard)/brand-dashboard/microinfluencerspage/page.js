@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { IoIosNotificationsOutline } from "react-icons/io";
 import Image from "next/image";
 
 // Mock data for creators - easily replaceable with API calls

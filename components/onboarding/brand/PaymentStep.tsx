@@ -4,15 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import {
-  Check,
-  CreditCard,
-  Shield,
-  Zap,
-  Users,
-  TrendingUp,
-  Star,
-} from "lucide-react";
+import { Check, CreditCard, Shield, Zap, Users } from "lucide-react";
 
 interface PaymentStepProps {
   onNext: () => void;
@@ -20,9 +12,7 @@ interface PaymentStepProps {
 }
 
 const PaymentStep = ({ onNext, onBack }: PaymentStepProps) => {
-  const [selectedPlan, setSelectedPlan] = useState<
-    "starter" | "growth" | "enterprise"
-  >("growth");
+  const [selectedPlan, setSelectedPlan] = useState<PlanId>("growth");
   const [acceptedTOS, setAcceptedTOS] = useState(false);
 
   const plans = [
@@ -75,7 +65,8 @@ const PaymentStep = ({ onNext, onBack }: PaymentStepProps) => {
       ],
       badge: "Best Value",
     },
-  ];
+  ] as const;
+  type PlanId = (typeof plans)[number]["id"];
 
   const trialFeatures = [
     {
@@ -130,7 +121,7 @@ const PaymentStep = ({ onNext, onBack }: PaymentStepProps) => {
             className={`cursor-pointer transition-all hover-lift ${
               selectedPlan === plan.id ? "ring-2 ring-primary bg-primary/5" : ""
             }`}
-            onClick={() => setSelectedPlan(plan.id as any)}
+            onClick={() => setSelectedPlan(plan.id)}
           >
             <CardHeader className="text-center space-y-4">
               <div className="space-y-2">

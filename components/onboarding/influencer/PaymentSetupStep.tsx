@@ -28,9 +28,9 @@ interface PaymentSetupStepProps {
 }
 
 const PaymentSetupStep = ({ onNext, onBack }: PaymentSetupStepProps) => {
-  const [paymentMethod, setPaymentMethod] = useState<
-    "paypal" | "bank" | "stripe" | null
-  >(null);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethodId | null>(
+    null
+  );
   const [formData, setFormData] = useState({
     paypalEmail: "",
     bankAccountName: "",
@@ -70,7 +70,8 @@ const PaymentSetupStep = ({ onNext, onBack }: PaymentSetupStepProps) => {
       processingTime: "2-3 business days",
       fees: "2.9% + $0.30 per transaction",
     },
-  ];
+  ] as const;
+  type PaymentMethodId = (typeof paymentMethods)[number]["id"];
 
   const businessTypes = [
     { value: "individual", label: "Individual/Sole Proprietor" },
@@ -93,7 +94,8 @@ const PaymentSetupStep = ({ onNext, onBack }: PaymentSetupStepProps) => {
       <div className="text-center space-y-4">
         <h1 className="text-3xl font-bold">Payment setup</h1>
         <p className="text-muted-foreground">
-          Choose how you'd like to receive payments from your collaborations
+          Choose how you&apos;d like to receive payments from your
+          collaborations
         </p>
       </div>
 
@@ -122,7 +124,7 @@ const PaymentSetupStep = ({ onNext, onBack }: PaymentSetupStepProps) => {
               className={`p-4 border rounded-lg cursor-pointer transition-all hover:bg-muted/50 ${
                 paymentMethod === method.id ? "border-primary bg-primary/5" : ""
               }`}
-              onClick={() => setPaymentMethod(method.id as any)}
+              onClick={() => setPaymentMethod(method.id)}
             >
               <div className="flex items-start gap-3">
                 <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center">

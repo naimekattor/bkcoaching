@@ -65,8 +65,9 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
           Welcome to <span className="gradient-text">CreatorHub</span>!
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          Your creator profile is complete and you're ready to start earning!
-          Get ready to collaborate with amazing brands and grow your influence.
+          Your creator profile is complete and you&apos;re ready to start
+          earning! Get ready to collaborate with amazing brands and grow your
+          influence.
         </p>
       </div>
 
@@ -100,7 +101,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
 
       {/* Next Steps */}
       <div className="space-y-6">
-        <h2 className="text-2xl font-bold">What's Next?</h2>
+        <h2 className="text-2xl font-bold">What&apos;s Next?</h2>
         <div className="grid md:grid-cols-2 gap-6">
           {nextSteps.map((step, index) => (
             <Card key={index} className="hover-lift cursor-pointer">
@@ -133,9 +134,9 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
             </h3>
           </div>
           <p className="text-sm text-muted-foreground">
-            Invite other creators to join CreatorHub and earn $10 when they
-            complete their first campaign. They'll get priority matching for
-            their first month too!
+            Invite other creators to join The Social Market and earn $10 when
+            they complete their first campaign. They&apos;ll get priority
+            matching for their first month too!
           </p>
           <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
             <code className="flex-1 text-center font-mono text-sm bg-background px-3 py-2 rounded">

@@ -35,8 +35,9 @@ const WelcomeStep = ({ onNext }: WelcomeStepProps) => {
           Welcome to <span className="gradient-text">CreatorHub</span>
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          You're about to join thousands of creators who've turned their passion
-          into profit. Let's get your creator profile set up and start earning!
+          You&apos;re about to join thousands of creators who&apos;ve turned
+          their passion into profit. Let&apos;s get your creator profile set up
+          and start earning!
         </p>
       </div>
 
@@ -58,7 +59,7 @@ const WelcomeStep = ({ onNext }: WelcomeStepProps) => {
 
       <div className="space-y-4">
         <Button variant="hero" size="lg" onClick={onNext}>
-          Let's Get Started
+          Let&apos;s Get Started
         </Button>
         <p className="text-sm text-muted-foreground">
           Free to join • Keep 85% of earnings • Get paid weekly

@@ -224,7 +224,7 @@ const TermsStep = ({ onNext, onBack }: TermsStepProps) => {
                 </p>
                 <p>
                   You must have rights to all content you create and not
-                  infringe on others' intellectual property.
+                  infringe on others intellectual property.
                 </p>
 
                 <p>

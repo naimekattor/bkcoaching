@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Bell, Search, ChevronDown, MoreHorizontal, X } from "lucide-react";
+import { Search, ChevronDown, MoreHorizontal, X } from "lucide-react";
 import Image from "next/image";
 const mockCampaigns = [
   {

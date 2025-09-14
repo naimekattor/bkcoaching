@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Upload, User, Hash, Users, Camera } from "lucide-react";
+import { User, Hash, Users, Camera } from "lucide-react";
 
 interface ProfileSetupStepProps {
   onNext: () => void;
