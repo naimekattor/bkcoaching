@@ -58,11 +58,11 @@ const BrandOnboarding = () => {
   };
 
   const handleComplete = () => {
-    toast({
-      title: "Onboarding complete!",
-      description:
-        "Welcome to CreatorHub. Let's start creating amazing campaigns!",
-    });
+    // toast({
+    //   title: "Onboarding complete!",
+    //   description:
+    //     "Welcome to The Social Market. Let's start creating amazing campaigns!",
+    // });
     navigate.push("/brand-dashboard");
   };
 

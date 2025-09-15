@@ -34,18 +34,18 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
       description: "Add more details to attract better brand partnerships",
       action: "Finish Profile",
     },
-    {
-      icon: TrendingUp,
-      title: "Set Your Rates",
-      description: "Update your pricing to maximize your earning potential",
-      action: "Update Rates",
-    },
-    {
-      icon: Star,
-      title: "Get Verified",
-      description: "Verify your social accounts to unlock premium campaigns",
-      action: "Verify Accounts",
-    },
+    // {
+    //   icon: TrendingUp,
+    //   title: "Set Your Rates",
+    //   description: "Update your pricing to maximize your earning potential",
+    //   action: "Update Rates",
+    // },
+    // {
+    //   icon: Star,
+    //   title: "Get Verified",
+    //   description: "Verify your social accounts to unlock premium campaigns",
+    //   action: "Verify Accounts",
+    // },
   ];
 
   const copyReferralCode = () => {

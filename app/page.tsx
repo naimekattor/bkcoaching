@@ -1,3 +1,4 @@
+import FAQSection from "@/components/FAQSection";
 import Feature from "@/components/Feature";
 import GlobalSection from "@/components/GlobalSection";
 import Hero from "@/components/hero";
@@ -15,6 +16,7 @@ const page = () => {
       <Feature />
       <PricingSection />
       <GlobalSection />
+      <FAQSection />
     </div>
   );
 };

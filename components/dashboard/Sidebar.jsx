@@ -51,9 +51,7 @@ export function Sidebar({ links = [] }) {
       {/* Logout Button */}
       <div className="p-4 border-t border-slate-700">
         <button className="w-full flex items-center justify-start px-4 py-3 text-slate-300 hover:text-white hover:bg-slate-700 rounded-lg transition-colors">
-          <span className="mr-3" onClick={router.push("/")}>
-            🚪
-          </span>
+          <span className="mr-3">🚪</span>
           Logout
         </button>
       </div>

@@ -35,18 +35,18 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
       description: "Check out creators we've matched with your campaign",
       action: "View Matches",
     },
-    {
-      icon: MessageCircle,
-      title: "Send Offers",
-      description: "Start conversations and send collaboration offers",
-      action: "Message Creators",
-    },
-    {
-      icon: BarChart3,
-      title: "Track Performance",
-      description: "Monitor your campaign progress and analytics",
-      action: "View Dashboard",
-    },
+    // {
+    //   icon: MessageCircle,
+    //   title: "Send Offers",
+    //   description: "Start conversations and send collaboration offers",
+    //   action: "Message Creators",
+    // },
+    // {
+    //   icon: BarChart3,
+    //   title: "Track Performance",
+    //   description: "Monitor your campaign progress and analytics",
+    //   action: "View Dashboard",
+    // },
   ];
 
   const copyReferralCode = () => {

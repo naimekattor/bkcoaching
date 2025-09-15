@@ -310,7 +310,7 @@ const PaymentSetupStep = ({ onBack }: PaymentSetupStepProps) => {
         )}
 
         {/* Tax Information */}
-        <Card>
+        {/* <Card>
           <CardHeader>
             <CardTitle>Tax Information (Optional but Recommended)</CardTitle>
             <p className="text-sm text-muted-foreground">
@@ -377,7 +377,7 @@ const PaymentSetupStep = ({ onBack }: PaymentSetupStepProps) => {
               </div>
             )}
           </CardContent>
-        </Card>
+        </Card> */}
 
         {/* Dispute Process */}
         <Alert>
