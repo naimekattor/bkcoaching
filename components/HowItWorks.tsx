@@ -63,7 +63,7 @@ const HowItWorks = () => {
                 </p>
 
                 <button className="bg-secondary w-full py-2 font-[600] text-[16px] text-primary rounded cursor-pointer">
-                  <Link href={"/auth/signup?role=brand"}> Start Here</Link>
+                  <Link href={"/brand-onboarding"}> Start Here</Link>
                 </button>
               </div>
             </div>
@@ -100,7 +100,7 @@ const HowItWorks = () => {
                 </p>
 
                 <button className="bg-secondary w-full py-2 font-[600] text-[16px] text-primary rounded cursor-pointer">
-                  <Link href={"/auth/signup?role=influencer"}> Start Here</Link>
+                  <Link href={"/influencer-onboarding"}> Start Here</Link>
                 </button>
               </div>
             </div>

@@ -2,11 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export function Sidebar({ links = [] }) {
   const pathname = usePathname() || "";
-
+  const router = useRouter();
   return (
     <div
       style={{ boxShadow: "2px 0px 10px 0px rgba(0, 0, 0, 0.1)" }}
@@ -51,7 +51,9 @@ export function Sidebar({ links = [] }) {
       {/* Logout Button */}
       <div className="p-4 border-t border-slate-700">
         <button className="w-full flex items-center justify-start px-4 py-3 text-slate-300 hover:text-white hover:bg-slate-700 rounded-lg transition-colors">
-          <span className="mr-3">🚪</span>
+          <span className="mr-3" onClick={router.push("/")}>
+            🚪
+          </span>
           Logout
         </button>
       </div>

@@ -24,13 +24,24 @@ import {
   Mic,
   FileText,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface CampaignStepProps {
   onNext: () => void;
   onBack: () => void;
 }
 
-const CampaignStep = ({ onNext, onBack }: CampaignStepProps) => {
+const CampaignStep = ({ onBack }: CampaignStepProps) => {
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const router = useRouter();
+
   const [formData, setFormData] = useState({
     campaignName: "",
     objective: "",
@@ -119,316 +130,371 @@ const CampaignStep = ({ onNext, onBack }: CampaignStepProps) => {
     formData.deliverables.length > 0 &&
     formData.timeline;
 
-  return (
-    <div className="space-y-8">
-      <div className="text-center space-y-4">
-        <h1 className="text-3xl font-bold">Create your first campaign</h1>
-        <p className="text-muted-foreground">
-          Let&apos;s set up a campaign to find the perfect creators for your
-          brand
-        </p>
-      </div>
+  const handleCreateCampaign = () => {
+    if (!isValid) return;
 
-      <div className="grid gap-8">
-        {/* Campaign Basics */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Target className="w-5 h-5" />
-              Campaign Basics
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="campaignName">Campaign Name *</Label>
-                <Input
-                  id="campaignName"
-                  value={formData.campaignName}
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      campaignName: e.target.value,
-                    }))
-                  }
-                  placeholder="Summer Collection Launch"
-                />
+    // Save draft campaign to localStorage (optional, so they don’t lose data)
+    localStorage.setItem("draftCampaign", JSON.stringify(formData));
+    setShowAuthModal(true);
+
+    // Redirect to signup with "returnTo" param
+    // router.push(`/auth/signup?role=brand&returnTo=/brand-onboarding?step=6`);
+    return;
+  };
+
+  return (
+    <>
+      <div className="space-y-8">
+        <div className="text-center space-y-4">
+          <h1 className="text-3xl font-bold">Create your first campaign</h1>
+          <p className="text-muted-foreground">
+            Let&apos;s set up a campaign to find the perfect creators for your
+            brand
+          </p>
+        </div>
+
+        <div className="grid gap-8">
+          {/* Campaign Basics */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Target className="w-5 h-5" />
+                Campaign Basics
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="campaignName">Campaign Name *</Label>
+                  <Input
+                    id="campaignName"
+                    value={formData.campaignName}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        campaignName: e.target.value,
+                      }))
+                    }
+                    placeholder="Summer Collection Launch"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Campaign Objective *</Label>
+                  <Select
+                    value={formData.objective}
+                    onValueChange={(value) =>
+                      setFormData((prev) => ({ ...prev, objective: value }))
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select objective" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {objectives.map((obj) => (
+                        <SelectItem key={obj.value} value={obj.value}>
+                          <div>
+                            <div className="font-medium">{obj.label}</div>
+                            <div className="text-xs text-muted-foreground">
+                              {obj.description}
+                            </div>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               <div className="space-y-2">
-                <Label>Campaign Objective *</Label>
+                <Label htmlFor="description">Campaign Description</Label>
+                <Textarea
+                  id="description"
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      description: e.target.value,
+                    }))
+                  }
+                  placeholder="Describe your campaign goals, target audience, key messages, and any specific requirements..."
+                  rows={4}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Budget */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <DollarSign className="w-5 h-5" />
+                Budget
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <Label>Budget Type:</Label>
+                  <div className="flex items-center gap-6">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="total-budget"
+                        checked={formData.budgetType === "total"}
+                        onCheckedChange={() =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            budgetType: "total",
+                          }))
+                        }
+                      />
+                      <Label htmlFor="total-budget">
+                        Total Campaign Budget
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="per-creator"
+                        checked={formData.budgetType === "per-creator"}
+                        onCheckedChange={() =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            budgetType: "per-creator",
+                          }))
+                        }
+                      />
+                      <Label htmlFor="per-creator">Budget Per Creator</Label>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex justify-between">
+                    <Label>Budget Amount: ${formData.budget[0]}</Label>
+                    <Badge variant="secondary">
+                      {formData.budgetType === "total"
+                        ? "Total"
+                        : "Per Creator"}
+                    </Badge>
+                  </div>
+                  <Slider
+                    value={formData.budget}
+                    onValueChange={(value) =>
+                      setFormData((prev) => ({ ...prev, budget: value }))
+                    }
+                    max={10000}
+                    min={100}
+                    step={100}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <span>$100</span>
+                    <span>$10,000+</span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Deliverables */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Content Deliverables *</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Select the type of content you want creators to produce
+              </p>
+            </CardHeader>
+            <CardContent>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {deliverableTypes.map((deliverable) => (
+                  <div
+                    key={deliverable.id}
+                    className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-muted/50 transition-colors"
+                  >
+                    <Checkbox
+                      id={deliverable.id}
+                      checked={formData.deliverables.includes(deliverable.id)}
+                      onCheckedChange={(checked) =>
+                        handleDeliverableChange(
+                          deliverable.id,
+                          checked as boolean
+                        )
+                      }
+                    />
+                    <deliverable.icon className="w-4 h-4 text-muted-foreground" />
+                    <Label
+                      htmlFor={deliverable.id}
+                      className="text-sm font-normal cursor-pointer"
+                    >
+                      {deliverable.label}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Timeline */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Calendar className="w-5 h-5" />
+                  Timeline *
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
                 <Select
-                  value={formData.objective}
+                  value={formData.timeline}
                   onValueChange={(value) =>
-                    setFormData((prev) => ({ ...prev, objective: value }))
+                    setFormData((prev) => ({ ...prev, timeline: value }))
                   }
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select objective" />
+                    <SelectValue placeholder="Select timeline" />
                   </SelectTrigger>
                   <SelectContent>
-                    {objectives.map((obj) => (
-                      <SelectItem key={obj.value} value={obj.value}>
-                        <div>
-                          <div className="font-medium">{obj.label}</div>
-                          <div className="text-xs text-muted-foreground">
-                            {obj.description}
-                          </div>
-                        </div>
+                    {timelineOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
 
-            <div className="space-y-2">
-              <Label htmlFor="description">Campaign Description</Label>
-              <Textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    description: e.target.value,
-                  }))
-                }
-                placeholder="Describe your campaign goals, target audience, key messages, and any specific requirements..."
-                rows={4}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Budget */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <DollarSign className="w-5 h-5" />
-              Budget
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-4">
-              <div className="flex items-center gap-4">
-                <Label>Budget Type:</Label>
-                <div className="flex items-center gap-6">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="total-budget"
-                      checked={formData.budgetType === "total"}
-                      onCheckedChange={() =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          budgetType: "total",
-                        }))
-                      }
-                    />
-                    <Label htmlFor="total-budget">Total Campaign Budget</Label>
+            {/* Campaign Settings */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Campaign Settings</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <Label>Content Approval Required</Label>
+                    <p className="text-xs text-muted-foreground">
+                      Review content before publishing
+                    </p>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="per-creator"
-                      checked={formData.budgetType === "per-creator"}
-                      onCheckedChange={() =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          budgetType: "per-creator",
-                        }))
-                      }
-                    />
-                    <Label htmlFor="per-creator">Budget Per Creator</Label>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex justify-between">
-                  <Label>Budget Amount: ${formData.budget[0]}</Label>
-                  <Badge variant="secondary">
-                    {formData.budgetType === "total" ? "Total" : "Per Creator"}
-                  </Badge>
-                </div>
-                <Slider
-                  value={formData.budget}
-                  onValueChange={(value) =>
-                    setFormData((prev) => ({ ...prev, budget: value }))
-                  }
-                  max={10000}
-                  min={100}
-                  step={100}
-                  className="w-full"
-                />
-                <div className="flex justify-between text-sm text-muted-foreground">
-                  <span>$100</span>
-                  <span>$10,000+</span>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Deliverables */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Content Deliverables *</CardTitle>
-            <p className="text-sm text-muted-foreground">
-              Select the type of content you want creators to produce
-            </p>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {deliverableTypes.map((deliverable) => (
-                <div
-                  key={deliverable.id}
-                  className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-muted/50 transition-colors"
-                >
-                  <Checkbox
-                    id={deliverable.id}
-                    checked={formData.deliverables.includes(deliverable.id)}
+                  <Switch
+                    checked={formData.approvalRequired}
                     onCheckedChange={(checked) =>
-                      handleDeliverableChange(
-                        deliverable.id,
-                        checked as boolean
-                      )
+                      setFormData((prev) => ({
+                        ...prev,
+                        approvalRequired: checked,
+                      }))
                     }
                   />
-                  <deliverable.icon className="w-4 h-4 text-muted-foreground" />
-                  <Label
-                    htmlFor={deliverable.id}
-                    className="text-sm font-normal cursor-pointer"
-                  >
-                    {deliverable.label}
-                  </Label>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
 
-        <div className="grid md:grid-cols-2 gap-8">
-          {/* Timeline */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="w-5 h-5" />
-                Timeline *
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Select
-                value={formData.timeline}
-                onValueChange={(value) =>
-                  setFormData((prev) => ({ ...prev, timeline: value }))
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select timeline" />
-                </SelectTrigger>
-                <SelectContent>
-                  {timelineOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </CardContent>
-          </Card>
-
-          {/* Campaign Settings */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Campaign Settings</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <Label>Content Approval Required</Label>
-                  <p className="text-xs text-muted-foreground">
-                    Review content before publishing
-                  </p>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <Label>Auto-match Creators</Label>
+                    <p className="text-xs text-muted-foreground">
+                      Automatically find matching creators
+                    </p>
+                  </div>
+                  <Switch
+                    checked={formData.autoMatch}
+                    onCheckedChange={(checked) =>
+                      setFormData((prev) => ({ ...prev, autoMatch: checked }))
+                    }
+                  />
                 </div>
-                <Switch
-                  checked={formData.approvalRequired}
-                  onCheckedChange={(checked) =>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Target Audience & Keywords */}
+          <div className="grid md:grid-cols-2 gap-8">
+            <Card>
+              <CardHeader>
+                <CardTitle>Target Audience</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Textarea
+                  value={formData.targetAudience}
+                  onChange={(e) =>
                     setFormData((prev) => ({
                       ...prev,
-                      approvalRequired: checked,
+                      targetAudience: e.target.value,
                     }))
                   }
+                  placeholder="Young professionals, age 25-35, interested in sustainable fashion..."
+                  rows={4}
                 />
-              </div>
+              </CardContent>
+            </Card>
 
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <Label>Auto-match Creators</Label>
-                  <p className="text-xs text-muted-foreground">
-                    Automatically find matching creators
-                  </p>
-                </div>
-                <Switch
-                  checked={formData.autoMatch}
-                  onCheckedChange={(checked) =>
-                    setFormData((prev) => ({ ...prev, autoMatch: checked }))
+            <Card>
+              <CardHeader>
+                <CardTitle>Keywords & Hashtags</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Textarea
+                  value={formData.keywords}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      keywords: e.target.value,
+                    }))
                   }
+                  placeholder="#sustainablefashion #ecoFriendly #consciousliving"
+                  rows={4}
                 />
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
-        {/* Target Audience & Keywords */}
-        <div className="grid md:grid-cols-2 gap-8">
-          <Card>
-            <CardHeader>
-              <CardTitle>Target Audience</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Textarea
-                value={formData.targetAudience}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    targetAudience: e.target.value,
-                  }))
-                }
-                placeholder="Young professionals, age 25-35, interested in sustainable fashion..."
-                rows={4}
-              />
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Keywords & Hashtags</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Textarea
-                value={formData.keywords}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, keywords: e.target.value }))
-                }
-                placeholder="#sustainablefashion #ecoFriendly #consciousliving"
-                rows={4}
-              />
-            </CardContent>
-          </Card>
+        {/* Navigation */}
+        <div className="flex justify-between pt-6">
+          <Button variant="outline" onClick={onBack}>
+            Back
+          </Button>
+          <Button
+            variant="primary"
+            onClick={handleCreateCampaign}
+            disabled={!isValid}
+          >
+            {formData.autoMatch
+              ? "Create Campaign & Find Creators"
+              : "Create Campaign"}
+          </Button>
         </div>
       </div>
-
-      {/* Navigation */}
-      <div className="flex justify-between pt-6">
-        <Button variant="outline" onClick={onBack}>
-          Back
-        </Button>
-        <Button variant="primary" onClick={onNext} disabled={!isValid}>
-          {formData.autoMatch
-            ? "Create Campaign & Find Creators"
-            : "Create Campaign"}
-        </Button>
-      </div>
-    </div>
+      {/* Auth Required Modal */}
+      <Dialog open={showAuthModal} onOpenChange={setShowAuthModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Sign up required</DialogTitle>
+            <DialogDescription>
+              Please sign up or log in to continue creating your campaign.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end gap-2 pt-4">
+            <Button
+              variant="outline"
+              onClick={() =>
+                router.push("/auth/login?returnTo=/brand-onboarding?step=6")
+              }
+            >
+              Log in
+            </Button>
+            <Button
+              onClick={() =>
+                router.push(
+                  "/auth/signup?role=brand&returnTo=/brand-onboarding?step=6"
+                )
+              }
+            >
+              Sign up
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 

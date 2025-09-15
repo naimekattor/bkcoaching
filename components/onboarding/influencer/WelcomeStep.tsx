@@ -31,8 +31,8 @@ const WelcomeStep = ({ onNext }: WelcomeStepProps) => {
         <div className="w-20 h-20 rounded-full bg-secondary/10 flex items-center justify-center mx-auto">
           <Star className="w-10 h-10 text-secondary" />
         </div>
-        <h1 className="text-4xl font-bold">
-          Welcome to <span className="gradient-text">CreatorHub</span>
+        <h1 className="text-4xl font-bold text-primary">
+          Welcome to <span className="">The Social Market</span>
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
           You&apos;re about to join thousands of creators who&apos;ve turned

@@ -17,7 +17,6 @@ import {
   AlertCircle,
   Bell,
   Mail,
-  Phone,
 } from "lucide-react";
 
 interface WorkflowStepProps {
@@ -214,7 +213,7 @@ const WorkflowStep = ({ onNext, onBack }: WorkflowStepProps) => {
               />
             </div>
 
-            <div className="flex items-center justify-between">
+            {/* <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4" />
                 <Label>SMS alerts (optional)</Label>
@@ -225,7 +224,7 @@ const WorkflowStep = ({ onNext, onBack }: WorkflowStepProps) => {
                   handleNotificationChange("sms", checked)
                 }
               />
-            </div>
+            </div> */}
           </CardContent>
         </Card>
       </div>
@@ -251,7 +250,7 @@ const WorkflowStep = ({ onNext, onBack }: WorkflowStepProps) => {
             />
           </div>
 
-          <div className="flex items-center justify-between">
+          {/* <div className="flex items-center justify-between">
             <div className="space-y-1">
               <Label>Auto-accept small campaigns</Label>
               <p className="text-xs text-muted-foreground">
@@ -265,7 +264,7 @@ const WorkflowStep = ({ onNext, onBack }: WorkflowStepProps) => {
                 setPreferences((prev) => ({ ...prev, autoAccept: checked }))
               }
             />
-          </div>
+          </div> */}
         </CardContent>
       </Card>
 

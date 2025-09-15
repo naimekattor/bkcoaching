@@ -252,9 +252,9 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
               </div>
             </div>
 
-            <Button variant="outline" size="sm">
+            {/* <Button variant="outline" size="sm">
               + Connect with OAuth
-            </Button>
+            </Button> */}
           </CardContent>
         </Card>
 

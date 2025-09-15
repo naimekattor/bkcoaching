@@ -1,23 +1,29 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Check, CreditCard, Shield, Zap, Users } from "lucide-react";
+import { CreditCard, Shield, Zap, Users } from "lucide-react";
 
 interface PaymentStepProps {
   onNext: () => void;
   onBack: () => void;
 }
 
-const PaymentStep = ({ onNext, onBack }: PaymentStepProps) => {
-  const [selectedPlan, setSelectedPlan] = useState<PlanId>("growth");
-  const [acceptedTOS, setAcceptedTOS] = useState(false);
+// Define a proper type for the plans
+interface Plan {
+  title: string;
+  price: number;
+  description: string;
+  savings?: string;
+}
 
+const PaymentStep = ({ onNext, onBack }: PaymentStepProps) => {
+  const [acceptedTOS, setAcceptedTOS] = useState(false);
   const [isYearly, setIsYearly] = useState(false);
 
-  const yearlyPlans = [
+  // Define plans with consistent structure
+  const yearlyPlans: Plan[] = [
     {
       title: "I'm a Micro-Influencer",
       price: 100,
@@ -36,9 +42,9 @@ const PaymentStep = ({ onNext, onBack }: PaymentStepProps) => {
       description: "Bundle of both plans",
       savings: "Save 20%",
     },
-  ] as const;
+  ];
 
-  const monthlyPlans = [
+  const monthlyPlans: Plan[] = [
     {
       title: "I'm a Micro-Influencer",
       price: 12,
@@ -55,10 +61,9 @@ const PaymentStep = ({ onNext, onBack }: PaymentStepProps) => {
       description: "Bundle of both plans",
       savings: "Save 20%",
     },
-  ] as const;
+  ];
 
   const currentPlans = isYearly ? yearlyPlans : monthlyPlans;
-  type PlanId = (typeof yearlyPlans)[number]["title"];
 
   const trialFeatures = [
     {
@@ -77,6 +82,12 @@ const PaymentStep = ({ onNext, onBack }: PaymentStepProps) => {
       description: "Connect with creators immediately",
     },
   ];
+
+  // Add a function to handle plan selection
+  const handlePlanSelect = (planTitle: string) => {
+    console.log("Selected plan:", planTitle);
+    // You can store the selected plan here if needed
+  };
 
   return (
     <div className="space-y-8">
@@ -164,7 +175,10 @@ const PaymentStep = ({ onNext, onBack }: PaymentStepProps) => {
                 {plan.description}
               </p>
 
-              <button className="w-full bg-primary hover:bg-slate-700 text-white font-semibold py-4 rounded-lg transition-colors duration-200">
+              <button
+                className="w-full bg-primary hover:bg-slate-700 text-white font-semibold py-4 rounded-lg transition-colors duration-200"
+                onClick={() => handlePlanSelect(plan.title)}
+              >
                 Select
               </button>
             </div>

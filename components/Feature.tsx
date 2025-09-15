@@ -85,7 +85,7 @@ const Feature = () => {
               </span>
             </div>
             <button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-4 rounded-lg transition-colors duration-200 text-lg mt-8">
-              <Link href={"/auth/signup?role=brand"}>Grow My Brand</Link>
+              <Link href={"/brand-onboarding"}>Grow My Brand</Link>
             </button>
           </div>
         </div>
@@ -175,9 +175,7 @@ const Feature = () => {
               </span>
             </div>
             <button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-4 rounded-lg transition-colors duration-200 text-lg mt-8">
-              <Link href={"/auth/signup?role=influencer"}>
-                Monetize My Influence
-              </Link>
+              <Link href={"/influencer-onboarding"}>Monetize My Influence</Link>
             </button>
           </div>
         </div>

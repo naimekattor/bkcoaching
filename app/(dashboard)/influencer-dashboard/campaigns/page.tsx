@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Search, MoreHorizontal } from "lucide-react";
 import { mockCampaigns } from "@/lib/mocks/campaigns";
 import { StatCard } from "@/components/cards/stat-card";
-import { Megaphone, Users, Play, Rocket } from "lucide-react";
+import { Megaphone, Play } from "lucide-react";
 import Image from "next/image";
 
 export default function CampaignsPage() {
@@ -37,13 +37,13 @@ export default function CampaignsPage() {
           subtitle="Campaigns running this month"
           icon={<Play className="w-8 h-8 text-green-600" />}
         />
-        <StatCard
+        {/* <StatCard
           title="Creators Hired"
           value="1,500"
           subtitle="Unique Creators in your network"
           icon={<Users className="w-8 h-8 text-purple-600" />}
-        />
-        <div className="bg-white rounded-lg border border-gray-200 p-6 relative overflow-hidden">
+        /> */}
+        {/* <div className="bg-white rounded-lg border border-gray-200 p-6 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-yellow-400 to-orange-500"></div>
           <div className="relative z-10">
             <p className="text-sm font-medium text-white mb-1">
@@ -57,7 +57,7 @@ export default function CampaignsPage() {
             </button>
           </div>
           <Rocket className="absolute top-4 right-4 w-8 h-8 text-white/20" />
-        </div>
+        </div> */}
       </div>
 
       {/* Search and Filters */}
