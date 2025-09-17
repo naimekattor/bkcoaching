@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,6 +20,9 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
     location: "",
     businessTypes: [] as string[],
   });
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
 
   const businessTypes = [
     "E-commerce/Retail",
@@ -54,6 +57,19 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
   };
 
   const isValid = formData.businessName && formData.businessTypes.length > 0;
+
+  const handleClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFileName(file.name);
+      // 🔹 Here you can also upload file to your backend/Cloudinary/S3
+      console.log("Selected file:", file);
+    }
+  };
 
   return (
     <div className="space-y-8">
@@ -145,15 +161,33 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
             {/* Logo Upload */}
             <div className="space-y-2">
               <Label>Logo (Optional)</Label>
-              <div className="border-2 border-dashed border-border rounded-lg p-6 text-center cursor-pointer hover:bg-muted/50 transition-colors">
+              <div
+                onClick={handleClick}
+                className="border-2 border-dashed border-border rounded-lg p-6 text-center cursor-pointer hover:bg-muted/50 transition-colors"
+              >
                 <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-                <p className="text-sm text-muted-foreground">
-                  Click to upload or drag and drop
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  PNG, JPG up to 2MB
-                </p>
+                {fileName ? (
+                  <p className="text-sm font-medium">{fileName}</p>
+                ) : (
+                  <>
+                    <p className="text-sm text-muted-foreground">
+                      Click to upload or drag and drop
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      PNG, JPG up to 2MB
+                    </p>
+                  </>
+                )}
               </div>
+
+              {/* Hidden file input */}
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                accept="image/png,image/jpeg"
+                className="hidden"
+              />
             </div>
           </CardContent>
         </Card>

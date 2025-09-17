@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Search, ChevronDown, MoreHorizontal, X } from "lucide-react";
 import Image from "next/image";
+import CreateCampaignModal from "../../../../components/brand/CreateCampaignModal";
 const mockCampaigns = [
   {
     id: 1,
@@ -22,13 +23,15 @@ const mockCampaigns = [
         id: 1,
         name: "@beautybymma",
         followers: "450K followers",
-        avatar: "/beauty-influencer-woman.jpg",
+        avatar:
+          "https://img.freepik.com/free-photo/young-bearded-man-with-striped-shirt_273609-5677.jpg?t=st=1758083672~exp=1758087272~hmac=14c26c763573e15ba83a5f5c48813a88ada64d28f9985c589874ef81d6c231df&w=1480",
       },
       {
         id: 2,
         name: "@glowgoddess",
         followers: "320K followers",
-        avatar: "/skincare-influencer-woman.jpg",
+        avatar:
+          "https://img.freepik.com/free-photo/cheerful-curly-business-girl-wearing-glasses_176420-206.jpg?t=st=1758083742~exp=1758087342~hmac=8a6e6f780f73d8cecf394c9846cba03befab95ac7b0691e4c508289aa5bf261e&w=1060",
       },
     ],
   },
@@ -38,7 +41,7 @@ const mockCampaigns = [
     description:
       "Unboxing videos for our new wireless earbuds with tech reviewers",
     image:
-      "https://quickframe.com/wp-content/uploads/2024/08/QF-Blog-12-Influencer-Marketing-Statistics-You-Need-To-Know_1920x1080.jpg",
+      "https://img.freepik.com/free-photo/young-man-filming-podcast-episode-camera-studio-live-broadcasting-online-discussion-create-social-media-content-male-influencer-vlogging-show-with-livestream-equipment_482257-47438.jpg?t=st=1758083862~exp=1758087462~hmac=7e9c6c3b03bd876c1997a2f76e1a4e5875e70025a54f3274388d4cacf0738918&w=1060",
     status: "Active",
     budget: "$8,000",
     targetReach: "200K",
@@ -50,13 +53,15 @@ const mockCampaigns = [
         id: 3,
         name: "@techreviewpro",
         followers: "1.2M followers",
-        avatar: "/tech-reviewer-man.jpg",
+        avatar:
+          "https://img.freepik.com/free-photo/young-bearded-man-with-striped-shirt_273609-5677.jpg?t=st=1758083672~exp=1758087272~hmac=14c26c763573e15ba83a5f5c48813a88ada64d28f9985c589874ef81d6c231df&w=1480",
       },
       {
         id: 4,
         name: "@gadgetguru",
         followers: "890K followers",
-        avatar: "/tech-influencer-man.jpg",
+        avatar:
+          "https://img.freepik.com/free-photo/cheerful-curly-business-girl-wearing-glasses_176420-206.jpg?t=st=1758083742~exp=1758087342~hmac=8a6e6f780f73d8cecf394c9846cba03befab95ac7b0691e4c508289aa5bf261e&w=1060",
       },
     ],
   },
@@ -65,7 +70,7 @@ const mockCampaigns = [
     title: "Fitness Challenge",
     description: "30-day fitness challenge with health and wellness Creators",
     image:
-      "https://quickframe.com/wp-content/uploads/2024/08/QF-Blog-12-Influencer-Marketing-Statistics-You-Need-To-Know_1920x1080.jpg",
+      "https://img.freepik.com/free-vector/influencer-recording-new-video_23-2148526236.jpg?t=st=1758083924~exp=1758087524~hmac=59e5d1adca0117a098d11a46e4cd352268b10592eccb3da5243c48cf2c80e688&w=1060",
     status: "Completed",
     budget: "$5,000",
     targetReach: "200K",
@@ -77,13 +82,15 @@ const mockCampaigns = [
         id: 5,
         name: "@fitnessqueen",
         followers: "650K followers",
-        avatar: "/fitness-influencer-woman.jpg",
+        avatar:
+          "https://img.freepik.com/free-photo/young-bearded-man-with-striped-shirt_273609-5677.jpg?t=st=1758083672~exp=1758087272~hmac=14c26c763573e15ba83a5f5c48813a88ada64d28f9985c589874ef81d6c231df&w=1480",
       },
       {
         id: 6,
         name: "@workoutking",
         followers: "420K followers",
-        avatar: "/fitness-influencer-man.png",
+        avatar:
+          "https://img.freepik.com/free-photo/cheerful-curly-business-girl-wearing-glasses_176420-206.jpg?t=st=1758083742~exp=1758087342~hmac=8a6e6f780f73d8cecf394c9846cba03befab95ac7b0691e4c508289aa5bf261e&w=1060",
       },
     ],
   },
@@ -124,6 +131,7 @@ const stats = [
 export default function CampaignDashboard() {
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
   const openCampaignModal = (campaign) => {
     setSelectedCampaign(campaign);
@@ -188,7 +196,10 @@ export default function CampaignDashboard() {
                   <div className="text-2xl">{stat.icon}</div>
                 </div>
                 {stat.isAction && (
-                  <button className="w-full mt-4 bg-orange-400 hover:bg-orange-500 text-white px-4 py-2 rounded-md font-medium transition-colors">
+                  <button
+                    className="w-full mt-4 bg-orange-400 hover:bg-orange-500 text-white px-4 py-2 rounded-md font-medium transition-colors"
+                    onClick={() => setShowModal(true)}
+                  >
                     Launch Campaign
                   </button>
                 )}
@@ -197,6 +208,10 @@ export default function CampaignDashboard() {
           ))}
         </div>
 
+        <CreateCampaignModal
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+        />
         {/* Search and Filters */}
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <div className="relative flex-1">
@@ -218,7 +233,6 @@ export default function CampaignDashboard() {
             </button>
           </div>
         </div>
-
         {/* Campaign Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {mockCampaigns.map((campaign) => (
@@ -319,7 +333,6 @@ export default function CampaignDashboard() {
             </div>
           ))}
         </div>
-
         {/* Load More Button */}
         <div className="text-center">
           <button className="px-8 py-2 border border-gray-300 rounded-md bg-white hover:bg-gray-50 transition-colors">

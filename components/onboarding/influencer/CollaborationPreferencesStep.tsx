@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -290,7 +289,7 @@ const CollaborationPreferencesStep = ({
         )}
 
         {/* Brand Preferences */}
-        <div className="grid md:grid-cols-2 gap-8">
+        {/* <div className="grid md:grid-cols-2 gap-8">
           <Card>
             <CardHeader>
               <CardTitle>Preferred Brand Types</CardTitle>
@@ -334,7 +333,7 @@ const CollaborationPreferencesStep = ({
               />
             </CardContent>
           </Card>
-        </div>
+        </div> */}
       </div>
 
       {/* Navigation */}

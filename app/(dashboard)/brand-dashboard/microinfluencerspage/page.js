@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 
 // Mock data for creators - easily replaceable with API calls
@@ -82,8 +81,65 @@ export default function MicroInfluencersPage() {
     followers: "",
     gender: "",
   });
+  const [filteredCreators, setFilteredCreators] = useState(mockCreators);
+  const [isSearching, setIsSearching] = useState(false);
 
-  const router = useRouter();
+  // Filter creators based on search term and filters
+  useEffect(() => {
+    let filtered = mockCreators;
+
+    // Search by name
+    if (searchTerm.trim()) {
+      filtered = filtered.filter((creator) =>
+        creator.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Apply filters
+    if (filters.contentNiches) {
+      filtered = filtered.filter(
+        (creator) => creator.niche === filters.contentNiches
+      );
+    }
+
+    if (filters.platforms) {
+      filtered = filtered.filter((creator) =>
+        creator.socialLinks.includes(filters.platforms)
+      );
+    }
+
+    if (filters.location) {
+      filtered = filtered.filter(
+        (creator) => creator.location === filters.location
+      );
+    }
+
+    if (filters.followers) {
+      filtered = filtered.filter((creator) => {
+        const count = creator.followerCount;
+        switch (filters.followers) {
+          case "1k-10k":
+            return count >= 1000 && count <= 10000;
+          case "10k-100k":
+            return count >= 10000 && count <= 100000;
+          case "100k-1m":
+            return count >= 100000 && count <= 1000000;
+          case "1m+":
+            return count >= 1000000;
+          default:
+            return true;
+        }
+      });
+    }
+
+    if (filters.gender) {
+      filtered = filtered.filter(
+        (creator) => creator.gender === filters.gender
+      );
+    }
+
+    setFilteredCreators(filtered);
+  }, [searchTerm, filters]);
 
   // Console log all input changes for debugging
   const handleSearchChange = (e) => {
@@ -99,27 +155,49 @@ export default function MicroInfluencersPage() {
     console.log("[v0] All filters:", newFilters);
   };
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
+    setIsSearching(true);
     console.log("[v0] Search triggered with:", {
       searchTerm,
       filters,
     });
+
+    // Simulate API call delay
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
     // Here you would make API call to backend
-    // Example: searchInfluencers({ searchTerm, ...filters })
+    // Example: const results = await searchInfluencers({ searchTerm, ...filters })
+    // setFilteredCreators(results);
+
+    setIsSearching(false);
   };
 
   const handleViewProfile = (creatorId) => {
-    console.log(" View profile clicked for creator:", creatorId);
-    router.push(`/brand-dashboard/influencers/${creatorId}`);
-
-    // Navigate to profile or open modal
+    console.log("[v0] View profile clicked for creator:", creatorId);
+    // In a real Next.js app, you would use:
+    // router.push(`/brand-dashboard/influencers/${creatorId}`);
+    alert(`Navigating to profile for creator ID: ${creatorId}`);
   };
 
   const handleMessage = (creatorId) => {
     console.log("[v0] Message clicked for creator:", creatorId);
     // Open messaging interface
+    alert(`Opening message interface for creator ID: ${creatorId}`);
   };
 
+  const clearAllFilters = () => {
+    setSearchTerm("");
+    setFilters({
+      contentNiches: "",
+      budgetRange: "",
+      platforms: "",
+      location: "",
+      followers: "",
+      gender: "",
+    });
+  };
+  const hasActiveFilters =
+    Object.values(filters).some((filter) => filter !== "") || searchTerm !== "";
   return (
     <div className="flex min-h-screen bg-white">
       <div className="flex-1">
@@ -157,9 +235,10 @@ export default function MicroInfluencersPage() {
               </div>
               <button
                 onClick={handleSearch}
+                disabled={isSearching}
                 className="px-8 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors font-medium"
               >
-                Search
+                {isSearching ? "Searching..." : "Search"}
               </button>
             </div>
 
@@ -254,7 +333,7 @@ export default function MicroInfluencersPage() {
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {mockCreators.map((creator) => (
+              {filteredCreators.map((creator) => (
                 <div
                   key={creator.id}
                   className="bg-white rounded-lg p-6 shadow-sm border border-[#D1D5DB] hover:shadow-xl hover:scale-102 transition-transform duration-300 ease-in-out    "
@@ -334,6 +413,39 @@ export default function MicroInfluencersPage() {
               ))}
             </div>
           </div>
+
+          {/* Empty State */}
+          {filteredCreators.length === 0 && hasActiveFilters && (
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg
+                  className="w-8 h-8 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                No creators found
+              </h3>
+              <p className="text-gray-500 mb-4">
+                Try adjusting your search criteria or filters
+              </p>
+              <button
+                onClick={clearAllFilters}
+                className="px-6 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors font-medium"
+              >
+                Clear all filters
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -2,25 +2,17 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   CreditCard,
   Wallet,
-  Building,
   Shield,
   AlertCircle,
   DollarSign,
   Calendar,
 } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useRouter } from "next/navigation";
 import {
   Dialog,
@@ -64,14 +56,14 @@ const PaymentSetupStep = ({ onBack }: PaymentSetupStepProps) => {
       processingTime: "1-2 business days",
       fees: "2.9% + $0.30 per transaction",
     },
-    {
-      id: "bank",
-      name: "Bank Transfer",
-      icon: Building,
-      description: "Direct deposit to your bank account",
-      processingTime: "3-5 business days",
-      fees: "No fees",
-    },
+    // {
+    //   id: "bank",
+    //   name: "Bank Transfer",
+    //   icon: Building,
+    //   description: "Direct deposit to your bank account",
+    //   processingTime: "3-5 business days",
+    //   fees: "No fees",
+    // },
     {
       id: "stripe",
       name: "Stripe Connect",
@@ -83,20 +75,16 @@ const PaymentSetupStep = ({ onBack }: PaymentSetupStepProps) => {
   ] as const;
   type PaymentMethodId = (typeof paymentMethods)[number]["id"];
 
-  const businessTypes = [
-    { value: "individual", label: "Individual/Sole Proprietor" },
-    { value: "llc", label: "LLC" },
-    { value: "corporation", label: "Corporation" },
-    { value: "partnership", label: "Partnership" },
-  ];
+  // const businessTypes = [
+  //   { value: "individual", label: "Individual/Sole Proprietor" },
+  //   { value: "llc", label: "LLC" },
+  //   { value: "corporation", label: "Corporation" },
+  //   { value: "partnership", label: "Partnership" },
+  // ];
 
   const isValid =
     paymentMethod &&
     ((paymentMethod === "paypal" && formData.paypalEmail) ||
-      (paymentMethod === "bank" &&
-        formData.bankAccountName &&
-        formData.bankAccountNumber &&
-        formData.bankRoutingNumber) ||
       (paymentMethod === "stripe" && formData.stripeConnected));
 
   const handleContinue = () => {
@@ -185,7 +173,6 @@ const PaymentSetupStep = ({ onBack }: PaymentSetupStepProps) => {
             <CardHeader>
               <CardTitle>
                 {paymentMethod === "paypal" && "PayPal Details"}
-                {paymentMethod === "bank" && "Bank Account Details"}
                 {paymentMethod === "stripe" && "Stripe Connect"}
               </CardTitle>
             </CardHeader>
@@ -208,7 +195,7 @@ const PaymentSetupStep = ({ onBack }: PaymentSetupStepProps) => {
                 </div>
               )}
 
-              {paymentMethod === "bank" && (
+              {/* {paymentMethod === "bank" && (
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="accountName">Account Holder Name</Label>
@@ -269,7 +256,7 @@ const PaymentSetupStep = ({ onBack }: PaymentSetupStepProps) => {
                     />
                   </div>
                 </div>
-              )}
+              )} */}
 
               {paymentMethod === "stripe" && (
                 <div className="space-y-4">

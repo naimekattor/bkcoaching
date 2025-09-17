@@ -1,16 +1,47 @@
 "use client";
 
 import { useState } from "react";
-import { Search, MoreHorizontal } from "lucide-react";
+import { Search, MoreHorizontal, DollarSign, CircleCheck } from "lucide-react";
 import { mockCampaigns } from "@/lib/mocks/campaigns";
 import { StatCard } from "@/components/cards/stat-card";
-import { Megaphone, Play } from "lucide-react";
+import { Megaphone } from "lucide-react";
 import Image from "next/image";
 
 export default function CampaignsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All Status");
   const [platformFilter, setPlatformFilter] = useState("All Platforms");
+  const [invitations] = useState([
+    {
+      title: "Summer Skincare Launch",
+      brand: "BeautyBrand Co.",
+      price: "$1,200",
+    },
+    { title: "Tech Gadget Review", brand: "TechFlow Inc.", price: "$800" },
+  ]);
+
+  const [activeCampaigns] = useState([
+    {
+      title: "Fitness Equipment Promo",
+      brand: "FitLife Brand",
+      status: "In Progress",
+      progress: 75,
+      deadline: "3 days",
+      price: "$950",
+      color: "bg-blue-500",
+      badge: "bg-blue-100 text-blue-600",
+    },
+    {
+      title: "Fashion Week Collection",
+      brand: "StyleHub",
+      status: "Review",
+      progress: 90,
+      deadline: "1 day",
+      price: "$1,500",
+      color: "bg-orange-500",
+      badge: "bg-orange-100 text-orange-600",
+    },
+  ]);
 
   return (
     <div className="p-8">
@@ -26,23 +57,23 @@ export default function CampaignsPage() {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <StatCard
-          title="Total Campaigns"
+          title="Active Campaigns"
           value="24"
           subtitle="Currently active and completed"
           icon={<Megaphone className="w-8 h-8 text-blue-600" />}
         />
         <StatCard
-          title="Active Campaigns"
-          value="8"
+          title="Completed"
+          value="47"
           subtitle="Campaigns running this month"
-          icon={<Play className="w-8 h-8 text-green-600" />}
+          icon={<CircleCheck className="w-8 h-8 text-green-600" />}
         />
-        {/* <StatCard
-          title="Creators Hired"
+        <StatCard
+          title="Total Earnings"
           value="1,500"
-          subtitle="Unique Creators in your network"
-          icon={<Users className="w-8 h-8 text-purple-600" />}
-        /> */}
+          // subtitle="Unique Creators in your network"
+          icon={<DollarSign className="w-8 h-8 text-purple-600" />}
+        />
         {/* <div className="bg-white rounded-lg border border-gray-200 p-6 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-yellow-400 to-orange-500"></div>
           <div className="relative z-10">
@@ -58,6 +89,69 @@ export default function CampaignsPage() {
           </div>
           <Rocket className="absolute top-4 right-4 w-8 h-8 text-white/20" />
         </div> */}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        {/* Campaign Invitations */}
+        <div className="border rounded-lg p-4">
+          <h2 className="text-lg font-semibold mb-4">Campaign Invitations</h2>
+          <div className="space-y-4">
+            {invitations.map((item, i) => (
+              <div
+                key={i}
+                className="flex justify-between items-center border rounded-lg p-4"
+              >
+                <div>
+                  <h3 className="font-medium">{item.title}</h3>
+                  <p className="text-sm text-gray-500">{item.brand}</p>
+                  <p className="text-green-600 font-semibold">{item.price}</p>
+                </div>
+                <div className="flex space-x-2">
+                  <button className="px-4 py-1 bg-green-500 text-white rounded-lg hover:bg-green-600">
+                    Accept
+                  </button>
+                  <button className="px-4 py-1 border rounded-lg hover:bg-gray-100">
+                    Decline
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* My Active Campaigns */}
+        <div className="border rounded-lg p-4">
+          <h2 className="text-lg font-semibold mb-4">My Active Campaigns</h2>
+          <div className="space-y-4">
+            {activeCampaigns.map((item, i) => (
+              <div key={i} className="border rounded-lg p-4">
+                <div className="flex justify-between items-center mb-2">
+                  <div>
+                    <h3 className="font-medium">{item.title}</h3>
+                    <p className="text-sm text-gray-500">{item.brand}</p>
+                  </div>
+                  <span
+                    className={`text-xs px-3 py-1 rounded-full ${item.badge}`}
+                  >
+                    {item.status}
+                  </span>
+                </div>
+
+                {/* Progress Bar */}
+                <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                  <div
+                    className={`${item.color} h-2 rounded-full`}
+                    style={{ width: `${item.progress}%` }}
+                  ></div>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <p className="text-gray-500">Deadline: {item.deadline}</p>
+                  <p className="text-green-600 font-semibold">{item.price}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Search and Filters */}

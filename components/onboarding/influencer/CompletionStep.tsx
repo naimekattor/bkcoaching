@@ -1,15 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  CheckCircle,
-  Search,
-  MessageCircle,
-  TrendingUp,
-  Gift,
-  Copy,
-  Star,
-} from "lucide-react";
+import { CheckCircle, Search, MessageCircle, Gift, Copy } from "lucide-react";
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import Link from "next/link";

@@ -132,7 +132,7 @@ const mockMessages: Message[] = [
   },
 ];
 
-export default function MessagesClient() {
+export default function InfluencerMessagesClient() {
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [showChatRequest, setShowChatRequest] = useState<boolean>(true);
@@ -158,7 +158,9 @@ export default function MessagesClient() {
           id: Number.parseInt(userId),
           name: decodeURIComponent(userName),
           lastMessage: "Start a new conversation",
-          avatar: userImage ? decodeURIComponent(userImage) : "/placeholder.svg",
+          avatar: userImage
+            ? decodeURIComponent(userImage)
+            : "/placeholder.svg",
           isOnline: true,
           lastSeen: "Active now",
           hasUnread: false,
@@ -264,7 +266,7 @@ export default function MessagesClient() {
         <div className="p-4 border-b border-gray-200">
           <div
             onClick={() => {
-              router.push("/brand-dashboard/message-request");
+              router.push("/influencer-dashboard/message-request");
             }}
             className="cursor-pointer flex items-center gap-3 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100 hover:from-blue-100 hover:to-indigo-100 transition-all duration-200"
           >
@@ -455,7 +457,9 @@ export default function MessagesClient() {
                         </p>
                         <p
                           className={`text-xs mt-1 ${
-                            message.isOwn ? "text-blue- personally want to see a version where the Suspense boundary is implemented directly in the MessagesClient component, rather than creating a separate server component. Can you provide that version with all type errors fixed, maintaining the same functionality and structure?100" : "text-gray-400"
+                            message.isOwn
+                              ? "text-blue- personally want to see a version where the Suspense boundary is implemented directly in the MessagesClient component, rather than creating a separate server component. Can you provide that version with all type errors fixed, maintaining the same functionality and structure?100"
+                              : "text-gray-400"
                           }`}
                         >
                           {message.timestamp}

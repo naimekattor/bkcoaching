@@ -1,6 +1,6 @@
 // app/brand-dashboard/messages/page.jsx
 import { Suspense } from "react";
-import MessagesClient from "./../../../../components/dashboard/MessagesClient";
+import MessagesClient from "../../../../components/brand/MessagesClient";
 
 export default function MessagesDashboard() {
   return (

@@ -33,30 +33,6 @@ const mockCurrentSubscription: Subscription = {
   status: "active",
 };
 
-// const mockPlans: Plan[] = [
-//   {
-//     id: "basic",
-//     name: "Basic",
-//     price: 10,
-//     billingCycle: "monthly",
-//     features: ["1 Campaign", "Basic Analytics", "Email Support"],
-//   },
-//   {
-//     id: "pro",
-//     name: "Pro",
-//     price: 20,
-//     billingCycle: "monthly",
-//     features: ["Unlimited Campaigns", "Advanced Analytics", "Priority Support"],
-//   },
-//   {
-//     id: "enterprise",
-//     name: "Enterprise",
-//     price: 50,
-//     billingCycle: "monthly",
-//     features: ["Custom Solutions", "Dedicated Manager", "24/7 Support"],
-//   },
-// ];
-
 export default function SubscriptionPage() {
   const [currentSubscription, setCurrentSubscription] = useState<Subscription>(
     mockCurrentSubscription
@@ -74,7 +50,7 @@ export default function SubscriptionPage() {
   };
 
   return (
-    <div className="p-6 container mx-auto">
+    <div className="p-6  mx-auto">
       <h1 className="text-2xl font-bold mb-6 text-gray-900">
         Subscription Management
       </h1>

@@ -73,7 +73,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen p-6">
-      <div className="container mx-auto">
+      <div className=" mx-auto">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
           <Button variant="ghost" size="sm" className="p-2">

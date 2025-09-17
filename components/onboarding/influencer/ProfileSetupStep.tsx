@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { User, Hash, Users, Camera } from "lucide-react";
+import Image from "next/image";
 
 interface ProfileSetupStepProps {
   onNext: () => void;
@@ -17,6 +20,8 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
   const [formData, setFormData] = useState({
     displayName: "",
     bio: "",
+    profilePhoto: null as File | null,
+    profilePhotoPreview: null as string | null,
     socialLinks: {
       instagram: "",
       tiktok: "",
@@ -28,6 +33,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
     demographics: [] as string[],
     keywords: "",
   });
+  type SocialPlatform = keyof typeof formData.socialLinks;
 
   const contentNiches = [
     "Fashion",
@@ -97,13 +103,26 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
     }
   };
 
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFormData((prev) => ({
+        ...prev,
+        profilePhoto: file,
+        profilePhotoPreview: URL.createObjectURL(file),
+      }));
+    }
+  };
+
   const isValid =
     formData.displayName && formData.bio && formData.niches.length > 0;
 
   return (
     <div className="space-y-8">
       <div className="text-center space-y-4">
-        <h1 className="text-3xl font-bold">Create your creator profile</h1>
+        <h1 className="text-3xl text-primary font-bold">
+          Create your creator profile
+        </h1>
         <p className="text-muted-foreground">
           Show brands who you are and what makes your content special
         </p>
@@ -123,12 +142,34 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
               {/* Profile Photo Upload */}
               <div className="space-y-2 md:w-1/3">
                 <Label>Profile Photo *</Label>
-                <div className="aspect-square w-32 mx-auto md:mx-0 border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors">
-                  <Camera className="w-8 h-8 text-muted-foreground mb-2" />
-                  <p className="text-xs text-muted-foreground text-center">
-                    Upload Photo
-                  </p>
-                </div>
+                <label
+                  htmlFor="profilePhoto"
+                  className="aspect-square w-32 mx-auto md:mx-0 border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors overflow-hidden"
+                >
+                  {formData.profilePhotoPreview ? (
+                    <Image
+                      width={500}
+                      height={500}
+                      src={formData.profilePhotoPreview}
+                      alt="Profile preview"
+                      className="object-cover w-full h-full"
+                    />
+                  ) : (
+                    <>
+                      <Camera className="w-8 h-8 text-muted-foreground mb-2" />
+                      <p className="text-xs text-muted-foreground text-center">
+                        Upload Photo
+                      </p>
+                    </>
+                  )}
+                </label>
+                <input
+                  type="file"
+                  id="profilePhoto"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handlePhotoChange}
+                />
               </div>
 
               {/* Basic Info */}
@@ -179,82 +220,28 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="instagram">Instagram</Label>
-                <Input
-                  id="instagram"
-                  value={formData.socialLinks.instagram}
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      socialLinks: {
-                        ...prev.socialLinks,
-                        instagram: e.target.value,
-                      },
-                    }))
-                  }
-                  placeholder="@yourusername or profile URL"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="tiktok">TikTok</Label>
-                <Input
-                  id="tiktok"
-                  value={formData.socialLinks.tiktok}
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      socialLinks: {
-                        ...prev.socialLinks,
-                        tiktok: e.target.value,
-                      },
-                    }))
-                  }
-                  placeholder="@yourusername or profile URL"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="youtube">YouTube</Label>
-                <Input
-                  id="youtube"
-                  value={formData.socialLinks.youtube}
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      socialLinks: {
-                        ...prev.socialLinks,
-                        youtube: e.target.value,
-                      },
-                    }))
-                  }
-                  placeholder="Channel URL"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="twitter">Twitter/X</Label>
-                <Input
-                  id="twitter"
-                  value={formData.socialLinks.twitter}
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      socialLinks: {
-                        ...prev.socialLinks,
-                        twitter: e.target.value,
-                      },
-                    }))
-                  }
-                  placeholder="@yourusername"
-                />
-              </div>
+              {(Object.keys(formData.socialLinks) as SocialPlatform[]).map(
+                (platform) => (
+                  <div className="space-y-2" key={platform}>
+                    <Label htmlFor={platform}>{platform}</Label>
+                    <Input
+                      id={platform}
+                      value={formData.socialLinks[platform]}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          socialLinks: {
+                            ...prev.socialLinks,
+                            [platform]: e.target.value,
+                          },
+                        }))
+                      }
+                      placeholder={`@yourusername or profile URL`}
+                    />
+                  </div>
+                )
+              )}
             </div>
-
-            {/* <Button variant="outline" size="sm">
-              + Connect with OAuth
-            </Button> */}
           </CardContent>
         </Card>
 

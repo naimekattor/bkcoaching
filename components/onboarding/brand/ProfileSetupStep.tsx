@@ -365,9 +365,9 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                 placeholder="Store address, office location, or event venue..."
                 rows={2}
               />
-              <Button variant="ghost" size="sm" className="mt-2">
+              {/* <Button variant="ghost" size="sm" className="mt-2">
                 Skip this step
-              </Button>
+              </Button> */}
             </CardContent>
           </Card>
         </div>
