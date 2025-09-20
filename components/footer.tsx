@@ -1,11 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog";
+import { Button } from "./ui/button";
 
 export default function Footer() {
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const pathName = usePathname();
-  console.log(pathName);
+  const router = useRouter();
+  //console.log(pathName);
+  const handleSignupRoute = () => {
+    setShowAuthModal(true);
+  };
 
   return (
     <footer className=" ">
@@ -17,18 +31,52 @@ export default function Footer() {
               Ready to grow smarter?
             </h2>
 
-            <Link
-              href="/auth/signup"
+            <button
+              onClick={handleSignupRoute}
               className="inline-block bg-secondary hover:bg-yellow-600 text-primary font-semibold px-8 py-3 rounded-lg transition-colors duration-200 mb-4"
             >
               Sign Up Free Today
-            </Link>
+            </button>
 
             <p className="text-sm text-gray-600 italic">
               Free for the first 100 users - claim your spot now
             </p>
           </div>
         )}
+
+      {/* Auth Required Modal */}
+      <Dialog open={showAuthModal} onOpenChange={setShowAuthModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Join The Social Market</DialogTitle>
+            <DialogDescription>
+              Choose your role to continue. You can always switch later if
+              needed.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex flex-col gap-3 pt-4">
+            <Button onClick={() => router.push("/influencer-onboarding")}>
+              Sign up as Influencer
+            </Button>
+            <Button onClick={() => router.push("/brand-onboarding")}>
+              Sign up as Brand
+            </Button>
+          </div>
+
+          <div className="flex justify-center pt-4 text-sm">
+            <p className="text-muted-foreground">
+              Already have an account?{" "}
+              <button
+                onClick={() => router.push("/auth/login")}
+                className="text-primary hover:underline"
+              >
+                Log in
+              </button>
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Navigation Links */}
       <div className=" py-8">
