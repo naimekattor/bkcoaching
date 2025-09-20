@@ -7,7 +7,8 @@ const Feature = () => {
     <section className="py-16 lg:py-24 bg-gradient-to-b from-[#F5FAFF] to-[#F4FAFF]">
       <div className="text-center mb-16">
         <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary">
-          Simple. <span className="text-yellow-500">Authentic.</span> Effective
+          Affordable. <span className="text-yellow-500">Authentic.</span>{" "}
+          Effective
         </h2>
       </div>
 
