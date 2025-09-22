@@ -1,7 +1,7 @@
 export function AnalyticsCards() {
   const analyticsData = [
     { value: "24", label: "Total Campaigns", color: "#BC8D03" },
-    { value: "89", label: "Creators", color: "#BC8D03" },
+    { value: "89", label: "micro-influencers", color: "#BC8D03" },
     { value: "4.8", label: "Avg Rating", color: "#BC8D03" },
     { value: "$250K", label: "Total Invested", color: "#BC8D03" },
   ];

@@ -71,51 +71,32 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
   const demographics = [
     "Women 25–45",
     "Men 25–45",
-    "Moms",
-    "Teens & Young Adults",
-    "Professionals",
-    "Entrepreneurs",
-    "Budget-Conscious",
-    "Wellness-Oriented",
-    "Trend Seekers",
-    "Family-Focused",
-    "Students",
-    "Creatives",
-    "Parents",
-    "High-Income Bracket",
-    "New Homeowners",
+    "Gen Z (18–24)",
+    "Millennials (25–40)",
+    "Parents with Young Children",
+    "Students & Recent Graduates",
+    "Young Professionals",
+    "Entrepreneurs & Startups",
+    "High-Income / Affluent",
+    "Budget-Conscious Shoppers",
+    "Health & Wellness Focused",
+    "Trend & Style Seekers",
+    "Family-Oriented",
+    "Homeowners / New Home Buyers",
+    "Tech-Savvy Consumers",
   ];
 
   const brandValues = [
     "Relatable",
     "Authentic",
     "Funny",
-    "Direct",
-    "Chill",
     "High-Energy",
     "Educational",
     "Bold",
-    "Community",
-    "Minimalist",
-    "Aesthetic-Driven",
     "Uplifting",
     "Honest",
     "Motivational",
-    "Clean Living",
-    "Sustainable",
-    "High-End Taste",
-    "Budget Friendly",
-    "Holistic Health",
-    "Practical Tips",
-    "Time Management",
-    "Personal Growth",
-    "Balance & Boundaries",
-    "Family First",
-    "Style on a Budget",
-    "Mindful Living",
-    "Creativity",
-    "Simplicity",
-    "Confidence",
+    "Creative",
   ];
 
   const handleArrayChange = (
@@ -147,7 +128,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
             Build your brand profile
           </h1>
           <p className="text-muted-foreground">
-            Help creators understand your brand and find the perfect
+            Help micro-influencers understand your brand and find the perfect
             collaboration fit
           </p>
         </div>
@@ -310,7 +291,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Heart className="w-5 h-5" />
-                  Brand Values & Tone
+                  Brand tone
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -340,7 +321,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
               <CardTitle className="flex items-center gap-2">
                 <MapPin className="w-5 h-5" />
                 In-Person Address (Optional)
-                <Tooltip>
+                {/* <Tooltip>
                   <TooltipTrigger>
                     <HelpCircle className="w-4 h-4 text-muted-foreground" />
                   </TooltipTrigger>
@@ -350,7 +331,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                       collaborations
                     </p>
                   </TooltipContent>
-                </Tooltip>
+                </Tooltip> */}
               </CardTitle>
             </CardHeader>
             <CardContent>

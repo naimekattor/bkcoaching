@@ -55,7 +55,7 @@ const TermsStep = ({ onNext, onBack }: TermsStepProps) => {
                 </p>
 
                 <p>
-                  <strong>2. Creator Responsibilities</strong>
+                  <strong>2. micro-influencers Responsibilities</strong>
                 </p>
                 <p>
                   You agree to create authentic, high-quality content that
@@ -67,9 +67,9 @@ const TermsStep = ({ onNext, onBack }: TermsStepProps) => {
                   <strong>3. Payment Terms</strong>
                 </p>
                 <p>
-                  Payments are processed weekly for completed campaigns.
-                  CreatorHub retains a 15% platform fee on all earnings. Dispute
-                  resolution process is available for payment issues.
+                  Payments are processed weekly for completed campaigns. The
+                  Social Market retains a 15% platform fee on all earnings.
+                  Dispute resolution process is available for payment issues.
                 </p>
 
                 <p>

@@ -16,7 +16,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
   const nextSteps = [
     {
       icon: Users,
-      title: "Browse Creators",
+      title: "Browse micro-influencers",
       description:
         "Explore our marketplace to find perfect collaboration partners",
       action: "Browse Now",
@@ -24,7 +24,8 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
     {
       icon: Target,
       title: "Review Matches",
-      description: "Check out creators we've matched with your campaign",
+      description:
+        "Check out micro-influencers we've matched with your campaign",
       action: "View Matches",
     },
     // {
@@ -60,7 +61,8 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
           Your brand profile is complete and your first campaign is ready.
-          You&apos;re all set to start collaborating with amazing creators!
+          You&apos;re all set to start collaborating with amazing
+          micro-influencers!
         </p>
       </div>
 
@@ -111,8 +113,8 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
             <h3 className="font-semibold">Earn $20 for Each Referral</h3>
           </div>
           <p className="text-sm text-muted-foreground">
-            Share CreatorHub with other brands and earn $20 when they sign up.
-            They&apos;ll get 25% off their first month too!
+            Share The Social Market with other brands and earn $20 when they
+            sign up. They&apos;ll get 25% off their first month too!
           </p>
           <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
             <code className="flex-1 text-center font-mono text-sm bg-background px-3 py-2 rounded">
@@ -133,7 +135,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
         </Button>
         <Button variant="outline" size="lg">
           <Link href={"/brand-dashboard/microinfluencerspage"}>
-            Browse Creators
+            Browse micro-influencers
           </Link>
         </Button>
       </div>

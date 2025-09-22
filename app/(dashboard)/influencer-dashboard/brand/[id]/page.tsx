@@ -148,7 +148,7 @@ export default function BrandProfilePage() {
                   <div className="text-2xl font-bold text-green-600 mb-1">
                     {brand.campaigns.creators}
                   </div>
-                  <div className="text-sm text-gray-600">Creators</div>
+                  <div className="text-sm text-gray-600">micro-influencers</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-yellow-600 mb-1">
@@ -190,7 +190,9 @@ export default function BrandProfilePage() {
                     <div className="flex items-center justify-between text-sm text-gray-500">
                       <span>Deadline: {campaign.deadline}</span>
                       <div className="flex items-center gap-4">
-                        <span>{campaign.creatorsNeeded} Creators needed</span>
+                        <span>
+                          {campaign.creatorsNeeded} micro-influencers needed
+                        </span>
                         <div className="flex -space-x-2">
                           <div className="w-6 h-6 bg-gray-300 rounded-full border-2 border-white"></div>
                           <div className="w-6 h-6 bg-gray-300 rounded-full border-2 border-white"></div>
@@ -236,7 +238,9 @@ export default function BrandProfilePage() {
                     key={review.id}
                     className="border-l-4 border-green-500 pl-4"
                   >
-                    <p className="text-gray-700 mb-2">&quot;{review.comment}&quot;</p>
+                    <p className="text-gray-700 mb-2">
+                      &quot;{review.comment}&quot;
+                    </p>
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                       <div className="w-6 h-6 bg-gray-300 rounded-full"></div>
                       <span className="font-medium">{review.reviewer}</span>

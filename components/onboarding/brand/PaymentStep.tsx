@@ -79,7 +79,7 @@ const PaymentStep = ({ onNext, onBack }: PaymentStepProps) => {
     {
       icon: Users,
       title: "Instant Access",
-      description: "Connect with creators immediately",
+      description: "Connect with micro-influencers immediately",
     },
   ];
 
@@ -95,7 +95,7 @@ const PaymentStep = ({ onNext, onBack }: PaymentStepProps) => {
         <h1 className="text-3xl font-bold">Choose your plan</h1>
         <p className="text-muted-foreground">
           Start with a free trial and upgrade anytime. All plans include secure
-          payments and creator protection.
+          payments and micro-influencers protection.
         </p>
       </div>
 

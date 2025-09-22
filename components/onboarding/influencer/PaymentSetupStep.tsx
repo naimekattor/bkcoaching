@@ -12,6 +12,7 @@ import {
   AlertCircle,
   DollarSign,
   Calendar,
+  Building,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
@@ -56,14 +57,14 @@ const PaymentSetupStep = ({ onBack }: PaymentSetupStepProps) => {
       processingTime: "1-2 business days",
       fees: "2.9% + $0.30 per transaction",
     },
-    // {
-    //   id: "bank",
-    //   name: "Bank Transfer",
-    //   icon: Building,
-    //   description: "Direct deposit to your bank account",
-    //   processingTime: "3-5 business days",
-    //   fees: "No fees",
-    // },
+    {
+      id: "bank",
+      name: "Bank Transfer",
+      icon: Building,
+      description: "Direct deposit to your bank account",
+      processingTime: "3-5 business days",
+      fees: "No fees",
+    },
     {
       id: "stripe",
       name: "Stripe Connect",
@@ -195,7 +196,7 @@ const PaymentSetupStep = ({ onBack }: PaymentSetupStepProps) => {
                 </div>
               )}
 
-              {/* {paymentMethod === "bank" && (
+              {paymentMethod === "bank" && (
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="accountName">Account Holder Name</Label>
@@ -256,7 +257,7 @@ const PaymentSetupStep = ({ onBack }: PaymentSetupStepProps) => {
                     />
                   </div>
                 </div>
-              )} */}
+              )}
 
               {paymentMethod === "stripe" && (
                 <div className="space-y-4">

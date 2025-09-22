@@ -108,7 +108,8 @@ const WorkflowStep = ({ onNext, onBack }: WorkflowStepProps) => {
         <CardHeader>
           <CardTitle>How Collaborations Work</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Here&apos;s what to expect when working with brands on CreatorHub
+            Here&apos;s what to expect when working with brands on The Social
+            Market
           </p>
         </CardHeader>
         <CardContent>

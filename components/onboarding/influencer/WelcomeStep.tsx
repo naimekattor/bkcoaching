@@ -11,17 +11,20 @@ const WelcomeStep = ({ onNext }: WelcomeStepProps) => {
     {
       icon: DollarSign,
       title: "Monetize Your Content",
-      description: "Turn your passion into profit with brand partnerships",
+      description:
+        "Turn your passion into profit by partnering with brands that need your voice.",
     },
     {
       icon: Users,
-      title: "Work with Top Brands",
-      description: "Collaborate with verified brands that match your values",
+      title: "Work with  Brands",
+      description:
+        "Collaborate with trusted brands that align with your style and values.",
     },
     {
       icon: TrendingUp,
-      title: "Grow Your Audience",
-      description: "Expand your reach through strategic partnerships",
+      title: "Boost Your Visibility",
+      description:
+        "Grow your reach and get noticed with brands that believe in you.",
     },
   ];
 
@@ -35,9 +38,9 @@ const WelcomeStep = ({ onNext }: WelcomeStepProps) => {
           Welcome to <span className="">The Social Market</span>
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          You&apos;re about to join thousands of creators who&apos;ve turned
-          their passion into profit. Let&apos;s get your creator profile set up
-          and start earning!
+          You&apos;re about to join thousands of micro-influencers who&apos;ve
+          turned their passion into profit. Let&apos;s get your
+          micro-influencers profile set up and start earning!
         </p>
       </div>
 

@@ -44,35 +44,37 @@ const HowItWorks = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 place-items-center">
           {/* Left side boxes */}
-          <div className="w-[326px]">
-            <div className="bg-white rounded shadow-md  text-left">
-              <div className="flex gap-4 items-center justify-center bg-primary py-2 px-2 rounded">
-                <Image
-                  src={"/images/work-icon1.png"}
-                  width={62}
-                  height={41}
-                  alt="icon"
-                />
-                <h3 className="text-xl font-bold text-[#ffffff] mb-2">
-                  Businessess
-                </h3>
-              </div>
-              <div className="px-6 pb-6">
-                <p className="text-[#838689] text-sm md:text-[19px] text-center  py-6">
-                    Run authentic campaigns that build trust and drive sales.
-                </p>
+          <Link href={"/brand-onboarding"}>
+            <div className="w-[326px]">
+              <div className="bg-white rounded shadow-md  text-left">
+                <div className="flex gap-4 items-center justify-center bg-primary py-2 px-2 rounded">
+                  <Image
+                    src={"/images/work-icon1.png"}
+                    width={62}
+                    height={41}
+                    alt="icon"
+                  />
+                  <h3 className="text-xl font-bold text-[#ffffff] mb-2">
+                    Businesses
+                  </h3>
+                </div>
+                <div className="px-6 pb-6">
+                  <p className="text-[#838689] text-sm md:text-[19px] text-center  py-6">
+                      Run authentic campaigns that build trust and drive sales.
+                  </p>
 
-                <button className="bg-secondary w-full py-2 font-[600] text-[16px] text-primary rounded cursor-pointer">
-                  <Link href={"/brand-onboarding"}> Start Here</Link>
-                </button>
+                  <button className="bg-secondary w-full py-2 font-[600] text-[16px] text-primary rounded cursor-pointer">
+                    <Link href={"/brand-onboarding"}> Start Here</Link>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+          </Link>
 
           {/* Center image */}
           <div className="flex justify-center">
             <Image
-              src="/images/work-img.png"
+              src="/images/hero-img.png"
               alt="How it works illustration"
               width={400}
               height={400}
@@ -81,30 +83,32 @@ const HowItWorks = () => {
           </div>
 
           {/* Right side boxes */}
-          <div className="w-[326px]">
-            <div className="bg-white rounded shadow-md  text-left">
-              <div className="flex gap-4 items-center justify-center bg-primary py-2 px-2 rounded">
-                <Image
-                  src={"/images/work-icon2.png"}
-                  width={62}
-                  height={41}
-                  alt="icon"
-                />
-                <h3 className="text-xl font-bold text-[#ffffff] mb-2">
-                  Micro- Influencers
-                </h3>
-              </div>
-              <div className="px-6 pb-6">
-                <p className="text-[#838689] text-sm md:text-[19px] text-center  py-6">
-                  Monetize your influence by sharing products you love.
-                </p>
+          <Link href={"/influencer-onboarding"}>
+            <div className="w-[326px]">
+              <div className="bg-white rounded shadow-md  text-left">
+                <div className="flex gap-4 items-center justify-center bg-primary py-2 px-2 rounded">
+                  <Image
+                    src={"/images/work-icon2.png"}
+                    width={62}
+                    height={41}
+                    alt="icon"
+                  />
+                  <h3 className="text-xl font-bold text-[#ffffff] mb-2">
+                    Micro- Influencers
+                  </h3>
+                </div>
+                <div className="px-6 pb-6">
+                  <p className="text-[#838689] text-sm md:text-[19px] text-center  py-6">
+                    Monetize your influence by sharing products you love.
+                  </p>
 
-                <button className="bg-secondary w-full py-2 font-[600] text-[16px] text-primary rounded cursor-pointer">
-                  <Link href={"/influencer-onboarding"}> Start Here</Link>
-                </button>
+                  <button className="bg-secondary w-full py-2 font-[600] text-[16px] text-primary rounded cursor-pointer">
+                    <Link href={"/influencer-onboarding"}> Start Here</Link>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+          </Link>
         </div>
       </div>
     </section>

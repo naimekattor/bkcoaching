@@ -316,7 +316,7 @@ export default function SignupPage() {
           />
           <p className="text-slate-600 text-lg">
             <span className="underline font-semibold">Sign up</span> and get{" "}
-            <span className="font-semibold">1 month free trial</span>
+            <span className="font-semibold">14 days free trial</span>
           </p>
         </div>
       </div>

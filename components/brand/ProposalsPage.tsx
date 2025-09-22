@@ -203,7 +203,9 @@ export default function ProposalsPage() {
                     type="text"
                     placeholder="City, Country"
                     value={formData.location}
-                    onChange={(e) => handleInputChange("location", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("location", e.target.value)
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
@@ -217,7 +219,9 @@ export default function ProposalsPage() {
                     type="text"
                     placeholder="Your business slogan"
                     value={formData.tagline}
-                    onChange={(e) => handleInputChange("tagline", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("tagline", e.target.value)
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
@@ -231,7 +235,9 @@ export default function ProposalsPage() {
                     type="text"
                     placeholder="$200 - $250"
                     value={formData.budget}
-                    onChange={(e) => handleInputChange("budget", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("budget", e.target.value)
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
@@ -245,7 +251,9 @@ export default function ProposalsPage() {
                     type="text"
                     placeholder="Start from August 15, 2025"
                     value={formData.timeline}
-                    onChange={(e) => handleInputChange("timeline", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("timeline", e.target.value)
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>

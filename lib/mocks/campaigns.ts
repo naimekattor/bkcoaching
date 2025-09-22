@@ -5,7 +5,7 @@ export const mockCampaigns: Campaign[] = [
     id: "1",
     title: "Summer Skincare Launch",
     description:
-      "Promoting our new oil-free serum with micro-Creators in beauty niche",
+      "Promoting our new oil-free serum with micro-influencers in beauty niche",
     status: "Active",
     budget: 5000,
     targetReach: "200K",

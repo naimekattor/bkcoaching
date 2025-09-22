@@ -47,6 +47,7 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
     objective: "",
     budget: [1000],
     budgetType: "total",
+    paymentPreferences: [] as string[],
     description: "",
     deliverables: [] as string[],
     timeline: "",
@@ -100,10 +101,12 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
     { id: "podcast", label: "Podcast Mention", icon: Mic },
     { id: "twitter-thread", label: "Twitter Thread", icon: FileText },
     { id: "linkedin-post", label: "LinkedIn Post", icon: FileText },
+    { id: "whatsapp-status", label: "WhatsApp Status", icon: FileText },
+    { id: "email-campaign", label: "Email Campaign", icon: FileText },
   ];
 
   const timelineOptions = [
-    { value: "asap", label: "ASAP (Rush order)" },
+    { value: "asap", label: "ASAP (Immediate )" },
     { value: "1-week", label: "Within 1 week" },
     { value: "2-weeks", label: "Within 2 weeks" },
     { value: "1-month", label: "Within 1 month" },
@@ -128,7 +131,8 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
     formData.campaignName &&
     formData.objective &&
     formData.deliverables.length > 0 &&
-    formData.timeline;
+    formData.timeline &&
+    formData.paymentPreferences.length > 0;
 
   const handleCreateCampaign = () => {
     if (!isValid) return;
@@ -148,8 +152,8 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
         <div className="text-center space-y-4">
           <h1 className="text-3xl font-bold">Create your first campaign</h1>
           <p className="text-muted-foreground">
-            Let&apos;s set up a campaign to find the perfect creators for your
-            brand
+            Let&apos;s set up a campaign to find the perfect micro-influencerss
+            for your brand
           </p>
         </div>
 
@@ -234,38 +238,64 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <Label>Budget Type:</Label>
-                  <div className="flex items-center gap-6">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="total-budget"
-                        checked={formData.budgetType === "total"}
-                        onCheckedChange={() =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            budgetType: "total",
-                          }))
-                        }
-                      />
-                      <Label htmlFor="total-budget">
-                        Total Campaign Budget
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="per-creator"
-                        checked={formData.budgetType === "per-creator"}
-                        onCheckedChange={() =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            budgetType: "per-creator",
-                          }))
-                        }
-                      />
-                      <Label htmlFor="per-creator">Budget Per Creator</Label>
-                    </div>
+                <div className="flex items-center gap-6 flex-wrap">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="total-budget"
+                      checked={formData.budgetType === "total"}
+                      onCheckedChange={() =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          budgetType: "total",
+                        }))
+                      }
+                    />
+                    <Label htmlFor="total-budget">Total Campaign Budget</Label>
                   </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="monthly-budget"
+                      checked={formData.budgetType === "monthly"}
+                      onCheckedChange={() =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          budgetType: "monthly",
+                        }))
+                      }
+                    />
+                    <Label htmlFor="monthly-budget">Monthly Budget</Label>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="weekly-budget"
+                      checked={formData.budgetType === "weekly"}
+                      onCheckedChange={() =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          budgetType: "weekly",
+                        }))
+                      }
+                    />
+                    <Label htmlFor="weekly-budget">Weekly Budget</Label>
+                  </div>
+
+                  {/* <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="per-micro-influencers"
+                      checked={formData.budgetType === "per-micro-influencers"}
+                      onCheckedChange={() =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          budgetType: "per-micro-influencers",
+                        }))
+                      }
+                    />
+                    <Label htmlFor="per-micro-influencers">
+                      Per micro-influencers Budget
+                    </Label>
+                  </div> */}
                 </div>
 
                 <div className="space-y-4">
@@ -274,7 +304,11 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
                     <Badge variant="secondary">
                       {formData.budgetType === "total"
                         ? "Total"
-                        : "Per Creator"}
+                        : formData.budgetType === "monthly"
+                        ? "Monthly"
+                        : formData.budgetType === "weekly"
+                        ? "Weekly"
+                        : ""}
                     </Badge>
                   </div>
                   <Slider
@@ -296,12 +330,149 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
             </CardContent>
           </Card>
 
+          {/* Payment Preferences */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Payment Preferences *</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Select how you plan to compensate micro-influencerss for this
+                campaign
+              </p>
+            </CardHeader>
+            <CardContent>
+              <div className="grid md:grid-cols-2 gap-4">
+                {/* Gifted Products */}
+                <div
+                  className={`flex items-center space-x-3 p-3 border rounded-lg cursor-pointer ${
+                    formData.paymentPreferences?.includes("gifted")
+                      ? "bg-primary/10 border-primary"
+                      : "hover:bg-muted/50"
+                  }`}
+                  onClick={() =>
+                    setFormData((prev) => {
+                      const current = prev.paymentPreferences || [];
+                      return current.includes("gifted")
+                        ? {
+                            ...prev,
+                            paymentPreferences: current.filter(
+                              (p) => p !== "gifted"
+                            ),
+                          }
+                        : {
+                            ...prev,
+                            paymentPreferences: [...current, "gifted"],
+                          };
+                    })
+                  }
+                >
+                  <Checkbox
+                    checked={formData.paymentPreferences?.includes("gifted")}
+                    id="gifted"
+                  />
+                  <Label htmlFor="gifted">Gifted Products</Label>
+                </div>
+
+                {/* Paid Collaborations */}
+                <div
+                  className={`flex items-center space-x-3 p-3 border rounded-lg cursor-pointer ${
+                    formData.paymentPreferences?.includes("paid")
+                      ? "bg-primary/10 border-primary"
+                      : "hover:bg-muted/50"
+                  }`}
+                  onClick={() =>
+                    setFormData((prev) => {
+                      const current = prev.paymentPreferences || [];
+                      return current.includes("paid")
+                        ? {
+                            ...prev,
+                            paymentPreferences: current.filter(
+                              (p) => p !== "paid"
+                            ),
+                          }
+                        : { ...prev, paymentPreferences: [...current, "paid"] };
+                    })
+                  }
+                >
+                  <Checkbox
+                    checked={formData.paymentPreferences?.includes("paid")}
+                    id="paid"
+                  />
+                  <Label htmlFor="paid">Paid Collaborations</Label>
+                </div>
+
+                {/* Affiliate Marketing */}
+                <div
+                  className={`flex items-center space-x-3 p-3 border rounded-lg cursor-pointer ${
+                    formData.paymentPreferences?.includes("affiliate")
+                      ? "bg-primary/10 border-primary"
+                      : "hover:bg-muted/50"
+                  }`}
+                  onClick={() =>
+                    setFormData((prev) => {
+                      const current = prev.paymentPreferences || [];
+                      return current.includes("affiliate")
+                        ? {
+                            ...prev,
+                            paymentPreferences: current.filter(
+                              (p) => p !== "affiliate"
+                            ),
+                          }
+                        : {
+                            ...prev,
+                            paymentPreferences: [...current, "affiliate"],
+                          };
+                    })
+                  }
+                >
+                  <Checkbox
+                    checked={formData.paymentPreferences?.includes("affiliate")}
+                    id="affiliate"
+                  />
+                  <Label htmlFor="affiliate">Affiliate Marketing</Label>
+                </div>
+
+                {/* Brand Ambassador */}
+                <div
+                  className={`flex items-center space-x-3 p-3 border rounded-lg cursor-pointer ${
+                    formData.paymentPreferences?.includes("ambassador")
+                      ? "bg-primary/10 border-primary"
+                      : "hover:bg-muted/50"
+                  }`}
+                  onClick={() =>
+                    setFormData((prev) => {
+                      const current = prev.paymentPreferences || [];
+                      return current.includes("ambassador")
+                        ? {
+                            ...prev,
+                            paymentPreferences: current.filter(
+                              (p) => p !== "ambassador"
+                            ),
+                          }
+                        : {
+                            ...prev,
+                            paymentPreferences: [...current, "ambassador"],
+                          };
+                    })
+                  }
+                >
+                  <Checkbox
+                    checked={formData.paymentPreferences?.includes(
+                      "ambassador"
+                    )}
+                    id="ambassador"
+                  />
+                  <Label htmlFor="ambassador">Brand Ambassador</Label>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Deliverables */}
           <Card>
             <CardHeader>
               <CardTitle>Content Deliverables *</CardTitle>
               <p className="text-sm text-muted-foreground">
-                Select the type of content you want creators to produce
+                Select the type of content you want micro-influencers to produce
               </p>
             </CardHeader>
             <CardContent>
@@ -340,7 +511,7 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Calendar className="w-5 h-5" />
-                  Timeline *
+                  Campaign timeline *
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -390,9 +561,9 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
-                    <Label>Auto-match Creators</Label>
+                    <Label>Auto-match micro-influencers</Label>
                     <p className="text-xs text-muted-foreground">
-                      Automatically find matching creators
+                      Automatically find matching micro-influencers
                     </p>
                   </div>
                   <Switch
@@ -459,7 +630,7 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
             disabled={!isValid}
           >
             {formData.autoMatch
-              ? "Create Campaign & Find Creators"
+              ? "Create Campaign & Find micro-influencers"
               : "Create Campaign"}
           </Button>
         </div>
@@ -477,7 +648,7 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
             <Button
               variant="outline"
               onClick={() =>
-                router.push("/auth/login?returnTo=/brand-onboarding?step=6")
+                router.push("/auth/login?returnTo=/brand-onboarding?step=5")
               }
             >
               Log in
@@ -485,7 +656,7 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
             <Button
               onClick={() =>
                 router.push(
-                  "/auth/signup?role=brand&returnTo=/brand-onboarding?step=6"
+                  "/auth/signup?role=brand&returnTo=/brand-onboarding?step=5"
                 )
               }
             >

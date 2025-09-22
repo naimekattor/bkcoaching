@@ -10,6 +10,7 @@ import {
   DialogTitle,
 } from "./ui/dialog";
 import { Button } from "./ui/button";
+import Typewriter from "./Typewriter";
 
 const Hero = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -26,7 +27,11 @@ const Hero = () => {
           <div className="lg:col-span-2 space-y-8 flex-1">
             <div className="space-y-4">
               <h1 className="text-4xl md:text-5xl  font-bold text-primary leading-tight">
-                Micro-influencers.{" "}
+                <Typewriter
+                  words={["Micro-influencers", "Brands"]}
+                  speed={80}
+                  pause={2000}
+                />{" "}
                 <span className="text-primary">Mega results.</span>
               </h1>
               <p className="text-xl  text-primary font-normal">
@@ -41,18 +46,23 @@ const Hero = () => {
               Sign up for free
             </button>
 
-            <div className="flex items-center gap-2 text-[16px] text-primary">
+            {/* <div className="flex items-center gap-2 text-[16px] text-primary">
               <span className="text-red-500">♥</span>
               <span>
                 Free for the first 100 users - &quot;Get in early!&quot;
               </span>
-            </div>
+            </div> */}
 
             <p className="text-primary text-[16px] leading-relaxed max-w-lg">
-              The Social Market is where brands and micro-influencers team up.
+              <h1 className="font-bold">
+                The Social Market is where brands and micro-influencers team up.
+              </h1>
               Brands get affordable, authentic marketing. Micro-influencers get
-              paid to share services. They actually love. It&apos;s
-              word-of-mouth, made smarter, faster, and scalable.
+              paid to share services. They actually love.
+              <span className="font-bold">
+                {" "}
+                It&apos;s word-of-mouth, made smarter, faster, and scalable.
+              </span>
             </p>
           </div>
 

@@ -9,7 +9,7 @@ const mockCampaigns = [
     id: 1,
     title: "Summer Skincare Launch",
     description:
-      "Promoting our new vitamin C serum with micro-Creators in beauty niche",
+      "Promoting our new vitamin C serum with micro-influencers in beauty niche",
     image:
       "https://quickframe.com/wp-content/uploads/2024/08/QF-Blog-12-Influencer-Marketing-Statistics-You-Need-To-Know_1920x1080.jpg",
     status: "Active",

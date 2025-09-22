@@ -44,7 +44,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
     navigator.clipboard.writeText(referralCode);
     toast({
       title: "Referral code copied!",
-      description: "Share with other creators to earn rewards",
+      description: "Share with other micro-influencers to earn rewards",
     });
   };
 
@@ -58,9 +58,9 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
           Welcome to <span className="">The Social Market</span>!
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          Your creator profile is complete and you&apos;re ready to start
-          earning! Get ready to collaborate with amazing brands and grow your
-          influence.
+          Your micro-influencers profile is complete and you&apos;re ready to
+          start earning! Get ready to collaborate with amazing brands and grow
+          your influence.
         </p>
       </div>
 
@@ -68,7 +68,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
       <Card className="bg-secondary/5 border-secondary/20">
         <CardContent className="p-6 text-center space-y-4">
           <Badge variant="secondary" className="text-secondary bg-secondary/10">
-            Creator Account Active
+            micro-influencers Account Active
           </Badge>
           <h3 className="font-semibold text-lg">Ready to Start Earning</h3>
           <p className="text-sm text-muted-foreground">
@@ -118,16 +118,16 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
       </div>
 
       {/* Referral Program */}
-      <Card>
+      {/* <Card>
         <CardContent className="p-6 space-y-4">
           <div className="flex items-center justify-center gap-2">
             <Gift className="w-5 h-5 text-secondary" />
             <h3 className="font-semibold">
-              Earn $10 for Each Creator Referral
+              Earn $10 for Each micro-influencers Referral
             </h3>
           </div>
           <p className="text-sm text-muted-foreground">
-            Invite other creators to join The Social Market and earn $10 when
+            Invite other micro-influencers to join The Social Market and earn $10 when
             they complete their first campaign. They&apos;ll get priority
             matching for their first month too!
           </p>
@@ -141,7 +141,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
             </Button>
           </div>
         </CardContent>
-      </Card>
+      </Card> */}
 
       {/* Pro Tips */}
       <Card className="bg-muted/30">

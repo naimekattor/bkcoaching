@@ -107,7 +107,7 @@ type Contact = {
 };
 
 export default function MessagesPage() {
-  const [selectedContact, setSelectedContact] = useState<Contact | null >(null);
+  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showChatRequest, setShowChatRequest] = useState(true);
   const [newMessage, setNewMessage] = useState("");
@@ -149,7 +149,7 @@ export default function MessagesPage() {
     }
   }, [searchParams]);
 
-  const handleContactSelect = (contact:Contact) => {
+  const handleContactSelect = (contact: Contact) => {
     setSelectedContact(contact);
     setShowChatRequest(false);
   };

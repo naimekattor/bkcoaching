@@ -17,7 +17,6 @@ const BrandOnboarding = () => {
   const navigate = useRouter();
 
   const steps = [
-    { title: "Welcome", description: "Get started with your free trial" },
     { title: "Business Info", description: "Tell us about your business" },
     { title: "Profile Setup", description: "Define your brand and audience" },
     { title: "Payment & Plans", description: "Choose your subscription plan" },
@@ -32,22 +31,22 @@ const BrandOnboarding = () => {
       setCurrentStep((prev) => prev + 1);
 
       // Send welcome notifications
-      if (currentStep === 1) {
-        toast({
-          title: "Welcome to CreatorHub!",
-          description:
-            "Check your email for next steps and support information.",
-        });
-      }
+      // if (currentStep === 1) {
+      //   toast({
+      //     title: "Welcome to The Social Market!",
+      //     description:
+      //       "Check your email for next steps and support information.",
+      //   });
+      // }
 
       // Send payment confirmation
-      if (currentStep === 4) {
-        toast({
-          title: "Trial activated!",
-          description:
-            "Your 14-day free trial has started. Payment receipt sent to your email.",
-        });
-      }
+      // if (currentStep === 4) {
+      //   toast({
+      //     title: "Trial activated!",
+      //     description:
+      //       "Your 14-day free trial has started. Payment receipt sent to your email.",
+      //   });
+      // }
     }
   };
 
@@ -68,20 +67,20 @@ const BrandOnboarding = () => {
 
   const renderStep = () => {
     switch (currentStep) {
+      // case 1:
+      // return <WelcomeStep onNext={handleNext} />;
       case 1:
-        return <WelcomeStep onNext={handleNext} />;
-      case 2:
         return <BusinessInfoStep onNext={handleNext} onBack={handleBack} />;
-      case 3:
+      case 2:
         return <ProfileSetupStep onNext={handleNext} onBack={handleBack} />;
-      case 4:
+      case 3:
         return <PaymentStep onNext={handleNext} onBack={handleBack} />;
-      case 5:
+      case 4:
         return <CampaignStep onNext={handleNext} onBack={handleBack} />;
-      case 6:
+      case 5:
         return <CompletionStep onComplete={handleComplete} />;
       default:
-        return <WelcomeStep onNext={handleNext} />;
+        return <BusinessInfoStep onNext={handleNext} />;
     }
   };
 
