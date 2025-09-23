@@ -1,6 +1,7 @@
+import PageHeaderWithSwitcher from "@/components/PageHeaderWithSwitcher";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Star, TrendingUp, DollarSign, Users } from "lucide-react";
+import { TrendingUp, DollarSign, Users } from "lucide-react";
 
 interface WelcomeStepProps {
   onNext: () => void;
@@ -30,10 +31,11 @@ const WelcomeStep = ({ onNext }: WelcomeStepProps) => {
 
   return (
     <div className="text-center space-y-8">
+      <PageHeaderWithSwitcher role="micro-influencers" />
       <div className="space-y-4">
-        <div className="w-20 h-20 rounded-full bg-secondary/10 flex items-center justify-center mx-auto">
+        {/* <div className="w-20 h-20 rounded-full bg-secondary/10 flex items-center justify-center mx-auto">
           <Star className="w-10 h-10 text-secondary" />
-        </div>
+        </div> */}
         <h1 className="text-4xl font-bold text-primary">
           Welcome to <span className="">The Social Market</span>
         </h1>

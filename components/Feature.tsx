@@ -2,7 +2,6 @@ import Link from "next/link";
 import React from "react";
 import { IoPersonOutline } from "react-icons/io5";
 import KeywordMotion from "./KeywordMotion";
-import { FcCollaboration } from "react-icons/fc";
 
 const Feature = () => {
   return (

@@ -3,8 +3,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, Search, MessageCircle, Gift, Copy } from "lucide-react";
 import { useState } from "react";
-import { toast } from "@/hooks/use-toast";
 import Link from "next/link";
+import { toast } from "@/hooks/use-toast";
 
 interface CompletionStepProps {
   onComplete: () => void;
@@ -118,7 +118,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
       </div>
 
       {/* Referral Program */}
-      {/* <Card>
+      <Card>
         <CardContent className="p-6 space-y-4">
           <div className="flex items-center justify-center gap-2">
             <Gift className="w-5 h-5 text-secondary" />
@@ -127,9 +127,9 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
             </h3>
           </div>
           <p className="text-sm text-muted-foreground">
-            Invite other micro-influencers to join The Social Market and earn $10 when
-            they complete their first campaign. They&apos;ll get priority
-            matching for their first month too!
+            Invite other micro-influencers to join The Social Market and earn
+            $10 when they complete their first campaign. They&apos;ll get
+            priority matching for their first month too!
           </p>
           <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
             <code className="flex-1 text-center font-mono text-sm bg-background px-3 py-2 rounded">
@@ -141,7 +141,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
             </Button>
           </div>
         </CardContent>
-      </Card> */}
+      </Card>
 
       {/* Pro Tips */}
       <Card className="bg-muted/30">
@@ -174,7 +174,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
           Go to Dashboard
         </Button>
         <Button variant="outline" size="lg">
-          <Link href={"/influencer-dashboard/brand"}>Browse Campaigns</Link>
+          <Link href={"/influencer-dashboard/campaigns"}>Browse Campaigns</Link>
         </Button>
       </div>
     </div>

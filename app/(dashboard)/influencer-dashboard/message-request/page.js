@@ -78,7 +78,7 @@ const mockNotifications = [
     type: "collaboration",
     brand: "Louis Vuitton",
     message:
-      "High-fashion, Creator-favorite Business with dramatic flair. we're impressed by your style! We'd love to collaborate on our upcoming fall beauty campaign. Let us know if you're interested.",
+      "High-fashion, micro-influencers-favorite Business with dramatic flair. we're impressed by your style! We'd love to collaborate on our upcoming fall beauty campaign. Let us know if you're interested.",
     avatar:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQH6JImtRr_PORjJojfyorJksXR84hWSXq9yg&s",
     time: "2d ago",

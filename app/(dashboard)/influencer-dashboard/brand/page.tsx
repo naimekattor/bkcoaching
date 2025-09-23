@@ -87,7 +87,7 @@ export default function MicroinfluencersPage() {
       {/* Featured Creators */}
       <div className="mb-8">
         <h2 className="text-xl font-semibold text-gray-900 mb-6">
-          Featured Creators
+          Featured micro-influencers
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

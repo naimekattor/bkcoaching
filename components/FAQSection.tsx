@@ -1,13 +1,13 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const faqs = [
   {
     question: "1. I’m a brand. How does it work?",
     answer:
-      " You tell us what kind of people you’d like representing your product — and we introduce you to micro-influencers who fit. If you see someone you’d like to work with, we call that a Market Match. They share your product with their community in a natural way, and you get results you can actually measure.",
+      "You tell us what kind of people you’d like representing your product — and we introduce you to micro-influencers who fit. If you see someone you’d like to work with, we call that a Market Match. They share your product with their community in a natural way, and you get results you can actually measure.",
   },
   {
     question: "2. I’m a micro-influencer. How do I get started?",
@@ -23,7 +23,7 @@ const faqs = [
   {
     question: "4. How do Market Matches actually work?",
     answer:
-      " A Market Match happens when a brand and an everyday voice (you!) agree to collaborate. You’ll see the details upfront: what you’ll receive, what kind of post is expected, and when payment (if included) is sent. Clear, simple, no guesswork.",
+      "A Market Match happens when a brand and an everyday voice (you!) agree to collaborate. You’ll see the details upfront: what you’ll receive, what kind of post is expected, and when payment (if included) is sent. Clear, simple, no guesswork.",
   },
   {
     question: "5. How do I get paid?",
@@ -63,45 +63,40 @@ export default function FAQSection() {
 
   return (
     <section className="py-16 lg:py-24 bg-white">
-      <div className="container mx-auto px-4 grid lg:grid-cols-2 gap-10 items-center">
-        {/* Left Illustration */}
-        <div className="flex justify-center">
-          <Image
-            src="/images/faq.png"
-            alt="FAQ Illustration"
-            width={500}
-            height={400}
-            className="w-full max-w-sm lg:max-w-md"
-          />
-        </div>
+      <div className="container mx-auto px-4">
+        <h2 className="text-[40px] font-bold mb-8 text-primary text-center">
+          Frequently Asked Questions
+        </h2>
 
-        {/* Right FAQ */}
-        <div>
-          <h2 className="text-[40px] font-bold mb-8 text-primary">
-            Frequently Asked Questions
-          </h2>
+        <div className="space-y-4">
+          {faqs.map((faq, index) => (
+            <div key={index} className="border-b border-gray-200 pb-4">
+              <button
+                onClick={() => setOpenIndex(openIndex === index ? null : index)}
+                className="flex justify-between items-center w-full text-left text-primary text-[24px] font-medium cursor-pointer hover:text-secondary transition-colors"
+              >
+                {faq.question}
+                <span className="text-xl ml-2">
+                  {openIndex === index ? "−" : "+"}
+                </span>
+              </button>
 
-          <div className="space-y-4">
-            {faqs.map((faq, index) => (
-              <div key={index} className="border-b border-gray-200 pb-4">
-                <button
-                  onClick={() =>
-                    setOpenIndex(openIndex === index ? null : index)
-                  }
-                  className="flex justify-between items-center w-full text-left text-primary text-[24px] font-medium  "
-                >
-                  {faq.question}
-                  {/* <span className="">{openIndex === index ? "−" : "+"}</span> */}
-                </button>
-
+              <AnimatePresence initial={false}>
                 {openIndex === index && (
-                  <p className="mt-2 text-primary text-sm leading-relaxed">
+                  <motion.p
+                    key="content"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    className="mt-2 text-primary text-sm leading-relaxed overflow-hidden"
+                  >
                     {faq.answer}
-                  </p>
+                  </motion.p>
                 )}
-              </div>
-            ))}
-          </div>
+              </AnimatePresence>
+            </div>
+          ))}
         </div>
       </div>
     </section>

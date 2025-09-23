@@ -19,8 +19,11 @@ const InfluencerOnboardingPage = () => {
   const navigate = useRouter();
 
   const steps = [
-    { title: "Welcome", description: "Get started as a creator" },
-    { title: "Profile Setup", description: "Create your creator profile" },
+    { title: "Welcome", description: "Get started as a micro-influencers" },
+    {
+      title: "Profile Setup",
+      description: "Create your micro-influencers profile",
+    },
     {
       title: "Collaboration Preferences",
       description: "Set your rates and preferences",
@@ -45,22 +48,22 @@ const InfluencerOnboardingPage = () => {
       setCurrentStep((prev) => prev + 1);
 
       // Send welcome notifications
-      if (currentStep === 1) {
-        toast({
-          title: "Welcome to CreatorHub!",
-          description:
-            "Check your email for creator tips and support information.",
-        });
-      }
+      // if (currentStep === 1) {
+      //   toast({
+      //     title: "Welcome to The Social Market!",
+      //     description:
+      //       "Check your email for micro-influencers tips and support information.",
+      //   });
+      // }
 
       // Profile setup reminder
-      if (currentStep === 2) {
-        toast({
-          title: "Profile looking great!",
-          description:
-            "Complete your profile to unlock more collaboration opportunities.",
-        });
-      }
+      // if (currentStep === 2) {
+      //   toast({
+      //     title: "Profile looking great!",
+      //     description:
+      //       "Complete your profile to unlock more collaboration opportunities.",
+      //   });
+      // }
 
       // Payment setup confirmation
       if (currentStep === 6) {

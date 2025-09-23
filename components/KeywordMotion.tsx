@@ -1,22 +1,23 @@
 "use client";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 
 export default function KeywordMotion() {
-  const wordVariant = {
-    hidden: { opacity: 0, y: 20 },
+  const wordVariant: Variants = {
+    hidden: { opacity: 0, y: 10 },
     visible: (i: number) => ({
       opacity: 1,
       y: 0,
       transition: {
-        delay: i * 0.4, // stagger each word
-        duration: 0.6,
-        ease: "easeOut",
+        delay: i * 0.05,
+        duration: 0.5,
+        // use numeric cubic-bezier or array easing to satisfy types
+        ease: [0.22, 1, 0.36, 1],
       },
     }),
     hover: {
       scale: 1.05,
-      color: "#facc15", // Tailwind yellow-400
-      transition: { type: "spring", stiffness: 300 },
+      color: "#2563eb",
+      transition: { type: "spring", stiffness: 300, damping: 20 },
     },
   };
 

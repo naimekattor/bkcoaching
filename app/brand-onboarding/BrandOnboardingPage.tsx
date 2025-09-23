@@ -1,13 +1,11 @@
 "use client";
 import { useState } from "react";
 import OnboardingLayout from "@/components/onboarding/OnboardingLayout";
-import WelcomeStep from "@/components/onboarding/brand/WelcomeStep";
 import BusinessInfoStep from "@/components/onboarding/brand/BusinessInfoStep";
 import ProfileSetupStep from "@/components/onboarding/brand/ProfileSetupStep";
 import PaymentStep from "@/components/onboarding/brand/PaymentStep";
 import CampaignStep from "@/components/onboarding/brand/CampaignStep";
 import CompletionStep from "@/components/onboarding/brand/CompletionStep";
-import { toast } from "@/hooks/use-toast";
 import { useRouter, useSearchParams } from "next/navigation";
 
 const BrandOnboarding = () => {
@@ -80,7 +78,7 @@ const BrandOnboarding = () => {
       case 5:
         return <CompletionStep onComplete={handleComplete} />;
       default:
-        return <BusinessInfoStep onNext={handleNext} />;
+        return <BusinessInfoStep onNext={handleNext} onBack={handleBack} />;
     }
   };
 

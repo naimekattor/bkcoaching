@@ -47,8 +47,8 @@ const OnboardingLayout = ({
       </header>
 
       {/* Progress Bar */}
-      <div className="px-6 py-4 bg-muted/30">
-        <div className="max-w-4xl mx-auto">
+      <div className=" py-4 bg-muted/30">
+        <div className="container mx-auto">
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span className="font-medium">{stepTitle}</span>
@@ -65,8 +65,8 @@ const OnboardingLayout = ({
       </div>
 
       {/* Content */}
-      <main className="px-6 py-8">
-        <div className="max-w-4xl mx-auto">{children}</div>
+      <main className=" py-8">
+        <div className="container mx-auto">{children}</div>
       </main>
     </div>
   );

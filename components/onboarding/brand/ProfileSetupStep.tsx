@@ -5,7 +5,15 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { HelpCircle, Target, Users, Hash, Heart, MapPin } from "lucide-react";
+import {
+  HelpCircle,
+  Target,
+  Users,
+  Hash,
+  Heart,
+  MapPin,
+  Users2,
+} from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -52,20 +60,64 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
   ];
 
   const targetAudiences = [
-    "Women 18–24",
-    "Women 25–34",
-    "Women 35–44",
-    "Men 18–24",
-    "Men 25–34",
-    "Men 35–44",
-    "Men 45+",
-    "Teen girls",
-    "Teen boys",
-    "Young married couples",
-    "Mothers with young children",
-    "Fathers with young children",
-    "Newlyweds",
-    "Singles in the dating stage",
+    {
+      label: "Women 18–24",
+      tooltip: "Gen Z – digital natives, heavy TikTok/IG use.",
+    },
+    {
+      label: "Women 25–34",
+      tooltip: "Millennials – young professionals / family-forming stage.",
+    },
+    {
+      label: "Women 35–44",
+      tooltip: "Older Millennials / Gen X – career stability & young families.",
+    },
+    {
+      label: "Men 18–24",
+      tooltip: "Gen Z – early adopters, trend-driven.",
+    },
+    {
+      label: "Men 25–34",
+      tooltip: "Millennials – tech-savvy, lifestyle & career focused.",
+    },
+    {
+      label: "Men 35–44",
+      tooltip: "Older Millennials / Gen X – higher disposable income.",
+    },
+    {
+      label: "Men 45+",
+      tooltip: "Gen X / Boomers – loyalty and financial stability.",
+    },
+    {
+      label: "Teen girls",
+      tooltip: "Gen Alpha / Gen Z – early fashion & fandom adopters.",
+    },
+    {
+      label: "Teen boys",
+      tooltip: "Gen Alpha / Gen Z – gaming, YouTube, and sports-heavy.",
+    },
+    {
+      label: "Young married couples",
+      tooltip: "Millennials – family-oriented, prioritizing lifestyle value.",
+    },
+    {
+      label: "Mothers with young children",
+      tooltip: "Millennials / Gen X – parenting, childcare, home-focused.",
+    },
+    {
+      label: "Fathers with young children",
+      tooltip: "Millennials / Gen X – parenting, career/family balance.",
+    },
+    {
+      label: "Newlyweds",
+      tooltip:
+        "Mostly Millennials – aspirational, home, and lifestyle-focused.",
+    },
+    {
+      label: "Singles in the dating stage",
+      tooltip:
+        "Gen Z / Millennials – lifestyle, social apps, and trend-driven.",
+    },
   ];
 
   const demographics = [
@@ -189,14 +241,14 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Users className="w-5 h-5" />
-                Target Audience *
+                <Users2 className="w-5 h-5" />
+                Target Audiences *
                 <Tooltip>
                   <TooltipTrigger>
                     <HelpCircle className="w-4 h-4 text-muted-foreground" />
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Who are you trying to reach with your campaigns?</p>
+                    <p>Select the audiences most relevant to your brand</p>
                   </TooltipContent>
                 </Tooltip>
               </CardTitle>
@@ -204,20 +256,34 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {targetAudiences.map((audience) => (
-                  <div key={audience} className="flex items-center space-x-2">
+                  <div
+                    key={audience.label}
+                    className="flex items-center space-x-2"
+                  >
                     <Checkbox
-                      id={audience}
-                      checked={formData.targetAudience.includes(audience)}
+                      id={audience.label}
+                      checked={formData.targetAudience.includes(audience.label)}
                       onCheckedChange={(checked) =>
                         handleArrayChange(
                           "targetAudience",
-                          audience,
+                          audience.label,
                           checked as boolean
                         )
                       }
                     />
-                    <Label htmlFor={audience} className="text-sm font-normal">
-                      {audience}
+                    <Label
+                      htmlFor={audience.label}
+                      className="flex items-center gap-1 text-sm font-normal"
+                    >
+                      {audience.label}
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <HelpCircle className="w-4 h-4 text-muted-foreground cursor-pointer" />
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-xs text-sm">
+                          {audience.tooltip}
+                        </TooltipContent>
+                      </Tooltip>
                     </Label>
                   </div>
                 ))}

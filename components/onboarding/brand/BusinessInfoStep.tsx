@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Upload, Building, Globe, MapPin } from "lucide-react";
+import PageHeaderWithSwitcher from "@/components/PageHeaderWithSwitcher";
 
 interface BusinessInfoStepProps {
   onNext: () => void;
@@ -73,6 +74,7 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
 
   return (
     <div className="space-y-8">
+      <PageHeaderWithSwitcher role="brands" />
       <div className="text-center space-y-4">
         <h1 className="text-3xl font-bold text-primary">
           Tell us about your business
