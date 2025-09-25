@@ -231,7 +231,7 @@ const WorkflowStep = ({ onNext, onBack }: WorkflowStepProps) => {
       </div>
 
       {/* Work Preferences */}
-      <Card>
+      {/* <Card>
         <CardHeader>
           <CardTitle>Work Preferences</CardTitle>
         </CardHeader>
@@ -251,7 +251,7 @@ const WorkflowStep = ({ onNext, onBack }: WorkflowStepProps) => {
             />
           </div>
 
-          {/* <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between">
             <div className="space-y-1">
               <Label>Auto-accept small campaigns</Label>
               <p className="text-xs text-muted-foreground">
@@ -265,9 +265,9 @@ const WorkflowStep = ({ onNext, onBack }: WorkflowStepProps) => {
                 setPreferences((prev) => ({ ...prev, autoAccept: checked }))
               }
             />
-          </div> */}
+          </div>
         </CardContent>
-      </Card>
+      </Card> */}
 
       {/* Key Expectations */}
       <Card className="bg-muted/30">

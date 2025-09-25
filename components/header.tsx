@@ -12,6 +12,7 @@ const navigationLinks = [
   { name: "Brands", href: "/brands" },
   { name: "Micro-Influencers", href: "/micro-Influencers" },
   { name: "About", href: "/about" },
+  { name: "Faq", href: "/faq" },
   { name: "Privacy", href: "/privacy" },
 ];
 

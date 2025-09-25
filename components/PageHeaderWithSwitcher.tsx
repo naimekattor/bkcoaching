@@ -11,7 +11,7 @@ export default function PageHeaderWithSwitcher({
 
   return (
     <div className="text-center space-y-2 mb-8">
-      <h1 className="text-2xl font-bold text-primary">
+      <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-primary">
         Hi, {isBrand ? "Brands" : "Micro-influencers"} 👋
       </h1>
       <p className="text-sm text-muted-foreground">

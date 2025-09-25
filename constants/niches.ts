@@ -1,0 +1,22 @@
+export const industriesNiches = [
+  "Beauty & Care",
+  "Business & Finance",
+  "Coaching & Personal Growth",
+  "Fashion & Style",
+  "Food & Cooking",
+  "Health & Wellness",
+
+  "Hair & Wigs",
+  "Home & Garden",
+  "Jewelry",
+  "Lifestyle",
+  "Makeup",
+  "Music",
+  "Nature & Outdoors",
+  "Parenting & Chinuch",
+  "Photography",
+  "Skincare",
+  "Simchas ",
+  "Travel & Family Trips",
+  "Women's Fitness",
+];

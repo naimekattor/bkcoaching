@@ -39,7 +39,7 @@ export default function Footer() {
             </button>
 
             <p className="text-sm text-gray-600 italic">
-              Free for the first 100 users - claim your spot now
+              Free for the first 100 users
             </p>
           </div>
         )}

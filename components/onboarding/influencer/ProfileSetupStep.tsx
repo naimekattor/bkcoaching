@@ -10,6 +10,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { User, Hash, Users, Camera } from "lucide-react";
 import Image from "next/image";
+import { industriesNiches } from "@/constants/niches";
+import { demographics } from "@/constants/demographics";
 
 interface ProfileSetupStepProps {
   onNext: () => void;
@@ -28,62 +30,13 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
       youtube: "",
       twitter: "",
       linkedin: "",
+      whatsapp: "",
     },
     niches: [] as string[],
     demographics: [] as string[],
     keywords: "",
   });
   type SocialPlatform = keyof typeof formData.socialLinks;
-
-  const contentNiches = [
-    "Fashion",
-    "Beauty & Skincare",
-    "Health & Fitness",
-    "Food & Cooking",
-    "Travel",
-    "Technology",
-    "Gaming",
-    "Sports",
-    "Music",
-    "Art & Design",
-    "Home & Garden",
-    "Parenting",
-    "Finance",
-    "Education",
-    "Entertainment",
-    "Automotive",
-    "Real Estate",
-    "Pet Care",
-    "Sustainability",
-    "Lifestyle",
-    "Business",
-    "Motivation",
-    "Comedy",
-    "DIY",
-    "Photography",
-  ];
-
-  const audienceDemographics = [
-    "18-24 years",
-    "25-34 years",
-    "35-44 years",
-    "45-54 years",
-    "55+ years",
-    "Primarily Female",
-    "Primarily Male",
-    "Mixed Gender",
-    "North America",
-    "Europe",
-    "Asia",
-    "Global Audience",
-    "Urban",
-    "Suburban",
-    "Rural",
-    "Students",
-    "Professionals",
-    "Parents",
-    "Entrepreneurs",
-  ];
 
   const handleArrayChange = (
     field: "niches" | "demographics",
@@ -236,7 +189,11 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                           },
                         }))
                       }
-                      placeholder={`@yourusername or profile URL`}
+                      placeholder={
+                        platform === "whatsapp"
+                          ? "+1 555-123-4567"
+                          : "@yourusername or profile URL"
+                      }
                     />
                   </div>
                 )
@@ -259,7 +216,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {contentNiches.map((niche) => (
+              {industriesNiches.map((niche) => (
                 <div key={niche} className="flex items-center space-x-2">
                   <Checkbox
                     id={niche}
@@ -297,7 +254,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {audienceDemographics.map((demo) => (
+              {demographics.map((demo) => (
                 <div key={demo} className="flex items-center space-x-2">
                   <Checkbox
                     id={demo}

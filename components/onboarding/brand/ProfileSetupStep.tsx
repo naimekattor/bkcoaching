@@ -20,6 +20,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { industriesNiches } from "@/constants/niches";
+import { demographics } from "@/constants/demographics";
 
 interface ProfileSetupStepProps {
   onNext: () => void;
@@ -28,36 +30,13 @@ interface ProfileSetupStepProps {
 
 const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
   const [formData, setFormData] = useState({
-    industries: [] as string[],
+    industriesNiches: [] as string[],
     targetAudience: [] as string[],
     keywords: "",
     demographics: [] as string[],
     values: [] as string[],
     inPersonAddress: "",
   });
-
-  const industries = [
-    "Beauty & Care",
-    "Business & Finance",
-    "Coaching & Personal Growth",
-    "Fashion & Style",
-    "Food & Cooking",
-    "Health & Wellness",
-
-    "Hair & Wigs",
-    "Home & Garden",
-    "Jewelry",
-    "Lifestyle",
-    "Makeup",
-    "Music",
-    "Nature & Outdoors",
-    "Parenting & Chinuch",
-    "Photography",
-    "Skincare",
-    "Simchas ",
-    "Travel & Family Trips",
-    "Women's Fitness",
-  ];
 
   const targetAudiences = [
     {
@@ -120,24 +99,6 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
     },
   ];
 
-  const demographics = [
-    "Women 25–45",
-    "Men 25–45",
-    "Gen Z (18–24)",
-    "Millennials (25–40)",
-    "Parents with Young Children",
-    "Students & Recent Graduates",
-    "Young Professionals",
-    "Entrepreneurs & Startups",
-    "High-Income / Affluent",
-    "Budget-Conscious Shoppers",
-    "Health & Wellness Focused",
-    "Trend & Style Seekers",
-    "Family-Oriented",
-    "Homeowners / New Home Buyers",
-    "Tech-Savvy Consumers",
-  ];
-
   const brandValues = [
     "Relatable",
     "Authentic",
@@ -170,7 +131,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
   };
 
   const isValid =
-    formData.industries.length > 0 && formData.targetAudience.length > 0;
+    formData.industriesNiches.length > 0 && formData.targetAudience.length > 0;
 
   return (
     <TooltipProvider>
@@ -187,7 +148,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
 
         <div className="grid gap-8">
           {/* Industries/Niches */}
-          <Card>
+          {/* <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Target className="w-5 h-5" />
@@ -204,14 +165,14 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {industries.map((industry) => (
+                {industriesNiches.map((industry) => (
                   <div key={industry} className="flex items-center space-x-2">
                     <Checkbox
                       id={industry}
-                      checked={formData.industries.includes(industry)}
+                      checked={formData.industriesNiches.includes(industry)}
                       onCheckedChange={(checked) =>
                         handleArrayChange(
-                          "industries",
+                          "industriesNiches",
                           industry,
                           checked as boolean
                         )
@@ -224,7 +185,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                 ))}
               </div>
               <div className="mt-4">
-                {formData.industries.map((industry) => (
+                {formData.industriesNiches.map((industry) => (
                   <Badge
                     key={industry}
                     variant="secondary"
@@ -235,7 +196,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                 ))}
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
 
           {/* Target Audience */}
           <Card>

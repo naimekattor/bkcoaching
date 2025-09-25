@@ -1,0 +1,17 @@
+export const demographics = [
+  "Women 25–45",
+  "Men 25–45",
+  "Gen Z (18–24)",
+  "Millennials (25–40)",
+  "Parents with Young Children",
+  "Students & Recent Graduates",
+  "Young Professionals",
+  "Entrepreneurs & Startups",
+  "High-Income / Affluent",
+  "Budget-Conscious Shoppers",
+  "Health & Wellness Focused",
+  "Trend & Style Seekers",
+  "Family-Oriented",
+  "Homeowners / New Home Buyers",
+  "Tech-Savvy Consumers",
+];

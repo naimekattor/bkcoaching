@@ -21,10 +21,16 @@ import {
   Percent,
   Crown,
 } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 interface CollaborationPreferencesStepProps {
   onNext: () => void;
   onBack: () => void;
+}
+
+interface RateOption {
+  type: string;
+  custom: string;
 }
 
 const CollaborationPreferencesStep = ({
@@ -35,30 +41,34 @@ const CollaborationPreferencesStep = ({
     contentFormats: [] as string[],
     paymentPreferences: [] as string[],
     rates: {
-      instagramPost: "",
-      instagramStory: "",
-      instagramReel: "",
-      tiktokVideo: "",
-      youtubeVideo: "",
-      youtubeShort: "",
-      blogPost: "",
-      podcastMention: "",
+      instagramPost: { type: "", custom: "" } as RateOption,
+      instagramStory: { type: "", custom: "" } as RateOption,
+      instagramReel: { type: "", custom: "" } as RateOption,
+      tiktokVideo: { type: "", custom: "" } as RateOption,
+      youtubeVideo: { type: "", custom: "" } as RateOption,
+      youtubeShort: { type: "", custom: "" } as RateOption,
+      blogPost: { type: "", custom: "" } as RateOption,
+      podcastMention: { type: "", custom: "" } as RateOption,
+      whatsappStatus: { type: "", custom: "" } as RateOption,
+      liveStream: { type: "", custom: "" } as RateOption,
+      userGeneratedContent: { type: "", custom: "" } as RateOption,
     },
     preferredBrands: "",
     avoidBrands: "",
   });
 
   const contentFormats = [
-    { id: "instagram-post", label: "Instagram Post", icon: Image },
-    { id: "instagram-story", label: "Instagram Story", icon: Image },
-    { id: "instagram-reel", label: "Instagram Reel", icon: Video },
-    { id: "tiktok-video", label: "TikTok Video", icon: Video },
-    { id: "youtube-video", label: "YouTube Video", icon: Video },
-    { id: "youtube-short", label: "YouTube Short", icon: Video },
-    { id: "blog-post", label: "Blog Post", icon: FileText },
-    { id: "podcast-mention", label: "Podcast Mention", icon: Mic },
-    { id: "live-stream", label: "Live Stream", icon: Video },
-    { id: "user-generated-content", label: "UGC Creation", icon: Video },
+    { id: "instagramPost", label: "Instagram Post", icon: Image },
+    { id: "instagramStory", label: "Instagram Story", icon: Image },
+    { id: "instagramReel", label: "Instagram Reel", icon: Video },
+    { id: "tiktokVideo", label: "TikTok Video", icon: Video },
+    { id: "youtubeVideo", label: "YouTube Video", icon: Video },
+    { id: "youtubeShort", label: "YouTube Short", icon: Video },
+    { id: "blogPost", label: "Blog Post", icon: FileText },
+    { id: "podcastMention", label: "Podcast Mention", icon: Mic },
+    { id: "liveStream", label: "Live Stream", icon: Video },
+    { id: "userGeneratedContent", label: "UGC Creation", icon: Video },
+    { id: "whatsappStatus", label: "WhatsApp Status Post", icon: Image },
   ];
 
   const paymentTypes = [
@@ -89,13 +99,11 @@ const CollaborationPreferencesStep = ({
   ];
 
   const rateRanges = [
-    { value: "0-100", label: "$0 - $100" },
-    { value: "100-500", label: "$100 - $500" },
-    { value: "500-1000", label: "$500 - $1,000" },
-    { value: "1000-2500", label: "$1,000 - $2,500" },
-    { value: "2500-5000", label: "$2,500 - $5,000" },
-    { value: "5000+", label: "$5,000+" },
-    { value: "custom", label: "Custom Rate" },
+    { value: "free", label: "Free" },
+    { value: "0-100", label: "$0 – $100" },
+    { value: "101-499", label: "$101 – $499" },
+    { value: "500+", label: "$500+" },
+    { value: "custom", label: "Custom amount" },
   ];
 
   const handleArrayChange = (
@@ -116,10 +124,29 @@ const CollaborationPreferencesStep = ({
     }
   };
 
-  const handleRateChange = (format: string, rate: string) => {
+  const handleRateChange = (format: string, value: string) => {
     setFormData((prev) => ({
       ...prev,
-      rates: { ...prev.rates, [format]: rate },
+      rates: {
+        ...prev.rates,
+        [format]: {
+          ...prev.rates[format as keyof typeof prev.rates],
+          type: value,
+        },
+      },
+    }));
+  };
+
+  const handleCustomChange = (format: string, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      rates: {
+        ...prev.rates,
+        [format]: {
+          ...prev.rates[format as keyof typeof prev.rates],
+          custom: value,
+        },
+      },
     }));
   };
 
@@ -141,9 +168,6 @@ const CollaborationPreferencesStep = ({
         <Card>
           <CardHeader>
             <CardTitle>Content Formats *</CardTitle>
-            <p className="text-sm text-muted-foreground">
-              Select the types of content you create (choose all that apply)
-            </p>
           </CardHeader>
           <CardContent>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -180,9 +204,6 @@ const CollaborationPreferencesStep = ({
         <Card>
           <CardHeader>
             <CardTitle>Payment Preferences *</CardTitle>
-            <p className="text-sm text-muted-foreground">
-              How do you prefer to be compensated for your work?
-            </p>
           </CardHeader>
           <CardContent>
             <div className="grid md:grid-cols-2 gap-4">
@@ -237,35 +258,23 @@ const CollaborationPreferencesStep = ({
                 <DollarSign className="w-5 h-5" />
                 Your Rate Ranges
               </CardTitle>
-              <p className="text-sm text-muted-foreground">
-                Set your typical rates for different content types (these can be
-                negotiated)
-              </p>
             </CardHeader>
             <CardContent>
               <div className="grid md:grid-cols-2 gap-6">
-                {formData.contentFormats
-                  .filter((format) =>
-                    [
-                      "instagram-post",
-                      "instagram-story",
-                      "instagram-reel",
-                      "tiktok-video",
-                      "youtube-video",
-                      "youtube-short",
-                      "blog-post",
-                      "podcast-mention",
-                    ].includes(format)
-                  )
-                  .map((format) => (
+                {formData.contentFormats.map((format) => {
+                  const selectedRate =
+                    formData.rates[format as keyof typeof formData.rates];
+                  if (!selectedRate) return null;
+
+                  return (
                     <div key={format} className="space-y-2">
                       <Label>
                         {contentFormats.find((f) => f.id === format)?.label}
                       </Label>
+
+                      {/* Dropdown */}
                       <Select
-                        value={
-                          formData.rates[format as keyof typeof formData.rates]
-                        }
+                        value={selectedRate.type}
                         onValueChange={(value) =>
                           handleRateChange(format, value)
                         }
@@ -281,59 +290,25 @@ const CollaborationPreferencesStep = ({
                           ))}
                         </SelectContent>
                       </Select>
+
+                      {/* Custom Input */}
+                      {selectedRate.type === "custom" && (
+                        <Input
+                          type="number"
+                          placeholder="Enter custom rate"
+                          value={selectedRate.custom}
+                          onChange={(e) =>
+                            handleCustomChange(format, e.target.value)
+                          }
+                        />
+                      )}
                     </div>
-                  ))}
+                  );
+                })}
               </div>
             </CardContent>
           </Card>
         )}
-
-        {/* Brand Preferences */}
-        {/* <div className="grid md:grid-cols-2 gap-8">
-          <Card>
-            <CardHeader>
-              <CardTitle>Preferred Brand Types</CardTitle>
-              <p className="text-sm text-muted-foreground">
-                What types of companies do you love working with?
-              </p>
-            </CardHeader>
-            <CardContent>
-              <Textarea
-                value={formData.preferredBrands}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    preferredBrands: e.target.value,
-                  }))
-                }
-                placeholder="Sustainable brands, tech startups, local businesses, fashion brands..."
-                rows={4}
-              />
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Brands to Avoid</CardTitle>
-              <p className="text-sm text-muted-foreground">
-                Any industries or types of brands you prefer not to work with?
-              </p>
-            </CardHeader>
-            <CardContent>
-              <Textarea
-                value={formData.avoidBrands}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    avoidBrands: e.target.value,
-                  }))
-                }
-                placeholder="Fast fashion, gambling, tobacco, etc."
-                rows={4}
-              />
-            </CardContent>
-          </Card>
-        </div> */}
       </div>
 
       {/* Navigation */}

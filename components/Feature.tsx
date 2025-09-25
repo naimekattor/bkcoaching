@@ -11,10 +11,11 @@ const Feature = () => {
       <div className="grid md:grid-cols-2 gap-8 container mx-auto">
         {/* For Brands Card */}
         <Link href={"/brand-onboarding"}>
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-            <div className="bg-primary text-white text-center py-6">
+          <div className="bg-white rounded-2xl shadow-lg flex flex-col justify-between  gap-4  overflow-hidden h-full">
+            <div className=" bg-primary text-white text-center py-6">
               <h3 className="text-2xl font-bold">For Brands</h3>
             </div>
+
             <div className="p-8 space-y-6">
               <div className="flex items-center gap-4 bg-[#F7F8F9] shadow p-1 rounded border-white border-3 text-[#838689] text-[24px]">
                 <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
@@ -110,7 +111,9 @@ const Feature = () => {
                   </p>
                 </div>
               </div>
-              <button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-4 rounded-lg transition-colors duration-200 text-lg mt-8">
+            </div>
+            <div className="p-8">
+              <button className="w-full  bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-4 rounded-lg transition-colors duration-200 text-lg ">
                 <Link href={"/brand-onboarding"}>Grow My Brand</Link>
               </button>
             </div>
@@ -119,11 +122,11 @@ const Feature = () => {
 
         {/* For Micro-Influencer Card */}
         <Link href={"/influencer-onboarding"}>
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-lg overflow-hidden  flex flex-col justify-between h-full">
             <div className="bg-primary text-white text-center py-6">
               <h3 className="text-2xl font-bold">For Micro-Influencer</h3>
             </div>
-            <div className="p-8 space-y-6">
+            <div className="space-y-6 p-8">
               <div className="flex items-center gap-4 bg-[#F7F8F9] shadow p-1 rounded border-white border-3 text-[#838689] text-[24px]">
                 <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
                   <svg
@@ -230,7 +233,9 @@ const Feature = () => {
                   </p>
                 </div>
               </div>
-              <button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-4 rounded-lg transition-colors duration-200 text-lg mt-8">
+            </div>
+            <div className="p-8">
+              <button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-4 rounded-lg transition-colors duration-200 text-lg ">
                 <Link href={"/influencer-onboarding"}>
                   Monetize My Influence
                 </Link>
