@@ -20,7 +20,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { industriesNiches } from "@/constants/niches";
 import { demographics } from "@/constants/demographics";
 
 interface ProfileSetupStepProps {
@@ -30,7 +29,7 @@ interface ProfileSetupStepProps {
 
 const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
   const [formData, setFormData] = useState({
-    industriesNiches: [] as string[],
+    // industriesNiches: [] as string[],
     targetAudience: [] as string[],
     keywords: "",
     demographics: [] as string[],
@@ -131,7 +130,8 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
   };
 
   const isValid =
-    formData.industriesNiches.length > 0 && formData.targetAudience.length > 0;
+    // formData.industriesNiches.length > 0 &&
+    formData.targetAudience.length > 0;
 
   return (
     <TooltipProvider>

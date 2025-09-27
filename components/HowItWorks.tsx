@@ -49,7 +49,7 @@ const HowItWorks = () => {
               <div className="bg-white rounded shadow-md  text-left">
                 <div className="flex gap-4 items-center justify-center bg-primary py-2 px-2 rounded">
                   <Image
-                    src={"/images/work-icon1.png"}
+                    src={"/images/work-icon2.png"}
                     width={62}
                     height={41}
                     alt="icon"
@@ -88,7 +88,7 @@ const HowItWorks = () => {
               <div className="bg-white rounded shadow-md  text-left">
                 <div className="flex gap-4 items-center justify-center bg-primary py-2 px-2 rounded">
                   <Image
-                    src={"/images/work-icon2.png"}
+                    src={"/images/work-icon1.png"}
                     width={62}
                     height={41}
                     alt="icon"

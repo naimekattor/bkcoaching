@@ -20,6 +20,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
       description:
         "Explore our marketplace to find perfect collaboration partners",
       action: "Browse Now",
+      link: "/brand-dashboard/campaigns",
     },
     {
       icon: Target,
@@ -27,6 +28,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
       description:
         "Check out micro-influencers we've matched with your campaign",
       action: "View Matches",
+      link: "/brand-dashboard/campaigns",
     },
     // {
     //   icon: MessageCircle,

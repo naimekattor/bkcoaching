@@ -11,7 +11,28 @@ import Image from "next/image";
 export default function MicroinfluencersPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [businessType, setBusinessType] = useState("Business Type");
-  const [location, setLocation] = useState("Location");
+  const [timeZone, setTimeZone] = useState("Time Zone");
+
+  const timeZones = Intl.supportedValuesOf("timeZone");
+
+  const businessTypes = [
+    "Beauty & Skincare Brands – makeup, skincare, haircare",
+    "Fashion & Apparel – clothing lines, modest fashion brands, boutique shops",
+    "Jewelry & Accessories – watches, handbags, eyewear",
+    "Health & Wellness – supplements, fitness programs, healthy living",
+    "Food & Beverage – restaurants, cafes, packaged foods, specialty drinks",
+    "Hospitality & Travel – hotels, resorts, Airbnb hosts, travel agencies",
+    "Events & Experiences – retreats, workshops, conferences",
+    "E-commerce Stores – online boutiques, curated shops, niche product sellers",
+    "Local Service Providers – gyms, salons, spas, personal trainers",
+    "Tech & Gadgets – phone accessories, smart devices, apps",
+    "Education & Coaching – online courses, coaches, masterminds",
+    "Parenting & Family Brands – baby products, toys, household goods",
+    "Home & Lifestyle – decor, furniture, kitchenware, cleaning products",
+    "Financial & Professional Services – investment apps, insurance, credit repair",
+    "Nonprofits & Causes – charities, community organizations, social impact campaigns",
+    "Other",
+  ];
 
   return (
     <div className="p-8">
@@ -48,29 +69,32 @@ export default function MicroinfluencersPage() {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4">
+          {/* Business Type */}
           <select
             value={businessType}
             onChange={(e) => setBusinessType(e.target.value)}
             className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
-            <option>Business Type</option>
-            <option>Fashion</option>
-            <option>Beauty</option>
-            <option>Fitness</option>
-            <option>Tech</option>
-            <option>Food</option>
+            <option value="Business Type">Business Type</option>
+            {businessTypes.map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
           </select>
 
+          {/* Time Zone */}
           <select
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
+            value={timeZone}
+            onChange={(e) => setTimeZone(e.target.value)}
             className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
-            <option>Location</option>
-            <option>United States</option>
-            <option>Canada</option>
-            <option>United Kingdom</option>
-            <option>Australia</option>
+            <option value="Time Zone">Select Time Zone</option>
+            {timeZones.map((tz) => (
+              <option key={tz} value={tz}>
+                {tz}
+              </option>
+            ))}
           </select>
 
           <div className="flex gap-3">

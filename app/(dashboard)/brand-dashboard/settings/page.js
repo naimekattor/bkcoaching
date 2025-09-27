@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // import { useRouter } from "next/navigation"
 
 export default function BrandSetupPage() {
@@ -13,7 +13,7 @@ export default function BrandSetupPage() {
     logo: null,
     businessType: "",
     industry: "",
-    location: "",
+    timeZone: "",
     description: "",
     instagramHandle: "",
     tiktokHandle: "",
@@ -22,6 +22,15 @@ export default function BrandSetupPage() {
     whatsappBusiness: "",
     emailNotifications: true,
   });
+  const [filters, setFilters] = useState({ timeZone: "" });
+  const timeZones = Intl.supportedValuesOf("timeZone");
+
+  const handleFilterChange = (filterType, value) => {
+    const newFilters = { ...filters, [filterType]: value };
+    setFilters(newFilters);
+    console.log("[v0] Filter changed:", filterType, "=", value);
+    console.log("[v0] All filters:", newFilters);
+  };
 
   // Handle input changes with console logging
   const handleInputChange = (field, value) => {
@@ -202,20 +211,27 @@ export default function BrandSetupPage() {
                 </select>
               </div>
 
-              {/* Location */}
+              {/* Time Zone */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Location
+                  Time Zone
                 </label>
-                <input
-                  type="text"
-                  placeholder="Business location"
-                  value={formData.location}
+                <select
+                  value={formData.timeZone}
                   onChange={(e) =>
-                    handleInputChange("location", e.target.value)
+                    handleInputChange("timeZone", e.target.value)
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md 
+               focus:outline-none focus:ring-2 focus:ring-blue-500 
+               focus:border-transparent"
+                >
+                  <option value="">Select Time Zone</option>
+                  {timeZones.map((tz) => (
+                    <option key={tz} value={tz}>
+                      {tz}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 

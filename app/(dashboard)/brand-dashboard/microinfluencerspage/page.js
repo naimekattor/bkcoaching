@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-
+import { ArrowLeft, Search, HelpCircle } from "lucide-react";
 // Mock data for creators - easily replaceable with API calls
 const mockCreators = [
   {
@@ -77,12 +77,14 @@ export default function MicroInfluencersPage() {
     contentNiches: "",
     budgetRange: "",
     platforms: "",
-    location: "",
+    timeZone: "",
     followers: "",
     gender: "",
   });
   const [filteredCreators, setFilteredCreators] = useState(mockCreators);
   const [isSearching, setIsSearching] = useState(false);
+
+  const timeZones = Intl.supportedValuesOf("timeZone");
 
   // Filter creators based on search term and filters
   useEffect(() => {
@@ -108,9 +110,9 @@ export default function MicroInfluencersPage() {
       );
     }
 
-    if (filters.location) {
+    if (filters.timeZone) {
       filtered = filtered.filter(
-        (creator) => creator.location === filters.location
+        (creator) => creator.timeZone === filters.timeZone
       );
     }
 
@@ -191,7 +193,7 @@ export default function MicroInfluencersPage() {
       contentNiches: "",
       budgetRange: "",
       platforms: "",
-      location: "",
+      timeZone: "",
       followers: "",
       gender: "",
     });
@@ -252,11 +254,71 @@ export default function MicroInfluencersPage() {
                 className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
               >
                 <option value="">Content Niches</option>
-                <option value="fashion">Fashion</option>
-                <option value="beauty">Beauty</option>
-                <option value="fitness">Fitness</option>
-                <option value="food">Food</option>
-                <option value="travel">Travel</option>
+                <option value="Beauty & Skincare Brands – makeup, skincare, haircare">
+                  Beauty & Skincare Brands – makeup, skincare, haircare
+                </option>
+                <option
+                  value="Fashion & Apparel – clothing lines, modest fashion brands,
+                  boutique shops"
+                >
+                  Fashion & Apparel – clothing lines, modest fashion brands,
+                  boutique shops
+                </option>
+                <option value="Jewelry & Accessories – watches, handbags, eyewear">
+                  Jewelry & Accessories – watches, handbags, eyewear
+                </option>
+                <option
+                  value="Health & Wellness – supplements, fitness programs, healthy
+                  living"
+                >
+                  Health & Wellness – supplements, fitness programs, healthy
+                  living
+                </option>
+                <option
+                  value="Food & Beverage – restaurants, cafes, packaged foods,
+                  specialty drinks"
+                >
+                  Food & Beverage – restaurants, cafes, packaged foods,
+                  specialty drinks
+                </option>
+                <option value="Hospitality & Travel – hotels, resorts, Airbnb hosts, travel agencies">
+                  Hospitality & Travel – hotels, resorts, Airbnb hosts, travel
+                  agencies
+                </option>
+                <option value="Events & Experiences – retreats, workshops, conferences">
+                  Events & Experiences – retreats, workshops, conferences
+                </option>
+                <option value="E-commerce Stores – online boutiques, curated shops, niche product sellers">
+                  E-commerce Stores – online boutiques, curated shops, niche
+                  product sellers
+                </option>
+                <option value="Local Service Providers – gyms, salons, spas, personal trainers">
+                  Local Service Providers – gyms, salons, spas, personal
+                  trainers
+                </option>
+                <option value="Tech & Gadgets – phone accessories, smart devices, apps">
+                  Tech & Gadgets – phone accessories, smart devices, apps
+                </option>
+                <option value="Education & Coaching – online courses, coaches, masterminds">
+                  Education & Coaching – online courses, coaches, masterminds
+                </option>
+                <option value="Parenting & Family Brands – baby products, toys, household goods">
+                  Parenting & Family Brands – baby products, toys, household
+                  goods
+                </option>
+                <option value="Home & Lifestyle – decor, furniture, kitchenware, cleaning products">
+                  Home & Lifestyle – decor, furniture, kitchenware, cleaning
+                  products
+                </option>
+                <option value="Financial & Professional Services – investment apps, insurance, credit repair">
+                  Financial & Professional Services – investment apps,
+                  insurance, credit repair
+                </option>
+                <option value="Education & Coaching – online courses, coaches, mastermindsNonprofits & Causes – charities, community organizations, social impact campaigns">
+                  Nonprofits & Causes – charities, community organizations,
+                  social impact campaigns
+                </option>
+                <option value="others">Others</option>
               </select>
 
               <select
@@ -267,10 +329,15 @@ export default function MicroInfluencersPage() {
                 className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
               >
                 <option value="">Budget Range</option>
-                <option value="0-500">$0 - $500</option>
-                <option value="500-1000">$500 - $1,000</option>
-                <option value="1000-5000">$1,000 - $5,000</option>
-                <option value="5000+">$5,000+</option>
+                <option
+                  value="Free
+"
+                >
+                  Free
+                </option>
+                <option value="0–100">$0–$100</option>
+                <option value="100-499">$101–$499</option>
+                <option value="500+">$500+</option>
               </select>
 
               <select
@@ -288,30 +355,43 @@ export default function MicroInfluencersPage() {
               </select>
 
               <select
-                value={filters.location}
-                onChange={(e) => handleFilterChange("location", e.target.value)}
+                value={filters.timeZone}
+                onChange={(e) => handleFilterChange("timeZone", e.target.value)}
                 className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
               >
-                <option value="">Location</option>
-                <option value="us">United States</option>
-                <option value="uk">United Kingdom</option>
-                <option value="ca">Canada</option>
-                <option value="au">Australia</option>
+                <option value="">Select Time Zone</option>
+                {timeZones.map((tz) => (
+                  <option key={tz} value={tz}>
+                    {tz}
+                  </option>
+                ))}
               </select>
 
-              <select
-                value={filters.followers}
-                onChange={(e) =>
-                  handleFilterChange("followers", e.target.value)
-                }
-                className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
-              >
-                <option value="">Followers</option>
-                <option value="1k-10k">1K - 10K</option>
-                <option value="10k-100k">10K - 100K</option>
-                <option value="100k-1m">100K - 1M</option>
-                <option value="1m+">1M+</option>
-              </select>
+              <div className="flex flex-col">
+                <label className="flex items-center text-sm font-medium text-gray-700 mb-1">
+                  Followers
+                  <div className="relative group ml-1">
+                    <HelpCircle className="w-4 h-4 text-gray-400 cursor-pointer" />
+                    <div className="absolute left-0 mt-2 w-64 bg-gray-900 text-white text-xs rounded-lg p-2 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                      This number refers to your total followers across
+                      Instagram.
+                    </div>
+                  </div>
+                </label>
+                <select
+                  value={filters.followers}
+                  onChange={(e) =>
+                    handleFilterChange("followers", e.target.value)
+                  }
+                  className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
+                >
+                  <option value="">Select range</option>
+                  <option value="1k-10k">1k - 10k</option>
+                  <option value="10k-100k">10k - 100k</option>
+                  <option value="100k-1m">100k - 1m</option>
+                  <option value="1m+">1m+</option>
+                </select>
+              </div>
 
               <select
                 value={filters.gender}
@@ -321,7 +401,7 @@ export default function MicroInfluencersPage() {
                 <option value="">Select Gender</option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
-                <option value="non-binary">Non-binary</option>
+                <option value="non-binary">No preference</option>
               </select>
             </div>
           </div>
@@ -329,7 +409,7 @@ export default function MicroInfluencersPage() {
           {/* Featured Creators */}
           <div className="mb-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-6">
-              Featured Creators
+              Featured Micro-influencers
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

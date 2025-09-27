@@ -4,7 +4,7 @@ import { IoSettingsOutline } from "react-icons/io5";
 
 export const brandLinks = [
   {
-    name: "Dashboard",
+    name: "My Dashboard",
     icon: <MdOutlineDashboard size={21} />,
     path: "/brand-dashboard",
   },
@@ -33,7 +33,7 @@ export const brandLinks = [
 
 export const influencerLinks = [
   {
-    name: "Dashboard",
+    name: "My Dashboard",
     icon: <MdOutlineDashboard size={21} />,
     path: "/influencer-dashboard",
   },
