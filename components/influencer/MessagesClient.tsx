@@ -238,14 +238,14 @@ export default function InfluencerMessagesClient() {
               >
                 <ArrowLeft className="h-5 w-5" />
               </button>
-              <h1 className="text-xl font-bold text-gray-900">Messages</h1>
+              <h1 className="text-xl font-bold text-primary">Messages</h1>
             </div>
             <div className="flex items-center gap-2">
               <button className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all duration-200">
                 <Bell className="h-5 w-5" />
                 <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
               </button>
-              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 text-white flex items-center justify-center text-sm font-semibold shadow-sm">
+              <div className="w-8 h-8 rounded-full bg-secondary text-white flex items-center justify-center text-sm font-semibold shadow-sm">
                 M
               </div>
             </div>
@@ -270,16 +270,16 @@ export default function InfluencerMessagesClient() {
             }}
             className="cursor-pointer flex items-center gap-3 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100 hover:from-blue-100 hover:to-indigo-100 transition-all duration-200"
           >
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center shadow-sm">
+            <div className="w-8 h-8 bg-secondary rounded-lg flex items-center justify-center shadow-sm">
               <span className="text-white text-sm">💬</span>
             </div>
             <div className="flex-1">
-              <span className="text-sm font-semibold text-blue-900">
+              <span className="text-sm font-semibold text-primary">
                 1 request
               </span>
-              <p className="text-xs text-blue-600">Tap to view</p>
+              <p className="text-xs text-primary">Tap to view</p>
             </div>
-            <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+            <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
           </div>
         </div>
 

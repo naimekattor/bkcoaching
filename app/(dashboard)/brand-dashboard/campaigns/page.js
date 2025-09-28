@@ -197,7 +197,7 @@ export default function CampaignDashboard() {
                 </div>
                 {stat.isAction && (
                   <button
-                    className="w-full mt-4 bg-orange-400 hover:bg-orange-500 text-white px-4 py-2 rounded-md font-medium transition-colors"
+                    className="w-full mt-4 bg-secondary hover:bg-yellow-600 text-primary px-4 py-2 rounded-md font-medium transition-colors"
                     onClick={() => setShowModal(true)}
                   >
                     Launch Campaign
@@ -325,7 +325,7 @@ export default function CampaignDashboard() {
                   <span className="text-sm text-gray-500">
                     {campaign.timeLeft}
                   </span>
-                  <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                  <button className="text-secondary hover:text-yellow-600 text-sm font-medium">
                     View Details
                   </button>
                 </div>
@@ -335,7 +335,7 @@ export default function CampaignDashboard() {
         </div>
         {/* Load More Button */}
         <div className="text-center">
-          <button className="px-8 py-2 border border-gray-300 rounded-md bg-white hover:bg-gray-50 transition-colors">
+          <button className="px-8 py-2 border border-gray-300 rounded-md bg-secondary text-primary font-semibold hover:bg-yellow-500 transition-colors">
             Load More Campaigns
           </button>
         </div>
@@ -381,7 +381,7 @@ export default function CampaignDashboard() {
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
-                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                    className="bg-secondary h-2 rounded-full transition-all duration-300"
                     style={{ width: `${selectedCampaign.progress}%` }}
                   ></div>
                 </div>
@@ -390,7 +390,7 @@ export default function CampaignDashboard() {
               <div className="mb-6">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="font-semibold">Assigned Creators</h3>
-                  <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                  <button className="text-secondary hover:text-blue-800 text-sm font-medium">
                     View All
                   </button>
                 </div>
@@ -418,7 +418,7 @@ export default function CampaignDashboard() {
                           </p>
                         </div>
                       </div>
-                      <button className="px-3 py-1 bg-orange-400 hover:bg-orange-500 text-white text-sm rounded-md font-medium transition-colors">
+                      <button className="px-3 py-1 bg-secondary hover:bg-yellow-600 text-white text-sm rounded-md font-medium transition-colors">
                         View Profile
                       </button>
                     </div>

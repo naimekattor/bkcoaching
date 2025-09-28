@@ -367,30 +367,35 @@ export default function MicroInfluencersPage() {
                 ))}
               </select>
 
-              <div className="flex flex-col">
-                <label className="flex items-center text-sm font-medium text-gray-700 mb-1">
-                  Followers
-                  <div className="relative group ml-1">
-                    <HelpCircle className="w-4 h-4 text-gray-400 cursor-pointer" />
-                    <div className="absolute left-0 mt-2 w-64 bg-gray-900 text-white text-xs rounded-lg p-2 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                      This number refers to your total followers across
-                      Instagram.
-                    </div>
-                  </div>
-                </label>
+              <div className="relative">
                 <select
                   value={filters.followers}
                   onChange={(e) =>
                     handleFilterChange("followers", e.target.value)
                   }
-                  className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg 
+               focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none pr-10"
                 >
                   <option value="">Select range</option>
-                  <option value="1k-10k">1k - 10k</option>
-                  <option value="10k-100k">10k - 100k</option>
-                  <option value="100k-1m">100k - 1m</option>
-                  <option value="1m+">1m+</option>
+                  <option value="0-100">0 – 100</option>
+                  <option value="101-500">101 – 500</option>
+                  <option value="501-1000">501 – 1,000</option>
+                  <option value="1001-5000">1,001 – 5,000</option>
+                  <option value="5001-10000">5,001 – 10,000</option>
+                  <option value="10001-25000">10,001 – 25,000</option>
+                  <option value="25001-50000">25,001 – 50,000</option>
+                  <option value="50001-100000">50,001 – 100,000</option>
+                  <option value="100001-250000">100,001 – 250,000</option>
+                  <option value="250001+">250,001+</option>
                 </select>
+
+                {/* Tooltip icon */}
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 group">
+                  <HelpCircle className="w-4 h-4 text-gray-400 cursor-pointer" />
+                  <div className="absolute right-0 mt-2 w-64 bg-gray-900 text-white text-xs rounded-md p-2 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                    This number refers to your total followers across Instagram.
+                  </div>
+                </div>
               </div>
 
               <select

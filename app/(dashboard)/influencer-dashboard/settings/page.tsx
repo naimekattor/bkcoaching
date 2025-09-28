@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowLeft, Upload, X, Search } from "lucide-react";
+import { Upload, X, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,43 +13,34 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useRouter } from "next/navigation";
 
 const contentNiches = [
-  "Spring Chic",
-  "Glow & Go",
-  "Heels & Hues",
-  "Coquette Edit",
-  "Purpose of Style",
-  "Fashion Hauls",
-  "Get Ready",
-  "Wardrobe Style",
-  "Beauty Tips",
-  "Lifestyle",
-  "Travel",
-  "Food",
-  "Fitness",
-  "Tech",
-  "Home Decor",
-  "Skincare",
-  "Makeup",
+  "Beauty & Skincare",
+  "Fashion & Apparel",
+  "Jewelry & Accessories",
+  "Health & Wellness",
+  "Food & Beverage",
+  "Hospitality & Travel",
+  "Events & Experiences",
+  "E-commerce Stores",
+  "Local Service Providers",
+  "Tech & Gadgets",
+  "Education & Coaching",
+  "Parenting & Family",
+  "Home & Lifestyle",
+  "Financial & Professional Services",
+  "Nonprofits & Causes",
+  "Other",
 ];
 
 export default function ProfilePage() {
-  const [selectedNiches, setSelectedNiches] = useState([
-    "Spring Chic",
-    "Glow & Go",
-    "Heels & Hues",
-    "Coquette Edit",
-    "Purpose of Style",
-    "Fashion Hauls",
-    "Get Ready",
-    "Wardrobe Style",
-  ]);
+  const [selectedNiches, setSelectedNiches] = useState<string[]>([]);
   const [nicheSearch, setNicheSearch] = useState("");
   const [paymentModels, setPaymentModels] = useState({
-    affiliate: false,
     gifted: false,
+    paid: false,
+    affiliate: false,
+    ambassador: false,
   });
 
   const removeNiche = (niche: string) => {
@@ -63,28 +54,25 @@ export default function ProfilePage() {
     setNicheSearch("");
   };
 
+  const timeZones = Intl.supportedValuesOf("timeZone");
+
   const filteredNiches = contentNiches.filter(
     (niche) =>
       niche.toLowerCase().includes(nicheSearch.toLowerCase()) &&
       !selectedNiches.includes(niche)
   );
 
-  const router = useRouter();
-
   return (
     <div className="min-h-screen p-6">
-      <div className=" mx-auto">
+      <div className="mx-auto">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
-          <Button variant="ghost" size="sm" className="p-2">
-            <ArrowLeft className="w-4 h-4" onClick={() => router.back()} />
-          </Button>
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900">
-              Complete Your Profile
+            <h1 className="text-2xl font-bold text-primary">
+              Micro-Influencer Profile Setup
             </h1>
             <p className="text-gray-600 mt-1">
-              Fill out your information to start connecting with Businesses.
+              Fill out your information to start connecting with Brands.
             </p>
           </div>
         </div>
@@ -92,28 +80,19 @@ export default function ProfilePage() {
         <div className="space-y-8">
           {/* Basic Information */}
           <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <div className="flex items-center gap-2 mb-6">
-              <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
-                <span className="text-blue-600 text-sm">👤</span>
-              </div>
-              <h2 className="text-lg font-semibold text-gray-900">
-                Basic Information
-              </h2>
-            </div>
+            <h2 className="text-lg font-semibold text-gray-900 mb-6">
+              Basic Information
+            </h2>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Full Name
-                  </label>
+                  <label className="block text-sm mb-2">Full Name</label>
                   <Input placeholder="Enter your full name" />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Bio / About Me
-                  </label>
+                  <label className="block text-sm mb-2">Bio / About Me</label>
                   <Textarea
                     placeholder="Tell us about yourself"
                     className="min-h-[100px] resize-none"
@@ -122,15 +101,22 @@ export default function ProfilePage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Location
-                    </label>
-                    <Input placeholder="City, Country" />
+                    <label className="block text-sm mb-2">Time Zone</label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Time Zone" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {timeZones.map((tz) => (
+                          <SelectItem key={tz} value={tz}>
+                            {tz}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Gender
-                    </label>
+                    <label className="block text-sm mb-2">Gender</label>
                     <Select>
                       <SelectTrigger>
                         <SelectValue placeholder="Select Gender" />
@@ -138,9 +124,8 @@ export default function ProfilePage() {
                       <SelectContent>
                         <SelectItem value="male">Male</SelectItem>
                         <SelectItem value="female">Female</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                        <SelectItem value="prefer-not-to-say">
-                          Prefer not to say
+                        <SelectItem value="no-preference">
+                          No Preference
                         </SelectItem>
                       </SelectContent>
                     </Select>
@@ -149,13 +134,11 @@ export default function ProfilePage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Birth Year
-                    </label>
+                    <label className="block text-sm mb-2">Birth Year</label>
                     <Input placeholder="1995" type="number" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm mb-2">
                       Languages Spoken
                     </label>
                     <Input placeholder="English, Spanish, French" />
@@ -164,9 +147,7 @@ export default function ProfilePage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Profile Picture
-                </label>
+                <label className="block text-sm mb-2">Profile Picture</label>
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
                   <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
                   <p className="text-sm text-gray-600">
@@ -186,58 +167,36 @@ export default function ProfilePage() {
 
           {/* Social Media Accounts */}
           <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <div className="flex items-center gap-2 mb-6">
-              <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
-                <span className="text-blue-600 text-sm">📱</span>
-              </div>
-              <h2 className="text-lg font-semibold text-gray-900">
-                Social Media Accounts
-              </h2>
-            </div>
+            <h2 className="text-lg font-semibold text-gray-900 mb-6">
+              Social Media Accounts
+            </h2>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <span className="text-pink-500">📷</span> Instagram Handle
-                  </label>
+                  <label className="block text-sm">Instagram Handle</label>
                   <Input placeholder="@username" />
                 </div>
-
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <span className="text-red-500">🎥</span> YouTube Channel
-                  </label>
+                  <label className="block text-sm">YouTube Channel</label>
                   <Input placeholder="Channel URL" />
                 </div>
-
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <span className="text-blue-500">🐦</span> Twitter / X
-                  </label>
+                  <label className="block text-sm">X (Twitter)</label>
                   <Input placeholder="@username" />
                 </div>
               </div>
-
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <span className="text-black">🎵</span> TikTok Handle
-                  </label>
+                  <label className="block text-sm">TikTok Handle</label>
                   <Input placeholder="@username" />
                 </div>
-
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <span className="text-green-500">💬</span> WhatsApp Business
-                  </label>
+                  <label className="block text-sm">WhatsApp Phone Number</label>
                   <Input placeholder="+1 (555) 123-4567" />
                 </div>
-
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <span className="text-blue-600">🌐</span> Website / Blog
-                  </label>
+                  <label className="block text-sm">Website / Blog</label>
                   <Input placeholder="https://yourwebsite.com" />
                 </div>
               </div>
@@ -245,18 +204,12 @@ export default function ProfilePage() {
           </div>
 
           {/* Content Niches */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <div className="flex items-center gap-2 mb-6">
-              <div className="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center">
-                <span className="text-purple-600 text-sm">🏷️</span>
-              </div>
-              <h2 className="text-lg font-semibold text-gray-900">
-                Content Niches
-              </h2>
-            </div>
-
+          <div className="bg-white rounded-lg border p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-6">
+              Content Niches
+            </h2>
             <div className="relative mb-4">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
                 placeholder="Search"
                 value={nicheSearch}
@@ -264,7 +217,7 @@ export default function ProfilePage() {
                 className="pl-10"
               />
               {nicheSearch && filteredNiches.length > 0 && (
-                <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-md shadow-lg z-10 max-h-40 overflow-y-auto">
+                <div className="absolute top-full left-0 right-0 bg-white border rounded-md shadow-lg z-10 max-h-40 overflow-y-auto">
                   {filteredNiches.map((niche) => (
                     <button
                       key={niche}
@@ -277,19 +230,15 @@ export default function ProfilePage() {
                 </div>
               )}
             </div>
-
             <div className="flex flex-wrap gap-2">
               {selectedNiches.map((niche) => (
                 <span
                   key={niche}
-                  className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
+                  className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 rounded-full text-sm"
                 >
                   {niche}
-                  <button
-                    onClick={() => removeNiche(niche)}
-                    className="text-gray-500 hover:text-gray-700"
-                  >
-                    <X className="w-3 h-3" />
+                  <button onClick={() => removeNiche(niche)}>
+                    <X className="w-3 h-3 text-gray-500" />
                   </button>
                 </span>
               ))}
@@ -297,82 +246,62 @@ export default function ProfilePage() {
           </div>
 
           {/* Rates & Payment */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <div className="flex items-center gap-2 mb-6">
-              <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
-                <span className="text-green-600 text-sm">💰</span>
-              </div>
-              <h2 className="text-lg font-semibold text-gray-900">
-                Rates & Payment
-              </h2>
-            </div>
-
+          <div className="bg-white rounded-lg border p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-6">
+              Rates & Payment
+            </h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Instagram Post Rate
-                  </label>
+                  <label className="block text-sm">Instagram Post Rate</label>
                   <Input placeholder="$500" />
                 </div>
-
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Payment Models
-                  </label>
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="affiliate"
-                        checked={paymentModels.affiliate}
-                        onCheckedChange={(checked) =>
-                          setPaymentModels((prev) => ({
-                            ...prev,
-                            affiliate: checked as boolean,
-                          }))
-                        }
-                      />
-                      <label
-                        htmlFor="affiliate"
-                        className="text-sm text-gray-700"
-                      >
-                        Affiliate Commission
-                      </label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="gifted"
-                        checked={paymentModels.gifted}
-                        onCheckedChange={(checked) =>
-                          setPaymentModels((prev) => ({
-                            ...prev,
-                            gifted: checked as boolean,
-                          }))
-                        }
-                      />
-                      <label htmlFor="gifted" className="text-sm text-gray-700">
-                        Gifted Products
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Instagram Story Rate
-                  </label>
+                  <label className="block text-sm">Instagram Story Rate</label>
                   <Input placeholder="$200" />
                 </div>
-
+              </div>
+              <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm">
                     Minimum Rate Per Project
                   </label>
                   <Input placeholder="$100" />
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Payment Models (separate) */}
+          <div className="bg-white rounded-lg border p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-6">
+              Payment Models
+            </h2>
+            <div className="space-y-3">
+              {[
+                { id: "gifted", label: "Gifted Products" },
+                { id: "paid", label: "Paid Collaborations" },
+                { id: "affiliate", label: "Affiliate Marketing" },
+                { id: "ambassador", label: "Brand Ambassadorship" },
+              ].map((model) => (
+                <div key={model.id} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={model.id}
+                    checked={
+                      paymentModels[model.id as keyof typeof paymentModels]
+                    }
+                    onCheckedChange={(checked) =>
+                      setPaymentModels((prev) => ({
+                        ...prev,
+                        [model.id]: checked as boolean,
+                      }))
+                    }
+                  />
+                  <label htmlFor={model.id} className="text-sm text-gray-700">
+                    {model.label}
+                  </label>
+                </div>
+              ))}
             </div>
           </div>
 

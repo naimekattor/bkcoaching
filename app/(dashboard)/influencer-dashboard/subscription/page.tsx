@@ -113,7 +113,7 @@ export default function SubscriptionPage() {
               <>
                 <button
                   onClick={() => setShowUpdateModal(true)}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="px-4 py-2 bg-secondary text-white rounded-lg hover:bg-yellow-600"
                 >
                   Update Plan
                 </button>
@@ -143,7 +143,7 @@ export default function SubscriptionPage() {
 
       {/* Cancel Confirmation Modal */}
       {showCancelModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50  flex items-center justify-center z-50">
           <div className="bg-white rounded-xl shadow-lg p-6 max-w-md w-full">
             <h3 className="text-lg font-semibold mb-4">Cancel Plan?</h3>
             <p className="text-gray-600 mb-6">
@@ -170,7 +170,7 @@ export default function SubscriptionPage() {
 
       {/* Update Plan Modal */}
       {showUpdateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl shadow-lg p-6 max-w-md w-full">
             <h3 className="text-lg font-semibold mb-4">Update Plan</h3>
             <p className="text-gray-600 mb-6">
@@ -183,7 +183,7 @@ export default function SubscriptionPage() {
               >
                 Cancel
               </button>
-              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+              <button className="px-4 py-2 bg-secondary text-white rounded-lg hover:bg-yellow-600">
                 Continue to Checkout
               </button>
             </div>

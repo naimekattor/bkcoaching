@@ -9,7 +9,7 @@ export const brandLinks = [
     path: "/brand-dashboard",
   },
   {
-    name: "Micro-influencers",
+    name: "Discover Micro-influencers",
     icon: <MdOutlineGroup size={25} />,
     path: "/brand-dashboard/microinfluencerspage",
   },
@@ -38,7 +38,7 @@ export const influencerLinks = [
     path: "/influencer-dashboard",
   },
   {
-    name: "Brand",
+    name: "Discover Brands",
     icon: <MdOutlineGroup size={25} />,
     path: "/influencer-dashboard/brand",
   },

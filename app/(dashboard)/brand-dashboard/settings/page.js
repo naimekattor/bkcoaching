@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 // import { useRouter } from "next/navigation"
 
 export default function BrandSetupPage() {
@@ -22,71 +22,67 @@ export default function BrandSetupPage() {
     whatsappBusiness: "",
     emailNotifications: true,
   });
-  const [filters, setFilters] = useState({ timeZone: "" });
+
   const timeZones = Intl.supportedValuesOf("timeZone");
 
-  const handleFilterChange = (filterType, value) => {
-    const newFilters = { ...filters, [filterType]: value };
-    setFilters(newFilters);
-    console.log("[v0] Filter changed:", filterType, "=", value);
-    console.log("[v0] All filters:", newFilters);
-  };
-
-  // Handle input changes with console logging
   const handleInputChange = (field, value) => {
-    console.log(`[Brand Setup] ${field} changed:`, value);
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
 
-  // Handle logo upload
   const handleLogoUpload = (event) => {
     const file = event.target.files[0];
-    console.log("[Brand Setup] Logo uploaded:", file);
     setFormData((prev) => ({
       ...prev,
       logo: file,
     }));
   };
 
-  // Handle form submission
   const handleSubmit = () => {
-    console.log("[Brand Setup] Form submitted with data:", formData);
-    // TODO: Replace with actual API call when backend is ready
-    // Example: await submitBrandProfile(formData);
-    alert(
-      "Brand profile setup completed! (This will be replaced with API call)"
-    );
+    console.log("[Brand Setup] Submitted data:", formData);
+    alert("Brand profile setup completed! (Replace with API call)");
   };
 
   const handleCancel = () => {
-    console.log("[Brand Setup] Form cancelled");
+    console.log("[Brand Setup] Cancelled");
     // router.back()
   };
 
+  // Standardized Business Type list (client Item 12)
+  const businessTypes = [
+    "Beauty & Skincare Brands – makeup, skincare, haircare",
+    "Fashion & Apparel – clothing lines, modest fashion brands, boutique shops",
+    "Jewelry & Accessories – watches, handbags, eyewear",
+    "Health & Wellness – supplements, fitness programs, healthy living",
+    "Food & Beverage – restaurants, cafes, packaged foods, specialty drinks",
+    "Hospitality & Travel – hotels, resorts, Airbnb hosts, travel agencies",
+    "Events & Experiences – retreats, workshops, conferences",
+    "E-commerce Stores – online boutiques, curated shops, niche product sellers",
+    "Local Service Providers – gyms, salons, spas, personal trainers",
+    "Tech & Gadgets – phone accessories, smart devices, apps",
+    "Education & Coaching – online courses, coaches, masterminds",
+    "Parenting & Family Brands – baby products, toys, household goods",
+    "Home & Lifestyle – decor, furniture, kitchenware, cleaning products",
+    "Financial & Professional Services – investment apps, insurance, credit repair",
+    "Nonprofits & Causes – charities, community organizations, social impact campaigns",
+    "Other",
+  ];
+
   return (
-    <div className="min-h-screen  p-6">
+    <div className="min-h-screen p-6">
       {/* Header */}
-      <div className=" mx-auto">
+      <div className="mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">
-              Brands Profile Setup
+              Brand Profile Setup
             </h1>
             <p className="text-gray-600 mt-1">
-              Complete your Brands profile to connect with Micro-Influencers
+              Complete your Brand profile to connect with Micro-Influencers
             </p>
           </div>
-          {/* <div className="flex items-center gap-4">
-            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-              <span className="text-gray-600">🔔</span>
-            </div>
-            <div className="w-8 h-8 bg-blue-900 rounded-full flex items-center justify-center">
-              <span className="text-white text-sm font-medium">M</span>
-            </div>
-          </div> */}
         </div>
 
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
@@ -172,16 +168,11 @@ export default function BrandSetupPage() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="">Select business...</option>
-                  <option value="ecommerce">E-commerce</option>
-                  <option value="saas">SaaS</option>
-                  <option value="retail">Retail</option>
-                  <option value="fashion">Fashion</option>
-                  <option value="beauty">Beauty</option>
-                  <option value="fitness">Fitness</option>
-                  <option value="food">Food & Beverage</option>
-                  <option value="travel">Travel</option>
-                  <option value="tech">Technology</option>
-                  <option value="other">Other</option>
+                  {businessTypes.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -190,25 +181,15 @@ export default function BrandSetupPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Industry
                 </label>
-                <select
+                <input
+                  type="text"
+                  placeholder="Enter your industry"
                   value={formData.industry}
                   onChange={(e) =>
                     handleInputChange("industry", e.target.value)
                   }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="">Select...</option>
-                  <option value="fashion">Fashion & Apparel</option>
-                  <option value="beauty">Beauty & Cosmetics</option>
-                  <option value="health">Health & Wellness</option>
-                  <option value="technology">Technology</option>
-                  <option value="food">Food & Beverage</option>
-                  <option value="travel">Travel & Tourism</option>
-                  <option value="fitness">Fitness & Sports</option>
-                  <option value="lifestyle">Lifestyle</option>
-                  <option value="automotive">Automotive</option>
-                  <option value="finance">Finance</option>
-                </select>
+                />
               </div>
 
               {/* Time Zone */}
@@ -221,9 +202,7 @@ export default function BrandSetupPage() {
                   onChange={(e) =>
                     handleInputChange("timeZone", e.target.value)
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md 
-               focus:outline-none focus:ring-2 focus:ring-blue-500 
-               focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="">Select Time Zone</option>
                   {timeZones.map((tz) => (
@@ -241,7 +220,7 @@ export default function BrandSetupPage() {
                 Business Profile Description
               </label>
               <textarea
-                placeholder="We are a bakery in New York offering fresh cakes and bread. We collaborate with food influencers."
+                placeholder="Describe your brand briefly..."
                 value={formData.description}
                 onChange={(e) =>
                   handleInputChange("description", e.target.value)
@@ -269,62 +248,45 @@ export default function BrandSetupPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Instagram Handle
                 </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <span className="text-pink-500">📷</span>
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="@yourbusiness"
-                    value={formData.instagramHandle}
-                    onChange={(e) =>
-                      handleInputChange("instagramHandle", e.target.value)
-                    }
-                    className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
+                <input
+                  type="text"
+                  placeholder="@yourbusiness"
+                  value={formData.instagramHandle}
+                  onChange={(e) =>
+                    handleInputChange("instagramHandle", e.target.value)
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
               </div>
 
-              {/* TikTok */}
+              {/* TikTok Handle */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   TikTok
                 </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <span className="text-black">🎵</span>
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="tiktok.com/yourpage"
-                    value={formData.tiktokHandle}
-                    onChange={(e) =>
-                      handleInputChange("tiktokHandle", e.target.value)
-                    }
-                    className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
+                <input
+                  type="text"
+                  placeholder="tiktok.com/yourpage"
+                  value={formData.tiktokHandle}
+                  onChange={(e) =>
+                    handleInputChange("tiktokHandle", e.target.value)
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
               </div>
 
               {/* X Handle */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  X Handle
+                  X (Twitter)
                 </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <span className="text-black">❌</span>
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="@yourbusiness"
-                    value={formData.xHandle}
-                    onChange={(e) =>
-                      handleInputChange("xHandle", e.target.value)
-                    }
-                    className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
+                <input
+                  type="text"
+                  placeholder="@yourbusiness"
+                  value={formData.xHandle}
+                  onChange={(e) => handleInputChange("xHandle", e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
               </div>
 
               {/* LinkedIn Profile */}
@@ -332,20 +294,15 @@ export default function BrandSetupPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   LinkedIn Profile
                 </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <span className="text-blue-600">💼</span>
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="linkedin.com/company/yourcompany"
-                    value={formData.linkedinProfile}
-                    onChange={(e) =>
-                      handleInputChange("linkedinProfile", e.target.value)
-                    }
-                    className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
+                <input
+                  type="text"
+                  placeholder="linkedin.com/company/yourcompany"
+                  value={formData.linkedinProfile}
+                  onChange={(e) =>
+                    handleInputChange("linkedinProfile", e.target.value)
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
               </div>
 
               {/* WhatsApp Business */}
@@ -353,35 +310,24 @@ export default function BrandSetupPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   WhatsApp Business
                 </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <span className="text-green-500">💬</span>
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="WhatsApp Business account"
-                    value={formData.whatsappBusiness}
-                    onChange={(e) =>
-                      handleInputChange("whatsappBusiness", e.target.value)
-                    }
-                    className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
+                <input
+                  type="text"
+                  placeholder="WhatsApp Business number or link"
+                  value={formData.whatsappBusiness}
+                  onChange={(e) =>
+                    handleInputChange("whatsappBusiness", e.target.value)
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
               </div>
             </div>
           </div>
 
           {/* Email Notifications */}
           <div className="mb-8">
-            <div className="flex items-center gap-2 mb-6">
-              <div className="w-5 h-5 bg-orange-100 rounded flex items-center justify-center">
-                <span className="text-orange-600 text-xs">⚠️</span>
-              </div>
-              <h2 className="text-lg font-semibold text-gray-900">
-                Email Notifications
-              </h2>
-            </div>
-
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              Email Notifications
+            </h2>
             <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
               <div>
                 <h3 className="font-medium text-gray-900">New Market Match</h3>
@@ -398,7 +344,7 @@ export default function BrandSetupPage() {
                   }
                   className="sr-only peer"
                 />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
               </label>
             </div>
           </div>

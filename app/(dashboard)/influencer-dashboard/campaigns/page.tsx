@@ -28,8 +28,8 @@ export default function CampaignsPage() {
       progress: 75,
       deadline: "3 days",
       price: "$950",
-      color: "bg-blue-500",
-      badge: "bg-blue-100 text-blue-600",
+      color: "bg-primary",
+      badge: "bg-yellow-100 text-primary",
     },
     {
       title: "Fashion Week Collection",
@@ -38,8 +38,8 @@ export default function CampaignsPage() {
       progress: 90,
       deadline: "1 day",
       price: "$1,500",
-      color: "bg-orange-500",
-      badge: "bg-orange-100 text-orange-600",
+      color: "bg-secondary",
+      badge: "bg-orange-100 text-primary",
     },
   ]);
 
@@ -52,6 +52,7 @@ export default function CampaignsPage() {
         <p className="text-gray-600">
           Create, manage and collaborate with campaigns
         </p>
+        <h2 className="text-primary font-bold text-[20px] mt-4">Analytics</h2>
       </div>
 
       {/* Stats Cards */}
@@ -60,13 +61,13 @@ export default function CampaignsPage() {
           title="Active Campaigns"
           value="24"
           subtitle="Currently active and completed"
-          icon={<Megaphone className="w-8 h-8 text-blue-600" />}
+          icon={<Megaphone className="w-8 h-8 text-primary" />}
         />
         <StatCard
           title="Completed"
           value="47"
           subtitle="Campaigns running this month"
-          icon={<CircleCheck className="w-8 h-8 text-green-600" />}
+          icon={<CircleCheck className="w-8 h-8 text-primary" />}
         />
         <StatCard
           title="Total Earnings"
@@ -104,10 +105,10 @@ export default function CampaignsPage() {
                 <div>
                   <h3 className="font-medium">{item.title}</h3>
                   <p className="text-sm text-gray-500">{item.brand}</p>
-                  <p className="text-green-600 font-semibold">{item.price}</p>
+                  <p className="text-secondary font-semibold">{item.price}</p>
                 </div>
                 <div className="flex space-x-2">
-                  <button className="px-4 py-1 bg-green-500 text-white rounded-lg hover:bg-green-600">
+                  <button className="px-4 py-1 bg-secondary text-white rounded-lg hover:bg-secondary">
                     Accept
                   </button>
                   <button className="px-4 py-1 border rounded-lg hover:bg-gray-100">
@@ -146,7 +147,7 @@ export default function CampaignsPage() {
                 </div>
                 <div className="flex justify-between text-sm">
                   <p className="text-gray-500">Deadline: {item.deadline}</p>
-                  <p className="text-green-600 font-semibold">{item.price}</p>
+                  <p className="text-secondary font-semibold">{item.price}</p>
                 </div>
               </div>
             ))}
@@ -164,7 +165,7 @@ export default function CampaignsPage() {
               placeholder="Search campaigns..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>
 
@@ -172,7 +173,7 @@ export default function CampaignsPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
             >
               <option>All Status</option>
               <option>Active</option>
@@ -183,7 +184,7 @@ export default function CampaignsPage() {
             <select
               value={platformFilter}
               onChange={(e) => setPlatformFilter(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
             >
               <option>All Platforms</option>
               <option>Instagram</option>
@@ -213,10 +214,10 @@ export default function CampaignsPage() {
                 <span
                   className={`px-2 py-1 rounded-full text-xs font-medium ${
                     campaign.status === "Active"
-                      ? "bg-green-100 text-green-800"
+                      ? "bg-secondary text-primary"
                       : campaign.status === "Completed"
                       ? "bg-gray-100 text-gray-800"
-                      : "bg-blue-100 text-blue-800"
+                      : "bg-yellow-100 text-primary"
                   }`}
                 >
                   {campaign.status}
@@ -287,7 +288,7 @@ export default function CampaignsPage() {
                 <span className="text-sm text-gray-500">
                   {campaign.endDate}
                 </span>
-                <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                <button className="text-secondary hover:text-yellow-600 text-sm font-medium">
                   View Details
                 </button>
               </div>
@@ -298,7 +299,7 @@ export default function CampaignsPage() {
 
       {/* Load More */}
       <div className="text-center">
-        <button className="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+        <button className="px-6 py-3 border border-gray-300 rounded-lg text-primary font-semibold hover:bg-yellow-600 bg-secondary transition-colors">
           Load More Campaigns
         </button>
       </div>

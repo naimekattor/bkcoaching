@@ -10,7 +10,7 @@ const DashboardTopHeader = () => {
           <div className="bg-[#EEF1F5] rounded-full p-2">
             <IoIosNotificationsOutline size={25} />
           </div>
-          <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
+          <div className="w-8 h-8 bg-secondary rounded-full flex items-center justify-center text-white text-sm font-medium">
             M
           </div>
         </div>
