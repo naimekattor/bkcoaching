@@ -38,7 +38,7 @@ const HowItWorks = () => {
         <div className="container mx-auto text-center mb-12">
           <h2 className="text-3xl md:text-[40px] font-bold text-primary">
             Where brands and micro- <br />
-            influencers &quot;Grow Together&quot;
+            influencers grow together
           </h2>
         </div>
 

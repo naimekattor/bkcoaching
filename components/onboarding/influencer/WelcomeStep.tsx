@@ -66,9 +66,9 @@ const WelcomeStep = ({ onNext }: WelcomeStepProps) => {
         <Button variant="hero" size="lg" onClick={onNext}>
           Let&apos;s Get Started
         </Button>
-        <p className="text-sm text-muted-foreground">
+        {/* <p className="text-sm text-muted-foreground">
           Free to join • Keep 85% of earnings • Get paid weekly
-        </p>
+        </p> */}
       </div>
     </div>
   );

@@ -4,62 +4,106 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const faqs = [
+  // Micro-influencers
   {
-    question: "1. I’m a brand. How does it work?",
+    question: "What is The Social Market?",
     answer:
-      "You tell us what kind of people you’d like representing your product — and we introduce you to micro-influencers who fit. If you see someone you’d like to work with, we call that a Market Match. They share your product with their community in a natural way, and you get results you can actually measure.",
+      "The Social Market is a place where micro-influencers and brands connect to grow authentically. You share products you genuinely love and get discovered by brands that value your influence.",
   },
   {
-    question: "2. I’m a micro-influencer. How do I get started?",
+    question: "Who can join as a micro-influencer?",
     answer:
-      "Create a profile, share what kinds of products you actually love, and wait for brands to find you. Once a Market Match is made, you’ll receive the product (sometimes plus payment) to post about in your own voice. No scripts, no gimmicks — just you being you.",
+      "Anyone with a small to medium-sized social media audience who wants to share products they care about. Whether you have 50 followers or 50,000, your authentic voice matters. You don’t need to be a professional content creator — passion, creativity, and trustworthiness are what brands love.",
+  },
+  {
+    question: "Do I have to pay to join?",
+    answer:
+      "Limited browsing the platform is free — you can explore a selection of brands and micro-influencers without signing up. To fully join and access all features, there’s a very low monthly subscription. Even better: the first 100 users get free lifetime access as a thank-you for helping us build the platform.",
+  },
+  {
+    question: "Do I have to post on Instagram?",
+    answer:
+      "Nope! You can share content wherever your audience engages — YouTube, WhatsApp Status, or even your podcast!",
+  },
+  {
+    question: "How do I set my rates for paid collaborations?",
+    answer:
+      "When creating your profile, you’ll see suggested ranges: Free, $0–$100, $101–$499, $500+, or a custom amount. Plus, in your profile you can indicate exactly how you’d like to get compensated. Brands will see your preferences and match you with campaigns that fit.",
+  },
+  {
+    question: "Can I work with multiple brands at the same time?",
+    answer: "Absolutely! You can manage several campaigns at once.",
+  },
+  {
+    question: "What happens after I sign up?",
+    answer:
+      "You’ll have full access to browse potential brands and you’ll be able to contact them with just a click. Once you fill out your profile, brands can find you and reach out to you as well!",
+  },
+  {
+    question: "I don’t have a big following — can I still make money?",
+    answer:
+      "Totally! Many brands care more about engagement and authenticity than numbers. Even small, dedicated audiences can be very effective.",
   },
   {
     question:
-      "3. I don’t consider myself an “influencer,” but I’d post about products if I got paid. Can I join?",
+      "I just want to repost a product to my WhatsApp Status or social feed — is that okay?",
     answer:
-      "Yes! That’s exactly who we’re built for. If you’ve got people who trust your recommendations — whether that’s a few hundred Instagram followers, your WhatsApp groups, or your gym buddies — you’re eligible for Market Matches. You don’t need a blue check to be valuable here.",
+      "Yep. Many users start by sharing products on Status or social posts. You decide what to share and when, and brands will compensate you based on what you agree on.",
+  },
+
+  // Brands
+  {
+    question: "What types of brands succeed here?",
+    answer:
+      "Any size — from small to growing e-commerce businesses or mid-sized lifestyle brands. Popular categories include beauty, wellness, fashion, food, and nonprofit and lifestyle. Success comes from campaigns that resonate with influencers and their audiences.",
   },
   {
-    question: "4. How do Market Matches actually work?",
-    answer:
-      "A Market Match happens when a brand and an everyday voice (you!) agree to collaborate. You’ll see the details upfront: what you’ll receive, what kind of post is expected, and when payment (if included) is sent. Clear, simple, no guesswork.",
+    question: "How do I create a campaign?",
+    answer: `Creating a campaign is super easy! Just add your product or campaign details:
+- Description of the product or service you offer
+- Relevant Images or media for reposting
+- Campaign type: Paid, gifted, or both
+- Target audience filters (content niche, demographics, audience size, timezone)
+- Suggested rates or budget
+We’ve made it super simple to set up your campaign so that the right micro-influencers can find it quickly and start growing your brand immediately. Influencers can either repost your existing content, create original content, or do both — whatever works best for your campaign.`,
   },
   {
-    question: "5. How do I get paid?",
+    question: "How do I match with the right micro-influencers?",
     answer:
-      "Payment terms vary by campaign. Some are product-only, others include payment, and some are a mix. Either way, you’ll always know before you accept a Market Match.",
+      "You can filter by audience size, content niche, demographics, timezone, and compensation preference (paid, gift, or both). We’ve made this super easy — once you set the parameters, you’ll see influencers who match, so finding the right partners is fast and stress-free.",
   },
   {
-    question: "6. How much does this cost for brands?",
+    question: "Can I offer free products instead of paying?",
     answer:
-      "Far less than ads or celebrity campaigns. Costs depend on how many Market Matches you’d like and your campaign goals. We make sure brands of all sizes — from new launches to established players — can find the right fit.",
+      "Yessss! One of the options for micro-influencers in their profile is how they want to get compensated — gifts only, paid only, or a mix. If an influencer only wants gifts, you can filter for that and only see matches who prefer gifting campaigns. Paid or mixed campaigns work the same way but are agreed on directly between the brand and influencer.",
   },
   {
-    question: "7. How do I know if it’s working?",
+    question: "Do I have to pay to join as a brand?",
     answer:
-      "Every campaign comes with measurable results: engagement, reach, and conversions. You’ll see how your Market Matches perform in real numbers.",
+      "Limited browsing of potential influencers is free. Full access and campaign creation require a subscription. Early adopters (first 100 users) get free lifetime access.",
+  },
+
+  // Platform & General
+  {
+    question: "Do I need to choose between being a brand or micro-influencer?",
+    answer:
+      "Nope! Many users are both. You’ll just complete both profiles and have separate dashboards for each. And btw if you are both, we have a discount created specifically for you.",
   },
   {
     question:
-      "8. Do I need thousands of followers to join as a micro-influencer?",
+      "I am running multiple campaigns and working with several different micro-influencers. How do I keep track of what’s working and which influencers are bringing results?",
     answer:
-      "Nope. We prioritize trust over follower count. If people pay attention to what you recommend, you’re a good fit.",
+      "Once each campaign is live, the dashboards give analytics for engagement, reach, and performance, so you can see what’s working and optimize campaigns.",
   },
   {
-    question: "9. What kinds of brands use The Social Market?",
+    question: "What if I need help?",
     answer:
-      "Mostly lifestyle, beauty, wellness, fashion, parenting, food, and fitness brands — but honestly, any product that real people use and talk about is a good candidate.",
-  },
-  {
-    question: "10. How do I join?",
-    answer:
-      "Brands: sign up, tell us your goals, and start making Market Matches. Micro-influencers: create your profile, share what excites you, and get ready for brands to find you.",
+      "Support is always available! You can reach out to us anytime at [insert contact email or link] for assistance.",
   },
 ];
 
 export default function FAQSection() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
     <section className="py-16 lg:py-24 bg-white">
@@ -89,7 +133,7 @@ export default function FAQSection() {
                     animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
                     transition={{ duration: 0.3, ease: "easeInOut" }}
-                    className="mt-2 text-primary text-sm leading-relaxed overflow-hidden"
+                    className="mt-2 text-primary text-sm leading-relaxed overflow-hidden whitespace-pre-line"
                   >
                     {faq.answer}
                   </motion.p>

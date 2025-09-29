@@ -93,7 +93,7 @@ export default function BrandCard({
         <p className="text-gray-600 mb-6">{description}</p>
 
         <div className="text-left lg:text-left mt-4">
-          <button className="bg-primary text-white font-semibold py-3 px-8 inline-block rounded-lg shadow-md hover:bg-blue-800 transition-colors duration-300">
+          <button className="bg-primary text-white font-semibold py-3 px-8 inline-block rounded-lg shadow-md hover:bg-primary transition-colors duration-300">
             Explore Brand
           </button>
         </div>

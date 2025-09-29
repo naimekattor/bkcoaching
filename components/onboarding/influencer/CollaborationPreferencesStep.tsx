@@ -40,6 +40,7 @@ const CollaborationPreferencesStep = ({
   const [formData, setFormData] = useState({
     contentFormats: [] as string[],
     paymentPreferences: [] as string[],
+    paymentPercentages: {} as Record<string, string>,
     rates: {
       instagramPost: { type: "", custom: "" } as RateOption,
       instagramStory: { type: "", custom: "" } as RateOption,
@@ -210,33 +211,61 @@ const CollaborationPreferencesStep = ({
               {paymentTypes.map((type) => (
                 <div
                   key={type.id}
-                  className="flex items-start space-x-3 p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                  className="flex flex-col md:flex-row items-start md:items-center space-y-2 md:space-y-0 md:space-x-4 p-4 border rounded-lg hover:bg-muted/50 transition-colors"
                 >
-                  <Checkbox
-                    id={type.id}
-                    checked={formData.paymentPreferences.includes(type.id)}
-                    onCheckedChange={(checked) =>
-                      handleArrayChange(
-                        "paymentPreferences",
-                        type.id,
-                        checked as boolean
-                      )
-                    }
-                  />
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <type.icon className="w-4 h-4 text-muted-foreground" />
-                      <Label
-                        htmlFor={type.id}
-                        className="text-sm font-medium cursor-pointer"
-                      >
-                        {type.label}
-                      </Label>
+                  <div className="flex items-start space-x-3">
+                    <Checkbox
+                      id={type.id}
+                      checked={formData.paymentPreferences.includes(type.id)}
+                      onCheckedChange={(checked) =>
+                        handleArrayChange(
+                          "paymentPreferences",
+                          type.id,
+                          checked as boolean
+                        )
+                      }
+                    />
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <type.icon className="w-4 h-4 text-muted-foreground" />
+                        <Label
+                          htmlFor={type.id}
+                          className="text-sm font-medium cursor-pointer"
+                        >
+                          {type.label}
+                        </Label>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {type.description}
+                      </p>
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      {type.description}
-                    </p>
                   </div>
+
+                  {/* NEW: Percentage Input for relevant payment types */}
+                  {(type.id === "affiliate" || type.id === "paid") &&
+                    formData.paymentPreferences.includes(type.id) && (
+                      <div className="flex flex-col">
+                        <Label className="text-xs font-medium">
+                          Percentage (%)
+                        </Label>
+                        <Input
+                          type="number"
+                          min={0}
+                          max={100}
+                          placeholder="e.g. 20"
+                          value={formData.paymentPercentages[type.id] || ""}
+                          onChange={(e) =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              paymentPercentages: {
+                                ...prev.paymentPercentages,
+                                [type.id]: e.target.value,
+                              },
+                            }))
+                          }
+                        />
+                      </div>
+                    )}
                 </div>
               ))}
             </div>

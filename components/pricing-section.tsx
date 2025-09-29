@@ -9,19 +9,20 @@ export function PricingSection() {
     {
       title: "I'm a Micro-Influencer",
       price: 100,
-      description: "Ideal for individual Micro-Influencer",
+      description: "Ideal for influencers no matter your audience size. ",
       savings: "",
     },
     {
       title: "I'm a Brand",
       price: 100,
-      description: "Perfect for small businesses",
+      description: "Perfect for Growing Businesses",
       savings: "",
     },
     {
       title: "I'm Both",
       price: 180,
-      description: "Bundle of both plans",
+      description:
+        "Bundle Both and Save: Perfect for anyone growing their own business and also open to helping others grow (and getting paid!)",
       savings: "Save 20%",
     },
   ];
@@ -30,17 +31,18 @@ export function PricingSection() {
     {
       title: "I'm a Micro-Influencer",
       price: 12,
-      description: "Ideal for individual Micro-Influencer",
+      description: "Ideal for influencers no matter your audience size. ",
     },
     {
       title: "I'm a Brand",
       price: 12,
-      description: "Perfect for small businesses",
+      description: "Perfect for Growing Businesses",
     },
     {
       title: "I'm Both",
       price: 20,
-      description: "Bundle of both plans",
+      description:
+        "Bundle Both and Save: Perfect for anyone growing their own business and also open to helping others grow (and getting paid!)",
       savings: "Save 20%",
     },
   ];

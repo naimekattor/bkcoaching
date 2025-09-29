@@ -200,7 +200,7 @@ export default function MessagesPage() {
               <button className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors">
                 <Bell className="h-5 w-5" />
               </button>
-              <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-medium">
+              <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-medium">
                 M
               </div>
             </div>
@@ -214,7 +214,7 @@ export default function MessagesPage() {
               placeholder="Search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
             />
           </div>
         </div>
@@ -225,12 +225,12 @@ export default function MessagesPage() {
             onClick={() => {
               router.push("/brand-dashboard/message-request-permission");
             }}
-            className="cursor-pointer flex items-center gap-3 p-3 bg-blue-50 rounded-lg"
+            className="cursor-pointer flex items-center gap-3 p-3 bg-primary rounded-lg"
           >
-            <div className="w-8 h-8 bg-blue-600 rounded-md flex items-center justify-center">
+            <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center">
               <span className="text-white text-sm">💬</span>
             </div>
-            <span className="text-sm font-medium text-blue-900">1 request</span>
+            <span className="text-sm font-medium text-primary">1 request</span>
           </div>
         </div>
 
@@ -241,7 +241,7 @@ export default function MessagesPage() {
               key={contact.id}
               className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors ${
                 selectedContact?.id === contact.id
-                  ? "bg-blue-50 border-blue-200"
+                  ? "bg-primary border-primary"
                   : ""
               }`}
               onClick={() => handleContactSelect(contact)}
@@ -329,7 +329,7 @@ export default function MessagesPage() {
                 <div className="max-w-md w-full text-center">
                   <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
                     <div className="w-8 h-8 bg-orange-400 rounded-full"></div>
-                    <div className="w-6 h-6 bg-blue-900 rounded-full -ml-2"></div>
+                    <div className="w-6 h-6 bg-primary rounded-full -ml-2"></div>
                   </div>
                   <h2 className="text-xl font-semibold text-gray-900 mb-2">
                     {mockChatRequest.requester}
@@ -370,7 +370,7 @@ export default function MessagesPage() {
                     <div
                       className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
                         message.isOwn
-                          ? "bg-blue-600 text-white"
+                          ? "bg-primary text-white"
                           : "bg-gray-200 text-gray-900"
                       }`}
                     >
@@ -404,11 +404,11 @@ export default function MessagesPage() {
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
                 />
                 <button
                   onClick={handleSendMessage}
-                  className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
+                  className="p-2 bg-primary hover:bg-primary text-white rounded-md transition-colors"
                 >
                   <Send className="h-5 w-5" />
                 </button>

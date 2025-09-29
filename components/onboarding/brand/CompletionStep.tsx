@@ -116,7 +116,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
           </div>
           <p className="text-sm text-muted-foreground">
             Share The Social Market with other brands and earn $20 when they
-            sign up. They&apos;ll get 25% off their first month too!
+            sign up. They&apos;ll get first month free!
           </p>
           <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
             <code className="flex-1 text-center font-mono text-sm bg-background px-3 py-2 rounded">
@@ -125,6 +125,63 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
             <Button size="sm" variant="outline" onClick={copyReferralCode}>
               <Copy className="w-4 h-4 mr-2" />
               Copy
+            </Button>
+          </div>
+
+          {/* Social Share Buttons */}
+          <div className="pt-4 flex flex-wrap justify-center gap-3">
+            <Button
+              size="sm"
+              variant="outline"
+              className="bg-primary text-white"
+              onClick={() =>
+                window.open(
+                  `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+                    window.location.href
+                  )}&quote=Use my referral code ${referralCode}!`,
+                  "_blank"
+                )
+              }
+            >
+              Facebook
+            </Button>
+
+            <Button
+              size="sm"
+              className="bg-primary text-white"
+              variant="outline"
+              onClick={() =>
+                window.open(`https://www.instagram.com/`, "_blank")
+              }
+            >
+              Instagram
+            </Button>
+
+            <Button
+              size="sm"
+              className="bg-primary text-white"
+              variant="outline"
+              onClick={() =>
+                window.open(
+                  `https://api.whatsapp.com/send?text=${encodeURIComponent(
+                    `Join The Social Market using my referral code ${referralCode}! ${window.location.href}`
+                  )}`,
+                  "_blank"
+                )
+              }
+            >
+              WhatsApp
+            </Button>
+
+            <Button
+              size="sm"
+              className="bg-primary text-white"
+              variant="outline"
+              onClick={() =>
+                (window.location.href = `mailto:?subject=Join The Social Market&body=Use my referral code ${referralCode} to sign up: ${window.location.href}`)
+              }
+            >
+              Email
             </Button>
           </div>
         </CardContent>

@@ -103,6 +103,11 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
     { id: "linkedin-post", label: "LinkedIn Post", icon: FileText },
     { id: "whatsapp-status", label: "WhatsApp Status", icon: FileText },
     { id: "email-campaign", label: "Email Campaign", icon: FileText },
+    {
+      id: "Repost Only",
+      label: "Repost Only",
+      icon: FileText,
+    },
   ];
 
   const timelineOptions = [

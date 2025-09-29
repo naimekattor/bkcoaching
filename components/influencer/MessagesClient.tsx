@@ -243,7 +243,7 @@ export default function InfluencerMessagesClient() {
             <div className="flex items-center gap-2">
               <button className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all duration-200">
                 <Bell className="h-5 w-5" />
-                <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-secondary rounded-full"></span>
               </button>
               <div className="w-8 h-8 rounded-full bg-secondary text-white flex items-center justify-center text-sm font-semibold shadow-sm">
                 M
@@ -258,7 +258,7 @@ export default function InfluencerMessagesClient() {
               placeholder="Search conversations..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-gray-50 focus:bg-white transition-all duration-200 text-sm"
+              className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none bg-gray-50 focus:bg-white transition-all duration-200 text-sm"
             />
           </div>
         </div>
@@ -268,7 +268,7 @@ export default function InfluencerMessagesClient() {
             onClick={() => {
               router.push("/influencer-dashboard/message-request");
             }}
-            className="cursor-pointer flex items-center gap-3 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100 hover:from-blue-100 hover:to-indigo-100 transition-all duration-200"
+            className="cursor-pointer flex items-center gap-3 p-3 bg-primary/20 rounded-xl border border-primary hover:from-primary hover:to-indigo-100 transition-all duration-200"
           >
             <div className="w-8 h-8 bg-secondary rounded-lg flex items-center justify-center shadow-sm">
               <span className="text-white text-sm">💬</span>
@@ -289,7 +289,7 @@ export default function InfluencerMessagesClient() {
               key={contact.id}
               className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-all duration-200 ${
                 selectedContact?.id === contact.id
-                  ? "bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-l-blue-500"
+                  ? "bg-gradient-to-r from-primary to-indigo-50 border-l-4 border-l-primary"
                   : ""
               }`}
               onClick={() => handleContactSelect(contact)}
@@ -328,7 +328,7 @@ export default function InfluencerMessagesClient() {
         </div>
 
         <div className="p-4 border-t border-gray-200 bg-gray-50">
-          <button className="text-sm text-blue-600 hover:text-blue-700 font-medium hover:bg-blue-50 px-3 py-2 rounded-lg transition-all duration-200">
+          <button className="text-sm text-primary hover:text-primary font-medium hover:bg-primary px-3 py-2 rounded-lg transition-all duration-200">
             See more conversations...
           </button>
         </div>
@@ -396,7 +396,7 @@ export default function InfluencerMessagesClient() {
                 <div className="max-w-md w-full text-center">
                   <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
                     <div className="w-8 h-8 bg-orange-400 rounded-full"></div>
-                    <div className="w-6 h-6 bg-blue-900 rounded-full -ml-2"></div>
+                    <div className="w-6 h-6 bg-primary rounded-full -ml-2"></div>
                   </div>
                   <h2 className="text-xl font-semibold text-gray-900 mb-2">
                     {mockChatRequest.requester}
@@ -448,7 +448,7 @@ export default function InfluencerMessagesClient() {
                       <div
                         className={`px-4 py-3 rounded-2xl shadow-sm ${
                           message.isOwn
-                            ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-br-md"
+                            ? "bg-gradient-to-r from-primary to-primary text-white rounded-br-md"
                             : "bg-white text-gray-900 rounded-bl-md border border-gray-200"
                         }`}
                       >
@@ -458,7 +458,7 @@ export default function InfluencerMessagesClient() {
                         <p
                           className={`text-xs mt-1 ${
                             message.isOwn
-                              ? "text-blue- personally want to see a version where the Suspense boundary is implemented directly in the MessagesClient component, rather than creating a separate server component. Can you provide that version with all type errors fixed, maintaining the same functionality and structure?100"
+                              ? "text-primary personally want to see a version where the Suspense boundary is implemented directly in the MessagesClient component, rather than creating a separate server component. Can you provide that version with all type errors fixed, maintaining the same functionality and structure?100"
                               : "text-gray-400"
                           }`}
                         >
@@ -483,13 +483,13 @@ export default function InfluencerMessagesClient() {
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm bg-gray-50 focus:bg-white transition-all duration-200"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-primary focus:border-primary outline-none text-sm bg-gray-50 focus:bg-white transition-all duration-200"
                   />
                 </div>
                 <button
                   onClick={handleSendMessage}
                   disabled={!newMessage.trim()}
-                  className="p-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-gray-300 disabled:electronics-400 text-white rounded-full transition-all duration-200 flex-shrink-0 shadow-sm disabled:cursor-not-allowed"
+                  className="p-3 bg-gradient-to-r from-primary to-primary hover:from-primary hover:to-primary800 disabled:from-gray-300 disabled:electronics-400 text-white rounded-full transition-all duration-200 flex-shrink-0 shadow-sm disabled:cursor-not-allowed"
                 >
                   <Send className="h-5 w-5" />
                 </button>
@@ -499,7 +499,7 @@ export default function InfluencerMessagesClient() {
         ) : (
           <div className="flex-1 flex items-center justify-center p-6 bg-gradient-to-br from-gray-50 to-gray-100">
             <div className="text-center text-gray-500 max-w-sm">
-              <div className="w-20 h-20 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+              <div className="w-20 h-20 bg-gradient-to-r from-primary to-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
                 <span className="text-3xl">💬</span>
               </div>
               <h3 className="text-lg font-semibold text-gray-700 mb-2">
@@ -511,7 +511,7 @@ export default function InfluencerMessagesClient() {
               </p>
               <button
                 onClick={() => setShowSidebar(true)}
-                className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-medium text-sm shadow-sm transition-all duration-200 md:hidden"
+                className="px-6 py-3 bg-gradient-to-r from-primary to-indigo-600 hover:from-primary hover:to-indigo-700 text-white rounded-xl font-medium text-sm shadow-sm transition-all duration-200 md:hidden"
               >
                 View Conversations
               </button>

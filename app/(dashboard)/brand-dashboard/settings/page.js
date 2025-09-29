@@ -23,7 +23,15 @@ export default function BrandSetupPage() {
     emailNotifications: true,
   });
 
-  const timeZones = Intl.supportedValuesOf("timeZone");
+  const timeZones = [
+    { value: "America/New_York", label: "Eastern (ET)" },
+    { value: "America/Chicago", label: "Central (CT)" },
+    { value: "America/Denver", label: "Mountain (MT)" },
+    { value: "America/Phoenix", label: "Arizona (no DST)" },
+    { value: "America/Los_Angeles", label: "Pacific (PT)" },
+    { value: "America/Anchorage", label: "Alaska (AKST/AKDT)" },
+    { value: "Pacific/Honolulu", label: "Hawaii (HST)" },
+  ];
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({
@@ -89,8 +97,8 @@ export default function BrandSetupPage() {
           {/* Basic Profile Information */}
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-6">
-              <div className="w-5 h-5 bg-blue-100 rounded flex items-center justify-center">
-                <span className="text-blue-600 text-xs">📋</span>
+              <div className="w-5 h-5 bg-primary rounded flex items-center justify-center">
+                <span className="text-primary text-xs">📋</span>
               </div>
               <h2 className="text-lg font-semibold text-gray-900">
                 Basic Profile Information
@@ -110,7 +118,7 @@ export default function BrandSetupPage() {
                   onChange={(e) =>
                     handleInputChange("businessName", e.target.value)
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
               </div>
 
@@ -124,7 +132,7 @@ export default function BrandSetupPage() {
                   placeholder="Your business slogan"
                   value={formData.tagline}
                   onChange={(e) => handleInputChange("tagline", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
               </div>
 
@@ -165,7 +173,7 @@ export default function BrandSetupPage() {
                   onChange={(e) =>
                     handleInputChange("businessType", e.target.value)
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 >
                   <option value="">Select business...</option>
                   {businessTypes.map((type) => (
@@ -188,7 +196,7 @@ export default function BrandSetupPage() {
                   onChange={(e) =>
                     handleInputChange("industry", e.target.value)
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
               </div>
 
@@ -202,14 +210,15 @@ export default function BrandSetupPage() {
                   onChange={(e) =>
                     handleInputChange("timeZone", e.target.value)
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
                 >
-                  <option value="">Select Time Zone</option>
+                  <option value="">Time Zone (US)</option>
                   {timeZones.map((tz) => (
-                    <option key={tz} value={tz}>
-                      {tz}
+                    <option key={tz.value} value={tz.value}>
+                      {tz.label}
                     </option>
                   ))}
+                  <option value="Others">Others</option>
                 </select>
               </div>
             </div>
@@ -226,7 +235,7 @@ export default function BrandSetupPage() {
                   handleInputChange("description", e.target.value)
                 }
                 rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
               />
             </div>
           </div>
@@ -255,7 +264,7 @@ export default function BrandSetupPage() {
                   onChange={(e) =>
                     handleInputChange("instagramHandle", e.target.value)
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
               </div>
 
@@ -271,7 +280,7 @@ export default function BrandSetupPage() {
                   onChange={(e) =>
                     handleInputChange("tiktokHandle", e.target.value)
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
               </div>
 
@@ -285,7 +294,7 @@ export default function BrandSetupPage() {
                   placeholder="@yourbusiness"
                   value={formData.xHandle}
                   onChange={(e) => handleInputChange("xHandle", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
               </div>
 
@@ -301,7 +310,7 @@ export default function BrandSetupPage() {
                   onChange={(e) =>
                     handleInputChange("linkedinProfile", e.target.value)
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
               </div>
 
@@ -317,7 +326,7 @@ export default function BrandSetupPage() {
                   onChange={(e) =>
                     handleInputChange("whatsappBusiness", e.target.value)
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
               </div>
             </div>
@@ -344,7 +353,7 @@ export default function BrandSetupPage() {
                   }
                   className="sr-only peer"
                 />
-                <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
+                <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-primary after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
               </label>
             </div>
           </div>

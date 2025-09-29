@@ -121,7 +121,7 @@ export default function ProposalsPage() {
             <button className="p-2 text-gray-400 hover:text-gray-600">
               🔔
             </button>
-            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
+            <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm font-medium">
               M
             </div>
           </div>
@@ -133,7 +133,7 @@ export default function ProposalsPage() {
             {/* Basic Information Section */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
               <div className="flex items-center gap-2 mb-6">
-                <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm">
+                <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center text-white text-sm">
                   👤
                 </div>
                 <h2 className="text-lg font-semibold text-gray-900">
@@ -154,7 +154,7 @@ export default function ProposalsPage() {
                     onChange={(e) =>
                       handleInputChange("businessName", e.target.value)
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                   />
                 </div>
 
@@ -190,7 +190,7 @@ export default function ProposalsPage() {
                     rows={4}
                     value={formData.bio}
                     onChange={(e) => handleInputChange("bio", e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                   />
                 </div>
 
@@ -206,7 +206,7 @@ export default function ProposalsPage() {
                     onChange={(e) =>
                       handleInputChange("location", e.target.value)
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                   />
                 </div>
 
@@ -222,7 +222,7 @@ export default function ProposalsPage() {
                     onChange={(e) =>
                       handleInputChange("tagline", e.target.value)
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                   />
                 </div>
 
@@ -238,7 +238,7 @@ export default function ProposalsPage() {
                     onChange={(e) =>
                       handleInputChange("budget", e.target.value)
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                   />
                 </div>
 
@@ -254,7 +254,7 @@ export default function ProposalsPage() {
                     onChange={(e) =>
                       handleInputChange("timeline", e.target.value)
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                   />
                 </div>
               </div>
@@ -272,7 +272,7 @@ export default function ProposalsPage() {
                 onChange={(e) =>
                   handleInputChange("proposalMessage", e.target.value)
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               />
             </div>
 
@@ -296,7 +296,7 @@ export default function ProposalsPage() {
                     type="file"
                     accept=".pdf,.doc,.docx"
                     onChange={(e) => handleFileChange(e, "campaignBrief")}
-                    className="mt-2 text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                    className="mt-2 text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary hover:file:bg-primary"
                   />
                   <span className="text-xs text-gray-500 block pl-6">
                     (PDF, doc)
@@ -316,7 +316,7 @@ export default function ProposalsPage() {
                     accept="image/*"
                     multiple
                     onChange={(e) => handleFileChange(e, "productPhotos")}
-                    className="mt-2 text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                    className="mt-2 text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary hover:file:bg-primary"
                   />
                 </div>
               </div>

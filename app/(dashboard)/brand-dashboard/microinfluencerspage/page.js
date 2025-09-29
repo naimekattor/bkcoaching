@@ -84,7 +84,15 @@ export default function MicroInfluencersPage() {
   const [filteredCreators, setFilteredCreators] = useState(mockCreators);
   const [isSearching, setIsSearching] = useState(false);
 
-  const timeZones = Intl.supportedValuesOf("timeZone");
+  const timeZones = [
+    { value: "America/New_York", label: "Eastern (ET)" },
+    { value: "America/Chicago", label: "Central (CT)" },
+    { value: "America/Denver", label: "Mountain (MT)" },
+    { value: "America/Phoenix", label: "Arizona (no DST)" },
+    { value: "America/Los_Angeles", label: "Pacific (PT)" },
+    { value: "America/Anchorage", label: "Alaska (AKST/AKDT)" },
+    { value: "Pacific/Honolulu", label: "Hawaii (HST)" },
+  ];
 
   // Filter creators based on search term and filters
   useEffect(() => {
@@ -214,7 +222,7 @@ export default function MicroInfluencersPage() {
               <div className="bg-[#EEF1F5] rounded-full p-2">
                 <IoIosNotificationsOutline size={25} />
               </div>
-              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
+              <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm font-medium">
                 M
               </div>
             </div> */}
@@ -359,12 +367,13 @@ export default function MicroInfluencersPage() {
                 onChange={(e) => handleFilterChange("timeZone", e.target.value)}
                 className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
               >
-                <option value="">Select Time Zone</option>
+                <option value="">Time Zone (US)</option>
                 {timeZones.map((tz) => (
-                  <option key={tz} value={tz}>
-                    {tz}
+                  <option key={tz.value} value={tz.value}>
+                    {tz.label}
                   </option>
                 ))}
+                <option value="Others">Others</option>
               </select>
 
               <div className="relative">
@@ -376,7 +385,7 @@ export default function MicroInfluencersPage() {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg 
                focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none pr-10"
                 >
-                  <option value="">Select range</option>
+                  <option value="">Total Audience Reach</option>
                   <option value="0-100">0 – 100</option>
                   <option value="101-500">101 – 500</option>
                   <option value="501-1000">501 – 1,000</option>

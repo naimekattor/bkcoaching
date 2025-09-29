@@ -12,7 +12,7 @@ const navigationLinks = [
   { name: "Brands", href: "/brands" },
   { name: "Micro-Influencers", href: "/micro-Influencers" },
   { name: "About", href: "/about" },
-  { name: "Faq", href: "/faq" },
+  { name: "FAQ", href: "/faq" },
   { name: "Privacy", href: "/privacy" },
 ];
 
@@ -29,22 +29,24 @@ const Header = () => {
         <div className="container mx-auto px-4 py-2 sm:px-6 lg:px-8 bg-primary backdrop-blur rounded-md">
           <div className="flex h-16 items-center justify-between">
             {/* Logo */}
-            <div className="flex-shrink-0">
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5 }}
-                className="text-2xl font-bold text-primary"
-              >
-                <Image
-                  priority
-                  width={160}
-                  height={45}
-                  alt="social market"
-                  src={"/images/logo.png"}
-                />
-              </motion.div>
-            </div>
+            <Link href={"/"}>
+              <div className="flex-shrink-0">
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="text-2xl font-bold text-primary"
+                >
+                  <Image
+                    priority
+                    width={160}
+                    height={45}
+                    alt="social market"
+                    src={"/images/logo.png"}
+                  />
+                </motion.div>
+              </div>
+            </Link>
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex md:items-center md:space-x-8">

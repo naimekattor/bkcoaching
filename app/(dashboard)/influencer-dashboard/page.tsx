@@ -12,7 +12,7 @@ export default function Page() {
   return (
     <div className="">
       <div className="flex-1">
-        <div className="bg-white rounded-lg border-2 border-dashed border-blue-300 p-6">
+        <div className="bg-white rounded-lg border-2 border-dashed border-primary p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="w-16 h-16 bg-slate-800 rounded-lg flex items-center justify-center">

@@ -67,7 +67,7 @@ export default function BrandProfilePage() {
         <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-blue-600 rounded-lg flex items-center justify-center text-white text-2xl font-bold">
+              <div className="w-16 h-16 bg-primary rounded-lg flex items-center justify-center text-white text-2xl font-bold">
                 {brand.name.charAt(0)}
               </div>
               <div>
@@ -139,7 +139,7 @@ export default function BrandProfilePage() {
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600 mb-1">
+                  <div className="text-2xl font-bold text-primary mb-1">
                     {brand.campaigns.total}
                   </div>
                   <div className="text-sm text-gray-600">Total Campaigns</div>
@@ -277,13 +277,13 @@ export default function BrandProfilePage() {
                 </div>
                 <div className="flex gap-2">
                   {brand.socialLinks.linkedin && (
-                    <div className="w-8 h-8 bg-blue-100 rounded flex items-center justify-center">
-                      <Linkedin className="w-4 h-4 text-blue-600" />
+                    <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
+                      <Linkedin className="w-4 h-4 text-primary" />
                     </div>
                   )}
                   {brand.socialLinks.twitter && (
-                    <div className="w-8 h-8 bg-blue-100 rounded flex items-center justify-center">
-                      <Twitter className="w-4 h-4 text-blue-600" />
+                    <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
+                      <Twitter className="w-4 h-4 text-primary" />
                     </div>
                   )}
                   {brand.socialLinks.instagram && (
@@ -306,13 +306,13 @@ export default function BrandProfilePage() {
                     key={index}
                     className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50"
                   >
-                    <div className="w-8 h-8 bg-blue-100 rounded flex items-center justify-center">
+                    <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
                       {resource.type.includes("Video") ? (
-                        <Video className="w-4 h-4 text-blue-600" />
+                        <Video className="w-4 h-4 text-primary" />
                       ) : resource.type.includes("Media") ? (
-                        <ImageIcon className="w-4 h-4 text-blue-600" />
+                        <ImageIcon className="w-4 h-4 text-primary" />
                       ) : (
-                        <FileText className="w-4 h-4 text-blue-600" />
+                        <FileText className="w-4 h-4 text-primary" />
                       )}
                     </div>
                     <div className="flex-1">

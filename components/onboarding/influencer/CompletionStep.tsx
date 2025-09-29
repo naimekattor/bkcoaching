@@ -140,6 +140,62 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
               Copy
             </Button>
           </div>
+          {/* Social Share Buttons */}
+          <div className="pt-4 flex flex-wrap justify-center gap-3">
+            <Button
+              size="sm"
+              variant="outline"
+              className="bg-primary text-white"
+              onClick={() =>
+                window.open(
+                  `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+                    window.location.href
+                  )}&quote=Use my referral code ${referralCode}!`,
+                  "_blank"
+                )
+              }
+            >
+              Facebook
+            </Button>
+
+            <Button
+              size="sm"
+              className="bg-primary text-white"
+              variant="outline"
+              onClick={() =>
+                window.open(`https://www.instagram.com/`, "_blank")
+              }
+            >
+              Instagram
+            </Button>
+
+            <Button
+              size="sm"
+              className="bg-primary text-white"
+              variant="outline"
+              onClick={() =>
+                window.open(
+                  `https://api.whatsapp.com/send?text=${encodeURIComponent(
+                    `Join The Social Market using my referral code ${referralCode}! ${window.location.href}`
+                  )}`,
+                  "_blank"
+                )
+              }
+            >
+              WhatsApp
+            </Button>
+
+            <Button
+              size="sm"
+              className="bg-primary text-white"
+              variant="outline"
+              onClick={() =>
+                (window.location.href = `mailto:?subject=Join The Social Market&body=Use my referral code ${referralCode} to sign up: ${window.location.href}`)
+              }
+            >
+              Email
+            </Button>
+          </div>
         </CardContent>
       </Card>
 

@@ -42,6 +42,7 @@ export default function ProfilePage() {
     affiliate: false,
     ambassador: false,
   });
+  const [timeZone, setTimeZone] = useState("Time Zone");
 
   const removeNiche = (niche: string) => {
     setSelectedNiches((prev) => prev.filter((n) => n !== niche));
@@ -54,7 +55,15 @@ export default function ProfilePage() {
     setNicheSearch("");
   };
 
-  const timeZones = Intl.supportedValuesOf("timeZone");
+  const timeZones = [
+    { value: "America/New_York", label: "Eastern (ET)" },
+    { value: "America/Chicago", label: "Central (CT)" },
+    { value: "America/Denver", label: "Mountain (MT)" },
+    { value: "America/Phoenix", label: "Arizona (no DST)" },
+    { value: "America/Los_Angeles", label: "Pacific (PT)" },
+    { value: "America/Anchorage", label: "Alaska (AKST/AKDT)" },
+    { value: "Pacific/Honolulu", label: "Hawaii (HST)" },
+  ];
 
   const filteredNiches = contentNiches.filter(
     (niche) =>
@@ -102,18 +111,19 @@ export default function ProfilePage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm mb-2">Time Zone</label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Time Zone" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {timeZones.map((tz) => (
-                          <SelectItem key={tz} value={tz}>
-                            {tz}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <select
+                      value={timeZone}
+                      onChange={(e) => setTimeZone(e.target.value)}
+                      className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
+                    >
+                      <option value="">Time Zone (US)</option>
+                      {timeZones.map((tz) => (
+                        <option key={tz.value} value={tz.value}>
+                          {tz.label}
+                        </option>
+                      ))}
+                      <option value="Others">Others</option>
+                    </select>
                   </div>
                   <div>
                     <label className="block text-sm mb-2">Gender</label>

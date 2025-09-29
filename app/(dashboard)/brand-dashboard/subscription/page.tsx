@@ -74,7 +74,7 @@ export default function SubscriptionPage() {
                 <CheckCircle2 className="w-4 h-4 text-green-500" />
               )}
               {currentSubscription.status === "canceled" && (
-                <XCircle className="w-4 h-4 text-red-500" />
+                <XCircle className="w-4 h-4 text-secondary" />
               )}
               {currentSubscription.status === "expired" && (
                 <AlertCircle className="w-4 h-4 text-yellow-500" />

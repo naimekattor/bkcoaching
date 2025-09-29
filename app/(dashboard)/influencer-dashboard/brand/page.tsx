@@ -13,7 +13,15 @@ export default function MicroinfluencersPage() {
   const [businessType, setBusinessType] = useState("Business Type");
   const [timeZone, setTimeZone] = useState("Time Zone");
 
-  const timeZones = Intl.supportedValuesOf("timeZone");
+  const timeZones = [
+    { value: "America/New_York", label: "Eastern (ET)" },
+    { value: "America/Chicago", label: "Central (CT)" },
+    { value: "America/Denver", label: "Mountain (MT)" },
+    { value: "America/Phoenix", label: "Arizona (no DST)" },
+    { value: "America/Los_Angeles", label: "Pacific (PT)" },
+    { value: "America/Anchorage", label: "Alaska (AKST/AKDT)" },
+    { value: "Pacific/Honolulu", label: "Hawaii (HST)" },
+  ];
 
   const businessTypes = [
     "Beauty & Skincare Brands – makeup, skincare, haircare",
@@ -59,7 +67,7 @@ export default function MicroinfluencersPage() {
               placeholder="Search by name or keyword..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>
           <button className="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2">
@@ -73,7 +81,7 @@ export default function MicroinfluencersPage() {
           <select
             value={businessType}
             onChange={(e) => setBusinessType(e.target.value)}
-            className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
           >
             <option value="Business Type">Business Type</option>
             {businessTypes.map((type) => (
@@ -87,14 +95,15 @@ export default function MicroinfluencersPage() {
           <select
             value={timeZone}
             onChange={(e) => setTimeZone(e.target.value)}
-            className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
           >
-            <option value="Time Zone">Select Time Zone</option>
+            <option value="">Time Zone (US)</option>
             {timeZones.map((tz) => (
-              <option key={tz} value={tz}>
-                {tz}
+              <option key={tz.value} value={tz.value}>
+                {tz.label}
               </option>
             ))}
+            <option value="Others">Others</option>
           </select>
 
           <div className="flex gap-3">

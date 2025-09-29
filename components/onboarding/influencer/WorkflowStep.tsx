@@ -43,7 +43,7 @@ const WorkflowStep = ({ onNext, onBack }: WorkflowStepProps) => {
       description:
         "Discover campaigns that match your niche and apply to collaborate",
       icon: MessageCircle,
-      color: "text-blue-500",
+      color: "text-primary",
     },
     {
       step: 2,

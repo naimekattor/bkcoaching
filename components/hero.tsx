@@ -54,12 +54,12 @@ const Hero = () => {
             </div> */}
 
             <p className="text-primary text-[16px] leading-relaxed max-w-lg">
-              <h1 className="font-bold">
+              <span className="font-bold text-[22px]">
                 The Social Market is where brands and micro-influencers team up.
-              </h1>
+              </span>{" "}
               Brands get affordable, authentic marketing. Micro-influencers get
-              paid to share services. They actually love.
-              <span className="font-bold">
+              paid to share services they actually love.
+              <span className="font-bold text-[22px]">
                 {" "}
                 It&apos;s word-of-mouth, made smarter, faster, and scalable.
               </span>
@@ -90,10 +90,20 @@ const Hero = () => {
           </DialogHeader>
 
           <div className="flex flex-col gap-3 pt-4">
-            <Button onClick={() => router.push("/influencer-onboarding")}>
+            <Button
+              onClick={() => {
+                router.push("/influencer-onboarding");
+                setShowAuthModal(false);
+              }}
+            >
               Sign up as Influencer
             </Button>
-            <Button onClick={() => router.push("/brand-onboarding")}>
+            <Button
+              onClick={() => {
+                router.push("/brand-onboarding");
+                setShowAuthModal(false);
+              }}
+            >
               Sign up as Brand
             </Button>
           </div>

@@ -42,7 +42,7 @@ export default function InfluencersPage() {
       name: "Robert Smith",
       followers: "520k Followers",
       category: "TECH",
-      categoryColor: "bg-blue-500",
+      categoryColor: "bg-primary",
       rating: 5,
       bio: "Robert Smith is a tech Creator known for breaking down complex innovations into simple insights.",
       price: "$150",
@@ -106,9 +106,7 @@ export default function InfluencersPage() {
                     <h2 className="text-xl font-bold text-gray-900">
                       John Doe
                     </h2>
-                    <p className="text-blue-600 font-semibold">
-                      520k Followers
-                    </p>
+                    <p className="text-primary font-semibold">520k Followers</p>
 
                     {/* Stars */}
                     <div className="flex text-yellow-400 mt-1">

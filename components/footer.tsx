@@ -56,10 +56,20 @@ export default function Footer() {
           </DialogHeader>
 
           <div className="flex flex-col gap-3 pt-4">
-            <Button onClick={() => router.push("/influencer-onboarding")}>
+            <Button
+              onClick={() => {
+                router.push("/influencer-onboarding");
+                setShowAuthModal(false);
+              }}
+            >
               Sign up as Influencer
             </Button>
-            <Button onClick={() => router.push("/brand-onboarding")}>
+            <Button
+              onClick={() => {
+                router.push("/brand-onboarding");
+                setShowAuthModal(false);
+              }}
+            >
               Sign up as Brand
             </Button>
           </div>

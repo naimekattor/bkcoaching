@@ -225,7 +225,7 @@ export default function InfluencerProfile() {
                   <path d="M10 2L3 7v11a2 2 0 002 2h10a2 2 0 002-2V7l-7-5z" />
                 </svg>
               </div>
-              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-medium">
+              <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-medium">
                 M
               </div>
             </div> */}
@@ -504,13 +504,13 @@ export default function InfluencerProfile() {
                   <div className="flex space-x-2 mt-4">
                     <a
                       href={influencer.contact.socialMedia.linkedin}
-                      className="w-8 h-8 bg-blue-600 text-white rounded flex items-center justify-center hover:bg-blue-700 transition-colors"
+                      className="w-8 h-8 bg-primary text-white rounded flex items-center justify-center hover:bg-primary transition-colors"
                     >
                       <span className="text-xs font-bold">in</span>
                     </a>
                     <a
                       href={influencer.contact.socialMedia.twitter}
-                      className="w-8 h-8 bg-blue-400 text-white rounded flex items-center justify-center hover:bg-blue-500 transition-colors"
+                      className="w-8 h-8 bg-primary text-white rounded flex items-center justify-center hover:bg-primary transition-colors"
                     >
                       <span className="text-xs font-bold">tw</span>
                     </a>
@@ -578,7 +578,7 @@ export default function InfluencerProfile() {
                   {influencer.contentNiches.map((niche, index) => (
                     <span
                       key={index}
-                      className="bg-blue-100 text-blue-800 text-xs px-3 py-1 rounded-full"
+                      className="bg-primary text-primary text-xs px-3 py-1 rounded-full"
                     >
                       {niche}
                     </span>

@@ -1,9 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { Search, ChevronDown, MoreHorizontal, X } from "lucide-react";
+import {
+  Search,
+  ChevronDown,
+  MoreHorizontal,
+  X,
+  Instagram,
+  Facebook,
+} from "lucide-react";
 import Image from "next/image";
 import CreateCampaignModal from "../../../../components/brand/CreateCampaignModal";
+import { FaTiktok } from "react-icons/fa";
 const mockCampaigns = [
   {
     id: 1,
@@ -102,7 +110,7 @@ const stats = [
     value: "24",
     subtitle: "Currently active and completed",
     icon: "📊",
-    color: "bg-blue-50",
+    color: "bg-white",
   },
   {
     title: "Active Campaigns",
@@ -221,7 +229,7 @@ export default function CampaignDashboard() {
               placeholder="Search campaigns..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
             />
           </div>
           <div className="flex gap-2">
@@ -272,14 +280,16 @@ export default function CampaignDashboard() {
                   {campaign.platforms.map((platform) => (
                     <div
                       key={platform}
-                      className="w-6 h-6 bg-gray-200 rounded flex items-center justify-center"
+                      className="w-6 h-6 text-primary rounded flex items-center justify-center"
                     >
                       <span className="text-xs">
-                        {platform === "tiktok"
-                          ? "🎵"
-                          : platform === "instagram"
-                          ? "📷"
-                          : "📺"}
+                        {platform === "tiktok" ? (
+                          <FaTiktok />
+                        ) : platform === "instagram" ? (
+                          <Instagram />
+                        ) : (
+                          <Facebook />
+                        )}
                       </span>
                     </div>
                   ))}
@@ -390,7 +400,7 @@ export default function CampaignDashboard() {
               <div className="mb-6">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="font-semibold">Assigned Creators</h3>
-                  <button className="text-secondary hover:text-blue-800 text-sm font-medium">
+                  <button className="text-secondary hover:text-primary text-sm font-medium">
                     View All
                   </button>
                 </div>

@@ -368,7 +368,7 @@ const PaymentSetupStep = ({ onBack }: PaymentSetupStepProps) => {
         </Card> */}
 
         {/* Dispute Process */}
-        <Alert>
+        {/* <Alert>
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
             <strong>Dispute Process:</strong> If there are any issues with
@@ -376,7 +376,7 @@ const PaymentSetupStep = ({ onBack }: PaymentSetupStepProps) => {
             within 48 hours. All payments are protected by our platform
             guarantee.
           </AlertDescription>
-        </Alert>
+        </Alert> */}
 
         {/* Navigation */}
         <div className="flex justify-between pt-6">

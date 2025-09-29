@@ -44,7 +44,7 @@ export default function PrivacyPage() {
 
           <div className="prose prose-lg max-w-none space-y-8">
             <div className="text-sm text-gray-600 mb-8">
-              <p>Effective Date: 19/02/2025</p>
+              <p>Effective Date: 02/19/2025</p>
               <p>
                 Thank you for visiting FLUENCER FLOW Platform. Your privacy is
                 important to us. This Privacy Policy explains how we collect,
