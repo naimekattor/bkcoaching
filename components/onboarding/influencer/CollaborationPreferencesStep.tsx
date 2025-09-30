@@ -20,6 +20,7 @@ import {
   Gift,
   Percent,
   Crown,
+  Repeat, // Using 'Repeat' for Repost
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
@@ -42,7 +43,8 @@ const CollaborationPreferencesStep = ({
     paymentPreferences: [] as string[],
     paymentPercentages: {} as Record<string, string>,
     rates: {
-      instagramPost: { type: "", custom: "" } as RateOption,
+      socialPost: { type: "", custom: "" } as RateOption, // Changed
+      repost: { type: "", custom: "" } as RateOption, // Changed
       instagramStory: { type: "", custom: "" } as RateOption,
       instagramReel: { type: "", custom: "" } as RateOption,
       tiktokVideo: { type: "", custom: "" } as RateOption,
@@ -59,7 +61,8 @@ const CollaborationPreferencesStep = ({
   });
 
   const contentFormats = [
-    { id: "instagramPost", label: "Instagram Post", icon: Image },
+    { id: "socialPost", label: "Social Post", icon: Image }, // Changed
+    { id: "repost", label: "Repost", icon: Repeat }, // Changed
     { id: "instagramStory", label: "Instagram Story", icon: Image },
     { id: "instagramReel", label: "Instagram Reel", icon: Video },
     { id: "tiktokVideo", label: "TikTok Video", icon: Video },
@@ -242,7 +245,7 @@ const CollaborationPreferencesStep = ({
                   </div>
 
                   {/* NEW: Percentage Input for relevant payment types */}
-                  {(type.id === "affiliate" || type.id === "paid") &&
+                  {type.id === "affiliate" &&
                     formData.paymentPreferences.includes(type.id) && (
                       <div className="flex flex-col">
                         <Label className="text-xs font-medium">

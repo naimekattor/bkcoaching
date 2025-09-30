@@ -9,6 +9,13 @@ import {
   Instagram,
   Facebook,
 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import Image from "next/image";
 import CreateCampaignModal from "../../../../components/brand/CreateCampaignModal";
 import { FaTiktok } from "react-icons/fa";
@@ -140,6 +147,23 @@ export default function CampaignDashboard() {
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [platformFilter, setPlatformFilter] = useState("all");
+
+  const filteredCampaigns = mockCampaigns.filter((campaign) => {
+    const matchesSearch = campaign.title
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+
+    const matchesStatus =
+      statusFilter === "all" || campaign.status.toLowerCase() === statusFilter;
+
+    const matchesPlatform =
+      platformFilter === "all" ||
+      campaign.platforms.includes(platformFilter.toLowerCase());
+
+    return matchesSearch && matchesStatus && matchesPlatform;
+  });
 
   const openCampaignModal = (campaign) => {
     setSelectedCampaign(campaign);
@@ -232,15 +256,34 @@ export default function CampaignDashboard() {
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
             />
           </div>
-          <div className="flex gap-2">
-            <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md bg-white hover:bg-gray-50 transition-colors">
-              All Status <ChevronDown className="h-4 w-4" />
-            </button>
-            <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md bg-white hover:bg-gray-50 transition-colors">
-              All Platforms <ChevronDown className="h-4 w-4" />
-            </button>
-          </div>
+
+          {/* Status Filter */}
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder="All Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="completed">Completed</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {/* Platform Filter */}
+          <Select value={platformFilter} onValueChange={setPlatformFilter}>
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder="All Platforms" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Platforms</SelectItem>
+              <SelectItem value="instagram">Instagram</SelectItem>
+              <SelectItem value="tiktok">TikTok</SelectItem>
+              <SelectItem value="youtube">YouTube</SelectItem>
+              <SelectItem value="facebook">Facebook</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
+
         {/* Campaign Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {mockCampaigns.map((campaign) => (
