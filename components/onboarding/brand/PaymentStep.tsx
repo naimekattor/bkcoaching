@@ -41,7 +41,7 @@ const PaymentStep = ({ onNext, onBack }: PaymentStepProps) => {
       price: 180,
       description:
         "Bundle Both and Save: Perfect for anyone growing their own business and also open to helping others grow (and getting paid!)",
-      savings: "Save 20%",
+      savings: "Save over 15%",
     },
   ];
 
@@ -61,7 +61,7 @@ const PaymentStep = ({ onNext, onBack }: PaymentStepProps) => {
       price: 20,
       description:
         "Bundle Both and Save: Perfect for anyone growing their own business and also open to helping others grow (and getting paid!)",
-      savings: "Save 20%",
+      savings: "Save over 15%",
     },
   ];
 

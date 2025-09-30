@@ -343,12 +343,12 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
           </div>
 
           {/* Optional In-Person Address */}
-          <Card>
+          {/* <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <MapPin className="w-5 h-5" />
                 In-Person Address (Optional)
-                {/* <Tooltip>
+                <Tooltip>
                   <TooltipTrigger>
                     <HelpCircle className="w-4 h-4 text-muted-foreground" />
                   </TooltipTrigger>
@@ -358,7 +358,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                       collaborations
                     </p>
                   </TooltipContent>
-                </Tooltip> */}
+                </Tooltip>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -373,11 +373,11 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                 placeholder="Store address, office location, or event venue..."
                 rows={2}
               />
-              {/* <Button variant="ghost" size="sm" className="mt-2">
+              <Button variant="ghost" size="sm" className="mt-2">
                 Skip this step
-              </Button> */}
+              </Button>
             </CardContent>
-          </Card>
+          </Card> */}
         </div>
 
         {/* Navigation */}

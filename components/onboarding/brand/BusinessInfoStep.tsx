@@ -18,12 +18,13 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
     businessName: "",
     website: "",
     bio: "",
-    location: "",
+    timeZone: "America/New_York",
     businessTypes: [] as string[],
   });
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [timeZone, setTimeZone] = useState("Time Zone");
 
   const businessTypes = [
     "Beauty & Skincare Brands – makeup, skincare, haircare",
@@ -42,6 +43,16 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
     "Financial & Professional Services – investment apps, insurance, credit repair",
     "Nonprofits & Causes – charities, community organizations, social impact campaigns",
     "Other",
+  ];
+
+  const timeZones = [
+    { value: "America/New_York", label: "Eastern (ET)" },
+    { value: "America/Chicago", label: "Central (CT)" },
+    { value: "America/Denver", label: "Mountain (MT)" },
+    { value: "America/Phoenix", label: "Arizona (no DST)" },
+    { value: "America/Los_Angeles", label: "Pacific (PT)" },
+    { value: "America/Anchorage", label: "Alaska (AKST/AKDT)" },
+    { value: "Pacific/Honolulu", label: "Hawaii (HST)" },
   ];
 
   const handleBusinessTypeChange = (type: string, checked: boolean) => {
@@ -130,21 +141,21 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="location">Location</Label>
-              <div className="relative">
-                <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input
-                  id="location"
-                  value={formData.location}
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      location: e.target.value,
-                    }))
-                  }
-                  placeholder="City, Country"
-                  className="pl-10"
-                />
+              <div>
+                <label className="block text-sm mb-2">Time Zone</label>
+                <select
+                  value={timeZone}
+                  onChange={(e) => setTimeZone(e.target.value)}
+                  className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
+                >
+                  <option value="">Time Zone (US)</option>
+                  {timeZones.map((tz) => (
+                    <option key={tz.value} value={tz.value}>
+                      {tz.label}
+                    </option>
+                  ))}
+                  <option value="Others">Others</option>
+                </select>
               </div>
             </div>
 

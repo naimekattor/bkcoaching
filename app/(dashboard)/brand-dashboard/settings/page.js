@@ -315,7 +315,7 @@ export default function BrandSetupPage() {
               </div>
 
               {/* WhatsApp Business */}
-              <div className="md:col-span-2">
+              <div className="">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   WhatsApp Business
                 </label>
@@ -325,6 +325,22 @@ export default function BrandSetupPage() {
                   value={formData.whatsappBusiness}
                   onChange={(e) =>
                     handleInputChange("whatsappBusiness", e.target.value)
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                />
+              </div>
+
+              {/* twiter Profile */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  twiter Profile
+                </label>
+                <input
+                  type="text"
+                  placeholder="@username"
+                  value={formData.twiterProfile}
+                  onChange={(e) =>
+                    handleInputChange("twiterProfile", e.target.value)
                   }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 />

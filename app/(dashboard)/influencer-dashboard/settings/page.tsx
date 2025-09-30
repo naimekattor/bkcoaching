@@ -13,23 +13,25 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 
 const contentNiches = [
-  "Beauty & Skincare",
-  "Fashion & Apparel",
-  "Jewelry & Accessories",
-  "Health & Wellness",
-  "Food & Beverage",
-  "Hospitality & Travel",
-  "Events & Experiences",
-  "E-commerce Stores",
-  "Local Service Providers",
-  "Tech & Gadgets",
-  "Education & Coaching",
-  "Parenting & Family",
-  "Home & Lifestyle",
-  "Financial & Professional Services",
-  "Nonprofits & Causes",
+  "Beauty & Skincare Brands – makeup, skincare, haircare",
+  "Fashion & Apparel – clothing lines, modest fashion brands, boutique shops",
+  "Jewelry & Accessories – watches, handbags, eyewear",
+  "Health & Wellness – supplements, fitness programs, healthy living",
+  "Food & Beverage – restaurants, cafes, packaged foods, specialty drinks",
+  "Hospitality & Travel – hotels, resorts, Airbnb hosts, travel agencies",
+  "Events & Experiences – retreats, workshops, conferences",
+  "E-commerce Stores – online boutiques, curated shops, niche product sellers",
+  "Local Service Providers – gyms, salons, spas, personal trainers",
+  "Tech & Gadgets – phone accessories, smart devices, apps",
+  "Education & Coaching – online courses, coaches, masterminds",
+  "Parenting & Family Brands – baby products, toys, household goods",
+  "Home & Lifestyle – decor, furniture, kitchenware, cleaning products",
+  "Financial & Professional Services – investment apps, insurance, credit repair",
+  "Nonprofits & Causes – charities, community organizations, social impact campaigns",
   "Other",
 ];
 
@@ -43,7 +45,17 @@ export default function ProfilePage() {
     ambassador: false,
   });
   const [timeZone, setTimeZone] = useState("Time Zone");
-
+  const [formData, setFormData] = useState({
+    socialLinks: {
+      instagram: "",
+      tiktok: "",
+      youtube: "",
+      twitter: "",
+      linkedin: "",
+      whatsapp: "",
+    },
+  });
+  type SocialPlatform = keyof typeof formData.socialLinks;
   const removeNiche = (niche: string) => {
     setSelectedNiches((prev) => prev.filter((n) => n !== niche));
   };
@@ -142,7 +154,7 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                {/* <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm mb-2">Birth Year</label>
                     <Input placeholder="1995" type="number" />
@@ -153,7 +165,7 @@ export default function ProfilePage() {
                     </label>
                     <Input placeholder="English, Spanish, French" />
                   </div>
-                </div>
+                </div> */}
               </div>
 
               <div>
@@ -181,36 +193,35 @@ export default function ProfilePage() {
               Social Media Accounts
             </h2>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm">Instagram Handle</label>
-                  <Input placeholder="@username" />
-                </div>
-                <div>
-                  <label className="block text-sm">YouTube Channel</label>
-                  <Input placeholder="Channel URL" />
-                </div>
-                <div>
-                  <label className="block text-sm">X (Twitter)</label>
-                  <Input placeholder="@username" />
-                </div>
+            <CardContent className="space-y-4">
+              <div className="grid md:grid-cols-2 gap-4">
+                {(Object.keys(formData.socialLinks) as SocialPlatform[]).map(
+                  (platform) => (
+                    <div className="space-y-2" key={platform}>
+                      <Label htmlFor={platform}>{platform}</Label>
+                      <Input
+                        id={platform}
+                        value={formData.socialLinks[platform]}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            socialLinks: {
+                              ...prev.socialLinks,
+                              [platform]: e.target.value,
+                            },
+                          }))
+                        }
+                        placeholder={
+                          platform === "whatsapp"
+                            ? "+1 555-123-4567"
+                            : "@yourusername or profile URL"
+                        }
+                      />
+                    </div>
+                  )
+                )}
               </div>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm">TikTok Handle</label>
-                  <Input placeholder="@username" />
-                </div>
-                <div>
-                  <label className="block text-sm">WhatsApp Phone Number</label>
-                  <Input placeholder="+1 (555) 123-4567" />
-                </div>
-                <div>
-                  <label className="block text-sm">Website / Blog</label>
-                  <Input placeholder="https://yourwebsite.com" />
-                </div>
-              </div>
-            </div>
+            </CardContent>
           </div>
 
           {/* Content Niches */}
