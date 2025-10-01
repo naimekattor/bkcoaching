@@ -43,15 +43,15 @@ export default function MicroinfluencersPage() {
   ];
 
   return (
-    <div className="p-8">
+    <div className="md:p-8 p-0">
       {/* Header */}
       <div className="flex items-center gap-4 mb-8">
-        <Link
+        {/* <Link
           href="/brand-dashboard"
           className="text-gray-400 hover:text-gray-600"
         >
           <ArrowLeft className="w-5 h-5" />
-        </Link>
+        </Link> */}
         <h1 className="text-2xl font-bold text-gray-900">
           Find Brands You Love
         </h1>
@@ -127,7 +127,7 @@ export default function MicroinfluencersPage() {
           {mockCreators.map((creator) => (
             <div
               key={creator.id}
-              className="bg-white rounded-lg border border-gray-200 p-6 text-center"
+              className="bg-white rounded-lg border border-gray-200 md:p-6 p-1 text-center"
             >
               <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center">
                 <Image

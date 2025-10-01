@@ -268,9 +268,9 @@ export default function InfluencerMessagesClient() {
             onClick={() => {
               router.push("/influencer-dashboard/message-request");
             }}
-            className="cursor-pointer flex items-center gap-3 p-3 bg-primary/20 rounded-xl border border-primary hover:from-primary hover:to-indigo-100 transition-all duration-200"
+            className="cursor-pointer flex items-center gap-3 p-3 bg-primary/20 rounded-xl  transition-all duration-200"
           >
-            <div className="w-8 h-8 bg-secondary rounded-lg flex items-center justify-center shadow-sm">
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-sm">
               <span className="text-white text-sm">💬</span>
             </div>
             <div className="flex-1">
@@ -289,7 +289,7 @@ export default function InfluencerMessagesClient() {
               key={contact.id}
               className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-all duration-200 ${
                 selectedContact?.id === contact.id
-                  ? "bg-gradient-to-r from-primary to-indigo-50 border-l-4 border-l-primary"
+                  ? " border-l-4 border-l-primary"
                   : ""
               }`}
               onClick={() => handleContactSelect(contact)}
@@ -374,16 +374,16 @@ export default function InfluencerMessagesClient() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button
+                  {/* <button
                     onClick={() => {
                       router.push(
                         `/brand-dashboard/influencers/${id}/send-proposal`
                       );
                     }}
-                    className="px-4 py-2 bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white rounded-xl font-semibold transition-all duration-200 cursor-pointer text-sm shadow-sm"
+                    className="px-4 py-2 bg-secondary text-primary rounded-xl font-semibold transition-all duration-200 cursor-pointer text-sm shadow-sm"
                   >
                     Hire
-                  </button>
+                  </button> */}
                   <button className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all duration-200">
                     <MoreHorizontal className="h-5 w-5" />
                   </button>
@@ -499,7 +499,7 @@ export default function InfluencerMessagesClient() {
         ) : (
           <div className="flex-1 flex items-center justify-center p-6 bg-gradient-to-br from-gray-50 to-gray-100">
             <div className="text-center text-gray-500 max-w-sm">
-              <div className="w-20 h-20 bg-gradient-to-r from-primary to-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+              <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
                 <span className="text-3xl">💬</span>
               </div>
               <h3 className="text-lg font-semibold text-gray-700 mb-2">

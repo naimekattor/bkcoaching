@@ -189,7 +189,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen p-6">
+    <div className="min-h-screen ">
       <div className="mx-auto space-y-8">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
@@ -232,12 +232,16 @@ export default function ProfilePage() {
                     className="min-h-[100px] resize-none"
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Time Zone */}
+                  <div className="flex flex-col">
                     <Label className="mb-1">Time Zone</Label>
-                    <Select value={timeZone} onValueChange={setTimeZone}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Time Zone (US) " />
+                    <Select
+                    // value={timeZone || undefined}
+                    // onValueChange={setTimeZone}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Time Zone (US)" />
                       </SelectTrigger>
                       <SelectContent>
                         {timeZones.map((tz) => (
@@ -248,10 +252,12 @@ export default function ProfilePage() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div>
+
+                  {/* Gender */}
+                  <div className="flex flex-col">
                     <Label className="mb-1">Gender</Label>
                     <Select>
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select Gender" />
                       </SelectTrigger>
                       <SelectContent>

@@ -16,7 +16,7 @@ export default function KeywordMotion() {
     }),
     hover: {
       scale: 1.05,
-      color: "#2563eb",
+
       transition: { type: "spring", stiffness: 300, damping: 20 },
     },
   };

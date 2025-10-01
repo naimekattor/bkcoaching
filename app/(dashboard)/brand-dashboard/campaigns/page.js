@@ -1,14 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Search,
-  ChevronDown,
-  MoreHorizontal,
-  X,
-  Instagram,
-  Facebook,
-} from "lucide-react";
+import { Search, MoreHorizontal, X, Instagram, Facebook } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -150,20 +143,20 @@ export default function CampaignDashboard() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [platformFilter, setPlatformFilter] = useState("all");
 
-  const filteredCampaigns = mockCampaigns.filter((campaign) => {
-    const matchesSearch = campaign.title
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
+  // const filteredCampaigns = mockCampaigns.filter((campaign) => {
+  //   const matchesSearch = campaign.title
+  //     .toLowerCase()
+  //     .includes(searchQuery.toLowerCase());
 
-    const matchesStatus =
-      statusFilter === "all" || campaign.status.toLowerCase() === statusFilter;
+  //   const matchesStatus =
+  //     statusFilter === "all" || campaign.status.toLowerCase() === statusFilter;
 
-    const matchesPlatform =
-      platformFilter === "all" ||
-      campaign.platforms.includes(platformFilter.toLowerCase());
+  //   const matchesPlatform =
+  //     platformFilter === "all" ||
+  //     campaign.platforms.includes(platformFilter.toLowerCase());
 
-    return matchesSearch && matchesStatus && matchesPlatform;
-  });
+  //   return matchesSearch && matchesStatus && matchesPlatform;
+  // });
 
   const openCampaignModal = (campaign) => {
     setSelectedCampaign(campaign);
@@ -186,21 +179,6 @@ export default function CampaignDashboard() {
               Create, manage and collaborate with campaigns
             </p>
           </div>
-          {/* <div className="flex items-center gap-4">
-            <button className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors">
-              <Bell className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full"></span>
-            </button>
-            <div className="w-8 h-8 rounded-full bg-gray-300 overflow-hidden">
-              <Image
-                width={600}
-                height={600}
-                src="/user-profile-illustration.png"
-                alt="User"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div> */}
         </div>
       </header>
 
@@ -397,7 +375,7 @@ export default function CampaignDashboard() {
       {/* Campaign Detail Modal */}
       {selectedCampaign && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[100vh] overflow-y-auto">
             <div className="relative">
               <Image
                 width={600}
@@ -418,12 +396,21 @@ export default function CampaignDashboard() {
             </div>
 
             <div className="p-6">
-              <h2 className="text-xl font-semibold mb-2">
-                {selectedCampaign.title}
-              </h2>
-              <p className="text-gray-600 mb-6">
-                {selectedCampaign.description}
-              </p>
+              <div className="flex justify-between items-center gap-4">
+                <div className="flex-1">
+                  <h2 className="text-xl font-semibold mb-2">
+                    {selectedCampaign.title}
+                  </h2>
+                  <p className="text-gray-600 mb-6">
+                    {selectedCampaign.description}
+                  </p>
+                </div>
+                <div>
+                  <button className=" bg-secondary text-primary px-8 py-2 font-semibold rounded cursor-pointer">
+                    Pay Now{" "}
+                  </button>
+                </div>
+              </div>
 
               <div className="mb-6">
                 <div className="flex justify-between items-center mb-2">

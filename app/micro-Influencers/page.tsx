@@ -61,16 +61,14 @@ export default function InfluencersPage() {
             <div className="lg:col-span-6 space-y-8 flex-1 pb-10">
               <div className="space-y-4">
                 <h1 className="text-4xl md:text-5xl  font-bold text-primary leading-tight">
-                  Micro-influencers.{" "}
-                  <span className="text-primary">Mega results.</span>
+                  Your Brand + Their Audience = A Great Match
                 </h1>
               </div>
 
               <p className="text-primary text-[16px] leading-relaxed max-w-lg">
-                The Social Market is where brands and micro-influencers team up.
-                Brands get affordable, authentic marketing. Micro-influencers
-                get paid to share services. They actually love. It&apos;s
-                word-of-mouth, made smarter, faster, and scalable.
+                Explore micro-influencers who know how to keep it real. Find
+                voices your customers already trust—and turn everyday
+                conversations into brand growth.
               </p>
             </div>
 

@@ -5,15 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  HelpCircle,
-  Target,
-  Users,
-  Hash,
-  Heart,
-  MapPin,
-  Users2,
-} from "lucide-react";
+import { HelpCircle, Users, Hash, Heart, Users2 } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,

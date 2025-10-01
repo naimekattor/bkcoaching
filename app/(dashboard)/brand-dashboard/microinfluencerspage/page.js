@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { ArrowLeft, Search, HelpCircle } from "lucide-react";
+import { HelpCircle } from "lucide-react";
 // Mock data for creators - easily replaceable with API calls
 const mockCreators = [
   {
@@ -230,8 +230,8 @@ export default function MicroInfluencersPage() {
         </div>
 
         {/* Search and Filters */}
-        <div className="p-8">
-          <div className="bg-white rounded-lg p-6 shadow-sm mb-8">
+        <div className="">
+          <div className="bg-white rounded-lg md:p-6 p-1 shadow-sm mb-8">
             {/* Search Bar */}
             <div className="flex gap-4 mb-6">
               <div className="flex-1">

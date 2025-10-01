@@ -19,29 +19,40 @@ export default function AboutPage() {
         <main className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 items-center">
             {/* Left Content */}
-            <div className="space-y-8 flex-1">
+            <div className="space-y-8 pb-8 pt-36">
               <div className="space-y-4">
                 <h1 className="text-4xl md:text-5xl font-bold text-primary leading-tight">
                   The Social Market Backstory
                 </h1>
               </div>
 
-              <p className="text-primary text-[16px] leading-relaxed max-w-lg">
+              <p className="text-primary text-[16px] leading-relaxed ">
                 I had all these events and programs I wanted to share with the
                 world, but every time I looked into advertising, it felt like
                 the only option was spending a fortune on big influencers. That
                 didn’t sit right with me—I wanted authentic growth that was
                 affordable. The kind that comes from people who I feel aligned
                 with, who repost and share because they care about what I’m
-                doing, not only because they’re paid to say it. Then, randomly,
-                I saw my friend—a health coach—posting about these adorable
-                pajamas her girls were wearing. They were probably gifted, and
-                it hit me: Wait. This is it. Maybe we don’t need giant
-                influencers. Maybe we can help each other. That’s when the idea
-                for The Social Market started forming. A space where brands and
-                micro-influencers can easily find each other, collaborate, and
-                grow—organically and Welcome to The Social Market. It’s good to
-                see you here 😉
+                doing, not only because they’re paid to say it.
+              </p>
+              <p className="text-primary text-[16px] leading-relaxed ">
+                Then, randomly, I saw my friend—a health coach—posting about
+                these adorable pajamas her girls were wearing. They were
+                probably gifted, and it hit me: Wait. This is it. Maybe we don’t
+                need giant influencers. Maybe we can help each other.
+              </p>
+              <p className="text-primary text-[16px] leading-relaxed ">
+                That’s when the idea for{" "}
+                <span className="font-semibold text-[16px]">
+                  The Social Market.
+                </span>{" "}
+                started forming. A space where brands and micro-influencers can
+                easily find each other, collaborate, and grow—organically and
+                Welcome to{" "}
+                <span className="font-semibold text-[16px]">
+                  The Social Market.
+                </span>{" "}
+                It’s good to see you here 😉
               </p>
 
               {/* Feedback Button under paragraph */}
@@ -91,7 +102,7 @@ export default function AboutPage() {
               </p>
             </div>
 
-            <div className="pt-8">
+            {/* <div className="pt-8">
               <h2 className="text-3xl md:text-4xl font-semibold text-primary mb-6">
                 Grow Smarter, Not Harder.
               </h2>
@@ -110,14 +121,14 @@ export default function AboutPage() {
                   growth.
                 </p>
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Right Images */}
           <div className="relative">
             <div className="grid grid-cols-2">
               <div className="space-y-4">
-                <div className="border-white border-6 bg-white shadow-2xl rounded-full overflow-hidden">
+                <div className="border-white border-6 bg-white shadow-2xl rounded-full overflow-hidden h-full">
                   <Image
                     width={500}
                     height={800}

@@ -48,14 +48,14 @@ const HowItWorks = () => {
             <div className="w-[326px]">
               <div className="bg-white rounded shadow-md  text-left">
                 <div className="flex gap-4 items-center justify-center bg-primary py-2 px-2 rounded">
-                  <Image
+                  {/* <Image
                     src={"/images/work-icon2.png"}
                     width={62}
                     height={41}
                     alt="icon"
-                  />
+                  /> */}
                   <h3 className="text-xl font-bold text-[#ffffff] mb-2">
-                    Businesses
+                    Brands
                   </h3>
                 </div>
                 <div className="px-6 pb-6">
@@ -87,12 +87,12 @@ const HowItWorks = () => {
             <div className="w-[326px]">
               <div className="bg-white rounded shadow-md  text-left">
                 <div className="flex gap-4 items-center justify-center bg-primary py-2 px-2 rounded">
-                  <Image
+                  {/* <Image
                     src={"/images/work-icon1.png"}
                     width={62}
                     height={41}
                     alt="icon"
-                  />
+                  /> */}
                   <h3 className="text-xl font-bold text-[#ffffff] mb-2">
                     Micro- Influencers
                   </h3>

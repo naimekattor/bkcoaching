@@ -67,14 +67,14 @@ export default function BrandsPage() {
             <div className="lg:col-span-1 space-y-8 flex-1 ">
               <div className="space-y-4">
                 <h1 className="text-4xl md:text-5xl  font-bold text-primary leading-tight">
-                  Grow Your Brand with Micro- Influencers
+                  Discover Brands You’ll Love Sharing
                 </h1>
               </div>
 
               <p className="text-primary text-[16px] leading-relaxed max-w-lg">
-                Connect with micro-influencers who have loyal, engaged
-                audiences. They bring trust, authenticity, and real
-                conversations that help your brand shine.
+                Browse campaigns from brands that value your authentic voice.
+                Choose partnerships that fit your style, share them with your
+                audience, and get paid for creating real influence.
               </p>
             </div>
 

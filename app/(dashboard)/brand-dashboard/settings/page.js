@@ -79,12 +79,12 @@ export default function BrandSetupPage() {
   ];
 
   return (
-    <div className="min-h-screen p-6">
+    <div className="min-h-screen ">
       {/* Header */}
       <div className="mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-2xl font-bold text-primary">
               Brand Profile Setup
             </h1>
             <p className="text-gray-600 mt-1">
@@ -93,14 +93,14 @@ export default function BrandSetupPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 md:p-8 p-2">
           {/* Basic Profile Information */}
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-6">
               <div className="w-5 h-5 bg-primary rounded flex items-center justify-center">
                 <span className="text-primary text-xs">📋</span>
               </div>
-              <h2 className="text-lg font-semibold text-gray-900">
+              <h2 className="text-lg font-semibold text-primary">
                 Basic Profile Information
               </h2>
             </div>

@@ -49,13 +49,13 @@ export default function Typewriter({
   return (
     <motion.span
       className={`text-4xl md:text-5xl  font-bold text-primary ${className}`}
-      animate={{ opacity: [0.8, 1, 0.8] }}
+      // animate={{ opacity: [0.8, 1, 0.8] }}
       transition={{ duration: 2, repeat: Infinity }}
     >
       {text}
       <motion.span
         className="inline-block w-[1ch]"
-        animate={{ opacity: [1, 0, 1] }}
+        // animate={{ opacity: [1, 0, 1] }}
         transition={{ duration: 0.7, repeat: Infinity }}
       >
         |

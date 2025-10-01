@@ -8,12 +8,12 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
 
   const tabs = [
     { name: "Profile Setup", href: "/brand-dashboard/settings" },
-    { name: "Invoice", href: "/brand-dashboard/settings/invoice" },
+    // { name: "Invoice", href: "/brand-dashboard/settings/invoice" },
     { name: "Account Details", href: "/brand-dashboard/settings/account" },
   ];
 
   return (
-    <div className="min-h-screen p-6">
+    <div className="min-h-screen md:p-6 p-0">
       {/* Tabs */}
       <div className="flex gap-6 border-b border-gray-200 mb-6">
         {tabs.map((tab) => {

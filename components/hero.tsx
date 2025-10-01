@@ -26,44 +26,44 @@ const Hero = () => {
           {/* Left Content */}
           <div className="lg:col-span-2 space-y-8 flex-1">
             <div className="space-y-4">
-              <h1 className="text-4xl md:text-5xl  font-bold text-primary leading-tight">
+              {/* Eyebrow */}
+              <p className="text-sm font-medium text-primary/70 tracking-wide uppercase">
+                Real People. Real Influence. Real Growth
+              </p>
+
+              {/* Headline */}
+              <h1 className="text-4xl md:text-5xl font-bold text-primary leading-tight">
                 <Typewriter
                   words={["Micro-influencers", "Brands"]}
                   speed={80}
                   pause={2000}
                 />{" "}
-                <span className="text-primary">Mega results.</span>
+                Mega results.
               </h1>
-              <p className="text-xl  text-primary font-normal">
-                Real People. Real Influence. Real Growth
-              </p>
-            </div>
 
-            <button
-              className="bg-secondary hover:bg-yellow-500 text-primary font-semibold px-8 py-4 rounded-lg transition-colors duration-200 text-lg"
-              onClick={handleSignupRoute}
-            >
-              Sign up for free
-            </button>
-
-            {/* <div className="flex items-center gap-2 text-[16px] text-primary">
-              <span className="text-red-500">♥</span>
-              <span>
-                Free for the first 100 users - &quot;Get in early!&quot;
-              </span>
-            </div> */}
-
-            <p className="text-primary text-[16px] leading-relaxed max-w-lg">
-              <span className="font-bold text-[22px]">
+              {/* Supporting text */}
+              <p className="text-lg text-primary leading-relaxed max-w-xl">
                 The Social Market is where brands and micro-influencers team up.
-              </span>{" "}
-              Brands get affordable, authentic marketing. Micro-influencers get
-              paid to share services they actually love.
-              <span className="font-bold text-[22px]">
-                {" "}
-                It&apos;s word-of-mouth, made smarter, faster, and scalable.
-              </span>
-            </p>
+                Brands get affordable, authentic marketing. Micro-influencers
+                get paid to share services they actually love. It’s
+                word-of-mouth, made smarter, faster, and scalable.
+              </p>
+
+              {/* Offer/Promo */}
+              {/* <p className="text-md text-primary font-semibold">
+      For the first 100 users: Use coupon code{" "}
+      <span className="font-bold">FIRST100</span> at checkout to sign up for
+      free.
+    </p> */}
+
+              {/* CTA button */}
+              <button
+                className="bg-secondary hover:bg-yellow-500 text-primary font-semibold px-8 py-4 rounded-lg transition-colors duration-200 text-lg"
+                onClick={handleSignupRoute}
+              >
+                Sign up for free
+              </button>
+            </div>
           </div>
 
           {/* Right Image (1/3) */}

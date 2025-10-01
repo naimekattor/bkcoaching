@@ -3,6 +3,13 @@
 import Image from "next/image";
 import { useState } from "react";
 
+type Deliverable = {
+  id: string;
+  platform: string;
+  type: string;
+  quantity: number;
+};
+
 type ProposalForm = {
   businessName: string;
   bio: string;
@@ -10,11 +17,44 @@ type ProposalForm = {
   tagline: string;
   budget: string;
   timeline: string;
+  startDate: string;
+  endDate: string;
   proposalMessage: string;
   logoFile: File | null;
   campaignBrief: File | null;
   productPhotos: File | null;
+  deliverables: Deliverable[];
 };
+
+const platformOptions = [
+  { value: "socialPost", label: "Social Post" },
+  { value: "repost", label: "Repost" },
+  { value: "instagramStory", label: "Instagram Story" },
+  { value: "instagramReel", label: "Instagram Reel" },
+  { value: "tiktokVideo", label: "TikTok Video" },
+  { value: "youtubeVideo", label: "YouTube Video" },
+  { value: "youtubeShort", label: "YouTube Short" },
+  { value: "blogPost", label: "Blog Post" },
+  { value: "podcastMention", label: "Podcast Mention" },
+  { value: "liveStream", label: "Live Stream" },
+  { value: "userGeneratedContent", label: "UGC Creation" },
+  { value: "whatsappStatus", label: "WhatsApp Status Post" },
+];
+
+const typeOptions = [
+  { value: "socialPost", label: "Social Post" },
+  { value: "repost", label: "Repost" },
+  { value: "instagramStory", label: "Instagram Story" },
+  { value: "instagramReel", label: "Instagram Reel" },
+  { value: "tiktokVideo", label: "TikTok Video" },
+  { value: "youtubeVideo", label: "YouTube Video" },
+  { value: "youtubeShort", label: "YouTube Short" },
+  { value: "blogPost", label: "Blog Post" },
+  { value: "podcastMention", label: "Podcast Mention" },
+  { value: "liveStream", label: "Live Stream" },
+  { value: "userGeneratedContent", label: "UGC Creation" },
+  { value: "whatsappStatus", label: "WhatsApp Status Post" },
+];
 
 export default function ProposalsPage() {
   // Form state for the initial proposal form
@@ -24,16 +64,23 @@ export default function ProposalsPage() {
     location: "",
     tagline: "",
     budget: "",
+    startDate: "",
+    endDate: "",
     timeline: "",
     proposalMessage: "",
     logoFile: null,
     campaignBrief: null,
     productPhotos: null,
+    deliverables: [],
   });
 
   // Modal states
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+
+  // Generate unique ID
+  const generateId = () =>
+    Date.now().toString() + Math.random().toString(36).substr(2, 9);
 
   // Handle input changes for text fields
   const handleInputChange = (field: keyof ProposalForm, value: string) => {
@@ -41,6 +88,42 @@ export default function ProposalsPage() {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
+    }));
+  };
+
+  // Handle deliverable changes
+  const handleDeliverableChange = (
+    id: string,
+    field: keyof Deliverable,
+    value: string | number
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      deliverables: prev.deliverables.map((del) =>
+        del.id === id ? { ...del, [field]: value } : del
+      ),
+    }));
+  };
+
+  // Add new deliverable
+  const addDeliverable = () => {
+    const newDel: Deliverable = {
+      id: generateId(),
+      platform: "Instagram",
+      type: "Reel",
+      quantity: 1,
+    };
+    setFormData((prev) => ({
+      ...prev,
+      deliverables: [...prev.deliverables, newDel],
+    }));
+  };
+
+  // Remove deliverable
+  const removeDeliverable = (id: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      deliverables: prev.deliverables.filter((del) => del.id !== id),
     }));
   };
 
@@ -95,11 +178,14 @@ export default function ProposalsPage() {
       location: "",
       tagline: "",
       budget: "",
+      startDate: "",
+      endDate: "",
       timeline: "",
       proposalMessage: "",
       logoFile: null,
       campaignBrief: null,
       productPhotos: null,
+      deliverables: [],
     });
   };
 
@@ -117,14 +203,14 @@ export default function ProposalsPage() {
               Micro-Influencer
             </p>
           </div>
-          <div className="flex items-center gap-4">
+          {/* <div className="flex items-center gap-4">
             <button className="p-2 text-gray-400 hover:text-gray-600">
               🔔
             </button>
             <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm font-medium">
               M
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Main Content */}
@@ -195,7 +281,7 @@ export default function ProposalsPage() {
                 </div>
 
                 {/* Location */}
-                <div>
+                {/* <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Location
                   </label>
@@ -208,7 +294,7 @@ export default function ProposalsPage() {
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                   />
-                </div>
+                </div> */}
 
                 {/* Tagline */}
                 <div>
@@ -243,19 +329,45 @@ export default function ProposalsPage() {
                 </div>
 
                 {/* Timeline */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Timeline
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Start from August 15, 2025"
-                    value={formData.timeline}
-                    onChange={(e) =>
-                      handleInputChange("timeline", e.target.value)
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                  />
+                <div className="px-3">
+                  <h4 className="font-medium text-gray-900 mb-4">
+                    Project Timeline
+                  </h4>
+
+                  <div className="flex items-center space-x-4">
+                    {/* Start Date */}
+                    <div className="flex flex-col">
+                      <label className="text-sm text-gray-600 mb-1">
+                        Start Date
+                      </label>
+                      <input
+                        type="date"
+                        value={formData.startDate}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            startDate: e.target.value,
+                          })
+                        }
+                        className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+
+                    {/* End Date */}
+                    <div className="flex flex-col">
+                      <label className="text-sm text-gray-600 mb-1">
+                        End Date
+                      </label>
+                      <input
+                        type="date"
+                        value={formData.endDate}
+                        onChange={(e) =>
+                          setFormData({ ...formData, endDate: e.target.value })
+                        }
+                        className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -266,7 +378,7 @@ export default function ProposalsPage() {
                 Proposal Message
               </label>
               <textarea
-                placeholder="Write proposal to Creator"
+                placeholder="Write proposal to micro-influencer"
                 rows={6}
                 value={formData.proposalMessage}
                 onChange={(e) =>
@@ -276,10 +388,95 @@ export default function ProposalsPage() {
               />
             </div>
 
+            {/* Campaign Deliverables Section */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Campaign Deliverables
+                </h3>
+                <button
+                  type="button"
+                  onClick={addDeliverable}
+                  className="px-4 py-2 bg-secondary text-primary rounded-md hover:bg-secondary/80 transition-colors font-semibold"
+                >
+                  Add Deliverable
+                </button>
+              </div>
+              {formData.deliverables.length === 0 ? (
+                <p className="text-gray-500 text-sm">
+                  No deliverables added yet.
+                </p>
+              ) : (
+                <div className="space-y-3">
+                  {formData.deliverables.map((del) => (
+                    <div
+                      key={del.id}
+                      className="flex items-center gap-3 p-3 border border-gray-200 rounded-md"
+                    >
+                      <select
+                        value={del.platform}
+                        onChange={(e) =>
+                          handleDeliverableChange(
+                            del.id,
+                            "platform",
+                            e.target.value
+                          )
+                        }
+                        className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                      >
+                        {platformOptions.map((opt) => (
+                          <option key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </option>
+                        ))}
+                      </select>
+                      {/* <select
+                        value={del.type}
+                        onChange={(e) =>
+                          handleDeliverableChange(
+                            del.id,
+                            "type",
+                            e.target.value
+                          )
+                        }
+                        className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                      >
+                        {typeOptions.map((opt) => (
+                          <option key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </option>
+                        ))}
+                      </select> */}
+                      <input
+                        type="number"
+                        min="1"
+                        value={del.quantity}
+                        onChange={(e) =>
+                          handleDeliverableChange(
+                            del.id,
+                            "quantity",
+                            parseInt(e.target.value) || 1
+                          )
+                        }
+                        className="w-20 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeDeliverable(del.id)}
+                        className="text-red-500 hover:text-red-700 text-sm"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
             {/* Attach Campaign Video Section */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Attach Campaign video
+                Attachment
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -287,7 +484,7 @@ export default function ProposalsPage() {
                 <div className="border border-gray-200 rounded-lg p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-gray-400">📄</span>
-                    <span className="text-sm font-medium text-gray-700">
+                    <span className="text-sm font-medium text-primary">
                       Campaign brief
                     </span>
                   </div>
@@ -296,7 +493,7 @@ export default function ProposalsPage() {
                     type="file"
                     accept=".pdf,.doc,.docx"
                     onChange={(e) => handleFileChange(e, "campaignBrief")}
-                    className="mt-2 text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary hover:file:bg-primary"
+                    className="mt-2 text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-secondary file:text-primary hover:file:bg-primary"
                   />
                   <span className="text-xs text-gray-500 block pl-6">
                     (PDF, doc)
@@ -307,7 +504,7 @@ export default function ProposalsPage() {
                 <div className="border border-gray-200 rounded-lg p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-gray-400">📷</span>
-                    <span className="text-sm font-medium text-gray-700">
+                    <span className="text-sm font-medium text-primary">
                       Product photos or Business kit
                     </span>
                   </div>
@@ -316,7 +513,7 @@ export default function ProposalsPage() {
                     accept="image/*"
                     multiple
                     onChange={(e) => handleFileChange(e, "productPhotos")}
-                    className="mt-2 text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary hover:file:bg-primary"
+                    className="mt-2 text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-secondary file:text-primary hover:file:bg-primary"
                   />
                 </div>
               </div>
@@ -332,7 +529,7 @@ export default function ProposalsPage() {
               </button>
               <button
                 type="submit"
-                className="px-6 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition-colors"
+                className="px-6 py-2 bg-yellow-500 text-primary font-semibold rounded-md hover:bg-yellow-600 transition-colors"
               >
                 Send
               </button>
@@ -383,7 +580,7 @@ export default function ProposalsPage() {
 
                 <div className="mb-4 border-b-2 border-[#E5E7EB] pb-3 px-3">
                   <h4 className="font-medium text-gray-900 mb-2">
-                    Creator Bio
+                    Micro-influencer&apos;s Bio
                   </h4>
                   <p className="text-sm text-gray-600">
                     Maya Fashionista is a lifestyle Creator fusing fashion with
@@ -414,11 +611,32 @@ export default function ProposalsPage() {
                 </div>
 
                 <div className="px-3">
-                  <h4 className="font-medium text-gray-900 mb-2">Timeline</h4>
-                  <p className="text-sm">
-                    📅 Timeline:{" "}
-                    {formData.timeline || "Start from August 15, 2025"}
-                  </p>
+                  <h4 className="font-medium text-gray-900 mb-4">
+                    Project Timeline
+                  </h4>
+
+                  <div className="flex items-center space-x-4">
+                    {/* Start Date Badge */}
+                    <div className="flex flex-col items-center">
+                      <span className="bg-blue-500 text-white text-sm font-semibold px-3 py-1 rounded-full">
+                        {formData.startDate || "Aug 15, 2025"}
+                      </span>
+                      <span className="text-gray-600 mt-1 text-xs">Start</span>
+                    </div>
+
+                    {/* Timeline Line */}
+                    <div className="flex-1 h-1 bg-gray-300 relative">
+                      <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-blue-500 to-green-500"></div>
+                    </div>
+
+                    {/* End Date Badge */}
+                    <div className="flex flex-col items-center">
+                      <span className="bg-green-500 text-white text-sm font-semibold px-3 py-1 rounded-full">
+                        {formData.endDate || "TBD"}
+                      </span>
+                      <span className="text-gray-600 mt-1 text-xs">End</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -430,7 +648,7 @@ export default function ProposalsPage() {
 
                 <div className="mb-4 border-2 border-[#E5E7EB] p-3 rounded-xl">
                   <p className="text-sm text-gray-700 mb-4">
-                    Hi {formData.businessName || "TechFlow Team"},
+                    Hi {formData.businessName || "Name"},
                   </p>
                   <p className="text-sm text-gray-700 mb-4">
                     {formData.proposalMessage ||
@@ -443,18 +661,20 @@ export default function ProposalsPage() {
                     Campaign Deliverables
                   </h5>
                   <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-green-500">✓</span>
-                      <span className="text-sm">1 Instagram Reel</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-green-500">✓</span>
-                      <span className="text-sm">2 Story Slides</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-green-500">✓</span>
-                      <span className="text-sm">1 Feed Post</span>
-                    </div>
+                    {formData.deliverables.length === 0 ? (
+                      <p className="text-sm text-gray-500 italic">
+                        No deliverables selected
+                      </p>
+                    ) : (
+                      formData.deliverables.map((del) => (
+                        <div key={del.id} className="flex items-center gap-2">
+                          <span className="text-green-500">✓</span>
+                          <span className="text-sm">
+                            {del.quantity} {del.type}(s) on {del.platform}
+                          </span>
+                        </div>
+                      ))
+                    )}
                   </div>
                 </div>
 

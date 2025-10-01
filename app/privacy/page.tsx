@@ -15,10 +15,10 @@ export default function PrivacyPage() {
                 </h1>
               </div>
 
-              <p className="text-primary text-[16px] leading-relaxed max-w-lg">
+              {/* <p className="text-primary text-[16px] leading-relaxed max-w-lg">
                 This headline speaks to the essence of your platform,
                 emphasizing the collaborative nature.
-              </p>
+              </p> */}
             </div>
 
             {/* Right Image (1/3) */}
@@ -46,10 +46,10 @@ export default function PrivacyPage() {
             <div className="text-sm text-gray-600 mb-8">
               <p>Effective Date: 02/19/2025</p>
               <p>
-                Thank you for visiting FLUENCER FLOW Platform. Your privacy is
+                Thank you for visiting The Social Market. Your privacy is
                 important to us. This Privacy Policy explains how we collect,
                 use, and protect your personal information when you visit or
-                interact with our website www.Creatorflow.com
+                interact with our website www.socialmarket.com
               </p>
             </div>
 
