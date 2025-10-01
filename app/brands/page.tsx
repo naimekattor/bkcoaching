@@ -61,7 +61,7 @@ export default function BrandsPage() {
   return (
     <section>
       <section className="bg-gradient-to-b from-[#ffffff] to-[#E9F4FF]">
-        <main className="container mx-auto px-4 ">
+        <main className="container mx-auto px-4 pt-8 lg:pt-16">
           <div className="grid lg:grid-cols-2 gap-2 items-center">
             {/* Left Content */}
             <div className="lg:col-span-1 space-y-8 flex-1 ">

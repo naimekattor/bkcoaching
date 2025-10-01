@@ -5,7 +5,7 @@ export default function PrivacyPage() {
     <div className="min-h-screen bg-background">
       <section className="bg-gradient-to-b from-[#ffffff] to-[#E9F4FF]">
         <main className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-2  items-center">
+          <div className="grid lg:grid-cols-2  items-center pt-16 md:pt-24">
             {/* Left Content */}
             <div className=" space-y-8 flex-1">
               <div className="space-y-4">
@@ -28,7 +28,7 @@ export default function PrivacyPage() {
                 height={519}
                 src={"/images/privacy-hero.png"}
                 alt="Two stylish women representing micro-influencers"
-                className="w-[527px] h-[476px] max-w-md mx-auto lg:max-w-full"
+                className="w-full h-[476px] max-w-md mx-auto lg:max-w-full"
               />
             </div>
           </div>

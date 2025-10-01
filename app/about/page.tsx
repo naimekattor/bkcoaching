@@ -19,41 +19,42 @@ export default function AboutPage() {
         <main className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 items-center">
             {/* Left Content */}
-            <div className="space-y-8 pb-8 pt-36">
+            <div className="space-y-8 pb-8 md:pt-36 pt-16">
               <div className="space-y-4">
                 <h1 className="text-4xl md:text-5xl font-bold text-primary leading-tight">
                   The Social Market Backstory
                 </h1>
               </div>
-
-              <p className="text-primary text-[16px] leading-relaxed ">
-                I had all these events and programs I wanted to share with the
-                world, but every time I looked into advertising, it felt like
-                the only option was spending a fortune on big influencers. That
-                didn’t sit right with me—I wanted authentic growth that was
-                affordable. The kind that comes from people who I feel aligned
-                with, who repost and share because they care about what I’m
-                doing, not only because they’re paid to say it.
-              </p>
-              <p className="text-primary text-[16px] leading-relaxed ">
-                Then, randomly, I saw my friend—a health coach—posting about
-                these adorable pajamas her girls were wearing. They were
-                probably gifted, and it hit me: Wait. This is it. Maybe we don’t
-                need giant influencers. Maybe we can help each other.
-              </p>
-              <p className="text-primary text-[16px] leading-relaxed ">
-                That’s when the idea for{" "}
-                <span className="font-semibold text-[16px]">
-                  The Social Market.
-                </span>{" "}
-                started forming. A space where brands and micro-influencers can
-                easily find each other, collaborate, and grow—organically and
-                Welcome to{" "}
-                <span className="font-semibold text-[16px]">
-                  The Social Market.
-                </span>{" "}
-                It’s good to see you here 😉
-              </p>
+              <div className="w-full">
+                <p className="text-primary text-[16px] leading-relaxed ">
+                  I had all these events and programs I wanted to share with the
+                  world, but every time I looked into advertising, it felt like
+                  the only option was spending a fortune on big influencers.
+                  That didn’t sit right with me—I wanted authentic growth that
+                  was affordable. The kind that comes from people who I feel
+                  aligned with, who repost and share because they care about
+                  what I’m doing, not only because they’re paid to say it.
+                </p>
+                <p className="text-primary text-[16px] leading-relaxed ">
+                  Then, randomly, I saw my friend—a health coach—posting about
+                  these adorable pajamas her girls were wearing. They were
+                  probably gifted, and it hit me: Wait. This is it. Maybe we
+                  don’t need giant influencers. Maybe we can help each other.
+                </p>
+                <p className="text-primary text-[16px] leading-relaxed ">
+                  That’s when the idea for{" "}
+                  <span className="font-semibold text-[16px]">
+                    The Social Market.
+                  </span>{" "}
+                  started forming. A space where brands and micro-influencers
+                  can easily find each other, collaborate, and grow—organically
+                  and Welcome to{" "}
+                  <span className="font-semibold text-[16px]">
+                    The Social Market.
+                  </span>{" "}
+                  It’s good to see you here 😉
+                </p>
+              </div>
 
               {/* Feedback Button under paragraph */}
               <button
@@ -71,7 +72,7 @@ export default function AboutPage() {
                 height={519}
                 src={"/images/about-hero.png"}
                 alt="Two stylish women representing micro-influencers"
-                className="w-[833px] h-[619px] max-w-md mx-auto lg:max-w-full"
+                className="w-full h-[619px] max-w-md mx-auto lg:max-w-full"
               />
             </div>
           </div>
