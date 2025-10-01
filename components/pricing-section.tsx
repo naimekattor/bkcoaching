@@ -54,7 +54,7 @@ export function PricingSection() {
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold text-primary mb-4">
+          <h2 className="text-3xl md:text-[40px] font-bold text-primary mb-4">
             Flexible Plans For Everyone
           </h2>
           <p className="text-lg text-gray-600 mb-8">

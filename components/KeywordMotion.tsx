@@ -25,7 +25,7 @@ export default function KeywordMotion() {
 
   return (
     <div className="text-center mb-16">
-      <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary flex flex-wrap justify-center gap-2">
+      <h2 className="text-3xl md:text-[40px] font-bold text-primary flex flex-wrap justify-center gap-2">
         {words.map((w, i) => (
           <motion.span
             key={w}
