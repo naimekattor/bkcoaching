@@ -1,6 +1,7 @@
 // app/brand-dashboard/page.js
 
 import Image from "next/image";
+import Link from "next/link";
 import { FaEdit } from "react-icons/fa";
 // Removed unused dashboard imports to satisfy lint rules
 const analyticsData = [
@@ -33,9 +34,12 @@ export default function Page() {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <button className="bg-yellow-500 hover:bg-yellow-600 text-slate-800 font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-1 ">
+              <Link
+                href={"/influencer-dashboard/settings"}
+                className="bg-yellow-500 hover:bg-yellow-600 text-slate-800 font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-1 "
+              >
                 <FaEdit /> Edit
-              </button>
+              </Link>
             </div>
           </div>
 
@@ -54,7 +58,7 @@ export default function Page() {
             ))}
           </div>
         </div>
-        <div className="p-4 sm:p-6 lg:p-8 ">
+        <div className="pt-4">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
             {/* My Campaigns */}
             <div className="col-span-1 lg:col-span-2 border-2 rounded p-6">

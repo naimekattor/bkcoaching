@@ -214,7 +214,7 @@ export default function ProposalsPage() {
         </div>
 
         {/* Main Content */}
-        <div className="p-6">
+        <div className="">
           <form onSubmit={handleSubmitForm} className="mx-auto">
             {/* Basic Information Section */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">

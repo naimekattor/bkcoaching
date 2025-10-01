@@ -51,7 +51,7 @@ export function PricingSection() {
 
   return (
     <section className="py-16 lg:py-24 ">
-      <div className="container mx-auto px-4">
+      <div className=" mx-auto ">
         {/* Header */}
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-[40px] font-bold text-primary mb-4">

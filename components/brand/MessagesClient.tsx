@@ -489,7 +489,7 @@ export default function MessagesClient() {
                 <button
                   onClick={handleSendMessage}
                   disabled={!newMessage.trim()}
-                  className="p-3 bg-gradient-to-r from-primary to-primary hover:from-primary hover:to-primary800 disabled:from-gray-300 disabled:electronics-400 text-white rounded-full transition-all duration-200 flex-shrink-0 shadow-sm disabled:cursor-not-allowed"
+                  className="p-3 bg-primary  disabled:from-gray-300 disabled:electronics-400 text-white rounded-full transition-all duration-200 flex-shrink-0 shadow-sm disabled:cursor-not-allowed"
                 >
                   <Send className="h-5 w-5" />
                 </button>
@@ -511,7 +511,7 @@ export default function MessagesClient() {
               </p>
               <button
                 onClick={() => setShowSidebar(true)}
-                className="px-6 py-3 bg-gradient-to-r from-primary to-indigo-600 hover:from-primary hover:to-indigo-700 text-white rounded-xl font-medium text-sm shadow-sm transition-all duration-200 md:hidden"
+                className="px-6 py-3 bg-primary  text-white rounded-xl font-medium text-sm shadow-sm transition-all duration-200 md:hidden"
               >
                 View Conversations
               </button>

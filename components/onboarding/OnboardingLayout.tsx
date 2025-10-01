@@ -66,7 +66,7 @@ const OnboardingLayout = ({
 
       {/* Content */}
       <main className=" py-8">
-        <div className="container mx-auto">{children}</div>
+        <div className="mx-auto">{children}</div>
       </main>
     </div>
   );

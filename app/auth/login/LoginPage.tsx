@@ -47,8 +47,8 @@ export default function LoginPage() {
       <div className="w-full lg:w-1/2 bg-slate-800 flex flex-col">
         {/* Header */}
         <div className="flex justify-between items-center p-6">
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2">
+          <Link href="/">
+            <div className="">
               <Image
                 src={"/images/logo.png"}
                 width={200}
@@ -57,7 +57,7 @@ export default function LoginPage() {
                 className="w-auto h-auto"
               />
             </div>
-          </div>
+          </Link>
         </div>
 
         {/* Form Content */}

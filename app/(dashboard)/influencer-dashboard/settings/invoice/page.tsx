@@ -47,7 +47,7 @@ export default function InvoicesPage() {
   };
 
   return (
-    <div className="p-6">
+    <div className="">
       <h1 className="text-3xl font-semibold text-primary mb-6">Invoices</h1>
 
       {/* Summary */}
