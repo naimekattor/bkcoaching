@@ -101,7 +101,7 @@ export default function SubscriptionPage() {
                 <XCircle className="w-4 h-4 text-red-500" />
               )}
               {currentSubscription.status === "expired" && (
-                <AlertCircle className="w-4 h-4 text-yellow-500" />
+                <AlertCircle className="w-4 h-4 text-secondary" />
               )}
               Status:{" "}
               <span className="capitalize">{currentSubscription.status}</span>

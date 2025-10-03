@@ -144,9 +144,9 @@ export default function InfluencerProfile() {
       customClass: {
         actions: "flex justify-center gap-x-4", // 👈 add spacing between buttons
         confirmButton:
-          "bg-yellow-500 text-black font-semibold px-5 py-2 rounded-md border-2 border-yellow-500 hover:bg-yellow-600 transition",
+          "bg-secondary text-black font-semibold px-5 py-2 rounded-md border-2 border-secondary hover:bg-yellow-600 transition",
         cancelButton:
-          "bg-white text-black font-semibold px-5 py-2 rounded-md border-2 border-yellow-500 hover:bg-gray-100 transition",
+          "bg-white text-black font-semibold px-5 py-2 rounded-md border-2 border-secondary hover:bg-gray-100 transition",
       },
     }).then((result) => {
       if (result.isConfirmed) {
@@ -289,7 +289,7 @@ export default function InfluencerProfile() {
             <div className="flex space-x-3">
               <button
                 onClick={handleMessage}
-                className="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+                className="bg-secondary hover:bg-yellow-600 text-white px-6 py-2 rounded-lg font-medium transition-colors"
               >
                 💬 Message
               </button>

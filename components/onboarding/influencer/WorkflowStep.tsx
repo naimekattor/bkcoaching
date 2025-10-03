@@ -59,7 +59,7 @@ const WorkflowStep = ({ onNext, onBack }: WorkflowStepProps) => {
       description:
         "Discuss deliverables, timelines, and compensation through our platform",
       icon: MessageCircle,
-      color: "text-yellow-500",
+      color: "text-secondary",
     },
     {
       step: 4,

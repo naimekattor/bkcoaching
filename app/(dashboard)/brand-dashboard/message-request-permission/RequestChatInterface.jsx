@@ -64,7 +64,7 @@ export default function RequestChatInterface({
                 <div className="text-sm text-gray-500">{c.email}</div>
               </div>
               <button
-                className="px-3 py-2 rounded bg-yellow-500 text-white"
+                className="px-3 py-2 rounded bg-secondary text-white"
                 onClick={() => onSelectContact?.(c)}
               >
                 Open

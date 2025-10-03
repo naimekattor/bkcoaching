@@ -77,7 +77,7 @@ export default function LoginPage() {
                 <input
                   type="email"
                   placeholder="Enter your Email or phone number"
-                  className="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                  className="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-secondary"
                   value={formData.email}
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
@@ -92,7 +92,7 @@ export default function LoginPage() {
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
-                  className="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-500 pr-12"
+                  className="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-secondary pr-12"
                   value={formData.password}
                   onChange={(e) =>
                     setFormData({ ...formData, password: e.target.value })
@@ -132,7 +132,7 @@ export default function LoginPage() {
 
               <Button
                 type="submit"
-                className="w-full bg-yellow-500 hover:bg-yellow-600 text-slate-800 font-semibold py-3 rounded-lg"
+                className="w-full bg-secondary hover:bg-yellow-600 text-slate-800 font-semibold py-3 rounded-lg"
               >
                 Log in
               </Button>
@@ -188,7 +188,7 @@ export default function LoginPage() {
                 </span>
                 <Link
                   href="/auth/signup"
-                  className="text-yellow-500 hover:text-yellow-400"
+                  className="text-secondary hover:text-yellow-400"
                 >
                   Sign up
                 </Link>
@@ -202,7 +202,7 @@ export default function LoginPage() {
       <div className="hidden relative lg:flex lg:w-1/2 bg-slate-100 items-center justify-center p-8">
         <Button
           variant="outline"
-          className="absolute top-4 right-4 bg-yellow-500 text-slate-800 border-yellow-500 hover:bg-yellow-600"
+          className="absolute top-4 right-4 bg-secondary text-slate-800 border-secondary hover:bg-yellow-600"
           asChild
         >
           <Link href="/">Back to website →</Link>

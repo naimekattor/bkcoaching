@@ -25,7 +25,7 @@ export function DashboardHeader() {
           <div className="flex items-center space-x-4">
             <Link
               href={"/brand-dashboard/settings"}
-              className="bg-yellow-500 hover:bg-yellow-600 text-slate-800 font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-1 "
+              className="bg-secondary hover:bg-yellow-600 text-slate-800 font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-1 "
             >
               <FaEdit /> Edit
             </Link>

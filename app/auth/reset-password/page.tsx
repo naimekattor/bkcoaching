@@ -69,7 +69,7 @@ export default function ResetPasswordPage() {
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="Password"
-                  className="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-500 pr-12"
+                  className="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-secondary pr-12"
                   value={formData.password}
                   onChange={(e) =>
                     setFormData({ ...formData, password: e.target.value })
@@ -91,7 +91,7 @@ export default function ResetPasswordPage() {
                 <input
                   type={showConfirmPassword ? "text" : "password"}
                   placeholder="Confirm password"
-                  className="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-500 pr-12"
+                  className="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-secondary pr-12"
                   value={formData.confirmPassword}
                   onChange={(e) =>
                     setFormData({
@@ -120,7 +120,7 @@ export default function ResetPasswordPage() {
 
               <Button
                 type="submit"
-                className="w-full bg-yellow-500 hover:bg-yellow-600 text-slate-800 font-semibold py-3 rounded-lg"
+                className="w-full bg-secondary hover:bg-secondary text-slate-800 font-semibold py-3 rounded-lg"
               >
                 Reset Password
               </Button>
@@ -143,7 +143,7 @@ export default function ResetPasswordPage() {
       <div className="hidden relative lg:flex lg:w-1/2 bg-slate-100 items-center justify-center p-8">
         <Button
           variant="outline"
-          className="absolute top-4 right-4 bg-yellow-500 text-slate-800 border-yellow-500 hover:bg-yellow-600"
+          className="absolute top-4 right-4 bg-secondary text-slate-800 border-secondary hover:bg-secondary"
           asChild
         >
           <Link href="/">Back to website →</Link>

@@ -111,7 +111,7 @@ export default function VerifyEmailPage() {
                 <Button
                   type="button"
                   onClick={handleResendCode}
-                  className="bg-yellow-500 hover:bg-yellow-600 text-slate-800 font-semibold px-4 py-2 rounded-lg text-sm"
+                  className="bg-secondary hover:bg-yellow-600 text-slate-800 font-semibold px-4 py-2 rounded-lg text-sm"
                 >
                   Resend
                 </Button>
@@ -123,7 +123,7 @@ export default function VerifyEmailPage() {
 
               <Button
                 type="submit"
-                className="w-full bg-yellow-500 hover:bg-yellow-600 text-slate-800 font-semibold py-3 rounded-lg"
+                className="w-full bg-secondary hover:bg-yellow-600 text-slate-800 font-semibold py-3 rounded-lg"
               >
                 Verify
               </Button>
@@ -146,7 +146,7 @@ export default function VerifyEmailPage() {
       <div className="hidden relative lg:flex lg:w-1/2 bg-slate-100 items-center justify-center p-8">
         <Button
           variant="outline"
-          className="absolute top-4 right-4 bg-yellow-500 text-slate-800 border-yellow-500 hover:bg-yellow-600"
+          className="absolute top-4 right-4 bg-secondary text-slate-800 border-secondary hover:bg-yellow-600"
           asChild
         >
           <Link href="/">Back to website →</Link>

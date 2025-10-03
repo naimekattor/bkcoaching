@@ -45,7 +45,7 @@ export function RecentCollaborations() {
 
             {/* ⭐ Rating */}
             <div className="flex items-center space-x-1">
-              <span className="text-yellow-500">
+              <span className="text-secondary">
                 <CiStar size={21} />
               </span>
               <span className="text-sm font-medium text-slate-700">

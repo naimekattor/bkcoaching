@@ -217,7 +217,7 @@ export default function CampaignsPage() {
                       ? "bg-secondary text-primary"
                       : campaign.status === "Completed"
                       ? "bg-gray-100 text-gray-800"
-                      : "bg-yellow-100 text-primary"
+                      : "bg-secondary text-primary"
                   }`}
                 >
                   {campaign.status}

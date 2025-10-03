@@ -24,7 +24,7 @@ export function BusinessAssets() {
         ))}
       </div>
 
-      <button className="w-full bg-yellow-500 hover:bg-yellow-600 text-slate-800 font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-3">
+      <button className="w-full bg-secondary hover:bg-yellow-600 text-slate-800 font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-3">
         <FaUpload></FaUpload> Upload New Assets
       </button>
     </div>

@@ -25,7 +25,7 @@ export default function AboutPage() {
                   The Social Market Backstory
                 </h1>
               </div>
-              <div className="w-full">
+              <div className="w-full space-y-6">
                 <p className="text-primary text-[16px] leading-relaxed ">
                   I had all these events and programs I wanted to share with the
                   world, but every time I looked into advertising, it felt like

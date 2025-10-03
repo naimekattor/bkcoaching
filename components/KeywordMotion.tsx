@@ -37,7 +37,7 @@ export default function KeywordMotion() {
             viewport={{ once: true }}
             className={
               i === 1
-                ? "text-yellow-500 inline-block cursor-pointer"
+                ? "text-secondary inline-block cursor-pointer"
                 : "inline-block cursor-pointer"
             }
           >

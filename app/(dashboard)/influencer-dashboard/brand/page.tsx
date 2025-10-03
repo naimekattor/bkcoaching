@@ -70,7 +70,7 @@ export default function MicroinfluencersPage() {
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>
-          <button className="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2">
+          <button className="bg-secondary hover:bg-yellow-600 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2">
             <Search className="w-4 h-4" />
             Search
           </button>
@@ -95,7 +95,7 @@ export default function MicroinfluencersPage() {
           <select
             value={timeZone}
             onChange={(e) => setTimeZone(e.target.value)}
-            className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
+            className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent outline-none"
           >
             <option value="">Time Zone (US)</option>
             {timeZones.map((tz) => (
@@ -175,7 +175,7 @@ export default function MicroinfluencersPage() {
                 >
                   View Profile
                 </Link>
-                <button className="bg-yellow-500 hover:bg-yellow-600 text-primary px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                <button className="bg-secondary hover:bg-yellow-600 text-primary px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                   Message
                 </button>
               </div>

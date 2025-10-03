@@ -107,7 +107,7 @@ export default function InfluencersPage() {
                     <p className="text-primary font-semibold">520k Followers</p>
 
                     {/* Stars */}
-                    <div className="flex text-yellow-400 mt-1">
+                    <div className="flex text-secondary mt-1">
                       <FaStar />
                       <FaStar />
                       <FaStar />

@@ -82,7 +82,7 @@ export default function SignupPage() {
                   <input
                     type="text"
                     placeholder="First name"
-                    className="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    className="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-secondary"
                     value={formData.firstName}
                     onChange={(e) =>
                       setFormData({ ...formData, firstName: e.target.value })
@@ -98,7 +98,7 @@ export default function SignupPage() {
                   <input
                     type="text"
                     placeholder="Last name"
-                    className="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    className="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-secondary"
                     value={formData.lastName}
                     onChange={(e) =>
                       setFormData({ ...formData, lastName: e.target.value })
@@ -117,7 +117,7 @@ export default function SignupPage() {
                   <input
                     type="email"
                     placeholder="Email"
-                    className="w-full px-4 py-3 pl-12 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    className="w-full px-4 py-3 pl-12 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-secondary"
                     value={formData.email}
                     onChange={(e) =>
                       setFormData({ ...formData, email: e.target.value })
@@ -146,7 +146,7 @@ export default function SignupPage() {
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="password"
-                  className="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-500 pr-12"
+                  className="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-secondary pr-12"
                   value={formData.password}
                   onChange={(e) =>
                     setFormData({ ...formData, password: e.target.value })
@@ -168,7 +168,7 @@ export default function SignupPage() {
                 <input
                   type={showConfirmPassword ? "text" : "password"}
                   placeholder="Confirm password"
-                  className="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-500 pr-12"
+                  className="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-secondary pr-12"
                   value={formData.confirmPassword}
                   onChange={(e) =>
                     setFormData({
@@ -212,7 +212,7 @@ export default function SignupPage() {
                     I agree to the{" "}
                     <Link
                       href="/terms"
-                      className="text-yellow-500 hover:text-yellow-400"
+                      className="text-secondary hover:text-yellow-400"
                     >
                       Terms & conditions
                     </Link>
@@ -227,7 +227,7 @@ export default function SignupPage() {
 
               <Button
                 type="submit"
-                className="w-full bg-yellow-500 hover:bg-yellow-600 text-slate-800 font-semibold py-3 rounded-lg"
+                className="w-full bg-secondary hover:bg-secondary text-slate-800 font-semibold py-3 rounded-lg"
               >
                 Create account
               </Button>
@@ -301,7 +301,7 @@ export default function SignupPage() {
       <div className="hidden relative lg:flex lg:w-1/2 bg-slate-100 items-center justify-center p-8">
         <Button
           variant="outline"
-          className="absolute top-4 right-4 bg-yellow-500 text-slate-800 border-yellow-500 hover:bg-yellow-600"
+          className="absolute top-4 right-4 bg-secondary text-slate-800 border-secondary hover:bg-secondary"
           asChild
         >
           <Link href="/">Back to website →</Link>

@@ -240,13 +240,13 @@ export default function MicroInfluencersPage() {
                   placeholder="Search by name or keyword..."
                   value={searchTerm}
                   onChange={handleSearchChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent outline-none"
                 />
               </div>
               <button
                 onClick={handleSearch}
                 disabled={isSearching}
-                className="px-8 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors font-medium"
+                className="px-8 py-3 bg-secondary text-white rounded-lg hover:bg-yellow-600 transition-colors font-medium"
               >
                 {isSearching ? "Searching..." : "Search"}
               </button>
@@ -259,7 +259,7 @@ export default function MicroInfluencersPage() {
                 onChange={(e) =>
                   handleFilterChange("contentNiches", e.target.value)
                 }
-                className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
+                className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent outline-none"
               >
                 <option value="">Content Niches</option>
                 <option value="Beauty & Skincare Brands – makeup, skincare, haircare">
@@ -334,7 +334,7 @@ export default function MicroInfluencersPage() {
                 onChange={(e) =>
                   handleFilterChange("budgetRange", e.target.value)
                 }
-                className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
+                className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent outline-none"
               >
                 <option value="">Budget Range</option>
                 <option
@@ -353,7 +353,7 @@ export default function MicroInfluencersPage() {
                 onChange={(e) =>
                   handleFilterChange("platforms", e.target.value)
                 }
-                className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
+                className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent outline-none"
               >
                 <option value="">Platforms</option>
                 <option value="instagram">Instagram</option>
@@ -365,7 +365,7 @@ export default function MicroInfluencersPage() {
               <select
                 value={filters.timeZone}
                 onChange={(e) => handleFilterChange("timeZone", e.target.value)}
-                className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
+                className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent outline-none"
               >
                 <option value="">Time Zone (US)</option>
                 {timeZones.map((tz) => (
@@ -383,7 +383,7 @@ export default function MicroInfluencersPage() {
                     handleFilterChange("followers", e.target.value)
                   }
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg 
-               focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none pr-10"
+               focus:ring-2 focus:ring-secondary focus:border-transparent outline-none pr-10"
                 >
                   <option value="">Total Audience Reach</option>
                   <option value="0-100">0 – 100</option>
@@ -410,7 +410,7 @@ export default function MicroInfluencersPage() {
               <select
                 value={filters.gender}
                 onChange={(e) => handleFilterChange("gender", e.target.value)}
-                className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
+                className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent outline-none"
               >
                 <option value="">Select Gender</option>
                 <option value="male">Male</option>
@@ -498,7 +498,7 @@ export default function MicroInfluencersPage() {
                     </button>
                     <button
                       onClick={() => handleMessage(creator.id)}
-                      className="flex-1 xl:px-4 px-2 xl:py-2 py-1 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors text-sm font-medium"
+                      className="flex-1 xl:px-4 px-2 xl:py-2 py-1 bg-secondary text-white rounded-lg hover:bg-yellow-600 transition-colors text-sm font-medium"
                     >
                       Message
                     </button>
@@ -534,7 +534,7 @@ export default function MicroInfluencersPage() {
               </p>
               <button
                 onClick={clearAllFilters}
-                className="px-6 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors font-medium"
+                className="px-6 py-2 bg-secondary text-white rounded-lg hover:bg-yellow-600 transition-colors font-medium"
               >
                 Clear all filters
               </button>

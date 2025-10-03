@@ -151,7 +151,7 @@ export default function BrandProfilePage() {
                   <div className="text-sm text-gray-600">micro-influencers</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-yellow-600 mb-1">
+                  <div className="text-2xl font-bold text-secondary mb-1">
                     {brand.campaigns.avgRating}
                   </div>
                   <div className="text-sm text-gray-600">Avg Rating</div>

@@ -113,7 +113,7 @@ const Feature = () => {
               </div>
             </div>
             <div className="p-8">
-              <button className="w-full  bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-4 rounded-lg transition-colors duration-200 text-lg ">
+              <button className="w-full  bg-secondary hover:bg-yellow-500 text-black font-semibold py-4 rounded-lg transition-colors duration-200 text-lg ">
                 <Link href={"/brand-onboarding"}>Grow My Brand</Link>
               </button>
             </div>
@@ -235,7 +235,7 @@ const Feature = () => {
               </div>
             </div>
             <div className="p-8">
-              <button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-4 rounded-lg transition-colors duration-200 text-lg ">
+              <button className="w-full bg-secondary hover:bg-yellow-500 text-black font-semibold py-4 rounded-lg transition-colors duration-200 text-lg ">
                 <Link href={"/influencer-onboarding"}>
                   Monetize My Influence
                 </Link>

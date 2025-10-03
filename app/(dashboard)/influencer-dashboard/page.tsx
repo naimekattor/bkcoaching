@@ -36,7 +36,7 @@ export default function Page() {
             <div className="flex items-center space-x-4">
               <Link
                 href={"/influencer-dashboard/settings"}
-                className="bg-yellow-500 hover:bg-yellow-600 text-slate-800 font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-1 "
+                className="bg-secondary hover:bg-yellow-600 text-slate-800 font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-1 "
               >
                 <FaEdit /> Edit
               </Link>
@@ -155,7 +155,7 @@ export default function Page() {
                 <p className="text-gray-500 text-sm">Your media kit preview</p>
               </div>
               <div className="w-full space-y-2">
-                <button className="w-full bg-yellow-400 text-gray-800 font-semibold py-3 rounded shadow hover:bg-yellow-500 transition-colors">
+                <button className="w-full bg-secondary text-gray-800 font-semibold py-3 rounded shadow hover:bg-yellow-500 transition-colors">
                   View Media Kit
                 </button>
                 <button className="w-full bg-[#f3f4f6] text-gray-800 font-semibold py-3 rounded shadow  transition-colors">
@@ -171,7 +171,7 @@ export default function Page() {
               <div className="flex items-center space-x-2 mb-4">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 text-yellow-500"
+                  className="h-6 w-6 text-secondary"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -260,10 +260,10 @@ export default function Page() {
                 </span>
               </div>
               <div className="w-full space-y-2">
-                <button className="w-full bg-yellow-400 text-gray-800 font-semibold py-3 rounded-xl shadow-md hover:bg-yellow-500 transition-colors">
+                <button className="w-full bg-secondary text-gray-800 font-semibold py-3 rounded-xl shadow-md hover:bg-yellow-500 transition-colors">
                   Withdraw
                 </button>
-                <button className="w-full bg-yellow-400 text-gray-800 font-semibold py-3 rounded-xl shadow-md hover:bg-yellow-500 transition-colors">
+                <button className="w-full bg-secondary text-gray-800 font-semibold py-3 rounded-xl shadow-md hover:bg-yellow-500 transition-colors">
                   Payment Methods
                 </button>
               </div>

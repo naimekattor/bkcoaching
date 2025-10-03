@@ -68,7 +68,7 @@ export default function BrandCard({
                   ({reviews.toLocaleString()} Reviews)
                 </span>
               </div>
-              <div className="flex text-yellow-400">
+              <div className="flex text-secondary">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <FaStar
                     key={i}

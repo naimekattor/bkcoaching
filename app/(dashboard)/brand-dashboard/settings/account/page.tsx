@@ -328,7 +328,7 @@ export default function SettingsPage() {
                         passwordStrength <= 1
                           ? "text-red-600"
                           : passwordStrength <= 3
-                          ? "text-yellow-600"
+                          ? "text-secondary"
                           : "text-green-600"
                       }`}
                     >

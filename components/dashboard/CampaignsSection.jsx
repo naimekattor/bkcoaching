@@ -12,7 +12,7 @@ export function CampaignsSection() {
       name: "Winter Skincare Launch",
       creators: "Ready to publish",
       status: "Preview",
-      statusColor: "bg-yellow-100 text-yellow-700",
+      statusColor: "bg-yellow-100 text-secondary",
     },
   ];
 
@@ -22,7 +22,7 @@ export function CampaignsSection() {
         <h3 className="text-xl font-semibold text-slate-800">Campaigns</h3>
         <Link
           href={"/brand-dashboard/campaigns"}
-          className="bg-yellow-500 hover:bg-yellow-600 text-slate-800 text-sm px-4 py-2 rounded-lg transition-colors font-medium"
+          className="bg-secondary hover:bg-yellow-600 text-slate-800 text-sm px-4 py-2 rounded-lg transition-colors font-medium"
         >
           + Create new
         </Link>

@@ -33,7 +33,7 @@ export function Sidebar({ links = [] }) {
             const isActive = pathname.startsWith(item.path);
             const linkClass = `w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${
               isActive
-                ? "bg-yellow-500 text-slate-800 font-medium"
+                ? "bg-secondary text-slate-800 font-medium"
                 : "text-slate-300 hover:bg-slate-700 hover:text-white"
             }`;
             return (
