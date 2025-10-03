@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { FaEdit } from "react-icons/fa";
 export function DashboardHeader() {
   return (
@@ -16,9 +17,9 @@ export function DashboardHeader() {
           </div>
         </div>
         <div className="flex items-center space-x-4">
-          <button className="bg-yellow-500 hover:bg-yellow-600 text-slate-800 font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-1 ">
+          <Link href={"http://localhost:3000/brand-dashboard/settings"} className="bg-yellow-500 hover:bg-yellow-600 text-slate-800 font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-1 ">
             <FaEdit /> Edit
-          </button>
+          </Link>
         </div>
       </div>
     </div>
