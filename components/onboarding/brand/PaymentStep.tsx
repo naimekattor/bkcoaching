@@ -94,7 +94,7 @@ const PaymentStep = ({ onNext, onBack }: PaymentStepProps) => {
   return (
     <div className="space-y-8">
       <div className="text-center space-y-4">
-        <h1 className="text-3xl font-bold">Choose your plan</h1>
+        <h1 className="text-3xl text-primary font-bold">Choose your plan</h1>
         <p className="text-muted-foreground">
           Start with a free trial and upgrade anytime. All plans include secure
           payments .
@@ -178,7 +178,7 @@ const PaymentStep = ({ onNext, onBack }: PaymentStepProps) => {
               </p>
 
               <button
-                className="w-full bg-primary hover:bg-slate-700 text-white font-semibold py-4 rounded-lg transition-colors duration-200"
+                className="w-full bg-primary hover:bg-primary hover:text-white text-white font-semibold py-4 rounded-lg transition-colors duration-200"
                 onClick={() => handlePlanSelect(plan.title)}
               >
                 Select

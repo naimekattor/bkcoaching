@@ -73,8 +73,8 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
   return (
     <div className="space-y-8">
       <div className="text-center space-y-4">
-        <h1 className="text-3xl text-primary font-bold">
-          Create your micro-influencers profile
+        <h1 className="text-3xl text-primary  font-bold">
+          Create your micro-influencer profile
         </h1>
         <p className="text-muted-foreground">
           Show brands who you are and what makes your content special

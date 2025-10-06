@@ -207,7 +207,7 @@ export default function CampaignDashboard() {
                 </div>
                 {stat.isAction && (
                   <button
-                    className="w-full mt-4 bg-secondary hover:bg-yellow-600 text-primary px-4 py-2 rounded-md font-medium transition-colors"
+                    className="w-full mt-4 bg-secondary hover:bg-[var(--secondaryhover)] text-primary px-4 py-2 rounded-md font-medium transition-colors"
                     onClick={() => setShowModal(true)}
                   >
                     Launch Campaign
@@ -366,7 +366,7 @@ export default function CampaignDashboard() {
         </div>
         {/* Load More Button */}
         <div className="text-center">
-          <button className="px-8 py-2 border border-gray-300 rounded-md bg-secondary text-primary font-semibold hover:bg-yellow-500 transition-colors">
+          <button className="px-8 py-2 border border-gray-300 rounded-md bg-secondary text-primary font-semibold hover:bg-[var(--secondaryhover)] transition-colors">
             Load More Campaigns
           </button>
         </div>
@@ -458,7 +458,7 @@ export default function CampaignDashboard() {
                           </p>
                         </div>
                       </div>
-                      <button className="px-3 py-1 bg-secondary hover:bg-yellow-600 text-white text-sm rounded-md font-medium transition-colors">
+                      <button className="px-3 py-1 bg-secondary hover:bg-[var(--secondaryhover)] text-white text-sm rounded-md font-medium transition-colors">
                         View Profile
                       </button>
                     </div>

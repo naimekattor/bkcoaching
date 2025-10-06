@@ -58,7 +58,7 @@ const Hero = () => {
 
               {/* CTA button */}
               <button
-                className="bg-secondary hover:bg-yellow-500 text-primary font-semibold px-8 py-4 rounded-lg transition-colors duration-200 text-lg"
+                className="bg-secondary hover:bg-[var(--secondaryhover)] text-primary font-semibold px-8 py-4 rounded-lg transition-colors duration-200 text-lg"
                 onClick={handleSignupRoute}
               >
                 Sign up for free

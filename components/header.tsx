@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
+import { Cross, X } from "lucide-react";
 
 const navigationLinks = [
   { name: "Home", href: "/" },
@@ -162,7 +163,12 @@ const Header = () => {
           >
             <div className="flex h-full flex-col">
               {/* Spacer for header */}
-              <div className="h-16" />
+              <div className="h-16 flex justify-center items-center">
+                <X
+                  className="text-primary"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                />
+              </div>
 
               {/* Navigation Links */}
               <nav className="flex flex-1 flex-col items-center justify-center space-y-8 px-6">

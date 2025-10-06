@@ -688,7 +688,7 @@ export default function SettingsPage() {
                   className="group flex items-center gap-4 px-6 py-4 transition-all duration-200 hover:bg-gray-50 active:bg-gray-100"
                 >
                   {/* Icon */}
-                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/30 flex items-center justify-center group-hover:bg-primary/40 transition-colors duration-200">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary flex items-center justify-center group-hover:bg-primary/40 transition-colors duration-200">
                     <Icon className="w-5 h-5 text-primary" />
                   </div>
 
@@ -725,7 +725,7 @@ export default function SettingsPage() {
 
         <button
           onClick={handleSave}
-          className="px-6 py-3 bg-secondary text-white rounded hover:bg-secondary transition"
+          className="px-6 py-3 bg-secondary text-primary font-semibold rounded hover:bg-secondary transition"
         >
           Save Settings
         </button>

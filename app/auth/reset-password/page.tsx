@@ -128,7 +128,7 @@ export default function ResetPasswordPage() {
               <div className="text-center">
                 <Button
                   variant="outline"
-                  className="border-slate-600 text-white hover:bg-slate-700 bg-transparent"
+                  className="border-slate-600 text-white hover:bg-primary hover:text-white bg-transparent"
                   asChild
                 >
                   <Link href="/auth/login">← Back to Log in</Link>

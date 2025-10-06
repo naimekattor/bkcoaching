@@ -33,7 +33,7 @@ export default function Footer() {
 
             <button
               onClick={handleSignupRoute}
-              className="inline-block bg-secondary hover:bg-yellow-600 text-primary font-semibold px-8 py-3 rounded-lg transition-colors duration-200 mb-4"
+              className="inline-block bg-secondary hover:bg-[var(--secondaryhover)] text-primary font-semibold px-8 py-3 rounded-lg transition-colors duration-200 mb-4"
             >
               Sign Up Free Today
             </button>

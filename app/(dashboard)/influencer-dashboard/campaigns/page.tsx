@@ -299,7 +299,7 @@ export default function CampaignsPage() {
 
       {/* Load More */}
       <div className="text-center">
-        <button className="px-6 py-3 border border-gray-300 rounded-lg text-primary font-semibold hover:bg-yellow-600 bg-secondary transition-colors">
+        <button className="px-6 py-3 border border-gray-300 rounded-lg text-primary font-semibold hover:bg-[var(--secondaryhover)] bg-secondary transition-colors">
           Load More Campaigns
         </button>
       </div>

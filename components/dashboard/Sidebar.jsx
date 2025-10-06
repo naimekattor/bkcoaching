@@ -30,11 +30,11 @@ export function Sidebar({ links = [] }) {
       <nav className="flex-1 p-4 overflow-y-auto">
         <ul className="space-y-2">
           {links.map((item) => {
-            const isActive = pathname.startsWith(item.path);
+            const isActive = pathname === item.path;
             const linkClass = `w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${
               isActive
                 ? "bg-secondary text-slate-800 font-medium"
-                : "text-slate-300 hover:bg-slate-700 hover:text-white"
+                : "text-slate-300 hover:bg-primary hover:text-white hover:text-white"
             }`;
             return (
               <li key={item.name}>
@@ -50,7 +50,7 @@ export function Sidebar({ links = [] }) {
 
       {/* Logout Button */}
       <div className="p-4 border-t border-slate-700">
-        <button className="w-full flex items-center justify-start px-4 py-3 text-slate-300 hover:text-white hover:bg-slate-700 rounded-lg transition-colors">
+        <button className="w-full flex items-center justify-start px-4 py-3 text-slate-300  hover:bg-primary hover:text-white rounded-lg transition-colors">
           {/* <span className="mr-3">🚪</span> */}
           Logout
         </button>

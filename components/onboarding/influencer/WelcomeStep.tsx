@@ -36,10 +36,10 @@ const WelcomeStep = ({ onNext }: WelcomeStepProps) => {
         {/* <div className="w-20 h-20 rounded-full bg-secondary/10 flex items-center justify-center mx-auto">
           <Star className="w-10 h-10 text-secondary" />
         </div> */}
-        <h1 className="text-4xl font-bold text-primary">
+        <h1 className="text-[30px] font-bold text-primary">
           Welcome to <span className="">The Social Market</span>
         </h1>
-        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+        <p className="text-[16px] text-muted-foreground max-w-2xl mx-auto">
           You&apos;re about to join thousands of micro-influencers who&apos;ve
           turned their passion into profit. Let&apos;s get your
           micro-influencers profile set up and start earning!

@@ -13,7 +13,7 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
   ];
 
   return (
-    <div className="min-h-screen md:p-6 p-0">
+    <div className="min-h-screen">
       {/* Tabs */}
       <div className="flex gap-6 border-b border-gray-200 mb-6">
         {tabs.map((tab) => {

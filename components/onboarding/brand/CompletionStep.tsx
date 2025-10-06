@@ -58,10 +58,10 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
         <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
           <CheckCircle className="w-10 h-10 text-primary" />
         </div>
-        <h1 className="text-4xl font-bold">
+        <h1 className="text-3xl text-primary font-bold">
           Welcome to <span className="gradient-text">The Social Market</span>!
         </h1>
-        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+        <p className="text-[16px] text-muted-foreground max-w-2xl mx-auto">
           Your brand profile is complete and your first campaign is ready.
           You&apos;re all set to start collaborating with amazing
           micro-influencers!
@@ -84,7 +84,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
 
       {/* Next Steps */}
       <div className="space-y-6">
-        <h2 className="text-2xl font-bold">What&apos;s Next?</h2>
+        <h2 className="text-2xl text-primary font-bold">What&apos;s Next?</h2>
         <div className="grid md:grid-cols-2 gap-6">
           {nextSteps.map((step, index) => (
             <Card key={index} className="hover-lift cursor-pointer">

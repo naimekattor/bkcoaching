@@ -727,7 +727,7 @@ export default function SettingsPage() {
 
         <button
           onClick={handleSave}
-          className="px-6 py-3 bg-secondary text-white rounded hover:bg-secondary transition"
+          className="px-6 py-3 bg-secondary text-primary font-semibold rounded hover:bg-secondary transition"
         >
           Save Settings
         </button>

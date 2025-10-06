@@ -384,7 +384,7 @@ export default function BrandSetupPage() {
             </button>
             <button
               onClick={handleSubmit}
-              className="px-6 py-2 bg-secondary text-white rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2 transition-colors"
+              className="px-6 py-2 bg-secondary text-white rounded-md hover:bg-[var(--secondaryhover)] focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2 transition-colors"
             >
               Done
             </button>

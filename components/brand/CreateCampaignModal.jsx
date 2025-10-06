@@ -264,7 +264,9 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b">
           <div>
-            <h2 className="text-xl font-semibold">Create New Campaign</h2>
+            <h2 className="text-xl text-primary font-semibold">
+              Create New Campaign
+            </h2>
             <p className="text-sm text-gray-500 mt-1">
               Set up your influencer marketing campaign
             </p>
@@ -792,7 +794,7 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between p-6 border-t bg-gray-50 rounded-b-lg">
+        <div className="flex md:flex-row flex-col items-center justify-between p-6 border-t bg-gray-50 rounded-b-lg">
           <button
             onClick={handleSaveDraft}
             className="px-6 py-2 text-gray-600 hover:text-gray-800 font-medium"

@@ -529,7 +529,7 @@ export default function ProposalsPage() {
               </button>
               <button
                 type="submit"
-                className="px-6 py-2 bg-secondary text-primary font-semibold rounded-md hover:bg-yellow-600 transition-colors"
+                className="px-6 py-2 bg-secondary text-primary font-semibold rounded-md hover:bg-[var(--secondaryhover)] transition-colors"
               >
                 Send
               </button>
@@ -703,7 +703,7 @@ export default function ProposalsPage() {
                 <div className="flex gap-3">
                   <button
                     onClick={handleSendProposal}
-                    className="flex-1 bg-secondary text-white py-2 px-4 rounded-md hover:bg-yellow-600 transition-colors"
+                    className="flex-1 bg-secondary text-white py-2 px-4 rounded-md hover:bg-[var(--secondaryhover)] transition-colors"
                   >
                     Send Proposal
                   </button>
@@ -739,7 +739,7 @@ export default function ProposalsPage() {
               <div className="flex gap-3">
                 <button
                   onClick={handleCloseSuccess}
-                  className="flex-1 bg-secondary text-white py-2 px-4 rounded-md hover:bg-yellow-600 transition-colors"
+                  className="flex-1 bg-secondary text-white py-2 px-4 rounded-md hover:bg-[var(--secondaryhover)] transition-colors"
                 >
                   Continue
                 </button>

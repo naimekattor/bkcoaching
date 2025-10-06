@@ -212,9 +212,9 @@ export default function MicroInfluencersPage() {
     <div className="flex min-h-screen bg-white">
       <div className="flex-1">
         {/* Header */}
-        <div className="bg-white px-8 py-6 ">
+        <div className="bg-white  py-6 ">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-semibold text-gray-900">
+            <h1 className="text-2xl font-semibold text-primary">
               Discover Micro-Influencers
             </h1>
 
@@ -231,7 +231,7 @@ export default function MicroInfluencersPage() {
 
         {/* Search and Filters */}
         <div className="">
-          <div className="bg-white rounded-lg md:p-6 p-1 shadow-sm mb-8">
+          <div className=" rounded-lg  mb-8">
             {/* Search Bar */}
             <div className="flex gap-4 mb-6">
               <div className="flex-1">
@@ -246,7 +246,7 @@ export default function MicroInfluencersPage() {
               <button
                 onClick={handleSearch}
                 disabled={isSearching}
-                className="px-8 py-3 bg-secondary text-white rounded-lg hover:bg-yellow-600 transition-colors font-medium"
+                className="px-8 py-3 bg-secondary text-white rounded-lg hover:bg-[var(--secondaryhover)] transition-colors font-medium"
               >
                 {isSearching ? "Searching..." : "Search"}
               </button>
@@ -498,7 +498,7 @@ export default function MicroInfluencersPage() {
                     </button>
                     <button
                       onClick={() => handleMessage(creator.id)}
-                      className="flex-1 xl:px-4 px-2 xl:py-2 py-1 bg-secondary text-white rounded-lg hover:bg-yellow-600 transition-colors text-sm font-medium"
+                      className="flex-1 xl:px-4 px-2 xl:py-2 py-1 bg-secondary text-white rounded-lg hover:bg-[var(--secondaryhover)] transition-colors text-sm font-medium"
                     >
                       Message
                     </button>
@@ -534,7 +534,7 @@ export default function MicroInfluencersPage() {
               </p>
               <button
                 onClick={clearAllFilters}
-                className="px-6 py-2 bg-secondary text-white rounded-lg hover:bg-yellow-600 transition-colors font-medium"
+                className="px-6 py-2 bg-secondary text-white rounded-lg hover:bg-[var(--secondaryhover)] transition-colors font-medium"
               >
                 Clear all filters
               </button>

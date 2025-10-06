@@ -104,7 +104,7 @@ const PaymentSetupStep = ({ onBack }: PaymentSetupStepProps) => {
     <>
       <div className="space-y-8">
         <div className="text-center space-y-4">
-          <h1 className="text-3xl font-bold">Payment setup</h1>
+          <h1 className="text-3xl text-primary font-bold">Payment setup</h1>
           <p className="text-muted-foreground">
             Choose how you&apos;d like to receive payments from your
             collaborations

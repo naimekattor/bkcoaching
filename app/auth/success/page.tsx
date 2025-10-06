@@ -36,7 +36,7 @@ export default function SuccessPage() {
             </div>
 
             <Button
-              className="bg-secondary hover:bg-yellow-600 text-slate-800 font-semibold py-3 px-8 rounded-lg"
+              className="bg-secondary hover:bg-[var(--secondaryhover)] text-slate-800 font-semibold py-3 px-8 rounded-lg"
               asChild
             >
               <Link href="/">← Back to</Link>
@@ -49,7 +49,7 @@ export default function SuccessPage() {
       <div className="hidden relative lg:flex lg:w-1/2 bg-slate-100 items-center justify-center p-8">
         <Button
           variant="outline"
-          className="absolute top-4 right-4 bg-secondary text-slate-800 border-secondary hover:bg-yellow-600"
+          className="absolute top-4 right-4 bg-secondary text-slate-800 border-secondary hover:bg-[var(--secondaryhover)]"
           asChild
         >
           <Link href="/">Back to website →</Link>

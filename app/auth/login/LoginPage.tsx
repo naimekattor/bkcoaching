@@ -132,7 +132,7 @@ export default function LoginPage() {
 
               <Button
                 type="submit"
-                className="w-full bg-secondary hover:bg-yellow-600 text-slate-800 font-semibold py-3 rounded-lg"
+                className="w-full bg-secondary hover:bg-[var(--secondaryhover)] text-slate-800 font-semibold py-3 rounded-lg"
               >
                 Log in
               </Button>
@@ -144,7 +144,7 @@ export default function LoginPage() {
               <Button
                 type="button"
                 variant="outline"
-                className="w-full border-slate-600 text-white hover:bg-slate-700 py-3 rounded-lg bg-transparent"
+                className="w-full border-slate-600 text-white hover:bg-primary hover:text-white py-3 rounded-lg bg-transparent"
               >
                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                   <path
@@ -170,7 +170,7 @@ export default function LoginPage() {
               <Button
                 type="button"
                 variant="outline"
-                className="w-full border-slate-600 text-white hover:bg-slate-700 py-3 rounded-lg bg-transparent"
+                className="w-full border-slate-600 text-white hover:bg-primary hover:text-white py-3 rounded-lg bg-transparent"
               >
                 <svg
                   className="w-5 h-5 mr-2"
@@ -202,7 +202,7 @@ export default function LoginPage() {
       <div className="hidden relative lg:flex lg:w-1/2 bg-slate-100 items-center justify-center p-8">
         <Button
           variant="outline"
-          className="absolute top-4 right-4 bg-secondary text-slate-800 border-secondary hover:bg-yellow-600"
+          className="absolute top-4 right-4 bg-secondary text-slate-800 border-secondary hover:bg-[var(--secondaryhover)]"
           asChild
         >
           <Link href="/">Back to website →</Link>

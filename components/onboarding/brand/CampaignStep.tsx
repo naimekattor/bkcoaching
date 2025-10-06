@@ -155,7 +155,9 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
     <>
       <div className="space-y-8">
         <div className="text-center space-y-4">
-          <h1 className="text-3xl font-bold">Create your first campaign</h1>
+          <h1 className="text-3xl text-primary font-bold">
+            Create your first campaign
+          </h1>
           <p className="text-muted-foreground">
             Let&apos;s set up a campaign to find the perfect micro-influencerss
             for your brand

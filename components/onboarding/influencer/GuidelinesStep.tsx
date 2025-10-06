@@ -81,7 +81,9 @@ const GuidelinesStep = ({ onNext, onBack }: GuidelinesStepProps) => {
   return (
     <div className="space-y-8">
       <div className="text-center space-y-4">
-        <h1 className="text-3xl font-bold">Content & disclosure guidelines</h1>
+        <h1 className="text-3xl text-primary font-bold">
+          Content & disclosure guidelines
+        </h1>
         <p className="text-muted-foreground">
           Please review and agree to our content standards and legal
           requirements

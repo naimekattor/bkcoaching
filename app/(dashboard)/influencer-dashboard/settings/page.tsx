@@ -547,7 +547,7 @@ export default function ProfilePage() {
 
         {/* Update Button */}
         <div className="flex justify-end pt-4">
-          <Button className="bg-yellow-500 hover:bg-yellow-600 text-white px-8 py-2">
+          <Button className="bg-yellow-500 hover:bg-[var(--secondaryhover)] text-white px-8 py-2">
             Update Profile
           </Button>
         </div>

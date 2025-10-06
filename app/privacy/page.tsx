@@ -37,7 +37,7 @@ export default function PrivacyPage() {
       <main className="container mx-auto px-4 py-16 lg:py-24">
         <div className="container mx-auto">
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4 underline">
+            <h1 className="text-4xl md:text-5xl font-bold text-primary mb-4 underline">
               Privacy Policy
             </h1>
           </div>

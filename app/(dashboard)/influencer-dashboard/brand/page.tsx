@@ -70,7 +70,7 @@ export default function MicroinfluencersPage() {
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>
-          <button className="bg-secondary hover:bg-yellow-600 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2">
+          <button className="bg-secondary hover:bg-[var(--secondaryhover)] text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2">
             <Search className="w-4 h-4" />
             Search
           </button>
@@ -107,7 +107,7 @@ export default function MicroinfluencersPage() {
           </select>
 
           <div className="flex gap-3">
-            <button className="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+            <button className="bg-yellow-500 hover:bg-[var(--secondaryhover)] text-white px-6 py-3 rounded-lg font-medium transition-colors">
               Apply Filters
             </button>
             <button className="border border-gray-300 hover:bg-gray-50 text-gray-700 px-6 py-3 rounded-lg font-medium transition-colors">
@@ -175,7 +175,7 @@ export default function MicroinfluencersPage() {
                 >
                   View Profile
                 </Link>
-                <button className="bg-secondary hover:bg-yellow-600 text-primary px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                <button className="bg-secondary hover:bg-[var(--secondaryhover)] text-primary px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                   Message
                 </button>
               </div>

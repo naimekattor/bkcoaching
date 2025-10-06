@@ -119,7 +119,7 @@ export function PricingSection() {
                   {plan.description}
                 </p>
 
-                <button className="w-full bg-primary hover:bg-slate-700 text-white font-semibold py-4 rounded-lg transition-colors duration-200">
+                <button className="w-full bg-primary cursor-pointer text-white font-semibold py-4 rounded-lg transition-colors duration-200">
                   Select
                 </button>
               </div>

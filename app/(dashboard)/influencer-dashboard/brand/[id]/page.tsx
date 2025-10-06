@@ -96,7 +96,7 @@ export default function BrandProfilePage() {
               </div>
             </div>
             <div className="flex gap-3">
-              <button className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2">
+              <button className="bg-yellow-500 hover:bg-[var(--secondaryhover)] text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2">
                 <MessageCircle className="w-4 h-4" />
                 Message
               </button>

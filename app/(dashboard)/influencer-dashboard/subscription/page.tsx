@@ -75,13 +75,15 @@ export default function SubscriptionPage() {
 
   return (
     <div className=" mx-auto">
-      <h1 className="text-2xl font-bold mb-6 text-gray-900">
+      <h1 className="text-2xl font-bold mb-6 text-primary">
         Subscription Management
       </h1>
 
       {/* Current Plan */}
       <div className="bg-white rounded-xl shadow border p-6 mb-10">
-        <h2 className="text-xl font-semibold mb-4">Current Plan</h2>
+        <h2 className="text-xl text-primary font-semibold mb-4">
+          Current Plan
+        </h2>
         <div className="flex flex-col md:flex-row md:items-center md:justify-between">
           <div>
             <p className="text-lg font-medium text-gray-900">
@@ -113,7 +115,7 @@ export default function SubscriptionPage() {
               <>
                 <button
                   onClick={() => setShowUpdateModal(true)}
-                  className="px-4 py-2 bg-secondary text-white rounded-lg hover:bg-yellow-600"
+                  className="px-4 py-2 bg-secondary text-primary font-semibold rounded-lg hover:bg-[var(--secondaryhover)]"
                 >
                   Update Plan
                 </button>
@@ -183,7 +185,7 @@ export default function SubscriptionPage() {
               >
                 Cancel
               </button>
-              <button className="px-4 py-2 bg-secondary text-white rounded-lg hover:bg-yellow-600">
+              <button className="px-4 py-2 bg-secondary text-white rounded-lg hover:bg-[var(--secondaryhover)]">
                 Continue to Checkout
               </button>
             </div>

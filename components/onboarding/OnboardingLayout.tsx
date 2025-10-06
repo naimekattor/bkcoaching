@@ -27,8 +27,8 @@ const OnboardingLayout = ({
   return (
     <div className="min-h-screen bg-background container px-4">
       {/* Header */}
-      <header className="border-b border-border/50 px-6 py-4">
-        <div className="flex items-center justify-between max-w-4xl mx-auto">
+      <header className="border-b border-border/50  py-4">
+        <div className="flex items-center justify-between  mx-auto">
           <div className="flex items-center gap-4">
             {showBack && onBack && (
               <Button variant="ghost" size="sm" onClick={onBack}>
@@ -36,9 +36,9 @@ const OnboardingLayout = ({
                 Back
               </Button>
             )}
-            <div className="text-2xl font-bold text-primary">
-              The social Market
-            </div>
+          </div>
+          <div className="md:text-2xl text-xl text-center font-bold text-primary">
+            The social Market
           </div>
           <div className="text-sm text-muted-foreground">
             Step {currentStep} of {totalSteps}

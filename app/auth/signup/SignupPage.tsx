@@ -52,15 +52,17 @@ export default function SignupPage() {
       <div className="w-full lg:w-1/2 bg-slate-800 flex flex-col">
         {/* Header */}
         <div className="flex justify-between items-center p-6">
-          <div className="flex items-center gap-2">
-            <Image
-              src={"/images/logo.png"}
-              width={200}
-              height={55}
-              alt="social market"
-              className="w-auto h-auto"
-            />
-          </div>
+          <Link href={"/"}>
+            <div className="flex-shrink-0">
+              <Image
+                priority
+                width={160}
+                height={45}
+                alt="social market"
+                src={"/images/logo.png"}
+              />
+            </div>
+          </Link>
         </div>
 
         {/* Form Content */}
@@ -248,7 +250,7 @@ export default function SignupPage() {
               <Button
                 type="button"
                 variant="outline"
-                className="w-full border-[#F7F8F9]/60 border-2 text-white hover:bg-slate-700 py-5 cursor-pointer rounded-lg bg-transparent"
+                className="w-full border-[#F7F8F9]/60 border-2 text-white hover:bg-primary hover:text-white py-5 cursor-pointer rounded-lg bg-transparent"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -280,7 +282,7 @@ export default function SignupPage() {
               <Button
                 type="button"
                 variant="outline"
-                className="w-full border-[#F7F8F9]/60 border-2 text-white hover:bg-slate-700 py-5 cursor-pointer rounded-lg bg-transparent"
+                className="w-full border-[#F7F8F9]/60 border-2 text-white hover:bg-primary hover:text-white  py-5 cursor-pointer rounded-lg bg-transparent"
               >
                 <svg
                   className="w-5 h-5 mr-2"
