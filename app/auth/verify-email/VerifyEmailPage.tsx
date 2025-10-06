@@ -104,7 +104,7 @@ export default function VerifyEmailPage() {
                     value={digit}
                     onChange={(e) => handleInputChange(index, e.target.value)}
                     onKeyDown={(e) => handleKeyDown(index, e)}
-                    className="w-12 h-12 text-center rounded-md border"
+                    className="w-12 h-12 text-center rounded-md border text-white"
                   />
                 ))}
 

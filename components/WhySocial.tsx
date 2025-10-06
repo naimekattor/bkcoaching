@@ -3,7 +3,7 @@ import React from "react";
 
 const WhySocial = () => {
   return (
-    <div className="py-16 px-4 sm:px-6 lg:px-8">
+    <div className="md:pb-[100px] pb-16  px-4 sm:px-6 lg:px-8">
       <h1 className="text-center font-bold text-3xl sm:text-[40px] text-primary mb-12">
         Why The Social Market?
       </h1>

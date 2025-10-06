@@ -52,7 +52,7 @@ export default function InfluencersPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen ">
       {/* for hero */}
       <section className="bg-gradient-to-b from-[#ffffff] to-[#E9F4FF]">
         <main className="container mx-auto px-4 pt-16 lg:pt-24">
@@ -85,8 +85,8 @@ export default function InfluencersPage() {
           </div>
         </main>
       </section>
-      <main className="container mx-auto px-4 py-16 lg:py-24">
-        <div className="max-w-6xl mx-auto">
+      <main className="container mx-auto  py-16 lg:py-[100px]">
+        <div>
           {/* <h1 className="text-4xl md:text-5xl font-bold text-center mb-16">
             Browse Influencers
           </h1> */}

@@ -166,14 +166,14 @@ export default function SettingsPage() {
       id: "guides",
       title: "Guides & Documentation",
       description: "Step-by-step tutorials and resources",
-      href: "/guides",
+      href: "#",
       icon: Book,
     },
     {
       id: "contact",
       title: "Contact Support",
       description: "Get help from our support team",
-      href: "/contact-support",
+      href: "#",
       icon: MessageCircle,
     },
   ];
@@ -688,7 +688,7 @@ export default function SettingsPage() {
                   className="group flex items-center gap-4 px-6 py-4 transition-all duration-200 hover:bg-gray-50 active:bg-gray-100"
                 >
                   {/* Icon */}
-                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary flex items-center justify-center group-hover:bg-primary/40 transition-colors duration-200">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/30 flex items-center justify-center group-hover:bg-primary/40 transition-colors duration-200">
                     <Icon className="w-5 h-5 text-primary" />
                   </div>
 
@@ -714,7 +714,7 @@ export default function SettingsPage() {
             <p className="text-sm text-gray-600 text-center">
               Still need help?{" "}
               <a
-                href="/contact-support"
+                href="#"
                 className="font-medium text-primary hover:text-primary hover:underline"
               >
                 Contact our support team

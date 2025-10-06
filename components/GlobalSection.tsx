@@ -4,7 +4,7 @@ import React from "react";
 const GlobalSection = () => {
   return (
     <div>
-      <section className="py-16 lg:py-24 px-4">
+      <section className="pb-16 md:pb-24 px-4">
         <div className="text-center max-w-4xl mx-auto">
           <h2 className="text-[32px] md:text-[40px]  font-semibold text-primary mb-8">
             Start now. Grow anywhere

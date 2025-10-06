@@ -91,7 +91,7 @@ export default function BrandsPage() {
           </div>
         </main>
       </section>
-      <div className="space-y-12 py-20">
+      <div className="space-y-12 py-16 lg:py-[100px]">
         {brands.map((brand) => (
           <BrandCard key={brand.id} {...brand} />
         ))}

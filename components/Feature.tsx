@@ -5,7 +5,7 @@ import KeywordMotion from "./KeywordMotion";
 
 const Feature = () => {
   return (
-    <section className="py-16 lg:py-24 bg-gradient-to-b from-[#F5FAFF] to-[#F4FAFF]">
+    <section className="py-16 lg:py-[100px] bg-gradient-to-b from-[#F5FAFF] to-[#F4FAFF]">
       <KeywordMotion />
 
       <div className="grid md:grid-cols-2 gap-8 container mx-auto">

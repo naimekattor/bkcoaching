@@ -50,7 +50,7 @@ export function PricingSection() {
   const currentPlans = isYearly ? yearlyPlans : monthlyPlans;
 
   return (
-    <section className="py-16 px-4 lg:py-24 ">
+    <section className=" px-4 py-16 lg:py-[100px] ">
       <div className=" mx-auto ">
         {/* Header */}
         <div className="text-center mb-12">
@@ -87,7 +87,7 @@ export function PricingSection() {
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <div className="grid lg:grid-cols-3 md:grid-cols-1 grid-cols-1 gap-6 max-w-5xl mx-auto">
           {currentPlans.map((plan, index) => (
             <div
               key={index}

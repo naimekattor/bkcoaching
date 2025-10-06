@@ -168,14 +168,14 @@ export default function SettingsPage() {
       id: "guides",
       title: "Guides & Documentation",
       description: "Step-by-step tutorials and resources",
-      href: "/guides",
+      href: "#",
       icon: Book,
     },
     {
       id: "contact",
       title: "Contact Support",
       description: "Get help from our support team",
-      href: "/contact-support",
+      href: "#",
       icon: MessageCircle,
     },
   ];

@@ -145,7 +145,7 @@ const PaymentStep = ({ onNext, onBack }: PaymentStepProps) => {
       </div>
 
       {/* Pricing Cards */}
-      <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+      <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6 max-w-5xl mx-auto">
         {currentPlans.map((plan, index) => (
           <div
             key={index}

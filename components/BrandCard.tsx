@@ -26,7 +26,10 @@ export default function BrandCard({
   logo,
 }: Brand) {
   return (
-    <div className="bg-[#F3FAFF] rounded shadow container mx-auto flex flex-col lg:flex-row items-center space-y-8 lg:space-y-0 lg:space-x-12">
+    <div
+      className="bg-[#F3FAFF] rounded shadow container mx-auto flex flex-col lg:flex-row items-center space-y-8 lg:space-y-0 lg:space-x-12"
+      style={{ padding: 0 }}
+    >
       {/* Image Section */}
       <div className="w-auto flex-shrink-0 relative">
         <div className="relative w-full h-80 lg:h-full rounded overflow-hidden">
