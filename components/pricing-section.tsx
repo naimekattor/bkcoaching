@@ -50,7 +50,7 @@ export function PricingSection() {
   const currentPlans = isYearly ? yearlyPlans : monthlyPlans;
 
   return (
-    <section className="py-16 lg:py-24 ">
+    <section className="py-16 px-4 lg:py-24 ">
       <div className=" mx-auto ">
         {/* Header */}
         <div className="text-center mb-12">
