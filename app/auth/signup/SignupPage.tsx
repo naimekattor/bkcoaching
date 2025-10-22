@@ -8,14 +8,18 @@ import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
+import { setAuthFromResponse, signup } from "@/lib/auth";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 export default function SignupPage() {
   const router = useRouter();
   const params = useSearchParams();
   const returnTo = params.get("returnTo");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -24,13 +28,15 @@ export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const { token, user, setToken, setUser, logout } = useAuthStore();
+  console.log(user, token);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: { [key: string]: string } = {};
 
-    if (!formData.firstName) newErrors.firstName = "First name is required";
-    if (!formData.lastName) newErrors.lastName = "Last name is required";
+    if (!formData.first_name) newErrors.firstName = "First name is required";
+    if (!formData.last_name) newErrors.lastName = "Last name is required";
     if (!formData.email) newErrors.email = "Email is required";
     if (!formData.password) newErrors.password = "Password is required";
     if (formData.password !== formData.confirmPassword)
@@ -39,11 +45,27 @@ export default function SignupPage() {
       newErrors.agreeToTerms = "You must agree to the terms";
 
     setErrors(newErrors);
+    setLoading(true);
+    try {
+      const res = await signup({ ...formData, signup_method: "normal" });
+      setAuthFromResponse(res);
 
-    if (Object.keys(newErrors).length === 0) {
-      // Handle successful signup - redirect to email verification
-      router.push(`/auth/verify-email?returnTo=${returnTo}`);
+      if (token) {
+        router.push(`/auth/verify-email?returnTo=${returnTo}`);
+      } else {
+        setError(res?.message || "Signup failed");
+      }
+
+      console.log(res);
+    } catch (err: any) {
+      setError(err.message || "signup failed");
+    } finally {
+      setLoading(false);
     }
+
+    // if (Object.keys(newErrors).length === 0) {
+    //   // Handle successful signup - redirect to email verification
+    //   router.push(`/auth/verify-email?returnTo=${returnTo}`);
   };
 
   return (
@@ -85,9 +107,9 @@ export default function SignupPage() {
                     type="text"
                     placeholder="First name"
                     className="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-secondary"
-                    value={formData.firstName}
+                    value={formData.first_name}
                     onChange={(e) =>
-                      setFormData({ ...formData, firstName: e.target.value })
+                      setFormData({ ...formData, first_name: e.target.value })
                     }
                   />
                   {errors.firstName && (
@@ -101,9 +123,9 @@ export default function SignupPage() {
                     type="text"
                     placeholder="Last name"
                     className="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-secondary"
-                    value={formData.lastName}
+                    value={formData.last_name}
                     onChange={(e) =>
-                      setFormData({ ...formData, lastName: e.target.value })
+                      setFormData({ ...formData, last_name: e.target.value })
                     }
                   />
                   {errors.lastName && (

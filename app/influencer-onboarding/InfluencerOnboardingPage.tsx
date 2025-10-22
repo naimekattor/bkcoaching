@@ -11,6 +11,7 @@ import TermsStep from "@/components/onboarding/influencer/TermsStep";
 import CompletionStep from "@/components/onboarding/influencer/CompletionStep";
 import { toast } from "@/hooks/use-toast";
 import { useRouter, useSearchParams } from "next/navigation";
+import InfluencerOnboardingProvider from "@/contexts/InfluencerOnboardingContext";
 
 const InfluencerOnboardingPage = () => {
   const params = useSearchParams();
@@ -120,16 +121,18 @@ const InfluencerOnboardingPage = () => {
   };
 
   return (
-    <OnboardingLayout
-      currentStep={currentStep}
-      totalSteps={totalSteps}
-      onBack={currentStep > 1 ? handleBack : undefined}
-      stepTitle={steps[currentStep - 1].title}
-      stepDescription={steps[currentStep - 1].description}
-      showBack={currentStep > 1 && currentStep < 8}
-    >
-      {renderStep()}
-    </OnboardingLayout>
+    <InfluencerOnboardingProvider>
+      <OnboardingLayout
+        currentStep={currentStep}
+        totalSteps={totalSteps}
+        onBack={currentStep > 1 ? handleBack : undefined}
+        stepTitle={steps[currentStep - 1].title}
+        stepDescription={steps[currentStep - 1].description}
+        showBack={currentStep > 1 && currentStep < 8}
+      >
+        {renderStep()}
+      </OnboardingLayout>
+    </InfluencerOnboardingProvider>
   );
 };
 

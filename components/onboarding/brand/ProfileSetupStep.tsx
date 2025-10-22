@@ -13,6 +13,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { demographics } from "@/constants/demographics";
+import { useBrandOnBoarding } from "@/contexts/BrandOnboardingContext";
 
 interface ProfileSetupStepProps {
   onNext: () => void;
@@ -20,14 +21,7 @@ interface ProfileSetupStepProps {
 }
 
 const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
-  const [formData, setFormData] = useState({
-    // industriesNiches: [] as string[],
-    targetAudience: [] as string[],
-    keywords: "",
-    demographics: [] as string[],
-    values: [] as string[],
-    inPersonAddress: "",
-  });
+  const { onboardingData, setOnboardingData } = useBrandOnBoarding();
 
   const targetAudiences = [
     {
@@ -104,17 +98,17 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
   ];
 
   const handleArrayChange = (
-    field: keyof typeof formData,
+    field: keyof typeof onboardingData,
     value: string,
     checked: boolean
   ) => {
     if (checked) {
-      setFormData((prev) => ({
+      setOnboardingData((prev) => ({
         ...prev,
         [field]: [...(prev[field] as string[]), value],
       }));
     } else {
-      setFormData((prev) => ({
+      setOnboardingData((prev) => ({
         ...prev,
         [field]: (prev[field] as string[]).filter((item) => item !== value),
       }));
@@ -123,7 +117,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
 
   const isValid =
     // formData.industriesNiches.length > 0 &&
-    formData.targetAudience.length > 0;
+    onboardingData.targetAudience.length > 0;
 
   return (
     <TooltipProvider>
@@ -215,7 +209,9 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                   >
                     <Checkbox
                       id={audience.label}
-                      checked={formData.targetAudience.includes(audience.label)}
+                      checked={onboardingData.targetAudience.includes(
+                        audience.label
+                      )}
                       onCheckedChange={(checked) =>
                         handleArrayChange(
                           "targetAudience",
@@ -262,9 +258,12 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
             </CardHeader>
             <CardContent>
               <Textarea
-                value={formData.keywords}
+                value={onboardingData.keywords}
                 onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, keywords: e.target.value }))
+                  setOnboardingData((prev) => ({
+                    ...prev,
+                    keywords: e.target.value,
+                  }))
                 }
                 placeholder="sustainable fashion, eco-friendly, organic, wellness, lifestyle..."
                 rows={3}
@@ -287,7 +286,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                     <div key={demo} className="flex items-center space-x-2">
                       <Checkbox
                         id={demo}
-                        checked={formData.demographics.includes(demo)}
+                        checked={onboardingData.demographics.includes(demo)}
                         onCheckedChange={(checked) =>
                           handleArrayChange(
                             "demographics",
@@ -319,7 +318,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                     <div key={value} className="flex items-center space-x-2">
                       <Checkbox
                         id={value}
-                        checked={formData.values.includes(value)}
+                        checked={onboardingData.values.includes(value)}
                         onCheckedChange={(checked) =>
                           handleArrayChange("values", value, checked as boolean)
                         }

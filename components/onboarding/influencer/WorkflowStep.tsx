@@ -18,6 +18,7 @@ import {
   Bell,
   Mail,
 } from "lucide-react";
+import { useInfluencerOnboarding } from "@/contexts/InfluencerOnboardingContext";
 
 interface WorkflowStepProps {
   onNext: () => void;
@@ -25,16 +26,18 @@ interface WorkflowStepProps {
 }
 
 const WorkflowStep = ({ onNext, onBack }: WorkflowStepProps) => {
-  const [preferences, setPreferences] = useState({
-    responseTime: "24-hours",
-    notifications: {
-      email: true,
-      push: true,
-      sms: false,
-    },
-    autoAccept: false,
-    weekendWork: true,
-  });
+  const { onboardingDataInfluencer, setOnboardingDataInfluencer } =
+    useInfluencerOnboarding();
+  // const [preferences, setPreferences] = useState({
+  //   responseTime: "24-hours",
+  //   notifications: {
+  //     email: true,
+  //     push: true,
+  //     sms: false,
+  //   },
+  //   autoAccept: false,
+  //   weekendWork: true,
+  // });
 
   const workflowSteps = [
     {
@@ -88,7 +91,7 @@ const WorkflowStep = ({ onNext, onBack }: WorkflowStepProps) => {
   ];
 
   const handleNotificationChange = (type: string, enabled: boolean) => {
-    setPreferences((prev) => ({
+    setOnboardingDataInfluencer((prev) => ({
       ...prev,
       notifications: { ...prev.notifications, [type]: enabled },
     }));
@@ -157,9 +160,12 @@ const WorkflowStep = ({ onNext, onBack }: WorkflowStepProps) => {
           </CardHeader>
           <CardContent>
             <Select
-              value={preferences.responseTime}
+              value={onboardingDataInfluencer.response_time}
               onValueChange={(value) =>
-                setPreferences((prev) => ({ ...prev, responseTime: value }))
+                setOnboardingDataInfluencer((prev) => ({
+                  ...prev,
+                  response_time: value,
+                }))
               }
             >
               <SelectTrigger>
@@ -196,7 +202,7 @@ const WorkflowStep = ({ onNext, onBack }: WorkflowStepProps) => {
                 <Label>Email notifications</Label>
               </div>
               <Switch
-                checked={preferences.notifications.email}
+                checked={onboardingDataInfluencer?.notifications?.email}
                 onCheckedChange={(checked) =>
                   handleNotificationChange("email", checked)
                 }
@@ -209,7 +215,7 @@ const WorkflowStep = ({ onNext, onBack }: WorkflowStepProps) => {
                 <Label>Push notifications</Label>
               </div>
               <Switch
-                checked={preferences.notifications.push}
+                checked={onboardingDataInfluencer?.notifications?.push}
                 onCheckedChange={(checked) =>
                   handleNotificationChange("push", checked)
                 }

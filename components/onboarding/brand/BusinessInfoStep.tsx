@@ -7,6 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Upload, Building, Globe, MapPin } from "lucide-react";
 import PageHeaderWithSwitcher from "@/components/PageHeaderWithSwitcher";
+import { useBrandOnBoarding } from "@/contexts/BrandOnboardingContext";
 
 interface BusinessInfoStepProps {
   onNext: () => void;
@@ -14,13 +15,14 @@ interface BusinessInfoStepProps {
 }
 
 const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
-  const [formData, setFormData] = useState({
-    businessName: "",
-    website: "",
-    bio: "",
-    timeZone: "America/New_York",
-    businessTypes: [] as string[],
-  });
+  // const [formData, setFormData] = useState({
+  //   businessName: "",
+  //   website: "",
+  //   bio: "",
+  //   timeZone: "America/New_York",
+  //   businessTypes: [] as string[],
+  // });
+  const { onboardingData, setOnboardingData } = useBrandOnBoarding();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState<string | null>(null);
@@ -57,19 +59,20 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
 
   const handleBusinessTypeChange = (type: string, checked: boolean) => {
     if (checked) {
-      setFormData((prev) => ({
+      setOnboardingData((prev) => ({
         ...prev,
         businessTypes: [...prev.businessTypes, type],
       }));
     } else {
-      setFormData((prev) => ({
+      setOnboardingData((prev) => ({
         ...prev,
         businessTypes: prev.businessTypes.filter((t) => t !== type),
       }));
     }
   };
 
-  const isValid = formData.businessName && formData.businessTypes.length > 0;
+  const isValid =
+    onboardingData.businessName && onboardingData.businessTypes.length > 0;
 
   const handleClick = () => {
     fileInputRef.current?.click();
@@ -110,9 +113,9 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
               <Label htmlFor="businessName">Business Name *</Label>
               <Input
                 id="businessName"
-                value={formData.businessName}
+                value={onboardingData.businessName}
                 onChange={(e) =>
-                  setFormData((prev) => ({
+                  setOnboardingData((prev) => ({
                     ...prev,
                     businessName: e.target.value,
                   }))
@@ -127,9 +130,9 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
                 <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   id="website"
-                  value={formData.website}
+                  value={onboardingData.website}
                   onChange={(e) =>
-                    setFormData((prev) => ({
+                    setOnboardingData((prev) => ({
                       ...prev,
                       website: e.target.value,
                     }))
@@ -163,9 +166,12 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
               <Label htmlFor="bio">Short Bio</Label>
               <Textarea
                 id="bio"
-                value={formData.bio}
+                value={onboardingData.bio}
                 onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, bio: e.target.value }))
+                  setOnboardingData((prev) => ({
+                    ...prev,
+                    bio: e.target.value,
+                  }))
                 }
                 placeholder="Brief description of your business and what you do..."
                 rows={4}
@@ -220,7 +226,7 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
                 <div key={type} className="flex items-center space-x-2">
                   <Checkbox
                     id={type}
-                    checked={formData.businessTypes.includes(type)}
+                    checked={onboardingData.businessTypes.includes(type)}
                     onCheckedChange={(checked) =>
                       handleBusinessTypeChange(type, checked as boolean)
                     }

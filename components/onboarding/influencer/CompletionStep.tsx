@@ -2,13 +2,68 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, Search, MessageCircle, Gift, Copy } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { toast } from "@/hooks/use-toast";
+import { apiClient } from "@/lib/apiClient";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 interface CompletionStepProps {
   onComplete: () => void;
 }
+
+const transformInfluencerDataForAPI = (data: any) => {
+  const payload = {
+    influencer_profile: {
+      display_name: data.display_name,
+      short_bio: data.short_bio,
+      profile_picture: data.profile_picture,
+      instagram_handle: data.instagram_handle,
+      tiktok_handle: data.tiktok_handle === "null" ? "" : data.tiktok_handle,
+      youtube_handle: data.youtube_handle,
+      twitter_handle: data.twitter_handle,
+      linkedin_handle: data.linkedin_handle,
+      whatsapp_handle: data.whatsapp_handle,
+      // Convert arrays to comma-separated strings
+      content_niches: Array.isArray(data.content_niches)
+        ? data.content_niches.join(", ")
+        : "",
+      audience_demographics: Array.isArray(data.audience_demographics)
+        ? data.audience_demographics.join(", ")
+        : "",
+      keyword_and_tags: data.keyword_and_tags,
+      content_formats: Array.isArray(data.content_formats)
+        ? data.content_formats.join(", ")
+        : "",
+      payment_preferences: Array.isArray(data.payment_preferences)
+        ? data.payment_preferences.join(", ")
+        : "",
+      // Rate and payment fields
+      rate_range_for_social_post: data.rate_range_for_social_post,
+      rate_range_for_youtube_video: data.rate_range_for_youtube_video,
+      rate_range_for_blog_post: data.rate_range_for_blog_post,
+      rate_range_for_youtube_short: data.rate_range_for_youtube_short,
+      rate_range_for_repost: data.rate_range_for_repost,
+      rate_range_for_instagram_story: data.rate_range_for_instagram_story,
+      rate_range_for_instagram_reel: data.rate_range_for_instagram_reel,
+      rate_range_for_tiktok_video: data.rate_range_for_tiktok_video,
+      rate_range_for_podcast_mention: data.rate_range_for_podcast_mention,
+      rate_range_for_live_stream: data.rate_range_for_live_stream,
+      rate_range_for_ugc_creation: data.rate_range_for_ugc_creation,
+      rate_range_for_whatsapp_status_post:
+        data.rate_range_for_whatsapp_status_post,
+      rate_range_for_affiliate_marketing_percent:
+        data.rate_range_for_affiliate_marketing_percent,
+      response_time: data.response_time,
+      payment_method: data.payment_method,
+      account_holder_name: data.account_holder_name,
+      account_number: data.account_number ? String(data.account_number) : "",
+      bank_name: data.bank_name,
+      paypal_email: data.paypal_email,
+    },
+  };
+  return payload;
+};
 
 const CompletionStep = ({ onComplete }: CompletionStepProps) => {
   const [referralCode] = useState("CREATOR-XYZ789");
@@ -47,6 +102,38 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
       description: "Share with other micro-influencers to earn rewards",
     });
   };
+  const { token } = useAuthStore();
+
+  useEffect(() => {
+    const submitOnboardingData = async () => {
+      const storedData = localStorage.getItem("InfluencerOnboardingData");
+      if (!storedData) return;
+
+      try {
+        const onboardingData = JSON.parse(storedData);
+        const apiPayload = transformInfluencerDataForAPI(onboardingData);
+
+        await apiClient("user_service/update_user_profile/", {
+          method: "PATCH",
+          auth: true,
+          body: JSON.stringify(apiPayload),
+        });
+
+        toast({
+          title: "Profile Saved!",
+          description: "Your influencer profile is now live.",
+        });
+        localStorage.removeItem("InfluencerOnboardingData");
+      } catch (error) {
+        console.error("Failed to submit influencer onboarding data:", error);
+        toast({ title: "Error Saving Profile", variant: "destructive" });
+      }
+    };
+
+    if (token) {
+      submitOnboardingData();
+    }
+  }, [token]);
 
   return (
     <div className="text-center space-y-8">

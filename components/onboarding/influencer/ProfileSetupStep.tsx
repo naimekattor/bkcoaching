@@ -12,6 +12,7 @@ import { User, Hash, Users, Camera } from "lucide-react";
 import Image from "next/image";
 import { industriesNiches } from "@/constants/niches";
 import { demographics } from "@/constants/demographics";
+import { useInfluencerOnboarding } from "@/contexts/InfluencerOnboardingContext";
 
 interface ProfileSetupStepProps {
   onNext: () => void;
@@ -19,37 +20,39 @@ interface ProfileSetupStepProps {
 }
 
 const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
-  const [formData, setFormData] = useState({
-    displayName: "",
-    bio: "",
-    profilePhoto: null as File | null,
-    profilePhotoPreview: null as string | null,
-    socialLinks: {
-      instagram: "",
-      tiktok: "",
-      youtube: "",
-      twitter: "",
-      linkedin: "",
-      whatsapp: "",
-    },
-    niches: [] as string[],
-    demographics: [] as string[],
-    keywords: "",
-  });
-  type SocialPlatform = keyof typeof formData.socialLinks;
+  const { onboardingDataInfluencer, setOnboardingDataInfluencer } =
+    useInfluencerOnboarding();
+  // const [formData, setOnboardingDataInfluencer] = useState({
+  //   displayName: "",
+  //   bio: "",
+  //   profilePhoto: null as File | null,
+  //   profilePhotoPreview: null as string | null,
+  //   socialLinks: {
+  //     instagram: "",
+  //     tiktok: "",
+  //     youtube: "",
+  //     twitter: "",
+  //     linkedin: "",
+  //     whatsapp: "",
+  //   },
+  //   niches: [] as string[],
+  //   demographics: [] as string[],
+  //   keywords: "",
+  // });
+  // type SocialPlatform = keyof typeof onboardingDataInfluencer.socialLinks;
 
   const handleArrayChange = (
-    field: "niches" | "demographics",
+    field: "content_niches" | "audience_demographics",
     value: string,
     checked: boolean
   ) => {
     if (checked) {
-      setFormData((prev) => ({
+      setOnboardingDataInfluencer((prev) => ({
         ...prev,
         [field]: [...prev[field], value],
       }));
     } else {
-      setFormData((prev) => ({
+      setOnboardingDataInfluencer((prev) => ({
         ...prev,
         [field]: prev[field].filter((item) => item !== value),
       }));
@@ -59,16 +62,18 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setFormData((prev) => ({
+      setOnboardingDataInfluencer((prev) => ({
         ...prev,
-        profilePhoto: file,
+        profile_picture: file,
         profilePhotoPreview: URL.createObjectURL(file),
       }));
     }
   };
 
   const isValid =
-    formData.displayName && formData.bio && formData.niches.length > 0;
+    onboardingDataInfluencer.display_name &&
+    onboardingDataInfluencer.short_bio &&
+    onboardingDataInfluencer.content_niches.length > 0;
 
   return (
     <div className="space-y-8">
@@ -99,11 +104,11 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                   htmlFor="profilePhoto"
                   className="aspect-square w-32 mx-auto md:mx-0 border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors overflow-hidden"
                 >
-                  {formData.profilePhotoPreview ? (
+                  {onboardingDataInfluencer.profile_picture ? (
                     <Image
                       width={500}
                       height={500}
-                      src={formData.profilePhotoPreview}
+                      src={onboardingDataInfluencer.profile_picture}
                       alt="Profile preview"
                       className="object-cover w-full h-full"
                     />
@@ -131,11 +136,11 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                   <Label htmlFor="displayName">Display Name *</Label>
                   <Input
                     id="displayName"
-                    value={formData.displayName}
+                    value={onboardingDataInfluencer.display_name}
                     onChange={(e) =>
-                      setFormData((prev) => ({
+                      setOnboardingDataInfluencer((prev) => ({
                         ...prev,
-                        displayName: e.target.value,
+                        display_name: e.target.value,
                       }))
                     }
                     placeholder="Your micro-influencers name"
@@ -146,16 +151,19 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                   <Label htmlFor="bio">Short Bio (160 characters) *</Label>
                   <Textarea
                     id="bio"
-                    value={formData.bio}
+                    value={onboardingDataInfluencer.short_bio}
                     onChange={(e) =>
-                      setFormData((prev) => ({ ...prev, bio: e.target.value }))
+                      setOnboardingDataInfluencer((prev) => ({
+                        ...prev,
+                        short_bio: e.target.value,
+                      }))
                     }
                     placeholder="Tell brands what makes you unique..."
                     rows={3}
                     maxLength={160}
                   />
                   <p className="text-xs text-muted-foreground text-right">
-                    {formData.bio.length}/160 characters
+                    {onboardingDataInfluencer.short_bio.length}/160 characters
                   </p>
                 </div>
               </div>
@@ -171,17 +179,17 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
               Link your social accounts to showcase your reach and engagement
             </p>
           </CardHeader>
-          <CardContent className="space-y-4">
+          {/* <CardContent className="space-y-4">
             <div className="grid md:grid-cols-2 gap-4">
-              {(Object.keys(formData.socialLinks) as SocialPlatform[]).map(
+              {(Object.keys(onboardingDataInfluencer.socialLinks) as SocialPlatform[]).map(
                 (platform) => (
                   <div className="space-y-2" key={platform}>
                     <Label htmlFor={platform}>{platform}</Label>
                     <Input
                       id={platform}
-                      value={formData.socialLinks[platform]}
+                      value={onboardingDataInfluencer.socialLinks[platform]}
                       onChange={(e) =>
-                        setFormData((prev) => ({
+                        setOnboardingDataInfluencer((prev) => ({
                           ...prev,
                           socialLinks: {
                             ...prev.socialLinks,
@@ -198,6 +206,99 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                   </div>
                 )
               )}
+            </div>
+          </CardContent> */}
+          <CardContent className="space-y-4">
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="instagram_handle">Instagram</Label>
+                <Input
+                  id="instagram_handle"
+                  value={onboardingDataInfluencer.instagram_handle}
+                  onChange={(e) =>
+                    setOnboardingDataInfluencer((prev) => ({
+                      ...prev,
+                      instagram_handle: e.target.value,
+                    }))
+                  }
+                  placeholder="@yourusername or profile URL"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="tiktok_handle">TikTok</Label>
+                <Input
+                  id="tiktok_handle"
+                  value={onboardingDataInfluencer.tiktok_handle}
+                  onChange={(e) =>
+                    setOnboardingDataInfluencer((prev) => ({
+                      ...prev,
+                      tiktok_handle: e.target.value,
+                    }))
+                  }
+                  placeholder="@yourusername or profile URL"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="youtube_handle">YouTube</Label>
+                <Input
+                  id="youtube_handle"
+                  value={onboardingDataInfluencer.youtube_handle}
+                  onChange={(e) =>
+                    setOnboardingDataInfluencer((prev) => ({
+                      ...prev,
+                      youtube_handle: e.target.value,
+                    }))
+                  }
+                  placeholder="@yourusername or profile URL"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="twitter_handle">Twitter</Label>
+                <Input
+                  id="twitter_handle"
+                  value={onboardingDataInfluencer.twitter_handle}
+                  onChange={(e) =>
+                    setOnboardingDataInfluencer((prev) => ({
+                      ...prev,
+                      twitter_handle: e.target.value,
+                    }))
+                  }
+                  placeholder="@yourusername or profile URL"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="linkedin_handle">LinkedIn</Label>
+                <Input
+                  id="linkedin_handle"
+                  value={onboardingDataInfluencer.linkedin_handle}
+                  onChange={(e) =>
+                    setOnboardingDataInfluencer((prev) => ({
+                      ...prev,
+                      linkedin_handle: e.target.value,
+                    }))
+                  }
+                  placeholder="@yourusername or profile URL"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="whatsapp_handle">WhatsApp</Label>
+                <Input
+                  id="whatsapp_handle"
+                  value={onboardingDataInfluencer.whatsapp_handle}
+                  onChange={(e) =>
+                    setOnboardingDataInfluencer((prev) => ({
+                      ...prev,
+                      whatsapp_handle: e.target.value,
+                    }))
+                  }
+                  placeholder="+1 555-123-4567"
+                />
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -220,9 +321,15 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                 <div key={niche} className="flex items-center space-x-2">
                   <Checkbox
                     id={niche}
-                    checked={formData.niches.includes(niche)}
+                    checked={onboardingDataInfluencer.content_niches.includes(
+                      niche
+                    )}
                     onCheckedChange={(checked) =>
-                      handleArrayChange("niches", niche, checked as boolean)
+                      handleArrayChange(
+                        "content_niches",
+                        niche,
+                        checked as boolean
+                      )
                     }
                   />
                   <Label htmlFor={niche} className="text-sm font-normal">
@@ -232,7 +339,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
               ))}
             </div>
             <div className="mt-4">
-              {formData.niches.map((niche) => (
+              {onboardingDataInfluencer.content_niches.map((niche) => (
                 <Badge key={niche} variant="secondary" className="mr-2 mb-2">
                   {niche}
                 </Badge>
@@ -258,10 +365,12 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                 <div key={demo} className="flex items-center space-x-2">
                   <Checkbox
                     id={demo}
-                    checked={formData.demographics.includes(demo)}
+                    checked={onboardingDataInfluencer.audience_demographics.includes(
+                      demo
+                    )}
                     onCheckedChange={(checked) =>
                       handleArrayChange(
-                        "demographics",
+                        "audience_demographics",
                         demo,
                         checked as boolean
                       )
@@ -286,9 +395,12 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
           </CardHeader>
           <CardContent>
             <Textarea
-              value={formData.keywords}
+              value={onboardingDataInfluencer.keyword_and_tags}
               onChange={(e) =>
-                setFormData((prev) => ({ ...prev, keywords: e.target.value }))
+                setOnboardingDataInfluencer((prev) => ({
+                  ...prev,
+                  keyword_and_tags: e.target.value,
+                }))
               }
               placeholder="minimalist style, authentic reviews, storytelling, humor, educational content..."
               rows={3}

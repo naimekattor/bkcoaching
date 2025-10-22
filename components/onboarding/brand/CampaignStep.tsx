@@ -32,6 +32,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useBrandOnBoarding } from "@/contexts/BrandOnboardingContext";
 
 interface CampaignStepProps {
   onNext: () => void;
@@ -42,20 +43,7 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const router = useRouter();
 
-  const [formData, setFormData] = useState({
-    campaignName: "",
-    objective: "",
-    budget: [1000],
-    budgetType: "total",
-    paymentPreferences: [] as string[],
-    description: "",
-    deliverables: [] as string[],
-    timeline: "",
-    targetAudience: "",
-    keywords: "",
-    approvalRequired: true,
-    autoMatch: false,
-  });
+  const { onboardingData, setOnboardingData } = useBrandOnBoarding();
 
   const objectives = [
     {
@@ -120,12 +108,12 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
 
   const handleDeliverableChange = (id: string, checked: boolean) => {
     if (checked) {
-      setFormData((prev) => ({
+      setOnboardingData((prev) => ({
         ...prev,
         deliverables: [...prev.deliverables, id],
       }));
     } else {
-      setFormData((prev) => ({
+      setOnboardingData((prev) => ({
         ...prev,
         deliverables: prev.deliverables.filter((d) => d !== id),
       }));
@@ -133,17 +121,17 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
   };
 
   const isValid =
-    formData.campaignName &&
-    formData.objective &&
-    formData.deliverables.length > 0 &&
-    formData.timeline &&
-    formData.paymentPreferences.length > 0;
+    onboardingData.campaignName &&
+    onboardingData.objective &&
+    onboardingData.deliverables.length > 0 &&
+    onboardingData.timeline &&
+    onboardingData.paymentPreferences.length > 0;
 
   const handleCreateCampaign = () => {
     if (!isValid) return;
 
     // Save draft campaign to localStorage (optional, so they don’t lose data)
-    localStorage.setItem("draftCampaign", JSON.stringify(formData));
+    localStorage.setItem("draftCampaign", JSON.stringify(onboardingData));
     setShowAuthModal(true);
 
     // Redirect to signup with "returnTo" param
@@ -179,9 +167,9 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
                   <Label htmlFor="campaignName">Campaign Name *</Label>
                   <Input
                     id="campaignName"
-                    value={formData.campaignName}
+                    value={onboardingData.campaignName}
                     onChange={(e) =>
-                      setFormData((prev) => ({
+                      setOnboardingData((prev) => ({
                         ...prev,
                         campaignName: e.target.value,
                       }))
@@ -193,9 +181,12 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
                 <div className="space-y-2">
                   <Label>Campaign Objective *</Label>
                   <Select
-                    value={formData.objective}
+                    value={onboardingData.objective}
                     onValueChange={(value) =>
-                      setFormData((prev) => ({ ...prev, objective: value }))
+                      setOnboardingData((prev) => ({
+                        ...prev,
+                        objective: value,
+                      }))
                     }
                   >
                     <SelectTrigger>
@@ -221,9 +212,9 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
                 <Label htmlFor="description">Campaign Description</Label>
                 <Textarea
                   id="description"
-                  value={formData.description}
+                  value={onboardingData.description}
                   onChange={(e) =>
-                    setFormData((prev) => ({
+                    setOnboardingData((prev) => ({
                       ...prev,
                       description: e.target.value,
                     }))
@@ -249,9 +240,9 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
                   <div className="flex items-center space-x-2">
                     <Checkbox
                       id="total-budget"
-                      checked={formData.budgetType === "total"}
+                      checked={onboardingData.budgetType === "total"}
                       onCheckedChange={() =>
-                        setFormData((prev) => ({
+                        setOnboardingData((prev) => ({
                           ...prev,
                           budgetType: "total",
                         }))
@@ -263,9 +254,9 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
                   <div className="flex items-center space-x-2">
                     <Checkbox
                       id="monthly-budget"
-                      checked={formData.budgetType === "monthly"}
+                      checked={onboardingData.budgetType === "monthly"}
                       onCheckedChange={() =>
-                        setFormData((prev) => ({
+                        setOnboardingData((prev) => ({
                           ...prev,
                           budgetType: "monthly",
                         }))
@@ -277,9 +268,9 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
                   <div className="flex items-center space-x-2">
                     <Checkbox
                       id="weekly-budget"
-                      checked={formData.budgetType === "weekly"}
+                      checked={onboardingData.budgetType === "weekly"}
                       onCheckedChange={() =>
-                        setFormData((prev) => ({
+                        setOnboardingData((prev) => ({
                           ...prev,
                           budgetType: "weekly",
                         }))
@@ -291,9 +282,9 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
                   {/* <div className="flex items-center space-x-2">
                     <Checkbox
                       id="per-micro-influencers"
-                      checked={formData.budgetType === "per-micro-influencers"}
+                      checked={onboardingData.budgetType === "per-micro-influencers"}
                       onCheckedChange={() =>
-                        setFormData((prev) => ({
+                        setOnboardingData((prev) => ({
                           ...prev,
                           budgetType: "per-micro-influencers",
                         }))
@@ -307,21 +298,21 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
 
                 <div className="space-y-4">
                   <div className="flex justify-between">
-                    <Label>Budget Amount: ${formData.budget[0]}</Label>
+                    <Label>Budget Amount: ${onboardingData.budget[0]}</Label>
                     <Badge variant="secondary">
-                      {formData.budgetType === "total"
+                      {onboardingData.budgetType === "total"
                         ? "Total"
-                        : formData.budgetType === "monthly"
+                        : onboardingData.budgetType === "monthly"
                         ? "Monthly"
-                        : formData.budgetType === "weekly"
+                        : onboardingData.budgetType === "weekly"
                         ? "Weekly"
                         : ""}
                     </Badge>
                   </div>
                   <Slider
-                    value={formData.budget}
+                    value={onboardingData.budget}
                     onValueChange={(value) =>
-                      setFormData((prev) => ({ ...prev, budget: value }))
+                      setOnboardingData((prev) => ({ ...prev, budget: value }))
                     }
                     max={10000}
                     min={100}
@@ -351,12 +342,12 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
                 {/* Gifted Products */}
                 <div
                   className={`flex items-center space-x-3 p-3 border rounded-lg cursor-pointer ${
-                    formData.paymentPreferences?.includes("gifted")
+                    onboardingData.paymentPreferences?.includes("gifted")
                       ? "bg-primary/10 border-primary"
                       : "hover:bg-muted/50"
                   }`}
                   onClick={() =>
-                    setFormData((prev) => {
+                    setOnboardingData((prev) => {
                       const current = prev.paymentPreferences || [];
                       return current.includes("gifted")
                         ? {
@@ -373,7 +364,9 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
                   }
                 >
                   <Checkbox
-                    checked={formData.paymentPreferences?.includes("gifted")}
+                    checked={onboardingData.paymentPreferences?.includes(
+                      "gifted"
+                    )}
                     id="gifted"
                   />
                   <Label htmlFor="gifted">Gifted Products</Label>
@@ -382,12 +375,12 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
                 {/* Paid Collaborations */}
                 <div
                   className={`flex items-center space-x-3 p-3 border rounded-lg cursor-pointer ${
-                    formData.paymentPreferences?.includes("paid")
+                    onboardingData.paymentPreferences?.includes("paid")
                       ? "bg-primary/10 border-primary"
                       : "hover:bg-muted/50"
                   }`}
                   onClick={() =>
-                    setFormData((prev) => {
+                    setOnboardingData((prev) => {
                       const current = prev.paymentPreferences || [];
                       return current.includes("paid")
                         ? {
@@ -401,7 +394,9 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
                   }
                 >
                   <Checkbox
-                    checked={formData.paymentPreferences?.includes("paid")}
+                    checked={onboardingData.paymentPreferences?.includes(
+                      "paid"
+                    )}
                     id="paid"
                   />
                   <Label htmlFor="paid">Paid Collaborations</Label>
@@ -410,12 +405,12 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
                 {/* Affiliate Marketing */}
                 <div
                   className={`flex items-center space-x-3 p-3 border rounded-lg cursor-pointer ${
-                    formData.paymentPreferences?.includes("affiliate")
+                    onboardingData.paymentPreferences?.includes("affiliate")
                       ? "bg-primary/10 border-primary"
                       : "hover:bg-muted/50"
                   }`}
                   onClick={() =>
-                    setFormData((prev) => {
+                    setOnboardingData((prev) => {
                       const current = prev.paymentPreferences || [];
                       return current.includes("affiliate")
                         ? {
@@ -432,7 +427,9 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
                   }
                 >
                   <Checkbox
-                    checked={formData.paymentPreferences?.includes("affiliate")}
+                    checked={onboardingData.paymentPreferences?.includes(
+                      "affiliate"
+                    )}
                     id="affiliate"
                   />
                   <Label htmlFor="affiliate">Affiliate Marketing</Label>
@@ -441,12 +438,12 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
                 {/* Brand Ambassador */}
                 <div
                   className={`flex items-center space-x-3 p-3 border rounded-lg cursor-pointer ${
-                    formData.paymentPreferences?.includes("ambassador")
+                    onboardingData.paymentPreferences?.includes("ambassador")
                       ? "bg-primary/10 border-primary"
                       : "hover:bg-muted/50"
                   }`}
                   onClick={() =>
-                    setFormData((prev) => {
+                    setOnboardingData((prev) => {
                       const current = prev.paymentPreferences || [];
                       return current.includes("ambassador")
                         ? {
@@ -463,7 +460,7 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
                   }
                 >
                   <Checkbox
-                    checked={formData.paymentPreferences?.includes(
+                    checked={onboardingData.paymentPreferences?.includes(
                       "ambassador"
                     )}
                     id="ambassador"
@@ -491,7 +488,9 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
                   >
                     <Checkbox
                       id={deliverable.id}
-                      checked={formData.deliverables.includes(deliverable.id)}
+                      checked={onboardingData.deliverables.includes(
+                        deliverable.id
+                      )}
                       onCheckedChange={(checked) =>
                         handleDeliverableChange(
                           deliverable.id,
@@ -523,9 +522,9 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
               </CardHeader>
               <CardContent>
                 <Select
-                  value={formData.timeline}
+                  value={onboardingData.timeline}
                   onValueChange={(value) =>
-                    setFormData((prev) => ({ ...prev, timeline: value }))
+                    setOnboardingData((prev) => ({ ...prev, timeline: value }))
                   }
                 >
                   <SelectTrigger>
@@ -556,9 +555,9 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
                     </p>
                   </div>
                   <Switch
-                    checked={formData.approvalRequired}
+                    checked={onboardingData.approvalRequired}
                     onCheckedChange={(checked) =>
-                      setFormData((prev) => ({
+                      setOnboardingData((prev) => ({
                         ...prev,
                         approvalRequired: checked,
                       }))
@@ -574,9 +573,12 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
                     </p>
                   </div>
                   <Switch
-                    checked={formData.autoMatch}
+                    checked={onboardingData.autoMatch}
                     onCheckedChange={(checked) =>
-                      setFormData((prev) => ({ ...prev, autoMatch: checked }))
+                      setOnboardingData((prev) => ({
+                        ...prev,
+                        autoMatch: checked,
+                      }))
                     }
                   />
                 </div>
@@ -592,11 +594,11 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
               </CardHeader>
               <CardContent>
                 <Textarea
-                  value={formData.targetAudience}
+                  value={onboardingData.targetAudience}
                   onChange={(e) =>
-                    setFormData((prev) => ({
+                    setOnboardingData((prev) => ({
                       ...prev,
-                      targetAudience: e.target.value,
+                      targetAudienceCampaign: e.target.value,
                     }))
                   }
                   placeholder="Young professionals, age 25-35, interested in sustainable fashion..."
@@ -611,9 +613,9 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
               </CardHeader>
               <CardContent>
                 <Textarea
-                  value={formData.keywords}
+                  value={onboardingData.keywords}
                   onChange={(e) =>
-                    setFormData((prev) => ({
+                    setOnboardingData((prev) => ({
                       ...prev,
                       keywords: e.target.value,
                     }))
@@ -636,7 +638,7 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
             onClick={handleCreateCampaign}
             disabled={!isValid}
           >
-            {formData.autoMatch
+            {onboardingData.autoMatch
               ? "Create Campaign & Find micro-influencers"
               : "Create Campaign"}
           </Button>

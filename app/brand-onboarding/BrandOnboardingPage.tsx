@@ -7,6 +7,7 @@ import PaymentStep from "@/components/onboarding/brand/PaymentStep";
 import CampaignStep from "@/components/onboarding/brand/CampaignStep";
 import CompletionStep from "@/components/onboarding/brand/CompletionStep";
 import { useRouter, useSearchParams } from "next/navigation";
+import BrandOnboardingProvider from "@/contexts/BrandOnboardingContext";
 
 const BrandOnboarding = () => {
   const params = useSearchParams();
@@ -27,24 +28,6 @@ const BrandOnboarding = () => {
   const handleNext = () => {
     if (currentStep < totalSteps) {
       setCurrentStep((prev) => prev + 1);
-
-      // Send welcome notifications
-      // if (currentStep === 1) {
-      //   toast({
-      //     title: "Welcome to The Social Market!",
-      //     description:
-      //       "Check your email for next steps and support information.",
-      //   });
-      // }
-
-      // Send payment confirmation
-      // if (currentStep === 4) {
-      //   toast({
-      //     title: "Trial activated!",
-      //     description:
-      //       "Your 14-day free trial has started. Payment receipt sent to your email.",
-      //   });
-      // }
     }
   };
 
@@ -83,16 +66,18 @@ const BrandOnboarding = () => {
   };
 
   return (
-    <OnboardingLayout
-      currentStep={currentStep}
-      totalSteps={totalSteps}
-      onBack={currentStep > 1 ? handleBack : undefined}
-      stepTitle={steps[currentStep - 1].title}
-      stepDescription={steps[currentStep - 1].description}
-      showBack={currentStep > 1 && currentStep < 6}
-    >
-      {renderStep()}
-    </OnboardingLayout>
+    <BrandOnboardingProvider>
+      <OnboardingLayout
+        currentStep={currentStep}
+        totalSteps={totalSteps}
+        onBack={currentStep > 1 ? handleBack : undefined}
+        stepTitle={steps[currentStep - 1].title}
+        stepDescription={steps[currentStep - 1].description}
+        showBack={currentStep > 1 && currentStep < 6}
+      >
+        {renderStep()}
+      </OnboardingLayout>
+    </BrandOnboardingProvider>
   );
 };
 
