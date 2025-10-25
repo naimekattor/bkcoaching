@@ -13,6 +13,7 @@ import Image from "next/image";
 import { industriesNiches } from "@/constants/niches";
 import { demographics } from "@/constants/demographics";
 import { useInfluencerOnboarding } from "@/contexts/InfluencerOnboardingContext";
+import { uploadToCloudinary } from "@/lib/fileUpload";
 
 interface ProfileSetupStepProps {
   onNext: () => void;
@@ -22,24 +23,8 @@ interface ProfileSetupStepProps {
 const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
   const { onboardingDataInfluencer, setOnboardingDataInfluencer } =
     useInfluencerOnboarding();
-  // const [formData, setOnboardingDataInfluencer] = useState({
-  //   displayName: "",
-  //   bio: "",
-  //   profilePhoto: null as File | null,
-  //   profilePhotoPreview: null as string | null,
-  //   socialLinks: {
-  //     instagram: "",
-  //     tiktok: "",
-  //     youtube: "",
-  //     twitter: "",
-  //     linkedin: "",
-  //     whatsapp: "",
-  //   },
-  //   niches: [] as string[],
-  //   demographics: [] as string[],
-  //   keywords: "",
-  // });
-  // type SocialPlatform = keyof typeof onboardingDataInfluencer.socialLinks;
+  const [preview, setPreview] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const handleArrayChange = (
     field: "content_niches" | "audience_demographics",
@@ -59,14 +44,26 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
     }
   };
 
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setOnboardingDataInfluencer((prev) => ({
+    if (!file) return;
+
+    const localPreview = URL.createObjectURL(file);
+    setPreview(localPreview);
+    try {
+      setUploading(true);
+      const res = await uploadToCloudinary(file);
+      const imgUrl = res.url;
+
+      // 3️⃣ update onboarding data with Cloudinary URL
+      setOnboardingDataInfluencer((prev: any) => ({
         ...prev,
-        profile_picture: file,
-        profilePhotoPreview: URL.createObjectURL(file),
+        profile_picture: imgUrl,
       }));
+    } catch (err) {
+      console.error("Upload failed:", err);
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -104,11 +101,11 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                   htmlFor="profilePhoto"
                   className="aspect-square w-32 mx-auto md:mx-0 border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors overflow-hidden"
                 >
-                  {onboardingDataInfluencer.profile_picture ? (
+                  {!uploading && preview ? (
                     <Image
                       width={500}
                       height={500}
-                      src={onboardingDataInfluencer.profile_picture}
+                      src={preview}
                       alt="Profile preview"
                       className="object-cover w-full h-full"
                     />

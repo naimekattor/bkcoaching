@@ -133,57 +133,6 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
         </div>
 
         <div className="grid gap-8">
-          {/* Industries/Niches */}
-          {/* <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Target className="w-5 h-5" />
-                Industries & Niches *
-                <Tooltip>
-                  <TooltipTrigger>
-                    <HelpCircle className="w-4 h-4 text-muted-foreground" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Select the industries most relevant to your brand</p>
-                  </TooltipContent>
-                </Tooltip>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {industriesNiches.map((industry) => (
-                  <div key={industry} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={industry}
-                      checked={formData.industriesNiches.includes(industry)}
-                      onCheckedChange={(checked) =>
-                        handleArrayChange(
-                          "industriesNiches",
-                          industry,
-                          checked as boolean
-                        )
-                      }
-                    />
-                    <Label htmlFor={industry} className="text-sm font-normal">
-                      {industry}
-                    </Label>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-4">
-                {formData.industriesNiches.map((industry) => (
-                  <Badge
-                    key={industry}
-                    variant="secondary"
-                    className="mr-2 mb-2"
-                  >
-                    {industry}
-                  </Badge>
-                ))}
-              </div>
-            </CardContent>
-          </Card> */}
-
           {/* Target Audience */}
           <Card>
             <CardHeader>
@@ -332,43 +281,6 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
               </CardContent>
             </Card>
           </div>
-
-          {/* Optional In-Person Address */}
-          {/* <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MapPin className="w-5 h-5" />
-                In-Person Address (Optional)
-                <Tooltip>
-                  <TooltipTrigger>
-                    <HelpCircle className="w-4 h-4 text-muted-foreground" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>
-                      For local events, store visits, or in-person
-                      collaborations
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Textarea
-                value={formData.inPersonAddress}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    inPersonAddress: e.target.value,
-                  }))
-                }
-                placeholder="Store address, office location, or event venue..."
-                rows={2}
-              />
-              <Button variant="ghost" size="sm" className="mt-2">
-                Skip this step
-              </Button>
-            </CardContent>
-          </Card> */}
         </div>
 
         {/* Navigation */}

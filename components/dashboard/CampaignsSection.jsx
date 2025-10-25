@@ -1,20 +1,20 @@
 import Link from "next/link";
 
-export function CampaignsSection() {
-  const campaigns = [
-    {
-      name: "Summer Glow Collection",
-      creators: "3 Creators onboarded",
-      status: "Active",
-      statusColor: "bg-green-100 text-green-700",
-    },
-    {
-      name: "Winter Skincare Launch",
-      creators: "Ready to publish",
-      status: "Preview",
-      statusColor: "bg-yellow-100 text-secondary",
-    },
-  ];
+export function CampaignsSection({ allCampaigns }) {
+  // const campaigns = [
+  //   {
+  //     name: allCampaigns.campaign_name,
+  //     creators: "3 Creators onboarded",
+  //     status: "Active",
+  //     statusColor: "bg-green-100 text-green-700",
+  //   },
+  //   {
+  //     name: "Winter Skincare Launch",
+  //     creators: "Ready to publish",
+  //     status: "Preview",
+  //     statusColor: "bg-yellow-100 text-secondary",
+  //   },
+  // ];
 
   return (
     <div className="bg-white rounded-lg p-6 border border-slate-200">
@@ -29,19 +29,21 @@ export function CampaignsSection() {
       </div>
 
       <div className="space-y-4">
-        {campaigns.map((campaign, index) => (
+        {allCampaigns.slice(0, 2).map((campaign, index) => (
           <div
             key={index}
             className="flex items-center justify-between p-4 bg-slate-50 rounded-lg"
           >
             <div>
-              <h4 className="font-medium text-slate-800">{campaign.name}</h4>
-              <p className="text-sm text-slate-600">{campaign.creators}</p>
+              <h4 className="font-medium text-slate-800">{campaign?.title}</h4>
+              <p className="text-sm text-slate-600">
+                {campaign?.creators || 0} Creators onboarded
+              </p>
             </div>
             <span
-              className={`px-3 py-1 rounded-full text-sm font-medium ${campaign.statusColor}`}
+              className={`px-3 py-1 rounded-full text-sm font-medium ${campaign?.statusColor}`}
             >
-              {campaign.status}
+              {campaign?.campaignStatus || "Active"}
             </span>
           </div>
         ))}

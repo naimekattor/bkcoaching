@@ -26,7 +26,7 @@ export async function apiClient<T = any>(
   const res = await fetch(url, {
     headers: {
       "Content-Type": "application/json",
-
+      "ngrok-skip-browser-warning": "true",
       ...(auth && token ? { Authorization: `Bearer ${token}` } : {}),
       ...headers,
     },

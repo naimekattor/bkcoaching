@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Search, MoreHorizontal, X, Instagram, Facebook } from "lucide-react";
 import {
   Select,
@@ -12,6 +12,8 @@ import {
 import Image from "next/image";
 import CreateCampaignModal from "../../../../components/brand/CreateCampaignModal";
 import { FaTiktok } from "react-icons/fa";
+import { apiClient } from "@/lib/apiClient";
+
 const mockCampaigns = [
   {
     id: 1,
@@ -142,6 +144,7 @@ export default function CampaignDashboard() {
   const [showModal, setShowModal] = useState(false);
   const [statusFilter, setStatusFilter] = useState("all");
   const [platformFilter, setPlatformFilter] = useState("all");
+  const [allCampaigns, setAllCampaigns] = useState([]);
 
   // const filteredCampaigns = mockCampaigns.filter((campaign) => {
   //   const matchesSearch = campaign.title
@@ -166,8 +169,75 @@ export default function CampaignDashboard() {
     setSelectedCampaign(null);
   };
 
+  useEffect(() => {
+    const fetchAllCampaigns = async () => {
+      try {
+        const res = await apiClient("campaign_service/get_my_all_campaigns/", {
+          method: "GET",
+          auth: true,
+        });
+
+        console.log("Raw API Response:", res.data);
+
+        const campaignsArray = Array.isArray(res.data) ? res.data : [];
+
+        // Transform API response to match component expectations
+        const transformedCampaigns = campaignsArray.map((campaign) => ({
+          // Basic info
+          id: campaign.id,
+          title: campaign.campaign_name || "Untitled Campaign",
+          description: campaign.campaign_description || "",
+          image: campaign.campaign_poster || "/images/placeholder-image.png",
+          status: campaign.campaign_status || "Active",
+
+          // Budget & Timeline
+          budget: campaign.budget_range ? `$${campaign.budget_range}` : "$0",
+          budgetType: campaign.budget_type || "total",
+          targetReach: "200K",
+          timeLeft: campaign.campaign_timeline || "N/A",
+          progress: 0,
+
+          platforms: [],
+
+          assignedCreators: [],
+
+          objective: campaign.campaign_objective || "",
+          timeline: campaign.campaign_timeline || "",
+
+          deliverables: campaign.content_deliverables
+            ? campaign.content_deliverables.split(",").map((d) => d.trim())
+            : [],
+
+          paymentPreferences: campaign.payment_preference
+            ? campaign.payment_preference.split(",").map((p) => p.trim())
+            : [],
+
+          keywords: campaign.keywords_and_hashtags
+            ? campaign.keywords_and_hashtags.split(",").map((k) => k.trim())
+            : [],
+
+          targetAudience: campaign.target_audience || "",
+
+          approvalRequired: campaign.content_approval_required || false,
+          autoMatch: campaign.auto_match_micro_influencers || false,
+
+          campaignOwner: campaign.campaign_owner,
+        }));
+
+        console.log("Transformed Campaigns:", transformedCampaigns);
+        setAllCampaigns(transformedCampaigns);
+      } catch (error) {
+        console.error("❌ API Error:", error);
+        setAllCampaigns([]);
+      }
+    };
+
+    fetchAllCampaigns();
+  }, []);
+  console.log(allCampaigns);
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen ">
       {/* Header */}
       <header className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="flex items-center justify-between">
@@ -198,7 +268,7 @@ export default function CampaignDashboard() {
                     </p>
                     {stat.value && (
                       <p className="text-2xl font-bold text-gray-900 mb-1">
-                        {stat.value}
+                        {allCampaigns.length}
                       </p>
                     )}
                     <p className="text-xs text-gray-500">{stat.subtitle}</p>
@@ -264,105 +334,108 @@ export default function CampaignDashboard() {
 
         {/* Campaign Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {mockCampaigns.map((campaign) => (
-            <div
-              key={campaign.id}
-              className="bg-white rounded-lg shadow-sm cursor-pointer hover:shadow-lg  border border-gray-200 transform transition-transform duration-300 hover:scale-102"
-              onClick={() => openCampaignModal(campaign)}
-            >
-              <div className="relative">
-                <Image
-                  width={600}
-                  height={192}
-                  src={campaign.image || "/placeholder.svg"}
-                  alt={campaign.title}
-                  className="w-full h-48 object-cover rounded-t-lg"
-                />
-                <span
-                  className={`absolute top-3 left-3 px-2 py-1 rounded-full text-xs font-medium ${
-                    campaign.status === "Active"
-                      ? "bg-green-100 text-green-800"
-                      : "bg-gray-100 text-gray-800"
-                  }`}
-                >
-                  {campaign.status}
-                </span>
-                <button className="absolute top-3 right-3 p-2 bg-white/80 hover:bg-white rounded-md transition-colors">
-                  <MoreHorizontal className="h-4 w-4" />
-                </button>
-              </div>
-              <div className="p-4 ">
-                <h3 className="font-semibold text-lg mb-2">{campaign.title}</h3>
-                <p className="text-sm text-gray-600 mb-4">
-                  {campaign.description}
-                </p>
-
-                <div className="flex items-center gap-2 mb-4">
-                  {campaign.platforms.map((platform) => (
-                    <div
-                      key={platform}
-                      className="w-6 h-6 text-primary rounded flex items-center justify-center"
-                    >
-                      <span className="text-xs">
-                        {platform === "tiktok" ? (
-                          <FaTiktok />
-                        ) : platform === "instagram" ? (
-                          <Instagram />
-                        ) : (
-                          <Facebook />
-                        )}
-                      </span>
-                    </div>
-                  ))}
-                  <div className="flex -space-x-2 ml-2">
-                    {campaign.assignedCreators
-                      .slice(0, 3)
-                      .map((creator, idx) => (
-                        <div
-                          key={idx}
-                          className="w-6 h-6 rounded-full border-2 border-white overflow-hidden bg-gray-300"
-                        >
-                          <Image
-                            width={600}
-                            height={600}
-                            src={creator.avatar || "/placeholder.svg"}
-                            alt={creator.name}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                      ))}
-                    {campaign.assignedCreators.length > 3 && (
-                      <div className="w-6 h-6 bg-gray-200 rounded-full border-2 border-white flex items-center justify-center">
-                        <span className="text-xs">
-                          +{campaign.assignedCreators.length - 3}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex justify-between items-center text-sm mb-4">
-                  <div>
-                    <span className="text-gray-500">Budget</span>
-                    <p className="font-semibold">{campaign.budget}</p>
-                  </div>
-                  <div>
-                    <span className="text-gray-500">Target Reach</span>
-                    <p className="font-semibold">{campaign.targetReach}</p>
-                  </div>
-                </div>
-
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-500">
-                    {campaign.timeLeft}
+          {allCampaigns.length > 0 &&
+            allCampaigns.map((campaign) => (
+              <div
+                key={campaign?.id}
+                className="bg-white rounded-lg shadow-sm cursor-pointer hover:shadow-lg  border border-gray-200 transform transition-transform duration-300 hover:scale-102"
+                onClick={() => openCampaignModal(campaign)}
+              >
+                <div className="relative">
+                  <Image
+                    width={600}
+                    height={192}
+                    src={campaign?.image || "/placeholder.svg"}
+                    alt={campaign?.title}
+                    className="w-full h-48 object-cover rounded-t-lg"
+                  />
+                  <span
+                    className={`absolute top-3 left-3 px-2 py-1 rounded-full text-xs font-medium ${
+                      campaign?.status === "Active"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-gray-100 text-gray-800"
+                    }`}
+                  >
+                    {campaign?.status}
                   </span>
-                  <button className="text-secondary hover:text-yellow-600 text-sm font-medium">
-                    View Details
+                  <button className="absolute top-3 right-3 p-2 bg-white/80 hover:bg-white rounded-md transition-colors">
+                    <MoreHorizontal className="h-4 w-4" />
                   </button>
                 </div>
+                <div className="p-4 ">
+                  <h3 className="font-semibold text-lg mb-2">
+                    {campaign?.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-4">
+                    {campaign?.description}
+                  </p>
+
+                  <div className="flex items-center gap-2 mb-4">
+                    {campaign?.platforms.map((platform) => (
+                      <div
+                        key={platform}
+                        className="w-6 h-6 text-primary rounded flex items-center justify-center"
+                      >
+                        <span className="text-xs">
+                          {platform === "tiktok" ? (
+                            <FaTiktok />
+                          ) : platform === "instagram" ? (
+                            <Instagram />
+                          ) : (
+                            <Facebook />
+                          )}
+                        </span>
+                      </div>
+                    ))}
+                    <div className="flex -space-x-2 ml-2">
+                      {campaign?.assignedCreators
+                        .slice(0, 3)
+                        .map((creator, idx) => (
+                          <div
+                            key={idx}
+                            className="w-6 h-6 rounded-full border-2 border-white overflow-hidden bg-gray-300"
+                          >
+                            <Image
+                              width={600}
+                              height={600}
+                              src={creator.avatar || "/placeholder.svg"}
+                              alt={creator.name}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        ))}
+                      {campaign?.assignedCreators.length > 3 && (
+                        <div className="w-6 h-6 bg-gray-200 rounded-full border-2 border-white flex items-center justify-center">
+                          <span className="text-xs">
+                            +{campaign?.assignedCreators.length - 3}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between items-center text-sm mb-4">
+                    <div>
+                      <span className="text-gray-500">Budget</span>
+                      <p className="font-semibold">{campaign?.budget}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">Target Reach</span>
+                      <p className="font-semibold">{campaign?.targetReach}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-500">
+                      {campaign?.timeLeft}
+                    </span>
+                    <button className="text-secondary hover:text-yellow-600 text-sm font-medium">
+                      View Details
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
         {/* Load More Button */}
         <div className="text-center">

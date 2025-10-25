@@ -5,6 +5,7 @@ import {
   useEffect,
   useState,
 } from "react";
+import { uploadToCloudinary, FileUploadResponse } from "@/lib/fileUpload";
 interface BrandOnboardingData {
   // From BusinessInfoStep
   businessName: string;
@@ -13,14 +14,14 @@ interface BrandOnboardingData {
   bio: string;
   businessTypes: string[];
   logoFile?: File | null;
-
+  logoUrl?: string;
   // From ProfileSetupStep
   targetAudience: string[];
   keywords: string;
   demographics: string[];
-  values: string[]; // Brand tone
+  values: string[];
 
-  // From PaymentStep (if needed, e.g., plan selection)
+  // From PaymentStep
   selectedPlan: string;
   billingCycle: "monthly" | "yearly";
 
@@ -41,6 +42,7 @@ interface BrandOnboardingData {
 interface BrandOnboardingContextType {
   onboardingData: BrandOnboardingData;
   setOnboardingData: React.Dispatch<React.SetStateAction<BrandOnboardingData>>;
+  uploadLogo: (file: File) => Promise<FileUploadResponse>;
 }
 const BrandOnboardingContext = createContext<
   BrandOnboardingContextType | undefined
@@ -51,6 +53,7 @@ const initialState: BrandOnboardingData = {
   bio: "",
   businessTypes: [],
   logoFile: null,
+  logoUrl: "",
   targetAudience: [],
   keywords: "",
   demographics: [],
@@ -87,12 +90,34 @@ const BrandOnboardingProvider = ({ children }: { children: ReactNode }) => {
   );
 
   useEffect(() => {
-    localStorage.setItem("brandOnBoardingData", JSON.stringify(onboardingData));
+    // Only save non-file data to localStorage
+    const { logoFile, ...dataToStore } = onboardingData;
+    localStorage.setItem("brandOnBoardingData", JSON.stringify(dataToStore));
   }, [onboardingData]);
+
+  const uploadLogo = async (file: File): Promise<FileUploadResponse> => {
+    try {
+      const result = await uploadToCloudinary(file);
+      if (result.success && result.url) {
+        setOnboardingData((prev) => ({
+          ...prev,
+          logoFile: file,
+          logoUrl: result.url!,
+        }));
+      }
+      return result;
+    } catch (error) {
+      console.error("Logo upload failed:", error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Upload failed",
+      };
+    }
+  };
 
   return (
     <BrandOnboardingContext.Provider
-      value={{ onboardingData, setOnboardingData }}
+      value={{ onboardingData, setOnboardingData, uploadLogo }}
     >
       {children}
     </BrandOnboardingContext.Provider>

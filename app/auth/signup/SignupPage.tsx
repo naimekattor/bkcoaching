@@ -15,6 +15,8 @@ export default function SignupPage() {
   const router = useRouter();
   const params = useSearchParams();
   const returnTo = params.get("returnTo");
+  console.log(returnTo);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -48,10 +50,18 @@ export default function SignupPage() {
     setLoading(true);
     try {
       const res = await signup({ ...formData, signup_method: "normal" });
+      console.log();
+
       setAuthFromResponse(res);
 
-      if (token) {
+      if (res.status === "Success") {
+        console.log(
+          "Response successful, redirecting to:",
+          `/auth/verify-email?returnTo=${returnTo}`
+        );
+        console.log("About to execute router.push...");
         router.push(`/auth/verify-email?returnTo=${returnTo}`);
+        console.log("router.push executed successfully");
       } else {
         setError(res?.message || "Signup failed");
       }

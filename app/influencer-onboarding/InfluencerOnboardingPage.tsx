@@ -48,24 +48,6 @@ const InfluencerOnboardingPage = () => {
     if (currentStep < totalSteps) {
       setCurrentStep((prev) => prev + 1);
 
-      // Send welcome notifications
-      // if (currentStep === 1) {
-      //   toast({
-      //     title: "Welcome to The Social Market!",
-      //     description:
-      //       "Check your email for micro-influencers tips and support information.",
-      //   });
-      // }
-
-      // Profile setup reminder
-      // if (currentStep === 2) {
-      //   toast({
-      //     title: "Profile looking great!",
-      //     description:
-      //       "Complete your profile to unlock more collaboration opportunities.",
-      //   });
-      // }
-
       // Payment setup confirmation
       if (currentStep === 6) {
         toast({

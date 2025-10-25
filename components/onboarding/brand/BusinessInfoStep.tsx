@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Upload, Building, Globe, MapPin } from "lucide-react";
 import PageHeaderWithSwitcher from "@/components/PageHeaderWithSwitcher";
 import { useBrandOnBoarding } from "@/contexts/BrandOnboardingContext";
+import { uploadToCloudinary } from "@/lib/fileUpload";
 
 interface BusinessInfoStepProps {
   onNext: () => void;
@@ -78,12 +79,19 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      const res = await uploadToCloudinary(file);
+      const imgUrl = res.url;
+
+      setOnboardingData((prev) => ({
+        ...prev,
+        logoUrl: imgUrl,
+      }));
       setFileName(file.name);
-      // 🔹 Here you can also upload file to your backend/Cloudinary/S3
-      console.log("Selected file:", file);
+
+      console.log("Selected file:", imgUrl);
     }
   };
 

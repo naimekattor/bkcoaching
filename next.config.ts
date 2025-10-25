@@ -11,6 +11,8 @@ const nextConfig: NextConfig = {
       "placehold.co",
       "encrypted-tbn0.gstatic.com",
       "img.freepik.com",
+      "res.cloudinary.com",
+      "media.istockphoto.com",
     ],
   },
   /* config options here */

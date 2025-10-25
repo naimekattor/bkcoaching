@@ -91,7 +91,7 @@ const Feature = () => {
                     stroke="currentColor"
                     strokeWidth="1.8"
                     strokeLinecap="round"
-                    stroke-linejoin="round"
+                    strokeLinejoin="round"
                   >
                     <circle cx="7" cy="7" r="3" />
                     <circle cx="17" cy="7" r="3" />
@@ -213,7 +213,7 @@ const Feature = () => {
                     stroke="currentColor"
                     strokeWidth="1.8"
                     strokeLinecap="round"
-                    stroke-linejoin="round"
+                    strokeLinejoin="round"
                   >
                     <circle cx="7" cy="7" r="3" />
                     <circle cx="17" cy="7" r="3" />

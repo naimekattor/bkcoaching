@@ -1,37 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-// Removed unused Button import
 
 const HowItWorks = () => {
-  // Removed unused steps to satisfy lint rules
-  // const steps = [
-  //   {
-  //     id: 1,
-  //     title: "Personalized Hair Profile",
-  //     description:
-  //       "Quickly identify your hair's unique characteristics, including curl pattern, porosity, density, thickness, and scalp condition. Type4 Pal's comprehensive quiz takes the guesswork out of hair care.",
-  //   },
-  //   {
-  //     id: 2,
-  //     title: " AI-Driven Recommendations",
-  //     description:
-  //       "Powered by advanced AI, Type4 Pal recommends hair products uniquely suited to your hair’s specific needs and environmental factors. No more guessing, get effective products matched to your exact hair profile.",
-  //   },
-  //   {
-  //     id: 3,
-  //     title: "Smart Routine Builder",
-  //     description:
-  //       "Create, schedule, and stick to personalized hair care routines with ease. Type4 Pal helps you never skip a step, ensuring consistent hair health improvements through daily, weekly, and monthly reminders.",
-  //   },
-  //   {
-  //     id: 4,
-  //     title: "Hair Health Dashboard",
-  //     description:
-  //       "Visually monitor your hair’s progress with the comprehensive hair-health dashboard. Track length, elasticity, strength, scalp health, and more! Celebrate your growth and identify areas for improvement.",
-  //   },
-  // ];
-
   return (
     <section id="HowItWorks" className="relative ">
       <div className="relative z-10 py-16 lg:py-[100px] px-4 container mx-auto">
@@ -48,12 +19,6 @@ const HowItWorks = () => {
             <div className="w-[326px]">
               <div className="bg-white rounded shadow-md  text-left">
                 <div className="flex gap-4 items-center justify-center bg-primary py-2 px-2 rounded">
-                  {/* <Image
-                    src={"/images/work-icon2.png"}
-                    width={62}
-                    height={41}
-                    alt="icon"
-                  /> */}
                   <h3 className="text-xl font-bold text-[#ffffff] mb-2">
                     Brands
                   </h3>

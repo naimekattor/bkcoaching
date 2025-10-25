@@ -1,7 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FaEdit } from "react-icons/fa";
+import { useAuthStore } from "@/stores/useAuthStore";
+
 export function DashboardHeader() {
+  const { user, logout } = useAuthStore();
+  console.log(user);
+
   return (
     <>
       <div className="bg-white rounded-lg shadow p-6">
@@ -11,13 +16,14 @@ export function DashboardHeader() {
               <Image
                 width={64}
                 height={64}
-                src={"/images/logo.png"}
+                src={user?.logo}
                 alt="logo"
+                className="h-full w-full"
               />
             </div>
             <div>
               <h2 className="text-xl font-bold text-slate-800">
-                TechFlow Solutions
+                {user?.business_name}
               </h2>
               <p className="text-slate-600">Skincare & Wellness | Remote</p>
             </div>

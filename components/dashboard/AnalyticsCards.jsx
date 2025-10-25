@@ -1,10 +1,15 @@
-export function AnalyticsCards() {
+import { useEffect, useState } from "react";
+import { apiClient } from "@/lib/apiClient";
+
+export function AnalyticsCards({ allCampaigns }) {
   const analyticsData = [
-    { value: "24", label: "Total Campaigns", color: "#BC8D03" },
+    { value: allCampaigns.length, label: "Total Campaigns", color: "#BC8D03" },
     { value: "89", label: "micro-influencers", color: "#BC8D03" },
     { value: "4.8", label: "Avg Rating", color: "#BC8D03" },
     { value: "$250K", label: "Total Invested", color: "#BC8D03" },
   ];
+
+  useEffect(() => {}, []);
 
   return (
     <div>
@@ -14,7 +19,7 @@ export function AnalyticsCards() {
           <div key={index} className="bg-slate-200 rounded-lg p-6 text-center">
             <div
               className="text-3xl font-bold mb-2"
-              style={{ color: item.color }} // 👈 apply hex color here
+              style={{ color: item.color }}
             >
               {item.value}
             </div>

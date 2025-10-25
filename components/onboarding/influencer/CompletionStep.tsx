@@ -7,12 +7,15 @@ import Link from "next/link";
 import { toast } from "@/hooks/use-toast";
 import { apiClient } from "@/lib/apiClient";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { useInfluencerOnboarding } from "@/contexts/InfluencerOnboardingContext";
 
 interface CompletionStepProps {
   onComplete: () => void;
 }
 
 const transformInfluencerDataForAPI = (data: any) => {
+  console.log("profile_picture:", data.profile_picture);
+
   const payload = {
     influencer_profile: {
       display_name: data.display_name,
@@ -24,7 +27,7 @@ const transformInfluencerDataForAPI = (data: any) => {
       twitter_handle: data.twitter_handle,
       linkedin_handle: data.linkedin_handle,
       whatsapp_handle: data.whatsapp_handle,
-      // Convert arrays to comma-separated strings
+
       content_niches: Array.isArray(data.content_niches)
         ? data.content_niches.join(", ")
         : "",
@@ -67,7 +70,8 @@ const transformInfluencerDataForAPI = (data: any) => {
 
 const CompletionStep = ({ onComplete }: CompletionStepProps) => {
   const [referralCode] = useState("CREATOR-XYZ789");
-
+  const { onboardingDataInfluencer, setOnboardingDataInfluencer } =
+    useInfluencerOnboarding();
   const nextSteps = [
     {
       icon: Search,
@@ -81,18 +85,6 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
       description: "Add more details to attract better brand partnerships",
       action: "Finish Profile",
     },
-    // {
-    //   icon: TrendingUp,
-    //   title: "Set Your Rates",
-    //   description: "Update your pricing to maximize your earning potential",
-    //   action: "Update Rates",
-    // },
-    // {
-    //   icon: Star,
-    //   title: "Get Verified",
-    //   description: "Verify your social accounts to unlock premium campaigns",
-    //   action: "Verify Accounts",
-    // },
   ];
 
   const copyReferralCode = () => {
@@ -111,6 +103,8 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
 
       try {
         const onboardingData = JSON.parse(storedData);
+        console.log("profile_picture:", onboardingData.profile_picture);
+
         const apiPayload = transformInfluencerDataForAPI(onboardingData);
 
         await apiClient("user_service/update_user_profile/", {

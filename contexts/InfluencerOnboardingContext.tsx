@@ -9,7 +9,7 @@ interface InfluencerOnboardingData {
   // From micro-influencer profile
   display_name: string;
   short_bio: string;
-  profile_picture?: File | null | string;
+  profile_picture: string;
   instagram_handle: string;
   tiktok_handle: string;
   youtube_handle: string;

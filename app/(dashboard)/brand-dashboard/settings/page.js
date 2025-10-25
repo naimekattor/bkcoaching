@@ -2,17 +2,19 @@
 
 import { useState } from "react";
 // import { useRouter } from "next/navigation"
+import { apiClient } from "@/lib/apiClient";
+import { uploadToCloudinary } from "@/lib/fileUpload";
 
 export default function BrandSetupPage() {
   //   const router = useRouter()
 
   // Form state management
   const [formData, setFormData] = useState({
-    businessName: "",
-    tagline: "",
+    business_name: "",
+    short_bio: "",
     logo: null,
-    businessType: "",
-    industry: "",
+    business_type: "",
+    website: "",
     timeZone: "",
     description: "",
     instagramHandle: "",
@@ -22,6 +24,8 @@ export default function BrandSetupPage() {
     whatsappBusiness: "",
     emailNotifications: true,
   });
+
+  const [fileName, setFileName] = useState("");
 
   const timeZones = [
     { value: "America/New_York", label: "Eastern (ET)" },
@@ -40,15 +44,32 @@ export default function BrandSetupPage() {
     }));
   };
 
-  const handleLogoUpload = (event) => {
+  const handleLogoUpload = async (event) => {
     const file = event.target.files[0];
+    const res = await uploadToCloudinary(file);
+    setFileName(file.name);
     setFormData((prev) => ({
       ...prev,
-      logo: file,
+      logo: res.url,
     }));
   };
 
-  const handleSubmit = () => {
+  const payload = {
+    brand_profile: formData,
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const res = await apiClient("user_service/update_user_profile/", {
+        method: "PATCH",
+        auth: true,
+        body: JSON.stringify(payload),
+      });
+
+      console.log("✅ User Info:", res);
+    } catch (error) {
+      console.error("❌ API Error:", error);
+    }
     console.log("[Brand Setup] Submitted data:", formData);
     alert("Brand profile setup completed! (Replace with API call)");
   };
@@ -114,24 +135,26 @@ export default function BrandSetupPage() {
                 <input
                   type="text"
                   placeholder="Enter business name"
-                  value={formData.businessName}
+                  value={formData.business_name}
                   onChange={(e) =>
-                    handleInputChange("businessName", e.target.value)
+                    handleInputChange("business_name", e.target.value)
                   }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
               </div>
 
-              {/* Tagline */}
-              <div>
+              {/* bio */}
+              <div className="overflow-hidden">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Tagline
+                  Short Bio
                 </label>
                 <input
                   type="text"
-                  placeholder="Your business slogan"
-                  value={formData.tagline}
-                  onChange={(e) => handleInputChange("tagline", e.target.value)}
+                  placeholder="Your business Bio"
+                  value={formData.short_bio}
+                  onChange={(e) =>
+                    handleInputChange("short_bio", e.target.value)
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
               </div>
@@ -156,9 +179,13 @@ export default function BrandSetupPage() {
                     </span>
                   </label>
                   {formData.logo && (
-                    <p className="text-sm text-green-600 mt-2">
-                      Selected: {formData.logo.name}
-                    </p>
+                    <div className="mt-2">
+                      <img
+                        src={formData.logo}
+                        alt="Logo Preview"
+                        className="h-20 w-20 object-contain rounded border border-gray-300"
+                      />
+                    </div>
                   )}
                 </div>
               </div>
@@ -169,9 +196,9 @@ export default function BrandSetupPage() {
                   Business Type
                 </label>
                 <select
-                  value={formData.businessType}
+                  value={formData.business_type}
                   onChange={(e) =>
-                    handleInputChange("businessType", e.target.value)
+                    handleInputChange("business_type", e.target.value)
                   }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 >
@@ -185,7 +212,7 @@ export default function BrandSetupPage() {
               </div>
 
               {/* Industry */}
-              <div>
+              {/* <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Industry
                 </label>
@@ -198,7 +225,7 @@ export default function BrandSetupPage() {
                   }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
-              </div>
+              </div> */}
 
               {/* Time Zone */}
               <div>
@@ -221,10 +248,22 @@ export default function BrandSetupPage() {
                   <option value="Others">Others</option>
                 </select>
               </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Website
+                </label>
+                <input
+                  type="text"
+                  placeholder="Your website"
+                  value={formData.website}
+                  onChange={(e) => handleInputChange("website", e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                />
+              </div>
             </div>
 
             {/* Business Description */}
-            <div className="mt-6">
+            {/* <div className="mt-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Business Profile Description
               </label>
@@ -237,11 +276,11 @@ export default function BrandSetupPage() {
                 rows={4}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
               />
-            </div>
+            </div> */}
           </div>
 
           {/* Social Media Accounts */}
-          <div className="mb-8">
+          {/* <div className="mb-8">
             <div className="flex items-center gap-2 mb-6">
               <div className="w-5 h-5 bg-purple-100 rounded flex items-center justify-center">
                 <span className="text-purple-600 text-xs">📱</span>
@@ -252,7 +291,7 @@ export default function BrandSetupPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Instagram Handle */}
+            
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Instagram Handle
@@ -268,7 +307,7 @@ export default function BrandSetupPage() {
                 />
               </div>
 
-              {/* TikTok Handle */}
+              
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   TikTok
@@ -284,7 +323,7 @@ export default function BrandSetupPage() {
                 />
               </div>
 
-              {/* X Handle */}
+         
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   X (Twitter)
@@ -298,7 +337,7 @@ export default function BrandSetupPage() {
                 />
               </div>
 
-              {/* LinkedIn Profile */}
+             
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   LinkedIn Profile
@@ -314,7 +353,7 @@ export default function BrandSetupPage() {
                 />
               </div>
 
-              {/* WhatsApp Business */}
+              
               <div className="">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   WhatsApp Business
@@ -330,7 +369,7 @@ export default function BrandSetupPage() {
                 />
               </div>
 
-              {/* twiter Profile */}
+              
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   twiter Profile
@@ -346,7 +385,7 @@ export default function BrandSetupPage() {
                 />
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* Email Notifications */}
           <div className="mb-8">
@@ -386,7 +425,7 @@ export default function BrandSetupPage() {
               onClick={handleSubmit}
               className="px-6 py-2 bg-secondary text-white rounded-md hover:bg-[var(--secondaryhover)] focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2 transition-colors"
             >
-              Done
+              Update
             </button>
           </div>
         </div>

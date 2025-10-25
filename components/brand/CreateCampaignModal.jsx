@@ -4,7 +4,7 @@ import {
   Target,
   DollarSign,
   Calendar,
-  Image,
+  Image as ImageIcon,
   Video,
   Mic,
   FileText,
@@ -34,8 +34,10 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
+  Dialogcampaign_description,
 } from "@/components/ui/dialog";
+import { apiClient } from "@/lib/apiClient";
+import { uploadToCloudinary } from "@/lib/fileUpload";
 
 const US_TIME_ZONES = [
   { value: "America/New_York", label: "Eastern (ET)" },
@@ -48,8 +50,8 @@ const US_TIME_ZONES = [
 ];
 
 const deliverableTypes = [
-  { id: "instagram-post", label: "Instagram Post", icon: Image },
-  { id: "instagram-story", label: "Instagram Story", icon: Image },
+  { id: "instagram-post", label: "Instagram Post", icon: ImageIcon },
+  { id: "instagram-story", label: "Instagram Story", icon: ImageIcon },
   { id: "instagram-reel", label: "Instagram Reel", icon: Video },
   { id: "tiktok-video", label: "TikTok Video", icon: Video },
   { id: "youtube-video", label: "YouTube Video", icon: Video },
@@ -74,25 +76,21 @@ const timelineOptions = [
 export default function CreateCampaignModal({ isOpen, onClose }) {
   const router = useRouter();
 
-  // NOTE: This state shape matches your original CampaignStep (plus extra fields),
-  // so both components can use the same model without inconsistency.
   const [formData, setFormData] = useState({
-    // core (CampaignStep-style)
-    campaignName: "",
-    objective: "",
-    budget: [1000], // slider expects an array value like in your original component
-    budgetType: "total", // total | monthly | weekly
-    paymentPreferences: [], // array of 'gifted', 'paid', 'affiliate', 'ambassador'
-    description: "",
-    deliverables: [], // array of deliverable ids
-    timeline: "",
-    targetAudience: "",
+    campaign_name: "",
+    campaign_objective: "",
+    campaign_poster: null,
+    budget_range: [1000],
+    budget_type: "total",
+    payment_preference: [],
+    campaign_description: "",
+    content_deliverables: [],
+    campaign_timeline: "",
+    target_audience: "",
     keywords: "",
-    approvalRequired: true,
-    autoMatch: false,
-
-    // extra fields from your modal
-    campaignStatus: "Active",
+    content_approval_required: true,
+    auto_match_micro_influencers: false,
+    campaign_status: "Active",
     platforms: {
       instagram: false,
       tiktok: false,
@@ -103,11 +101,11 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
     endDate: "",
     creativeType: "Nano (1K-10K)",
     creatorsNeeded: "",
-    hashtags: ["#lifestyle", "#fashion"],
+    keywords_and_hashtags: ["#lifestyle", "#fashion"],
     ageRange: [18, 45],
     location: "United States",
     timeZone: "America/New_York",
-    gender: "", // single value: 'female'|'male'|'No_Preference'
+    gender: "",
     campaignGoals: {
       awareness: false,
       engagement: false,
@@ -115,11 +113,14 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
       growth: false,
     },
     paymentMethod: "Fixed Fee",
+    posterFile: null,
+    posterPreview: null,
   });
 
   const [newHashtag, setNewHashtag] = useState("");
   const [dragActive, setDragActive] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [uploadError, setUploadError] = useState("");
 
   // Generic field updater for top-level fields
   const handleInputChange = (field, value) => {
@@ -140,27 +141,33 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
   // PaymentPreferences toggle (array)
   const togglePaymentPreference = (pref) => {
     setFormData((prev) => {
-      const current = prev.paymentPreferences || [];
+      const current = prev.payment_preference || [];
       return current.includes(pref)
-        ? { ...prev, paymentPreferences: current.filter((p) => p !== pref) }
-        : { ...prev, paymentPreferences: [...current, pref] };
+        ? { ...prev, payment_preference: current.filter((p) => p !== pref) }
+        : { ...prev, payment_preference: [...current, pref] };
     });
   };
 
   const handleDeliverableChange = (id, checked) => {
-    // If "Repost Only" must behave exclusively, we can enforce that:
     if (id === "Repost Only" && checked) {
-      // selecting Repost Only clears other deliverables
-      setFormData((prev) => ({ ...prev, deliverables: ["Repost Only"] }));
-      return;
-    }
-    if (id !== "Repost Only" && formData.deliverables.includes("Repost Only")) {
-      // if any other is chosen, remove Repost Only first
       setFormData((prev) => ({
         ...prev,
-        deliverables: checked
-          ? [...prev.deliverables.filter((d) => d !== "Repost Only"), id]
-          : prev.deliverables.filter((d) => d !== id),
+        content_deliverables: ["Repost Only"],
+      }));
+      return;
+    }
+    if (
+      id !== "Repost Only" &&
+      formData.content_deliverables.includes("Repost Only")
+    ) {
+      setFormData((prev) => ({
+        ...prev,
+        content_deliverables: checked
+          ? [
+              ...prev.content_deliverables.filter((d) => d !== "Repost Only"),
+              id,
+            ]
+          : prev.content_deliverables.filter((d) => d !== id),
       }));
       return;
     }
@@ -168,12 +175,12 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
     if (checked) {
       setFormData((prev) => ({
         ...prev,
-        deliverables: [...prev.deliverables, id],
+        content_deliverables: [...prev.content_deliverables, id],
       }));
     } else {
       setFormData((prev) => ({
         ...prev,
-        deliverables: prev.deliverables.filter((d) => d !== id),
+        content_deliverables: prev.content_deliverables.filter((d) => d !== id),
       }));
     }
   };
@@ -201,16 +208,74 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
   const addHashtag = () => {
     const tag = newHashtag.trim();
     if (!tag) return;
-    if (!formData.hashtags.includes(tag)) {
-      setFormData((prev) => ({ ...prev, hashtags: [...prev.hashtags, tag] }));
+    if (!formData.keywords_and_hashtags.includes(tag)) {
+      setFormData((prev) => ({
+        ...prev,
+        keywords_and_hashtags: [...prev.keywords_and_hashtags, tag],
+      }));
     }
     setNewHashtag("");
   };
+
   const removeHashtag = (tag) =>
     setFormData((prev) => ({
       ...prev,
-      hashtags: prev.hashtags.filter((h) => h !== tag),
+      keywords_and_hashtags: prev.keywords_and_hashtags.filter(
+        (h) => h !== tag
+      ),
     }));
+
+  // Poster upload validation
+  const validateFile = (file) => {
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    const validTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+
+    if (!validTypes.includes(file.type)) {
+      setUploadError("Please upload a valid image (JPG, PNG, WebP, or GIF)");
+      return false;
+    }
+
+    if (file.size > maxSize) {
+      setUploadError("Image size must be less than 5MB");
+      return false;
+    }
+
+    setUploadError("");
+    return true;
+  };
+
+  // Handle poster upload
+  const handleImageChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const res = await uploadToCloudinary(file);
+    console.log(res);
+
+    setFormData((prev) => ({
+      ...prev,
+      campaign_poster: res.url,
+    }));
+
+    if (!validateFile(file)) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setFormData((prev) => ({
+        ...prev,
+        posterFile: file,
+        posterPreview: event.target.result,
+        campaign_poster: res.url,
+      }));
+    };
+    reader.onerror = () => {
+      setUploadError("Failed to read file");
+    };
+
+    reader.readAsDataURL(file);
+  };
 
   // Drag & drop (assets)
   const handleDrag = (e) => {
@@ -219,12 +284,37 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
     if (e.type === "dragenter" || e.type === "dragover") setDragActive(true);
     if (e.type === "dragleave") setDragActive(false);
   };
+
   const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    // TODO: wire up file upload logic
-    console.log("Dropped files:", e.dataTransfer.files);
+
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      const file = files[0];
+      if (validateFile(file)) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          setFormData((prev) => ({
+            ...prev,
+            posterFile: file,
+            posterPreview: event.target.result,
+          }));
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  };
+
+  // Remove poster
+  const handleRemovePoster = () => {
+    setFormData((prev) => ({
+      ...prev,
+      posterFile: null,
+      posterPreview: null,
+    }));
+    setUploadError("");
   };
 
   const handleSaveDraft = () => {
@@ -232,27 +322,52 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
     alert("Campaign saved as draft!");
   };
 
-  const handleCreateCampaign = () => {
-    // Basic validation similar to CampaignStep
+  const handleCreateCampaign = async () => {
     const isValid =
-      formData.campaignName &&
-      formData.objective &&
-      formData.deliverables.length > 0 &&
-      formData.timeline &&
-      (formData.paymentPreferences || []).length > 0;
+      formData.campaign_name &&
+      formData.campaign_objective &&
+      formData.content_deliverables.length > 0 &&
+      formData.campaign_timeline &&
+      (formData.payment_preference || []).length > 0;
 
     if (!isValid) {
-      // show a quick message (replace with toast in your app)
       alert(
-        "Please fill required fields: name, objective, deliverables, timeline, payment method."
+        "Please fill required fields: name, campaign_objective, content_deliverables, campaign_timeline, payment method."
       );
       return;
     }
 
-    // persist / API call
+    try {
+      const campaignData = {
+        campaign_name: formData.campaign_name,
+        campaign_objective: formData.campaign_objective,
+        campaign_description: formData.campaign_description.substring(0, 50),
+        budget_range: formData.budget_range[0].toString(),
+        budget_type: formData.budget_type,
+        payment_preference: formData.payment_preference.join(","),
+        content_deliverables: formData.content_deliverables.join(","),
+        campaign_timeline: formData.campaign_timeline,
+        target_audience: formData.target_audience,
+        keywords_and_hashtags: formData.keywords_and_hashtags.join(","),
+        content_approval_required: formData.content_approval_required,
+        auto_match_micro_influencers: formData.auto_match_micro_influencers,
+        campaign_status: formData.campaign_status,
+        campaign_poster: formData.campaign_poster,
+      };
+      const res = await apiClient("campaign_service/create_campaign/", {
+        auth: true,
+        method: "POST",
+        body: JSON.stringify(campaignData),
+      });
+      if (res) {
+        onClose();
+        console.log(res);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
     console.log("Creating campaign:", formData);
-    // optionally save draft or send to backend here
-    // then require signup if needed:
     setShowAuthModal(true);
   };
 
@@ -289,27 +404,27 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
             <CardContent className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="campaignName">Campaign Name *</Label>
+                  <Label htmlFor="campaign_name">Campaign Name *</Label>
                   <Input
-                    id="campaignName"
-                    value={formData.campaignName}
+                    id="campaign_name"
+                    value={formData.campaign_name}
                     onChange={(e) =>
-                      handleInputChange("campaignName", e.target.value)
+                      handleInputChange("campaign_name", e.target.value)
                     }
                     placeholder="Summer Collection Launch"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Campaign Objective *</Label>
+                  <Label>Campaign campaign_objective *</Label>
                   <Select
-                    value={formData.objective}
+                    value={formData.campaign_objective}
                     onValueChange={(value) =>
-                      handleInputChange("objective", value)
+                      handleInputChange("campaign_objective", value)
                     }
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select objective" />
+                      <SelectValue placeholder="Select campaign_objective" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="awareness">Brand Awareness</SelectItem>
@@ -324,16 +439,74 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
               </div>
 
               <div>
-                <Label htmlFor="description">Campaign Description</Label>
+                <Label htmlFor="campaign_description">
+                  Campaign campaign_description
+                </Label>
                 <Textarea
-                  id="description"
-                  value={formData.description}
+                  id="campaign_description"
+                  value={formData.campaign_description}
                   onChange={(e) =>
-                    handleInputChange("description", e.target.value)
+                    handleInputChange("campaign_description", e.target.value)
                   }
                   placeholder="Describe your campaign goals, target audience, key messages, and any specific requirements..."
                   rows={4}
                 />
+              </div>
+
+              <div>
+                <Label htmlFor="campaignposter">Campaign Poster</Label>
+                {!formData.posterPreview ? (
+                  <div
+                    onDragEnter={handleDrag}
+                    onDragLeave={handleDrag}
+                    onDragOver={handleDrag}
+                    onDrop={handleDrop}
+                    className={`border-2 border-dashed rounded-lg p-6 text-center transition ${
+                      dragActive
+                        ? "border-primary bg-primary/5"
+                        : "border-gray-300 hover:border-gray-400"
+                    }`}
+                  >
+                    <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                    <p className="text-sm text-gray-600 mb-2">
+                      Drag and drop your poster or click to browse
+                    </p>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="hidden"
+                      id="poster-input"
+                    />
+                    <label htmlFor="poster-input">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        asChild
+                        className="cursor-pointer"
+                      >
+                        <span>Choose File</span>
+                      </Button>
+                    </label>
+                  </div>
+                ) : (
+                  <div className="relative rounded-lg overflow-hidden border border-gray-200">
+                    <img
+                      src={formData.posterPreview}
+                      alt="Poster preview"
+                      className="w-full h-48 object-cover"
+                    />
+                    <button
+                      onClick={handleRemovePoster}
+                      className="absolute top-2 right-2 p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                )}
+                {uploadError && (
+                  <p className="text-sm text-red-500 mt-2">{uploadError}</p>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -352,9 +525,9 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
                   <div className="flex items-center space-x-2">
                     <Checkbox
                       id="total-budget"
-                      checked={formData.budgetType === "total"}
+                      checked={formData.budget_type === "total"}
                       onCheckedChange={() =>
-                        handleInputChange("budgetType", "total")
+                        handleInputChange("budget_type", "total")
                       }
                     />
                     <Label htmlFor="total-budget">Total Campaign Budget</Label>
@@ -363,9 +536,9 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
                   <div className="flex items-center space-x-2">
                     <Checkbox
                       id="monthly-budget"
-                      checked={formData.budgetType === "monthly"}
+                      checked={formData.budget_type === "monthly"}
                       onCheckedChange={() =>
-                        handleInputChange("budgetType", "monthly")
+                        handleInputChange("budget_type", "monthly")
                       }
                     />
                     <Label htmlFor="monthly-budget">Monthly Budget</Label>
@@ -374,9 +547,9 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
                   <div className="flex items-center space-x-2">
                     <Checkbox
                       id="weekly-budget"
-                      checked={formData.budgetType === "weekly"}
+                      checked={formData.budget_type === "weekly"}
                       onCheckedChange={() =>
-                        handleInputChange("budgetType", "weekly")
+                        handleInputChange("budget_type", "weekly")
                       }
                     />
                     <Label htmlFor="weekly-budget">Weekly Budget</Label>
@@ -385,11 +558,11 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
 
                 <div className="space-y-4">
                   <div className="flex justify-between">
-                    <Label>Budget Amount: ${formData.budget[0]}</Label>
+                    <Label>Budget Amount: ${formData.budget_range[0]}</Label>
                     <Badge variant="secondary">
-                      {formData.budgetType === "total"
+                      {formData.budget_type === "total"
                         ? "Total"
-                        : formData.budgetType === "monthly"
+                        : formData.budget_type === "monthly"
                         ? "Monthly"
                         : "Weekly"}
                     </Badge>
@@ -428,14 +601,14 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
               <div className="grid md:grid-cols-2 gap-4">
                 <div
                   className={`flex items-center space-x-3 p-3 border rounded-lg cursor-pointer ${
-                    formData.paymentPreferences.includes("gifted")
+                    formData.payment_preference.includes("gifted")
                       ? "bg-primary/10 border-primary"
                       : "hover:bg-muted/50"
                   }`}
                   onClick={() => togglePaymentPreference("gifted")}
                 >
                   <Checkbox
-                    checked={formData.paymentPreferences.includes("gifted")}
+                    checked={formData.payment_preference.includes("gifted")}
                     id="gifted"
                   />
                   <Label htmlFor="gifted">Gifted Products</Label>
@@ -443,14 +616,14 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
 
                 <div
                   className={`flex items-center space-x-3 p-3 border rounded-lg cursor-pointer ${
-                    formData.paymentPreferences.includes("paid")
+                    formData.payment_preference.includes("paid")
                       ? "bg-primary/10 border-primary"
                       : "hover:bg-muted/50"
                   }`}
                   onClick={() => togglePaymentPreference("paid")}
                 >
                   <Checkbox
-                    checked={formData.paymentPreferences.includes("paid")}
+                    checked={formData.payment_preference.includes("paid")}
                     id="paid"
                   />
                   <Label htmlFor="paid">Paid Collaborations</Label>
@@ -458,14 +631,14 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
 
                 <div
                   className={`flex items-center space-x-3 p-3 border rounded-lg cursor-pointer ${
-                    formData.paymentPreferences.includes("affiliate")
+                    formData.payment_preference.includes("affiliate")
                       ? "bg-primary/10 border-primary"
                       : "hover:bg-muted/50"
                   }`}
                   onClick={() => togglePaymentPreference("affiliate")}
                 >
                   <Checkbox
-                    checked={formData.paymentPreferences.includes("affiliate")}
+                    checked={formData.payment_preference.includes("affiliate")}
                     id="affiliate"
                   />
                   <Label htmlFor="affiliate">Affiliate Marketing</Label>
@@ -473,14 +646,14 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
 
                 <div
                   className={`flex items-center space-x-3 p-3 border rounded-lg cursor-pointer ${
-                    formData.paymentPreferences.includes("ambassador")
+                    formData.payment_preference.includes("ambassador")
                       ? "bg-primary/10 border-primary"
                       : "hover:bg-muted/50"
                   }`}
                   onClick={() => togglePaymentPreference("ambassador")}
                 >
                   <Checkbox
-                    checked={formData.paymentPreferences.includes("ambassador")}
+                    checked={formData.payment_preference.includes("ambassador")}
                     id="ambassador"
                   />
                   <Label htmlFor="ambassador">Brand Ambassador</Label>
@@ -506,7 +679,7 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
                   >
                     <Checkbox
                       id={d.id}
-                      checked={formData.deliverables.includes(d.id)}
+                      checked={formData.content_deliverables.includes(d.id)}
                       onCheckedChange={(checked) =>
                         handleDeliverableChange(d.id, checked)
                       }
@@ -535,9 +708,9 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
               </CardHeader>
               <CardContent>
                 <Select
-                  value={formData.timeline}
+                  value={formData.campaign_timeline}
                   onValueChange={(value) =>
-                    handleInputChange("timeline", value)
+                    handleInputChange("campaign_timeline", value)
                   }
                 >
                   <SelectTrigger>
@@ -568,9 +741,9 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
                     </p>
                   </div>
                   <Switch
-                    checked={formData.approvalRequired}
+                    checked={formData.content_approval_required}
                     onCheckedChange={(checked) =>
-                      handleInputChange("approvalRequired", checked)
+                      handleInputChange("content_approval_required", checked)
                     }
                   />
                 </div>
@@ -583,8 +756,10 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
                     </p>
                   </div>
                   <Switch
-                    checked={formData.autoMatch}
-                    onCheckedChange={(c) => handleInputChange("autoMatch", c)}
+                    checked={formData.auto_match_micro_influencers}
+                    onCheckedChange={(c) =>
+                      handleInputChange("auto_match_micro_influencers", c)
+                    }
                   />
                 </div>
               </CardContent>
@@ -599,9 +774,9 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
               </CardHeader>
               <CardContent>
                 <Textarea
-                  value={formData.targetAudience}
+                  value={formData.target_audience}
                   onChange={(e) =>
-                    handleInputChange("targetAudience", e.target.value)
+                    handleInputChange("target_audience", e.target.value)
                   }
                   placeholder="Young professionals, age 25-35, interested in sustainable fashion..."
                   rows={4}
@@ -614,18 +789,18 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
                 <CardTitle>Keywords & Hashtags</CardTitle>
               </CardHeader>
               <CardContent>
-                <Textarea
+                {/* <Textarea
                   value={formData.keywords}
                   onChange={(e) =>
                     handleInputChange("keywords", e.target.value)
                   }
                   placeholder="#sustainablefashion #ecoFriendly #consciousliving"
                   rows={3}
-                />
+                /> */}
 
                 <div className="mt-4">
                   <div className="flex flex-wrap gap-2 mb-3">
-                    {formData.hashtags.map((tag, i) => (
+                    {formData.keywords_and_hashtags.map((tag, i) => (
                       <span
                         key={i}
                         className="inline-flex items-center gap-1 px-3 py-1 bg-primary text-white text-sm rounded-full"
@@ -660,153 +835,21 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
               </CardContent>
             </Card>
           </div>
-
-          {/* Audience Filters */}
-          <div>
-            {/* <h3 className="text-lg font-medium text-gray-900 mb-4">
-              Audience Filters
-            </h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-              <div>
-                <Label>
-                  Age Range: {formData.ageRange[0]} - {formData.ageRange[1]}
-                </Label>
-                <div className="px-3">
-                  <input
-                    type="range"
-                    min="13"
-                    max="65"
-                    value={formData.ageRange[1]}
-                    onChange={(e) =>
-                      handleInputChange("ageRange", [
-                        formData.ageRange[0],
-                        parseInt(e.target.value, 10),
-                      ])
-                    }
-                    className="w-full h-2 bg-primary rounded-lg appearance-none cursor-pointer slider"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label>Time Zone</Label>
-                <select
-                  value={
-                    US_TIME_ZONES.some((tz) => tz.value === formData.timeZone)
-                      ? formData.timeZone
-                      : "Other"
-                  }
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    handleInputChange("timeZone", val === "Other" ? "" : val);
-                  }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                >
-                  {US_TIME_ZONES.map((tz) => (
-                    <option key={tz.value} value={tz.value}>
-                      {tz.label}
-                    </option>
-                  ))}
-                  <option value="Other">Other</option>
-                </select>
-                <p className="mt-1 text-xs text-gray-500">
-                  US time zones only. Choose “Other” if outside the US.
-                </p>
-              </div>
-
-              <div>
-                <Label>Location</Label>
-                <Input
-                  value={formData.location}
-                  onChange={(e) =>
-                    handleInputChange("location", e.target.value)
-                  }
-                  placeholder="United States"
-                />
-              </div>
-            </div> */}
-
-            {/* Gender (single choice) */}
-            {/* <div className="mb-4">
-              <Label className="block mb-2">Gender</Label>
-              <div className="flex gap-6">
-                {["female", "male", "No_Preference"].map((opt) => (
-                  <label
-                    key={opt}
-                    className="flex items-center gap-2 cursor-pointer"
-                  >
-                    <input
-                      type="radio"
-                      name="gender"
-                      value={opt}
-                      checked={formData.gender === opt}
-                      onChange={() => handleGenderChange(opt)}
-                      className="w-4 h-4 text-primary"
-                    />
-                    <span className="text-sm text-gray-700">
-                      {opt === "No_Preference"
-                        ? "No Preference"
-                        : opt[0].toUpperCase() + opt.slice(1)}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </div> */}
-          </div>
-
-          {/* Campaign Goals */}
-          {/* <div>
-            <Label className="block mb-3">Campaign Goals</Label>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {Object.keys(formData.campaignGoals).map((g) => (
-                <label key={g} className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={formData.campaignGoals[g]}
-                    onChange={() => handleGoalChange(g)}
-                    className="w-4 h-4 text-primary"
-                  />
-                  <span className="text-sm text-gray-700">
-                    {g.charAt(0).toUpperCase() + g.slice(1)}
-                  </span>
-                </label>
-              ))}
-            </div>
-          </div> */}
-
-          {/* Payment Method */}
-          {/* <div>
-            <Label>Payment Method</Label>
-            <select
-              value={formData.paymentMethod}
-              onChange={(e) =>
-                handleInputChange("paymentMethod", e.target.value)
-              }
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            >
-              <option value="Fixed Fee">Fixed Fee</option>
-              <option value="Paid Collaboration">Paid Collaboration</option>
-              <option value="Affiliate Marketing">Affiliate Marketing</option>
-              <option value="Brand Ambassador">Brand Ambassador</option>
-            </select>
-          </div> */}
         </div>
 
         {/* Footer */}
-        <div className="flex md:flex-row flex-col items-center justify-between p-6 border-t bg-gray-50 rounded-b-lg">
-          <button
+        <div className="flex md:flex-row flex-col items-center justify-center p-6 border-t bg-gray-50 rounded-b-lg">
+          {/* <button
             onClick={handleSaveDraft}
             className="px-6 py-2 text-gray-600 hover:text-gray-800 font-medium"
           >
             Save as Draft
-          </button>
+          </button> */}
 
           <div className="flex items-center gap-3">
             <Button
               variant="outline"
               onClick={() => {
-                // example: open signup/login if required
                 setShowAuthModal(true);
               }}
             >
@@ -817,7 +860,7 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
               onClick={handleCreateCampaign}
               className="bg-primary text-white"
             >
-              {formData.autoMatch
+              {formData.auto_match_micro_influencers
                 ? "Create Campaign & Find micro-influencers"
                 : "Create Campaign"}
             </Button>
@@ -826,13 +869,13 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
       </div>
 
       {/* Sign-up / Auth prompt if user is not logged in */}
-      <Dialog open={showAuthModal} onOpenChange={setShowAuthModal}>
+      {/* <Dialog open={showAuthModal} onOpenChange={setShowAuthModal}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Sign up required</DialogTitle>
-            <DialogDescription>
+            <Dialogcampaign_description>
               Please sign up or log in to continue creating your campaign.
-            </DialogDescription>
+            </Dialogcampaign_description>
           </DialogHeader>
 
           <div className="flex justify-end gap-2 pt-4">
@@ -855,7 +898,7 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
             </Button>
           </div>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
     </div>
   );
 }

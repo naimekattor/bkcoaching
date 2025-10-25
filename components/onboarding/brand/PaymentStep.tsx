@@ -67,23 +67,7 @@ const PaymentStep = ({ onNext, onBack }: PaymentStepProps) => {
 
   const currentPlans = isYearly ? yearlyPlans : monthlyPlans;
 
-  // const trialFeatures = [
-  //   {
-  //     icon: Zap,
-  //     title: "14-Day Free Trial",
-  //     description: "Full access to all Growth plan features",
-  //   },
-  //   {
-  //     icon: Shield,
-  //     title: "No Credit Card Required",
-  //     description: "Start exploring without any commitment",
-  //   },
-  //   {
-  //     icon: Users,
-  //     title: "Instant Access",
-  //     description: "Connect with micro-influencers immediately",
-  //   },
-  // ];
+  
 
   // Add a function to handle plan selection
   const handlePlanSelect = (planTitle: string) => {
@@ -101,22 +85,7 @@ const PaymentStep = ({ onNext, onBack }: PaymentStepProps) => {
         </p>
       </div>
 
-      {/* Free Trial Benefits */}
-      {/* <div className="grid md:grid-cols-3 gap-6">
-        {trialFeatures.map((feature, index) => (
-          <Card key={index} className="text-center">
-            <CardContent className="p-6 space-y-4">
-              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
-                <feature.icon className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="font-semibold">{feature.title}</h3>
-              <p className="text-sm text-muted-foreground">
-                {feature.description}
-              </p>
-            </CardContent>
-          </Card>
-        ))}
-      </div> */}
+      
 
       {/* Toggle */}
       <div className="flex justify-center">

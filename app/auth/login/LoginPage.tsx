@@ -8,6 +8,8 @@ import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
+import { apiClient } from "@/lib/apiClient";
+import { login, setAuthFromResponse } from "@/lib/auth";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -20,8 +22,9 @@ export default function LoginPage() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: { [key: string]: string } = {};
 
@@ -29,15 +32,31 @@ export default function LoginPage() {
     if (!formData.password) newErrors.password = "Password is required";
 
     setErrors(newErrors);
+    setLoading(true);
 
-    if (Object.keys(newErrors).length === 0) {
-      // Handle successful login - redirect to success page
-      // window.location.href = "/auth/success";
-      if (returnTo) {
-        router.push(returnTo);
+    try {
+      const res = await login({ ...formData });
+      console.log();
+
+      setAuthFromResponse(res);
+
+      if (res.status === "success") {
+        console.log(
+          "Response successful, redirecting to:",
+          `/auth/verify-email?returnTo=${returnTo}`
+        );
+        console.log("About to execute router.push...");
+        router.push(`/auth/verify-email?returnTo=${returnTo}`);
+        console.log("router.push executed successfully");
       } else {
-        router.push("/brand-dashboard"); // fallback
+        setErrors(res?.message || "login failed");
       }
+
+      console.log(res);
+    } catch (err: any) {
+      setErrors(err.message || "login failed");
+    } finally {
+      setLoading(false);
     }
   };
 
