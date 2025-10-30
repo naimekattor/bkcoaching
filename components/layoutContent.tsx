@@ -3,6 +3,8 @@ import React from "react";
 import Header from "./header";
 import { usePathname } from "next/navigation";
 import Footer from "./footer";
+import { SessionProvider } from "next-auth/react";
+import AuthSessionSync from "./AuthSessionSync";
 
 const LayoutContent = ({ children }: { children: React.ReactNode }) => {
   // client-side pathname to detect nested auth routes
@@ -15,11 +17,14 @@ const LayoutContent = ({ children }: { children: React.ReactNode }) => {
   );
 
   return (
-    <div>
-      {!isHiddenRoute && <Header />}
-      {children}
-      {!isHiddenRoute && <Footer />}
-    </div>
+    <SessionProvider>
+      <AuthSessionSync />
+      <div>
+        {!isHiddenRoute && <Header />}
+        {children}
+        {!isHiddenRoute && <Footer />}
+      </div>
+    </SessionProvider>
   );
 };
 

@@ -22,6 +22,8 @@ const PaymentStep = ({ onNext, onBack }: PaymentStepProps) => {
   const [acceptedTOS, setAcceptedTOS] = useState(false);
   const [isYearly, setIsYearly] = useState(false);
 
+  
+
   // Define plans with consistent structure
   const yearlyPlans: Plan[] = [
     {

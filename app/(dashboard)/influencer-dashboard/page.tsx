@@ -1,32 +1,59 @@
-// app/brand-dashboard/page.js
-
+"use client";
+import { apiClient } from "@/lib/apiClient";
 import Image from "next/image";
 import Link from "next/link";
 import { FaEdit } from "react-icons/fa";
-// Removed unused dashboard imports to satisfy lint rules
+import { TbMessageCircleFilled } from "react-icons/tb";
+import { useEffect, useState } from "react";
+import { useAuthStore } from "@/stores/useAuthStore";
+
 const analyticsData = [
   { value: "12", label: "Total Campaigns", color: "#F3EFFF" },
   { value: "$2250", label: "Earnings", color: "#E1F5FF" },
   { value: "5", label: "New Messages", color: "#FEFCE8" },
 ];
 export default function Page() {
+  const [influencerProfile, setInfluencerProfile] = useState();
+
+  const store = useAuthStore.getState();
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await apiClient("user_service/get_user_info/", {
+          method: "GET",
+          auth: true,
+        });
+
+        store.setUser(res.data.influencer_profile);
+        setInfluencerProfile(res.data.influencer_profile);
+
+        console.log("✅ User Info:", res.data.influencer_profile);
+      } catch (error) {
+        console.error("❌ API Error:", error);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
   return (
     <div className="">
       <div className="flex-1">
-        <div className="bg-white rounded-lg border-2 border-dashed border-primary p-2">
+        <div className="bg-white rounded-lg border-[#E5E7EB] shadow border-[1px] p-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="w-16 h-16 bg-slate-800 rounded-lg flex items-center justify-center">
                 <Image
                   width={64}
                   height={64}
-                  src={"/images/logo.png"}
+                  src={influencerProfile?.profile_picture}
+                  className="w-full h-full"
                   alt="logo"
                 />
               </div>
               <div>
                 <h2 className="text-xl font-bold text-slate-800">
-                  Welcome back, Maya! 👋
+                  Welcome back, {influencerProfile?.display_name}! 👋
                 </h2>
                 <p className="text-slate-600">
                   Ready to grow your influence today?
@@ -61,11 +88,11 @@ export default function Page() {
         <div className="pt-4">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
             {/* My Campaigns */}
-            <div className="col-span-1 lg:col-span-2 border-2 rounded p-6">
+            <div className="col-span-1 lg:col-span-2 border-[#E5E7EB] shadow border-[1px] rounded p-6">
               <div className="flex items-center space-x-2 mb-4">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 text-gray-500"
+                  className="h-6 w-6 text-secondary"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -126,7 +153,7 @@ export default function Page() {
               </div>
             </div>
             {/* Media Kit */}
-            <div className="border-2 rounded p-6 flex flex-col items-center text-center">
+            <div className="border-[#E5E7EB] shadow border-[1px]  rounded p-6 flex flex-col items-center text-center">
               <div className="flex items-center space-x-2 mb-4 self-start">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -167,22 +194,9 @@ export default function Page() {
 
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* Messages (75%) */}
-            <div className="border-2 rounded shadow p-6 lg:col-span-3">
+            <div className="border-[#E5E7EB] shadow border-[1px]  rounded  p-6 lg:col-span-3">
               <div className="flex items-center space-x-2 mb-4">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 text-secondary"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8 10h.01M12 10h.01M16 10h.01M9 16h6m-9-6a2 2 0 01-2-2v-3a2 2 0 012-2h8a2 2 0 012 2v3a2 2 0 01-2 2h-4a2 2 0 01-2-2z"
-                  />
-                </svg>
+                <TbMessageCircleFilled className="text-secondary text-[24px]" />
                 <h2 className="text-xl font-bold text-gray-900">Messages</h2>
               </div>
               <div className="space-y-4">
@@ -192,7 +206,7 @@ export default function Page() {
                     width={40}
                     height={40}
                     className="h-10 w-10 rounded-full"
-                    src="https://placehold.co/40x40/e0e9d6/658e65?text=TB"
+                    src="/images/person.jpg"
                     alt="TechBusiness Inc. avatar"
                   />
                   <div className="flex-grow">
@@ -213,7 +227,7 @@ export default function Page() {
                     width={40}
                     height={40}
                     className="h-10 w-10 rounded-full"
-                    src="https://placehold.co/40x40/e0e9d6/658e65?text=FF"
+                    src="/images/person.jpg"
                     alt="Fashion Forward avatar"
                   />
                   <div className="flex-grow">
@@ -232,7 +246,7 @@ export default function Page() {
             </div>
 
             {/* Earnings (25%) */}
-            <div className="border-2 rounded shadow p-6 flex flex-col items-center text-center lg:col-span-1">
+            <div className="border-[#E5E7EB] shadow border-[1px]  rounded  p-6 flex flex-col items-center text-center lg:col-span-1">
               <div className="flex items-center space-x-2 mb-4 self-start">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -271,11 +285,11 @@ export default function Page() {
           </div>
           {/* Content Niche */}
           <div className="w-full">
-            <div className=" border-2 mt-4 rounded shadow p-6 w-3/4 ">
+            <div className=" border-[#E5E7EB] shadow border-[1px]  mt-4 rounded  p-6 w-3/4 ">
               <div className="flex items-center space-x-2 mb-4">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 text-purple-600"
+                  className="h-6 w-6 text-primary"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -292,21 +306,7 @@ export default function Page() {
                 </h2>
               </div>
               <div className="flex flex-wrap gap-2">
-                {[
-                  "Spring Chic",
-                  "Glow & Go",
-                  "Heels & Hues",
-                  "Coquette Edit",
-                  "Purpose of Style",
-                  "Day to Night",
-                  "Thread Talk",
-                  "Fashion Hauls",
-                  "OOTD Reels",
-                  "Heel Styling",
-                  "Care Routine",
-                  "Get Ready",
-                  "Wardrobe Style",
-                ].map((tag) => (
+                {influencerProfile?.content_niches?.split(",").map((tag) => (
                   <span
                     key={tag}
                     className="bg-gray-200 text-gray-700 rounded-full px-4 py-2 text-sm font-medium"

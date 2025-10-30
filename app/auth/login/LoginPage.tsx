@@ -8,8 +8,10 @@ import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { apiClient } from "@/lib/apiClient";
 import { login, setAuthFromResponse } from "@/lib/auth";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { apiClient } from "@/lib/apiClient";
+import { signIn } from "next-auth/react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -23,38 +25,36 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [loading, setLoading] = useState(false);
+  const { user } = useAuthStore();
+  console.log(user);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newErrors: { [key: string]: string } = {};
+
+    const newErrors: Record<string, string> = {};
 
     if (!formData.email) newErrors.email = "Email is required";
     if (!formData.password) newErrors.password = "Password is required";
 
     setErrors(newErrors);
+    if (Object.keys(newErrors).length) {
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
 
     try {
       const res = await login({ ...formData });
-      console.log();
-
       setAuthFromResponse(res);
 
-      if (res.status === "success") {
-        console.log(
-          "Response successful, redirecting to:",
-          `/auth/verify-email?returnTo=${returnTo}`
-        );
-        console.log("About to execute router.push...");
-        router.push(`/auth/verify-email?returnTo=${returnTo}`);
-        console.log("router.push executed successfully");
-      } else {
-        setErrors(res?.message || "login failed");
+      if (res.status !== "success") {
+        throw new Error(res.message ?? "Login failed");
       }
 
-      console.log(res);
+      router.push("/home_dashboard");
     } catch (err: any) {
-      setErrors(err.message || "login failed");
+      setErrors({ general: err.message || "Login failed" });
     } finally {
       setLoading(false);
     }
@@ -151,9 +151,10 @@ export default function LoginPage() {
 
               <Button
                 type="submit"
+                disabled={loading}
                 className="w-full bg-secondary hover:bg-[var(--secondaryhover)] text-slate-800 font-semibold py-3 rounded-lg"
               >
-                Log in
+                {loading ? "Logging in..." : "Log in"}
               </Button>
 
               <div className="text-center">
@@ -164,6 +165,9 @@ export default function LoginPage() {
                 type="button"
                 variant="outline"
                 className="w-full border-slate-600 text-white hover:bg-primary hover:text-white py-3 rounded-lg bg-transparent"
+                onClick={() =>
+                  signIn("google", { callbackUrl: "/home_dashboard" })
+                }
               >
                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                   <path

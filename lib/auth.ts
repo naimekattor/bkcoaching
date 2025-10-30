@@ -6,7 +6,8 @@ export async function signup(payload: {
   last_name: string;
   email: string;
   password: string;
-  signup_method?: "normal" | "google" | "apple";
+  signup_method?: string;
+  signed_up_as?: string;
 }) {
   return apiClient("user_service/signup/", {
     method: "POST",

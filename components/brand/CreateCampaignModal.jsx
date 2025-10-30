@@ -38,6 +38,7 @@ import {
 } from "@/components/ui/dialog";
 import { apiClient } from "@/lib/apiClient";
 import { uploadToCloudinary } from "@/lib/fileUpload";
+import { toast } from "react-toastify";
 
 const US_TIME_ZONES = [
   { value: "America/New_York", label: "Eastern (ET)" },
@@ -317,12 +318,7 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
     setUploadError("");
   };
 
-  const handleSaveDraft = () => {
-    localStorage.setItem("draftCampaign", JSON.stringify(formData));
-    alert("Campaign saved as draft!");
-  };
-
-  const handleCreateCampaign = async () => {
+  const handleSaveDraft = async () => {
     const isValid =
       formData.campaign_name &&
       formData.campaign_objective &&
@@ -351,7 +347,7 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
         keywords_and_hashtags: formData.keywords_and_hashtags.join(","),
         content_approval_required: formData.content_approval_required,
         auto_match_micro_influencers: formData.auto_match_micro_influencers,
-        campaign_status: formData.campaign_status,
+        campaign_status: "draft",
         campaign_poster: formData.campaign_poster,
       };
       const res = await apiClient("campaign_service/create_campaign/", {
@@ -360,10 +356,65 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
         body: JSON.stringify(campaignData),
       });
       if (res) {
+        toast("Saved campaign  successfully");
         onClose();
         console.log(res);
       }
     } catch (error) {
+      toast("There is an error!");
+      console.log(error);
+    }
+
+    console.log("Creating campaign:", formData);
+    setShowAuthModal(true);
+  };
+
+  const handleCreateCampaign = async (e) => {
+    console.log(e.target.value);
+
+    const isValid =
+      formData.campaign_name &&
+      formData.campaign_objective &&
+      formData.content_deliverables.length > 0 &&
+      formData.campaign_timeline &&
+      (formData.payment_preference || []).length > 0;
+
+    if (!isValid) {
+      alert(
+        "Please fill required fields: name, campaign_objective, content_deliverables, campaign_timeline, payment method."
+      );
+      return;
+    }
+
+    try {
+      const campaignData = {
+        campaign_name: formData.campaign_name,
+        campaign_objective: formData.campaign_objective,
+        campaign_description: formData.campaign_description.substring(0, 50),
+        budget_range: formData.budget_range[0].toString(),
+        budget_type: formData.budget_type,
+        payment_preference: formData.payment_preference.join(","),
+        content_deliverables: formData.content_deliverables.join(","),
+        campaign_timeline: formData.campaign_timeline,
+        target_audience: formData.target_audience,
+        keywords_and_hashtags: formData.keywords_and_hashtags.join(","),
+        content_approval_required: formData.content_approval_required,
+        auto_match_micro_influencers: formData.auto_match_micro_influencers,
+        campaign_status: "active",
+        campaign_poster: formData.campaign_poster,
+      };
+      const res = await apiClient("campaign_service/create_campaign/", {
+        auth: true,
+        method: "POST",
+        body: JSON.stringify(campaignData),
+      });
+      if (res) {
+        toast("Campaign created successfully");
+        onClose();
+        console.log(res);
+      }
+    } catch (error) {
+      toast("There is an error!");
       console.log(error);
     }
 
@@ -416,7 +467,7 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Campaign campaign_objective *</Label>
+                  <Label>Campaign objective *</Label>
                   <Select
                     value={formData.campaign_objective}
                     onValueChange={(value) =>
@@ -439,8 +490,8 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
               </div>
 
               <div>
-                <Label htmlFor="campaign_description">
-                  Campaign campaign_description
+                <Label htmlFor="campaign_description" className="mb-2">
+                  Campaign description
                 </Label>
                 <Textarea
                   id="campaign_description"
@@ -454,7 +505,9 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
               </div>
 
               <div>
-                <Label htmlFor="campaignposter">Campaign Poster</Label>
+                <Label htmlFor="campaignposter" className="mb-2">
+                  Campaign Poster
+                </Label>
                 {!formData.posterPreview ? (
                   <div
                     onDragEnter={handleDrag}
@@ -850,7 +903,7 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
             <Button
               variant="outline"
               onClick={() => {
-                setShowAuthModal(true);
+                handleSaveDraft();
               }}
             >
               Save & Continue

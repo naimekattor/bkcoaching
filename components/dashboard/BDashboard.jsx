@@ -40,7 +40,9 @@ export default function BDashboard() {
 
         console.log("Raw API Response:", res.data);
 
-        const campaignsArray = Array.isArray(res.data) ? res.data : [];
+        const campaignsArray = Array.isArray(res.data)
+          ? [...res.data].reverse()
+          : [];
 
         // Transform API response to match component expectations
         const transformedCampaigns = campaignsArray.map((campaign) => ({

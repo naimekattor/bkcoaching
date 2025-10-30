@@ -5,12 +5,15 @@ import { Sidebar } from "../../../components/dashboard/Sidebar";
 import { HiMenu, HiX } from "react-icons/hi";
 import { brandLinks } from "../../../config/sidebarLinks";
 import DashboardTopHeader from "../../../components/dashboard/DashboardTopHeader";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { toast } from "react-toastify";
 
 export default function BrandDashboardLayout({ children }) {
   const [showSideBar, setShowSideBar] = useState(false);
   const sideBarRef = useRef(null);
   const path = usePathname();
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   useEffect(() => {
     const clickOutSideSideBar = (event) => {
@@ -29,6 +32,18 @@ export default function BrandDashboardLayout({ children }) {
       document.removeEventListener("mousedown", clickOutSideSideBar);
     };
   }, [showSideBar]);
+
+  useEffect(() => {
+    const status = searchParams.get("status");
+    if (status === "success") {
+      toast("Subscription completed successfully! 🎉");
+
+      // Clean up the URL
+      const url = new URL(window.location.href);
+      url.searchParams.delete("status");
+      router.replace(url.pathname);
+    }
+  }, [searchParams, router]);
 
   return (
     <div className="flex min-h-screen bg-[#FFFFFF]">

@@ -3,10 +3,16 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 export function Sidebar({ links = [] }) {
   const pathname = usePathname() || "";
   const router = useRouter();
+  const { user, logout } = useAuthStore();
+  const handleLogOut = () => {
+    logout();
+    router.push("/");
+  };
   return (
     <div
       style={{ boxShadow: "2px 0px 10px 0px rgba(0, 0, 0, 0.1)" }}
@@ -50,7 +56,10 @@ export function Sidebar({ links = [] }) {
 
       {/* Logout Button */}
       <div className="p-4 border-t border-slate-700">
-        <button className="w-full flex items-center justify-start px-4 py-3 text-slate-300  hover:bg-primary hover:text-white rounded-lg transition-colors">
+        <button
+          className="w-full flex items-center justify-start px-4 py-3 text-slate-300  hover:bg-primary hover:text-white rounded-lg transition-colors"
+          onClick={handleLogOut}
+        >
           {/* <span className="mr-3">🚪</span> */}
           Logout
         </button>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useState } from "react";
-// --- UPDATED IMPORTS ---
 import { Upload, X, DollarSign, Percent, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,7 +12,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-// --- NEW IMPORTS for Dropdown Menu ---
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -24,6 +22,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
+import { uploadToCloudinary } from "@/lib/fileUpload";
+import { apiClient } from "@/lib/apiClient";
+import { toast } from "react-toastify";
 
 const contentNiches = [
   "Beauty & Skincare Brands – makeup, skincare, haircare",
@@ -88,7 +89,6 @@ export default function ProfilePage() {
       contentFormats.map((c) => [c.id, { type: "", custom: "" }])
     )
   );
-  const [timeZone, setTimeZone] = useState("Time Zone");
   const [formData, setFormData] = useState({
     fullName: "",
     bio: "",
@@ -100,6 +100,8 @@ export default function ProfilePage() {
       linkedin: "",
       whatsapp: "",
     },
+    timeZone: "",
+    gender: "",
   });
 
   const [profileImage, setProfileImage] = useState<File | null>(null);
@@ -111,7 +113,6 @@ export default function ProfilePage() {
     setSelectedNiches((prev) => prev.filter((n) => n !== niche));
   };
 
-  // --- UPDATED HANDLER for DropdownMenuCheckboxItem ---
   const handleNicheChange = (niche: string, checked: boolean) => {
     if (checked) {
       setSelectedNiches((prev) => [...prev, niche]);
@@ -138,6 +139,7 @@ export default function ProfilePage() {
     { value: "America/Los_Angeles", label: "Pacific (PT)" },
     { value: "America/Anchorage", label: "Alaska (AKST/AKDT)" },
     { value: "Pacific/Honolulu", label: "Hawaii (HST)" },
+    { value: "Others", label: "Others" },
   ];
 
   const handleRateChange = (format: string, value: string) => {
@@ -164,11 +166,14 @@ export default function ProfilePage() {
     return `${selectedNiches.length} niches selected`;
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
     if (file) {
-      setProfileImage(file);
-      // Generate a temporary URL for the image preview
+      const res = await uploadToCloudinary(file);
+      const imageUrl = res.url;
+      setProfileImage(imageUrl);
       const previewUrl = URL.createObjectURL(file);
       setImagePreview(previewUrl);
     }
@@ -178,14 +183,86 @@ export default function ProfilePage() {
     setProfileImage(null);
     setImagePreview(null);
     if (fileInputRef.current) {
-      // Reset the file input so the user can select the same file again
       fileInputRef.current.value = "";
     }
   };
 
-  // This function will be triggered by the button click
   const handleTriggerFileSelect = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleSubmit = async () => {
+    let profilePictureUrl = "https://default-placeholder-url.com";
+    if (profileImage) {
+      profilePictureUrl = profileImage;
+      // profilePictureUrl = URL.createObjectURL(profileImage);
+    }
+
+    // Map content format IDs to payload field names
+    const formatMap: Record<string, string> = {
+      socialPost: "social_post",
+      repost: "repost",
+      instagramStory: "instagram_story",
+      instagramReel: "instagram_reel",
+      tiktokVideo: "tiktok_video",
+      youtubeVideo: "youtube_video",
+      youtubeShort: "youtube_short",
+      blogPost: "blog_post",
+      podcastMention: "podcast_mention",
+      liveStream: "live_stream",
+      userGeneratedContent: "ugc_creation",
+      whatsappStatus: "whatsapp_status_post",
+    };
+
+    // Build rate ranges only for selected formats
+    const rateRangesPayload: Record<string, string> = {};
+    selectedContentFormats.forEach((formatId) => {
+      const rate = rates[formatId];
+      const value = rate.type === "custom" ? rate.custom : rate.type;
+      const fieldName = `rate_range_for_${formatMap[formatId] || formatId}`;
+      rateRangesPayload[fieldName] = value || "";
+    });
+
+    // Build payload
+    const payload = {
+      influencer_profile: {
+        display_name: formData.fullName || "",
+        profile_picture: profilePictureUrl,
+        short_bio: formData.bio || "",
+        instagram_handle: formData.socialLinks.instagram || "",
+        tiktok_handle: formData.socialLinks.tiktok || "",
+        youtube_handle: formData.socialLinks.youtube || "",
+        twitter_handle: formData.socialLinks.twitter || "",
+        linkedin_handle: formData.socialLinks.linkedin || "",
+        whatsapp_handle: formData.socialLinks.whatsapp || "",
+        content_niches: selectedNiches.join(", ") || "",
+        content_formats: selectedContentFormats.join(",") || "",
+        payment_preferences:
+          Object.keys(paymentModels)
+            .filter((key) => paymentModels[key as keyof typeof paymentModels])
+            .join(", ") || "",
+        ...rateRangesPayload,
+        rate_range_for_affiliate_marketing_percent: paymentModels.affiliate
+          ? paymentPercentages.affiliate
+          : "",
+      },
+    };
+
+    console.log("Payload:", JSON.stringify(payload, null, 2)); // For demo
+
+    try {
+      const response = await apiClient("user_service/update_user_profile/", {
+        method: "PATCH",
+        auth: true,
+        body: JSON.stringify(payload),
+      });
+      if (response.ok) {
+        toast("Profile updated successfully!");
+      }
+    } catch (error) {
+      toast("there was an error!");
+      console.error("Error submitting payload:", error);
+    }
   };
 
   return (
@@ -237,8 +314,9 @@ export default function ProfilePage() {
                   <div className="flex flex-col">
                     <Label className="mb-1">Time Zone</Label>
                     <Select
-                    // value={timeZone || undefined}
-                    // onValueChange={setTimeZone}
+                      onValueChange={(value) =>
+                        setFormData((prev) => ({ ...prev, timeZone: value }))
+                      }
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Time Zone (US)" />
@@ -256,7 +334,11 @@ export default function ProfilePage() {
                   {/* Gender */}
                   <div className="flex flex-col">
                     <Label className="mb-1">Gender</Label>
-                    <Select>
+                    <Select
+                      onValueChange={(value) =>
+                        setFormData((prev) => ({ ...prev, gender: value }))
+                      }
+                    >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select Gender" />
                       </SelectTrigger>
@@ -547,7 +629,10 @@ export default function ProfilePage() {
 
         {/* Update Button */}
         <div className="flex justify-end pt-4">
-          <Button className="bg-yellow-500 hover:bg-[var(--secondaryhover)] text-white px-8 py-2">
+          <Button
+            onClick={handleSubmit}
+            className="bg-yellow-500 hover:bg-[var(--secondaryhover)] text-white px-8 py-2"
+          >
             Update Profile
           </Button>
         </div>

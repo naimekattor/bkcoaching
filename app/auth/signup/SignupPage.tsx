@@ -10,12 +10,17 @@ import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { setAuthFromResponse, signup } from "@/lib/auth";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { signIn, useSession } from "next-auth/react";
+import { apiClient } from "@/lib/apiClient";
 
 export default function SignupPage() {
   const router = useRouter();
   const params = useSearchParams();
   const returnTo = params.get("returnTo");
   console.log(returnTo);
+  const match = returnTo.match(/^\/([^-]+)/);
+  const result = match ? match[1] : null;
+  console.log(result);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -31,6 +36,8 @@ export default function SignupPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const { token, user, setToken, setUser, logout } = useAuthStore();
+  const { data: session } = useSession();
+  console.log(session);
   console.log(user, token);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -49,7 +56,12 @@ export default function SignupPage() {
     setErrors(newErrors);
     setLoading(true);
     try {
-      const res = await signup({ ...formData, signup_method: "normal" });
+      const res = await signup({
+        ...formData,
+        signup_method: "normal",
+        signed_up_as: result,
+        state: result,
+      });
       console.log();
 
       setAuthFromResponse(res);
@@ -76,6 +88,13 @@ export default function SignupPage() {
     // if (Object.keys(newErrors).length === 0) {
     //   // Handle successful signup - redirect to email verification
     //   router.push(`/auth/verify-email?returnTo=${returnTo}`);
+  };
+
+  const handleGoogleSignUp = async () => {
+    signIn("google", {
+      callbackUrl: `/home_dashboard`,
+      state: result,
+    });
   };
 
   return (
@@ -283,6 +302,7 @@ export default function SignupPage() {
                 type="button"
                 variant="outline"
                 className="w-full border-[#F7F8F9]/60 border-2 text-white hover:bg-primary hover:text-white py-5 cursor-pointer rounded-lg bg-transparent"
+                onClick={handleGoogleSignUp}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

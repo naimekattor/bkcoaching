@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CheckCircle2, XCircle, AlertCircle } from "lucide-react";
 import { PricingSection } from "@/components/pricing-section";
+import { apiClient } from "@/lib/apiClient";
+import { useRouter } from "next/navigation";
 
 type BillingCycle = "monthly" | "yearly";
 type Status = "active" | "canceled" | "expired";
@@ -15,14 +17,6 @@ interface Subscription {
   renewalDate: string;
   status: Status;
 }
-
-// interface Plan {
-//   id: string;
-//   name: string;
-//   price: number;
-//   billingCycle: BillingCycle;
-//   features: string[];
-// }
 
 const mockCurrentSubscription: Subscription = {
   id: "sub_123",
@@ -39,6 +33,9 @@ export default function SubscriptionPage() {
   );
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [planData, setPlanData] = useState({});
+  const [portalData, setPortalData] = useState();
+  const router = useRouter();
 
   const handleCancel = () => {
     setCurrentSubscription((prev) => ({ ...prev, status: "canceled" }));
@@ -48,6 +45,46 @@ export default function SubscriptionPage() {
   const handleResume = () => {
     setCurrentSubscription((prev) => ({ ...prev, status: "active" }));
   };
+
+  useEffect(() => {
+    const fetchSubscriptionInformation = async () => {
+      try {
+        const res = await apiClient(
+          "subscription_service/get_user_subscription_information/",
+          { auth: true, method: "GET" }
+        );
+
+        if (res.status === "success") {
+          console.log("Subscription Info:", res.data);
+          setPlanData(res.data);
+        } else {
+          console.warn("No subscription info:", res.error);
+        }
+      } catch (error) {
+        console.error("Failed to fetch subscription info:", error);
+      }
+    };
+    const fetchcustomerPortal = async () => {
+      try {
+        const res = await apiClient("subscription_service/customer-portal/", {
+          auth: true,
+          method: "GET",
+        });
+
+        if (res.status === "success") {
+          console.log("Subscription Info:", res.data);
+          setPortalData(res.data.portal_url);
+        } else {
+          console.warn("No subscription info:", res.error);
+        }
+      } catch (error) {
+        console.error("Failed to fetch subscription info:", error);
+      }
+    };
+    fetchcustomerPortal();
+
+    fetchSubscriptionInformation();
+  }, []);
 
   return (
     <div className="  mx-auto">
@@ -63,13 +100,17 @@ export default function SubscriptionPage() {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between">
           <div>
             <p className="text-lg font-medium text-gray-900">
-              {currentSubscription.name} Plan
+              {planData.plan_name} Plan
             </p>
             <p className="text-gray-600">
               ${currentSubscription.price}/{currentSubscription.billingCycle}
             </p>
             <p className="text-sm text-gray-500">
-              Renewal Date: {currentSubscription.renewalDate}
+              Renewal Date:{" "}
+              {new Date(planData.current_period_end).toLocaleDateString(
+                "en-US",
+                { day: "numeric", month: "long", year: "numeric" }
+              )}
             </p>
             <p className="flex items-center gap-1 text-sm mt-2">
               {currentSubscription.status === "active" && (
@@ -81,8 +122,7 @@ export default function SubscriptionPage() {
               {currentSubscription.status === "expired" && (
                 <AlertCircle className="w-4 h-4 text-secondary" />
               )}
-              Status:{" "}
-              <span className="capitalize">{currentSubscription.status}</span>
+              Status: <span className="capitalize">{planData.status}</span>
             </p>
           </div>
 
@@ -90,7 +130,7 @@ export default function SubscriptionPage() {
             {currentSubscription.status === "active" && (
               <>
                 <button
-                  onClick={() => setShowUpdateModal(true)}
+                  onClick={() => router.push(portalData)}
                   className="px-4 py-2 bg-secondary text-primary font-semibold rounded-lg hover:bg-[var(--secondaryhover)]"
                 >
                   Update Plan
