@@ -21,7 +21,7 @@ export function DashboardHeader() {
                 height={64}
                 src={user?.logo}
                 alt="logo"
-                className="h-full w-full"
+                className="h-full w-full rounded-md"
               />
             </div>
             <div>

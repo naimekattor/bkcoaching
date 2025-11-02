@@ -24,8 +24,9 @@ export default function Page() {
           auth: true,
         });
 
-        store.setUser(res.data.influencer_profile);
+        store.setUser(res.data);
         setInfluencerProfile(res.data.influencer_profile);
+        console.log("✅ User full Info:", res.data);
 
         console.log("✅ User Info:", res.data.influencer_profile);
       } catch (error) {
@@ -42,13 +43,15 @@ export default function Page() {
         <div className="bg-white rounded-lg border-[#E5E7EB] shadow border-[1px] p-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 bg-slate-800 rounded-lg flex items-center justify-center">
+              <div className="w-16 h-16  rounded-md flex items-center justify-center">
                 <Image
                   width={64}
                   height={64}
-                  src={influencerProfile?.profile_picture}
-                  className="w-full h-full"
-                  alt="logo"
+                  src={
+                    influencerProfile?.profile_picture || "/images/person.jpg"
+                  }
+                  className="w-full h-full rounded-md"
+                  alt={influencerProfile?.display_name || "User avatar"}
                 />
               </div>
               <div>

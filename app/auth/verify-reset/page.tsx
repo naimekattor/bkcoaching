@@ -6,11 +6,18 @@ import { useState, useRef } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { apiClient } from "@/lib/apiClient";
+import { useSearchParams } from "next/navigation";
 
 export default function VerifyResetPage() {
   const [code, setCode] = useState(["", "", "", ""]);
   const [error, setError] = useState("");
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const searchParams = useSearchParams();
+  const userEmail = searchParams.get("email");
+
+  console.log("Email:", userEmail);
+  console.log(userEmail);
 
   const handleInputChange = (index: number, value: string) => {
     if (value.length > 1) return;
@@ -31,7 +38,7 @@ export default function VerifyResetPage() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const verificationCode = code.join("");
 
@@ -39,9 +46,15 @@ export default function VerifyResetPage() {
       setError("Please enter the complete verification code");
       return;
     }
+    const res = await apiClient("user_service/verify_email/", {
+      method: "POST",
+      body: JSON.stringify({ email: userEmail, otp: verificationCode }),
+    });
 
-    // Handle verification - redirect to reset password page
-    window.location.href = "/auth/reset-password";
+    if (res.code == "200") {
+      // Handle verification - redirect to reset password page
+      window.location.href = ` /auth/reset-password?email=${userEmail}`;
+    }
   };
 
   const handleResendCode = () => {
@@ -76,7 +89,7 @@ export default function VerifyResetPage() {
               <p className="text-slate-300 mb-1">
                 Enter The 4 Digit Code Sent To
               </p>
-              <p className="text-slate-300">creativeitem@gmail.com</p>
+              <p className="text-slate-300">{userEmail}</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">

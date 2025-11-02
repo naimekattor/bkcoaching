@@ -16,7 +16,8 @@ import { apiClient } from "@/lib/apiClient";
 export default function SignupPage() {
   const router = useRouter();
   const params = useSearchParams();
-  const returnTo = params.get("returnTo");
+
+  const returnTo = params.get("returnTo") || "";
   console.log(returnTo);
   const match = returnTo.match(/^\/([^-]+)/);
   const result = match ? match[1] : null;
@@ -92,7 +93,7 @@ export default function SignupPage() {
 
   const handleGoogleSignUp = async () => {
     signIn("google", {
-      callbackUrl: `/home_dashboard`,
+      callbackUrl: `/home_dashboard?returnTo=${returnTo}`,
       state: result,
     });
   };

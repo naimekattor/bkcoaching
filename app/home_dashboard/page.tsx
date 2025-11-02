@@ -11,12 +11,16 @@ import { setAuthFromResponse } from "@/lib/auth";
 
 export default function DashboardPage() {
   const router = useRouter();
+  const params = useSearchParams();
+
   const searchParams = useSearchParams();
   const token = useAuthStore((state) => state.token);
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const { data: session } = useSession();
-  console.log(session);
+  const returnTo = params.get("returnTo");
+
+  console.log(session, returnTo);
 
   console.log(token);
   useEffect(() => {
@@ -25,9 +29,55 @@ export default function DashboardPage() {
   }, [searchParams]);
 
   useEffect(() => {
-    const Signup = async () => {};
-    Signup();
-  }, []);
+    const handleGoogleAuth = async () => {
+      if (!session) return;
+
+      const payload = {
+        first_name: session.user?.name?.split(" ")[0] || "",
+        last_name: session.user?.name?.split(" ")[1] || "",
+        email: session.user?.email,
+        password: "google_auth",
+        signup_method: "google",
+        signed_up_as: "brand", // or dynamic
+      };
+
+      try {
+        const res = await apiClient(`user_service/signup/`, {
+          method: "POST",
+          body: JSON.stringify(payload),
+        });
+
+        console.log(res);
+
+        setAuthFromResponse(res);
+        if (returnTo) {
+          router.push(returnTo);
+        }
+      } catch (err: any) {
+        if (err?.status === 400) {
+          const loginRes = await apiClient(`user_service/login/`, {
+            method: "POST",
+
+            body: JSON.stringify({
+              email: payload.email,
+              password: "google_auth",
+            }),
+          });
+
+          console.log(loginRes);
+
+          setAuthFromResponse(loginRes);
+          if (returnTo) {
+            router.push(returnTo);
+          }
+        } else {
+          console.error("Google Auth failed", err);
+        }
+      }
+    };
+
+    handleGoogleAuth();
+  }, [session]);
 
   useEffect(() => {
     // This function will run once the token is available in the Zustand store.
@@ -58,7 +108,6 @@ export default function DashboardPage() {
           redirectPath = "/brand-dashboard";
         }
 
-        // Preserve ?status=success in redirect
         if (status === "success") {
           router.replace(`${redirectPath}?status=success`);
         } else {
@@ -69,20 +118,14 @@ export default function DashboardPage() {
         setError(
           "Could not retrieve your profile. Please try logging in again."
         );
-        // Optional: Log the user out if their token is invalid
-        // useAuthStore.getState().logout();
-        // router.replace("/auth/login");
       }
     };
 
-    // We wait for the token to be available.
-    // The `AuthSessionSync` component ensures this happens quickly after a social login.
     if (token) {
       checkUserProfile();
     }
   }, [token, router, status]);
 
-  // Display a loading or error state to the user while we work.
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50">
       {error ? (

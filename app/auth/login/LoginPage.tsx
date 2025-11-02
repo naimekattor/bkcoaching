@@ -16,7 +16,6 @@ import { signIn } from "next-auth/react";
 export default function LoginPage() {
   const router = useRouter();
   const params = useSearchParams();
-  const returnTo = params.get("returnTo");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -58,6 +57,12 @@ export default function LoginPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGoogleLogin = async () => {
+    signIn("google", {
+      callbackUrl: `/home_dashboard`,
+    });
   };
 
   return (
@@ -165,9 +170,7 @@ export default function LoginPage() {
                 type="button"
                 variant="outline"
                 className="w-full border-slate-600 text-white hover:bg-primary hover:text-white py-3 rounded-lg bg-transparent"
-                onClick={() =>
-                  signIn("google", { callbackUrl: "/home_dashboard" })
-                }
+                onClick={handleGoogleLogin}
               >
                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                   <path
@@ -205,7 +208,7 @@ export default function LoginPage() {
                 Continue with apple
               </Button>
 
-              <div className="text-center">
+              {/* <div className="text-center">
                 <span className="text-slate-400">
                   Don&apos;t have an account?{" "}
                 </span>
@@ -215,7 +218,7 @@ export default function LoginPage() {
                 >
                   Sign up
                 </Link>
-              </div>
+              </div> */}
             </form>
           </div>
         </div>

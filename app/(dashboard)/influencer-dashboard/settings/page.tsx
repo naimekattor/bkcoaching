@@ -256,7 +256,7 @@ export default function ProfilePage() {
         auth: true,
         body: JSON.stringify(payload),
       });
-      if (response.ok) {
+      if (response.code == "200") {
         toast("Profile updated successfully!");
       }
     } catch (error) {

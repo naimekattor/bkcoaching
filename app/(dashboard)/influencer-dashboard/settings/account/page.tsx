@@ -19,6 +19,9 @@ import {
   Shield,
   Smartphone,
 } from "lucide-react";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { apiClient } from "@/lib/apiClient";
+import { toast } from "react-toastify";
 type NotificationKeys = "email" | "push" | "sms" | "marketing";
 
 interface NotificationItem {
@@ -37,6 +40,8 @@ export default function SettingsPage() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
+  const { user } = useAuthStore();
+  console.log("user account",user);
 
   const [notifications, setNotifications] = useState<
     Record<NotificationKeys, boolean>
@@ -82,7 +87,7 @@ export default function SettingsPage() {
     return "Strong";
   };
 
-  const handleUpdatePassword = () => {
+  const handleUpdatePassword =async () => {
     if (!currentPassword || !newPassword || !confirmPassword) {
       alert("Please fill in all password fields");
       return;
@@ -91,11 +96,22 @@ export default function SettingsPage() {
       alert("New passwords do not match");
       return;
     }
-    if (passwordStrength < 3) {
-      alert("Please use a stronger password");
-      return;
+    // if (passwordStrength < 3) {
+    //   alert("Please use a stronger password");
+    //   return;
+    // }
+    const res=await apiClient("user_service/reset_password/",{
+      method:"POST",
+      body:JSON.stringify({email:user?.user?.email,new_password:newPassword})
+
+    });
+    if (res.code=="200") {
+      toast("Password updated successfully ✅")
+    }else{
+      toast("Failed to update password ❌")
     }
-    alert("Password updated successfully ✅");
+
+    // alert("Password updated successfully ✅");
     setCurrentPassword("");
     setNewPassword("");
     setConfirmPassword("");

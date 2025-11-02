@@ -7,6 +7,8 @@ import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { apiClient } from "@/lib/apiClient";
+import { useSearchParams } from "next/navigation";
 
 export default function ResetPasswordPage() {
   const [formData, setFormData] = useState({
@@ -16,8 +18,12 @@ export default function ResetPasswordPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const searchParams = useSearchParams();
+  const userEmail = searchParams.get("email");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  console.log("Email:", userEmail);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: { [key: string]: string } = {};
 
@@ -28,9 +34,14 @@ export default function ResetPasswordPage() {
       newErrors.confirmPassword = "Passwords do not match";
 
     setErrors(newErrors);
-
-    if (Object.keys(newErrors).length === 0) {
-      // Handle password reset - redirect to success page
+    const res = await apiClient("user_service/reset_password/", {
+      method: "POST",
+      body: JSON.stringify({
+        email: userEmail,
+        new_password: formData.password,
+      }),
+    });
+    if (res.code == "200") {
       window.location.href = "/auth/password-changed";
     }
   };

@@ -6,21 +6,26 @@ import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { apiClient } from "@/lib/apiClient";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!email) {
       setError("Email is required");
       return;
     }
-
-    // Handle forgot password - redirect to verify email for reset
-    window.location.href = "/auth/verify-reset";
+    const res = await apiClient("user_service/send_otp/", {
+      method: "POST",
+      body: JSON.stringify({ email: email }),
+    });
+    if (res.code == "200") {
+      window.location.href = `/auth/verify-reset?email=${email}`;
+    }
   };
 
   return (

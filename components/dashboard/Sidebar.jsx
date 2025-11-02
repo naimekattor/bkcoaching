@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { LogOut } from "lucide-react";
 
 export function Sidebar({ links = [] }) {
   const pathname = usePathname() || "";
@@ -57,10 +58,10 @@ export function Sidebar({ links = [] }) {
       {/* Logout Button */}
       <div className="p-4 border-t border-slate-700">
         <button
-          className="w-full flex items-center justify-start px-4 py-3 text-slate-300  hover:bg-primary hover:text-white rounded-lg transition-colors"
+          className="w-full flex items-center gap-2 cursor-pointer justify-start px-4 py-3 text-slate-300  hover:bg-primary hover:text-white rounded-lg transition-colors"
           onClick={handleLogOut}
         >
-          {/* <span className="mr-3">🚪</span> */}
+          <LogOut size={18} className="text-[14px]" />
           Logout
         </button>
       </div>

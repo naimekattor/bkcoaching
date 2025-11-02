@@ -2,11 +2,12 @@
 
 import type React from "react";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
+import { apiClient } from "@/lib/apiClient";
 
 export default function VerifyEmailPage() {
   const router = useRouter();
@@ -15,6 +16,33 @@ export default function VerifyEmailPage() {
   const [code, setCode] = useState(["", "", "", ""]);
   const [error, setError] = useState("");
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const [userEmail, setUserEmail] = useState("");
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await apiClient("user_service/get_user_info/", {
+          method: "GET",
+          auth: true,
+        });
+
+        const email = res.data.user.email;
+        setUserEmail(email);
+
+        console.log("Email:", email);
+
+        await apiClient("user_service/send_otp/", {
+          method: "POST",
+          body: JSON.stringify({ email }),
+        });
+
+        console.log("✅ User full Info:", res.data);
+      } catch (error) {
+        console.error("❌ API Error:", error);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const handleInputChange = (index: number, value: string) => {
     if (value.length > 1) return;
@@ -35,7 +63,7 @@ export default function VerifyEmailPage() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const verificationCode = code.join("");
 
@@ -44,20 +72,27 @@ export default function VerifyEmailPage() {
       return;
     }
     localStorage.setItem("emailVerified", "true");
+    const res = await apiClient("user_service/verify_email/", {
+      method: "POST",
+      body: JSON.stringify({ email: userEmail, otp: verificationCode }),
+    });
+
+    console.log(res.code);
 
     // Redirect to correct onboarding
-    if (returnTo) {
+    if (res.code == "200" && returnTo) {
       router.push(returnTo);
     } else {
-      router.push("/brand-dashboard"); // fallback
+      // router.push("/brand-dashboard"); // fallback
     }
-
-    // Handle verification - redirect to success page 1234
-    // window.location.href = "/auth/success";
   };
 
-  const handleResendCode = () => {
+  const handleResendCode = async () => {
     // Handle resend code logic
+    await apiClient("user_service/send_otp/", {
+      method: "POST",
+      body: JSON.stringify(userEmail),
+    });
     console.log("Resending verification code...");
   };
 
@@ -88,7 +123,7 @@ export default function VerifyEmailPage() {
               <p className="text-slate-300 mb-1">
                 Enter The 4 Digit Code Sent To
               </p>
-              <p className="text-slate-300">creativeitem@gmail.com</p>
+              <p className="text-slate-300">{userEmail}</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
