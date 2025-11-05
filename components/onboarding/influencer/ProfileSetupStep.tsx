@@ -176,35 +176,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
               Link your social accounts to showcase your reach and engagement
             </p>
           </CardHeader>
-          {/* <CardContent className="space-y-4">
-            <div className="grid md:grid-cols-2 gap-4">
-              {(Object.keys(onboardingDataInfluencer.socialLinks) as SocialPlatform[]).map(
-                (platform) => (
-                  <div className="space-y-2" key={platform}>
-                    <Label htmlFor={platform}>{platform}</Label>
-                    <Input
-                      id={platform}
-                      value={onboardingDataInfluencer.socialLinks[platform]}
-                      onChange={(e) =>
-                        setOnboardingDataInfluencer((prev) => ({
-                          ...prev,
-                          socialLinks: {
-                            ...prev.socialLinks,
-                            [platform]: e.target.value,
-                          },
-                        }))
-                      }
-                      placeholder={
-                        platform === "whatsapp"
-                          ? "+1 555-123-4567"
-                          : "@yourusername or profile URL"
-                      }
-                    />
-                  </div>
-                )
-              )}
-            </div>
-          </CardContent> */}
+          
           <CardContent className="space-y-4">
             <div className="grid md:grid-cols-2 gap-4">
               <div className="space-y-2">

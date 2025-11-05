@@ -29,7 +29,7 @@ const HowItWorks = () => {
                   </p>
 
                   <button className="bg-secondary w-full py-2 font-[600] text-[16px] text-primary rounded cursor-pointer">
-                    <Link href={"/brand-onboarding"}> Start Here</Link>
+                     Start Here
                   </button>
                 </div>
               </div>
@@ -68,7 +68,7 @@ const HowItWorks = () => {
                   </p>
 
                   <button className="bg-secondary w-full py-2 font-[600] text-[16px] text-primary rounded cursor-pointer">
-                    <Link href={"/influencer-onboarding"}> Start Here</Link>
+                    Start Here
                   </button>
                 </div>
               </div>

@@ -113,8 +113,8 @@ const Feature = () => {
               </div>
             </div>
             <div className="p-8">
-              <button className="w-full  bg-secondary hover:bg-[var(--secondaryhover)] text-black font-semibold py-4 rounded-lg transition-colors duration-200 text-lg ">
-                <Link href={"/brand-onboarding"}>Grow My Brand</Link>
+              <button className="w-full cursor-pointer  bg-secondary hover:bg-[var(--secondaryhover)] text-black font-semibold py-4 rounded-lg transition-colors duration-200 text-lg ">
+                Grow My Brand
               </button>
             </div>
           </div>
@@ -236,9 +236,9 @@ const Feature = () => {
             </div>
             <div className="p-8">
               <button className="w-full bg-secondary hover:bg-[var(--secondaryhover)] text-black font-semibold py-4 rounded-lg transition-colors duration-200 text-lg ">
-                <Link href={"/influencer-onboarding"}>
+                
                   Monetize My Influence
-                </Link>
+                
               </button>
             </div>
           </div>

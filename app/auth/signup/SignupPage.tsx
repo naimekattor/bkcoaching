@@ -16,7 +16,6 @@ import { apiClient } from "@/lib/apiClient";
 export default function SignupPage() {
   const router = useRouter();
   const params = useSearchParams();
-
   const returnTo = params.get("returnTo") || "";
   console.log(returnTo);
   const match = returnTo.match(/^\/([^-]+)/);
@@ -56,7 +55,8 @@ export default function SignupPage() {
 
     setErrors(newErrors);
     setLoading(true);
-    try {
+    if (formData.first_name && formData.last_name && formData.email && formData.password && formData.password === formData.confirmPassword && formData.agreeToTerms) {
+      try {
       const res = await signup({
         ...formData,
         signup_method: "normal",
@@ -76,7 +76,9 @@ export default function SignupPage() {
         router.push(`/auth/verify-email?returnTo=${returnTo}`);
         console.log("router.push executed successfully");
       } else {
-        setError(res?.message || "Signup failed");
+        console.log(res);
+        
+        setError(res?.error || "Signup failed");
       }
 
       console.log(res);
@@ -85,10 +87,10 @@ export default function SignupPage() {
     } finally {
       setLoading(false);
     }
+    }
+    
 
-    // if (Object.keys(newErrors).length === 0) {
-    //   // Handle successful signup - redirect to email verification
-    //   router.push(`/auth/verify-email?returnTo=${returnTo}`);
+   
   };
 
   const handleGoogleSignUp = async () => {
@@ -278,6 +280,7 @@ export default function SignupPage() {
                   </p>
                 )}
               </div>
+              <p className="text-red-400 text-sm mt-1">{error}</p>
 
               <Button
                 type="submit"

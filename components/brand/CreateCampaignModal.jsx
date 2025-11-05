@@ -74,7 +74,7 @@ const timelineOptions = [
   { value: "flexible", label: "Flexible timing" },
 ];
 
-export default function CreateCampaignModal({ isOpen, onClose }) {
+export default function CreateCampaignModal({ isOpen, onClose,onSuccess }) {
   const router = useRouter();
 
   const [formData, setFormData] = useState({
@@ -357,6 +357,7 @@ export default function CreateCampaignModal({ isOpen, onClose }) {
       });
       if (res) {
         toast("Saved campaign  successfully");
+        onSuccess(newCampaign);
         onClose();
         console.log(res);
       }

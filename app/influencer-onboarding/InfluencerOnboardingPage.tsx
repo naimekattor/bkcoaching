@@ -111,6 +111,8 @@ const InfluencerOnboardingPage = () => {
         stepTitle={steps[currentStep - 1].title}
         stepDescription={steps[currentStep - 1].description}
         showBack={currentStep > 1 && currentStep < 8}
+        skipRole="influencer"
+        finalStep ="7"
       >
         {renderStep()}
       </OnboardingLayout>

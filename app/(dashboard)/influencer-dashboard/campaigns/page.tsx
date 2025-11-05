@@ -75,21 +75,7 @@ export default function CampaignsPage() {
           // subtitle="Unique Creators in your network"
           icon={<DollarSign className="w-8 h-8 text-purple-600" />}
         />
-        {/* <div className="bg-white rounded-lg border border-gray-200 p-6 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-yellow-400 to-orange-500"></div>
-          <div className="relative z-10">
-            <p className="text-sm font-medium text-white mb-1">
-              Launch New Campaign
-            </p>
-            <p className="text-sm text-white/90 mb-4">
-              Start a new collaboration project today
-            </p>
-            <button className="bg-white text-gray-900 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors w-full">
-              Launch Campaign
-            </button>
-          </div>
-          <Rocket className="absolute top-4 right-4 w-8 h-8 text-white/20" />
-        </div> */}
+        
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
@@ -210,22 +196,8 @@ export default function CampaignsPage() {
                 alt={campaign.title}
                 className="w-full h-48 object-cover"
               />
-              <div className="absolute top-3 left-3">
-                <span
-                  className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    campaign.status === "Active"
-                      ? "bg-secondary text-primary"
-                      : campaign.status === "Completed"
-                      ? "bg-gray-100 text-gray-800"
-                      : "bg-secondary text-primary"
-                  }`}
-                >
-                  {campaign.status}
-                </span>
-              </div>
-              <button className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm hover:shadow-md transition-shadow">
-                <MoreHorizontal className="w-4 h-4 text-gray-600" />
-              </button>
+              
+              
             </div>
 
             <div className="p-6">

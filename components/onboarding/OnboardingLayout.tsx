@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 interface OnboardingLayoutProps {
   children: ReactNode;
@@ -11,6 +12,8 @@ interface OnboardingLayoutProps {
   stepTitle: string;
   stepDescription?: string;
   showBack?: boolean;
+  skipRole?: "brand" | "influencer";
+  finalStep?:number |string;
 }
 
 const OnboardingLayout = ({
@@ -21,6 +24,8 @@ const OnboardingLayout = ({
   stepTitle,
   stepDescription,
   showBack = true,
+  skipRole="brand",
+  finalStep,
 }: OnboardingLayoutProps) => {
   const progress = (currentStep / totalSteps) * 100;
 
@@ -62,6 +67,11 @@ const OnboardingLayout = ({
             )}
           </div>
         </div>
+      </div>
+      <div>
+        <Link href={`/auth/signup?role=${skipRole}&returnTo=/${skipRole}-onboarding?step=${finalStep}`} className="text-muted-foreground font-semibold underline text-sm mt-6">
+        I want to Complete profile setup Later
+        </Link>
       </div>
 
       {/* Content */}

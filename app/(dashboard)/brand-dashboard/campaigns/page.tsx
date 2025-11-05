@@ -234,7 +234,7 @@ export default function CampaignDashboard() {
           timeLeft: c.campaign_timeline || "N/A",
           progress: 0,
 
-          platforms: [], // you can fill this from another field if you have it
+          platforms: [], 
           assignedCreators: [],
 
           objective: c.campaign_objective || "",
@@ -309,6 +309,11 @@ export default function CampaignDashboard() {
     }
   };
 
+  const handleCampaignCreated = (newCampaign: Campaign) => {
+  setAllCampaigns((prev) => [newCampaign, ...prev]); 
+  setShowModal(false);
+};
+
   /* -------------------------------------------------
      Render
   ------------------------------------------------- */
@@ -367,6 +372,7 @@ export default function CampaignDashboard() {
         <CreateCampaignModal
           isOpen={showModal}
           onClose={() => setShowModal(false)}
+          onSuccess={handleCampaignCreated}
         />
 
         {/* Search & Filters */}

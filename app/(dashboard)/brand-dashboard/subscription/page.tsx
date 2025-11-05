@@ -88,12 +88,12 @@ export default function SubscriptionPage() {
 
   return (
     <div className="  mx-auto">
-      <h1 className="text-2xl font-bold mb-6 text-primary">
+      {/* <h1 className="text-2xl font-bold mb-6 text-primary">
         Subscription Management
-      </h1>
+      </h1> */}
 
       {/* Current Plan */}
-      <div className="bg-white rounded-xl shadow border p-6 mb-10">
+      {/* <div className="bg-white rounded-xl shadow border p-6 mb-10">
         <h2 className="text-xl font-semibold mb-4 text-primary">
           Current Plan
         </h2>
@@ -153,11 +153,11 @@ export default function SubscriptionPage() {
             )}
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Available Plans */}
       {/* <h2 className="text-xl font-semibold mb-4">Available Plans</h2> */}
-      <PricingSection />
+      <PricingSection planName={planData.plan_name}/>
 
       {/* Cancel Confirmation Modal */}
       {showCancelModal && (

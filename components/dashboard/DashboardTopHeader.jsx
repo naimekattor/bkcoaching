@@ -4,7 +4,7 @@ import Image from "next/image";
 
 const DashboardTopHeader = () => {
   const { user, logout } = useAuthStore();
-  console.log(user);
+  console.log("useer Data:",user);
 
   return (
     <div className="bg-white px-8 py-6 ">
@@ -15,13 +15,13 @@ const DashboardTopHeader = () => {
           <div className="bg-[#EEF1F5] rounded-full p-2">
             <IoIosNotificationsOutline size={25} />
           </div>
-          <div className="w-[41px] h-[41px]  rounded-full flex items-center justify-center">
+          <div className="rounded-full flex items-center justify-center">
             <Image
               src={user?.influencer_profile?.profile_picture || user?.brand_profile?.logo || "/images/person.jpg"}
               width={41}
               height={41}
               alt={user?.display_name || "User avatar"}
-              className="w-full h-ull rounded-full"
+              className="w-[41px] h-[41px] rounded-full"
             />
           </div>
         </div>

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { HelpCircle, Search } from "lucide-react";
 import { apiClient } from "@/lib/apiClient";
+import { SkeletonCard } from "@/components/SkeletoCard";
 
 const PAGE_SIZE = 20;
 
@@ -150,12 +151,14 @@ export default function MicroInfluencersPage() {
 
   // Loading
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {Array.from({ length: PAGE_SIZE }).map((_, i) => (
+        <SkeletonCard key={i} />
+      ))}
+    </div>
+  );
+}
 
   return (
     <div className="min-h-screen">

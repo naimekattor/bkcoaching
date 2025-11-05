@@ -13,6 +13,7 @@ const nextConfig: NextConfig = {
       "img.freepik.com",
       "res.cloudinary.com",
       "media.istockphoto.com",
+      "default-placeholder-url.com"
     ],
   },
   /* config options here */

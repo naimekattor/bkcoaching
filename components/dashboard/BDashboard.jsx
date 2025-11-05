@@ -22,7 +22,7 @@ export default function BDashboard() {
           auth: true,
         });
 
-        store.setUser(res.data.brand_profile);
+        store.setUser(res.data);
         setBrandProfile(res.data.user);
 
         console.log("✅ User Info:", res);

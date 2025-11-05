@@ -74,6 +74,8 @@ const BrandOnboarding = () => {
         stepTitle={steps[currentStep - 1].title}
         stepDescription={steps[currentStep - 1].description}
         showBack={currentStep > 1 && currentStep < 6}
+        skipRole="brand"
+        finalStep ="5"
       >
         {renderStep()}
       </OnboardingLayout>

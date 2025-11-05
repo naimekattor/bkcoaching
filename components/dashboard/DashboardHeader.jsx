@@ -19,7 +19,7 @@ export function DashboardHeader() {
               <Image
                 width={64}
                 height={64}
-                src={user?.logo}
+                src={user?.brand_profile?.logo }
                 alt="logo"
                 className="h-full w-full rounded-md"
               />

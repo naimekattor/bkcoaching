@@ -3,6 +3,7 @@
 import { apiClient } from "@/lib/apiClient";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { SkeletonCard } from "./SkeletoCard";
 
 interface Price {
   price_id: string;
@@ -26,7 +27,7 @@ interface ApiResponse {
   meta: { timestamp: string };
 }
 
-export function PricingSection() {
+export function PricingSection({planName}:{planName:string}) {
   const [isYearly, setIsYearly] = useState(false);
   const [plans, setPlans] = useState<Plan[]>([]);
   const [loading, setLoading] = useState(true);
@@ -60,6 +61,9 @@ export function PricingSection() {
             return order.indexOf(a.name) - order.indexOf(b.name);
           });
           setPlans(sortedPlans);
+          console.log(sortedPlans);
+          
+          
         } else {
           throw new Error("Invalid response structure");
         }
@@ -95,10 +99,12 @@ export function PricingSection() {
 
   if (loading) {
     return (
-      <section className="px-4 py-16 lg:py-[100px]">
-        <div className="mx-auto text-center">
-          <p className="text-lg text-gray-600">Loading plans...</p>
-        </div>
+      <section className="px-4 py-16 lg:py-[100px] container mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <SkeletonCard key={i} />
+      ))}
+    </div>
       </section>
     );
   }
@@ -226,7 +232,7 @@ export function PricingSection() {
                     className="w-full bg-primary cursor-pointer text-white font-semibold py-4 rounded-lg transition-colors duration-200 hover:bg-primary/90"
                     onClick={() => handleCheckout(price.price_id)}
                   >
-                    Select
+                    {plan.name===planName?"Selected":"Select"}
                   </button>
                 </div>
               </div>
