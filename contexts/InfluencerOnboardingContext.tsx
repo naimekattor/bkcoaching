@@ -66,7 +66,7 @@ const initialState: InfluencerOnboardingData = {
   short_bio: "",
   profile_picture: "",
   instagram_handle: "",
-  tiktok_handle: "null",
+  tiktok_handle: "",
   youtube_handle: "",
   twitter_handle: "",
   linkedin_handle: "",

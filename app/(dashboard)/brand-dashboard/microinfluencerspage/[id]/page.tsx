@@ -17,6 +17,7 @@ import {
   FileText,
   Video,
   ImageIcon,
+  Loader2,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -173,7 +174,7 @@ export default function BrandProfilePage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded全都 h-12 w-12 border-b-2 border-primary"></div>
+        <Loader2 className="h-12 w-12 animate-spin text-primary" strokeWidth={2.5} />
       </div>
     );
   }

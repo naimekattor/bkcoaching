@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CheckCircle2, XCircle, AlertCircle } from "lucide-react";
 import { PricingSection } from "@/components/pricing-section";
+import { apiClient } from "@/lib/apiClient";
 
 type BillingCycle = "monthly" | "yearly";
 type Status = "active" | "canceled" | "expired";
@@ -63,6 +64,8 @@ export default function SubscriptionPage() {
   );
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [planData, setPlanData] = useState({});
+  const [portalData, setPortalData] = useState();
 
   const handleCancel = () => {
     setCurrentSubscription((prev) => ({ ...prev, status: "canceled" }));
@@ -73,18 +76,58 @@ export default function SubscriptionPage() {
     setCurrentSubscription((prev) => ({ ...prev, status: "active" }));
   };
 
+  useEffect(() => {
+      const fetchSubscriptionInformation = async () => {
+        try {
+          const res = await apiClient(
+            "subscription_service/get_user_subscription_information/",
+            { auth: true, method: "GET" }
+          );
+  
+          if (res.status === "success") {
+            console.log("Subscription Info:", res.data);
+            setPlanData(res.data);
+          } else {
+            console.warn("No subscription info:", res.error);
+          }
+        } catch (error) {
+          console.error("Failed to fetch subscription info:", error);
+        }
+      };
+      const fetchcustomerPortal = async () => {
+        try {
+          const res = await apiClient("subscription_service/customer-portal/", {
+            auth: true,
+            method: "GET",
+          });
+  
+          if (res.status === "success") {
+            console.log("Subscription Info:", res.data);
+            setPortalData(res.data.portal_url);
+          } else {
+            console.warn("No subscription info:", res.error);
+          }
+        } catch (error) {
+          console.error("Failed to fetch subscription info:", error);
+        }
+      };
+      fetchcustomerPortal();
+  
+      fetchSubscriptionInformation();
+    }, []);
+
   return (
     <div className=" mx-auto">
-      <h1 className="text-2xl font-bold mb-6 text-primary">
+      {/* <h1 className="text-2xl font-bold mb-6 text-primary">
         Subscription Management
-      </h1>
+      </h1> */}
 
       {/* Current Plan */}
-      <div className="bg-white rounded-xl shadow border p-6 mb-10">
-        <h2 className="text-xl text-primary font-semibold mb-4">
+      <div className=" mb-10">
+        {/* <h2 className="text-xl text-primary font-semibold mb-4">
           Current Plan
-        </h2>
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+        </h2> */}
+        {/* <div className="flex flex-col md:flex-row md:items-center md:justify-between">
           <div>
             <p className="text-lg font-medium text-gray-900">
               {currentSubscription.name} Plan
@@ -136,12 +179,12 @@ export default function SubscriptionPage() {
               </button>
             )}
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Available Plans */}
       {/* <h2 className="text-xl font-semibold mb-4">Available Plans</h2> */}
-      <PricingSection />
+      <PricingSection planName={planData.plan_name}/>
 
       {/* Cancel Confirmation Modal */}
       {showCancelModal && (
