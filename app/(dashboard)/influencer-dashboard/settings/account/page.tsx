@@ -1,13 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+
 import {
   AlertCircle,
   Bell,
   Book,
   Check,
-  CheckCircle,
   ChevronRight,
   Copy,
   Eye,

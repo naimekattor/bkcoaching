@@ -2,13 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { FaEdit } from "react-icons/fa";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { useSession } from "next-auth/react";
 
 export function DashboardHeader() {
   const { user, logout } = useAuthStore();
-  console.log(user);
-  const { data: session } = useSession();
-  console.log(session);
+  console.log("brand_header",user);
 
   return (
     <>

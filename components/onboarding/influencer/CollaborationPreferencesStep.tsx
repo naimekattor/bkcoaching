@@ -122,7 +122,7 @@ const CollaborationPreferencesStep = ({
         </p>
       </div>
 
-      <div className="grid gap-8">
+      <div className="grid  gap-8">
         {/* Content Formats */}
         <Card>
           <CardHeader><CardTitle>Content Formats *</CardTitle></CardHeader>
@@ -149,8 +149,8 @@ const CollaborationPreferencesStep = ({
             </div>
           </CardContent>
         </Card>
-
-        {/* Payment Preferences */}
+        <div className="flex md:flex-row flex-col gap-4">
+          {/* Payment Preferences */}
         <Card>
           <CardHeader><CardTitle>Payment Preferences *</CardTitle></CardHeader>
           <CardContent>
@@ -206,7 +206,6 @@ const CollaborationPreferencesStep = ({
             </div>
           </CardContent>
         </Card>
-
         {/* RATE RANGES – FIXED & WORKING */}
         {onboardingDataInfluencer.payment_preferences.includes("paid") && (
           <Card>
@@ -285,6 +284,10 @@ const CollaborationPreferencesStep = ({
             </CardContent>
           </Card>
         )}
+        </div>
+        
+
+        
       </div>
 
       {/* Navigation */}

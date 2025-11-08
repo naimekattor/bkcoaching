@@ -23,9 +23,9 @@ export default function BDashboard() {
         });
 
         store.setUser(res.data);
-        setBrandProfile(res.data.user);
+        setBrandProfile(res?.data?.brand_profile);
 
-        console.log("✅ User Info:", res);
+        console.log("✅ User Info:", res,res?.data?.brand_profile);
       } catch (error) {
         console.error("❌ API Error:", error);
       }
