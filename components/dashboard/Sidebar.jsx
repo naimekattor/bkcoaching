@@ -22,14 +22,14 @@ export function Sidebar({ links = [] }) {
       {/* Logo Section */}
       <div className="p-6 border-b border-slate-700">
         <div className="flex items-center space-x-3">
-          <div className="w-auto h-auto rounded-lg flex items-center justify-center">
+          <Link href={"/"} className="w-auto h-auto rounded-lg flex items-center justify-center">
             <Image
-              width={100}
-              height={100}
+              width={160}
+              height={45}
               src={"/images/logo.png"}
               alt="logo"
             />
-          </div>
+          </Link>
         </div>
       </div>
 

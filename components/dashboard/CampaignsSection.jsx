@@ -1,20 +1,7 @@
 import Link from "next/link";
 
 export function CampaignsSection({ allCampaigns }) {
-  // const campaigns = [
-  //   {
-  //     name: allCampaigns.campaign_name,
-  //     creators: "3 Creators onboarded",
-  //     status: "Active",
-  //     statusColor: "bg-green-100 text-green-700",
-  //   },
-  //   {
-  //     name: "Winter Skincare Launch",
-  //     creators: "Ready to publish",
-  //     status: "Preview",
-  //     statusColor: "bg-yellow-100 text-secondary",
-  //   },
-  // ];
+  
 
   return (
     <div className="bg-white rounded-lg p-6 border border-slate-200">

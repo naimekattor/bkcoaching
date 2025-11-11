@@ -55,7 +55,7 @@ export default function BrandDashboardLayout({ children }) {
       {/* Mobile toggle button */}
       <button
         onClick={() => setShowSideBar(!showSideBar)}
-        className="fixed top-4 left-4 z-30 p-2 bg-primary text-white rounded-lg shadow-lg md:hidden"
+        className={`fixed top-5 left-4 z-30 p-2 bg-secondary text-primary rounded-lg shadow-lg md:hidden ${showSideBar ?"left-50":"left-4"}`}
       >
         {showSideBar ? <HiX size={24} /> : <HiMenu size={24} />}
       </button>

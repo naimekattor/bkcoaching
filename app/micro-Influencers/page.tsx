@@ -115,21 +115,24 @@ export default function InfluencersPage() {
                       <FaStar />
                     </div>
                   </div>
-                  <div className="relative">
-                    <Image
-                      width={600}
-                      height={600}
-                      src={influencer.image}
-                      alt="Creator"
-                      className="w-full h-60 object-cover"
-                    />
-                    <div className="absolute top-3 right-3 flex items-center bg-white px-3 py-1 rounded-full shadow">
-                      <span className="text-pink-500 text-lg mr-1">❤️</span>
-                      <span className="text-gray-800 text-sm font-semibold">
-                        FASHION
-                      </span>
-                    </div>
-                  </div>
+                  <div className="relative w-40 h-40 md:w-48 md:h-48 rounded-lg  overflow-hidden border-4 border-white shadow-md bg-gray-100 flex-shrink-0 mx-4 my-4">
+  <Image
+    src={influencer.image}
+    alt={`${influencer.name} profile`}
+    width={192}
+    height={192}
+    className="object-cover w-full h-full"
+  />
+  <div className="absolute bottom-2 right-2 flex items-center bg-white px-2 py-1 rounded-full shadow">
+    <span className="text-pink-500 text-sm mr-1">❤️</span>
+    <span
+      className={`text-gray-800 text-xs font-semibold `}
+    >
+      {influencer.category}
+    </span>
+  </div>
+</div>
+
                 </div>
 
                 {/* Content */}

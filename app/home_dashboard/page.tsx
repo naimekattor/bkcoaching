@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { apiClient } from "@/lib/apiClient";
-import { Loader2 } from "lucide-react"; // A nice loading spinner icon
+import { Loader2 } from "lucide-react"; 
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { setAuthFromResponse } from "@/lib/auth";
@@ -28,64 +28,63 @@ export default function DashboardPage() {
     if (statusParam) setStatus(statusParam);
   }, [searchParams]);
 
+  // useEffect(() => {
+  //   const handleGoogleAuth = async () => {
+  //     if (!session) return;
+
+  //     const payload = {
+  //       first_name: session.user?.name?.split(" ")[0] || "",
+  //       last_name: session.user?.name?.split(" ")[1] || "",
+  //       email: session.user?.email,
+  //       password: "google_auth",
+  //       signup_method: "google",
+  //       signed_up_as: "brand", // or dynamic
+  //     };
+
+  //     try {
+  //       const res = await apiClient(`user_service/signup/`, {
+  //         method: "POST",
+  //         body: JSON.stringify(payload),
+  //       });
+
+  //       console.log(res);
+
+  //       setAuthFromResponse(res);
+  //       if (returnTo) {
+  //         router.push(returnTo);
+  //       }
+  //     } catch (err: any) {
+  //       if (err?.status === 400) {
+  //         const loginRes = await apiClient(`user_service/login/`, {
+  //           method: "POST",
+
+  //           body: JSON.stringify({
+  //             email: payload.email,
+  //             password: "google_auth",
+  //           }),
+  //         });
+
+  //         console.log(loginRes);
+
+  //         setAuthFromResponse(loginRes);
+  //         if (returnTo) {
+  //           router.push(returnTo);
+  //         }
+  //       } else {
+  //         console.error("Google Auth failed", err);
+  //       }
+  //     }
+  //   };
+
+  //   handleGoogleAuth();
+  // }, [session]);
+
   useEffect(() => {
-    const handleGoogleAuth = async () => {
-      if (!session) return;
-
-      const payload = {
-        first_name: session.user?.name?.split(" ")[0] || "",
-        last_name: session.user?.name?.split(" ")[1] || "",
-        email: session.user?.email,
-        password: "google_auth",
-        signup_method: "google",
-        signed_up_as: "brand", // or dynamic
-      };
-
-      try {
-        const res = await apiClient(`user_service/signup/`, {
-          method: "POST",
-          body: JSON.stringify(payload),
-        });
-
-        console.log(res);
-
-        setAuthFromResponse(res);
-        if (returnTo) {
-          router.push(returnTo);
-        }
-      } catch (err: any) {
-        if (err?.status === 400) {
-          const loginRes = await apiClient(`user_service/login/`, {
-            method: "POST",
-
-            body: JSON.stringify({
-              email: payload.email,
-              password: "google_auth",
-            }),
-          });
-
-          console.log(loginRes);
-
-          setAuthFromResponse(loginRes);
-          if (returnTo) {
-            router.push(returnTo);
-          }
-        } else {
-          console.error("Google Auth failed", err);
-        }
-      }
-    };
-
-    handleGoogleAuth();
-  }, [session]);
-
-  useEffect(() => {
-    // This function will run once the token is available in the Zustand store.
     const checkUserProfile = async () => {
       console.log("Token found, checking user profile...");
       try {
         const userInfo = await apiClient("user_service/get_user_info/", {
-          auth: true, // This will use the token from Zustand/localStorage
+          auth: true, 
           method: "GET",
         });
 

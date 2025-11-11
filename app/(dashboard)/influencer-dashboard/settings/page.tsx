@@ -815,7 +815,7 @@ export default function ProfilePage() {
         auth: true,
         body: JSON.stringify(payload),
       });
-      if (res.code === "200") {
+      if (res.code ==200) {
         toast.success("Profile updated successfully!");
       } else {
         toast.error("Update failed");

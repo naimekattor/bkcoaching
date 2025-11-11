@@ -912,7 +912,7 @@ export default function CreateCampaignModal({ isOpen, onClose,onSuccess }) {
 
             <Button
               onClick={handleCreateCampaign}
-              className="bg-primary text-white"
+              className="bg-secondary text-primary"
             >
               {formData.auto_match_micro_influencers
                 ? "Create Campaign & Find micro-influencers"

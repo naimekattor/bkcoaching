@@ -18,14 +18,17 @@ const GlobalSection = () => {
 
           {/* World Map */}
           <div className="relative max-w-4xl mx-auto">
-            <Image
-              width={600}
-              height={600}
-              src="/images/globe.png"
-              alt="World map showing global reach with location pins"
-              className="w-full h-auto"
-            />
-          </div>
+  <div className="flex justify-center">
+    <Image
+      width={600}
+      height={600}
+      src="/images/globe.png"
+      alt="World map showing global reach with location pins"
+      className="w-full h-auto translate-x-4 md:translate-x-8" // Shift slightly right
+    />
+  </div>
+</div>
+
         </div>
       </section>
     </div>

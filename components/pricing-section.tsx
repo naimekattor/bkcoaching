@@ -156,32 +156,34 @@ export function PricingSection({planName}:{planName:string}) {
             Flexible Plans For Everyone
           </h2>
           <p className="text-lg text-gray-600 mb-8">
-            Pick The Plan That Works Best For You. Cancel Anytime.
+            Pick the plan that works best for you. Cancel anytime.
           </p>
 
           {/* Toggle */}
-          <div className="inline-flex bg-gray-200 rounded-lg">
-            <button
-              onClick={() => setIsYearly(false)}
-              className={`px-6 py-2 rounded-md font-medium transition-all duration-200 ${
-                !isYearly
-                  ? "bg-primary text-white shadow-sm"
-                  : "text-gray-600 hover:text-gray-800"
-              }`}
-            >
-              Monthly
-            </button>
-            <button
-              onClick={() => setIsYearly(true)}
-              className={`px-6 py-2 rounded-md font-medium transition-all duration-200 ${
-                isYearly
-                  ? "bg-primary text-white shadow-sm"
-                  : "text-gray-600 hover:text-gray-800"
-              }`}
-            >
-              Yearly
-            </button>
-          </div>
+          {/* Toggle */}
+<div className="inline-flex bg-gray-100 rounded-full shadow-sm p-1 transition-all duration-300">
+  <button
+    onClick={() => setIsYearly(false)}
+    className={`px-8 py-3 rounded-full font-semibold text-lg transition-all duration-200
+      ${!isYearly
+        ? "bg-primary text-white shadow-md scale-105"
+        : "text-gray-600 hover:text-gray-800"
+      }`}
+  >
+    Monthly
+  </button>
+  <button
+    onClick={() => setIsYearly(true)}
+    className={`px-8 py-3 rounded-full font-semibold text-lg transition-all duration-200
+      ${isYearly
+        ? "bg-primary text-white shadow-md scale-105"
+        : "text-gray-600 hover:text-gray-800"
+      }`}
+  >
+    Yearly
+  </button>
+</div>
+
         </div>
 
         {/* Pricing Cards */}
@@ -199,43 +201,55 @@ export function PricingSection({planName}:{planName:string}) {
 
             return (
               <div
-                key={plan.product_id}
-                className="bg-[#f6f8fa] rounded-2xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-shadow duration-300"
-              >
-                <div className="p-8 text-center flex flex-col h-full justify-between">
-                  <h3 className="text-[40px] font-semibold text-primary mb-8">
-                    {titleMap[plan.name] || plan.name}
-                  </h3>
+  key={plan.product_id}
+  
+  className="bg-[#f6f8fa] rounded-2xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col"
+>
+  <div className="p-8 text-center flex flex-col flex-grow">
+    {/* Title */}
+    <h3 className="md:text-[26px] text-[22px] font-semibold text-primary mb-8 min-h-[70px] flex items-center justify-center">
+      {titleMap[plan.name] || plan.name}
+    </h3>
 
-                  <div className="mb-6">
-                    <span className="md:text-[64px] text-3xl font-semibold text-primary">
-                      ${price.amount.toFixed(0)}
-                    </span>
-                    <span className="text-[28px] text-primary font-semibold ml-1">
-                      /{isYearly ? "Year" : "month"}
-                    </span>
-                  </div>
+    {/* Price */}
+    <div className="mb-6 min-h-[90px] flex items-end justify-center">
+      <span className="md:text-[64px] text-3xl font-semibold text-primary leading-none">
+        ${price.amount.toFixed(0)}
+      </span>
+      <span className="text-[28px] text-primary font-semibold ml-1 leading-none">
+        /{isYearly ? "Year" : "month"}
+      </span>
+    </div>
 
-                  {savings && (
-                    <div className="mb-4">
-                      <span className="text-red-500 font-semibold text-sm">
-                        {savings}
-                      </span>
-                    </div>
-                  )}
+    {/* Savings */}
+    <div className="mb-4 min-h-[24px]">
+      {savings && (
+        <span className="text-red-500 font-semibold text-xl">
+          {savings}
+        </span>
+      )}
+      {
+        !isYearly && plan.name==="Both" &&(
+          <span className="text-red-500 font-semibold text-xl">Save 15%</span>
+        )
+      }
+    </div>
 
-                  <p className="text-primary text-[24px] mb-8 leading-relaxed">
-                    {plan.description}
-                  </p>
+    {/* Description */}
+    <p className="text-primary text-[18px] mb-8 leading-relaxed flex-grow">
+      {plan.description?.charAt(0).toUpperCase() + plan.description?.slice(1).toLowerCase()}
+    </p>
 
-                  <button
-                    className="w-full bg-primary cursor-pointer text-white font-semibold py-4 rounded-lg transition-colors duration-200 hover:bg-primary/90"
-                    onClick={() => handleCheckout(price.price_id)}
-                  >
-                    {plan.name===planName?"Selected":"Select"}
-                  </button>
-                </div>
-              </div>
+    {/* CTA Button */}
+    <button
+      className="w-full bg-primary cursor-pointer text-white font-semibold py-4 rounded-lg transition-colors duration-200 hover:bg-primary/90"
+      onClick={() => handleCheckout(price.price_id)}
+    >
+      {plan.name === planName ? "Selected" : "Select"}
+    </button>
+  </div>
+</div>
+
             );
           })}
         </div>

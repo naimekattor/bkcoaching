@@ -26,15 +26,19 @@ export default function AboutPage() {
                 </h1>
               </div>
               <div className="w-full space-y-6">
-                <p className="text-primary text-[16px] leading-relaxed ">
-                  I had all these events and programs I wanted to share with the
-                  world, but every time I looked into advertising, it felt like
-                  the only option was spending a fortune on big influencers.
-                  That didn’t sit right with me—I wanted authentic growth that
-                  was affordable. The kind that comes from people who I feel
-                  aligned with, who repost and share because they care about
-                  what I’m doing, not only because they’re paid to say it.
-                </p>
+                <p className="text-primary text-[16px] leading-relaxed">
+  I had all these events and programs I wanted to share with the world. But every time I looked into advertising, it felt like the only option was spending a fortune on big influencers.
+</p>
+
+<p className="text-primary text-[16px] leading-relaxed">
+  That didn’t sit right with me—I wanted authentic growth that was affordable. The kind that comes from people who align with my values, who share because they care, not just because they’re paid.
+</p>
+
+{/* Pull Quote */}
+<blockquote className="border-l-4 border-secondary pl-4 italic text-secondary text-lg font-medium">
+  “Real growth comes from genuine connections, not expensive campaigns.”
+</blockquote>
+
                 <p className="text-primary text-[16px] leading-relaxed ">
                   Then, randomly, I saw my friend—a health coach—posting about
                   these adorable pajamas her girls were wearing. They were
@@ -59,7 +63,7 @@ export default function AboutPage() {
               {/* Feedback Button under paragraph */}
               <button
                 onClick={() => setIsFeedbackOpen(true)}
-                className="mt-4 bg-secondary text-primary font-semibold px-6 py-3 rounded hover:bg-secondary/80 transition"
+                className="mt-4 bg-secondary text-primary font-semibold px-6 py-3 rounded-lg hover:bg-secondary/80 transition"
               >
                 Share Your Feedback
               </button>
@@ -81,7 +85,8 @@ export default function AboutPage() {
 
       {/* Second Section */}
       <main className="container mx-auto px-4 py-16 lg:py-24">
-        <div className="grid lg:grid-cols-2 items-center">
+        <div className="grid lg:grid-cols-2 items-center lg:gap-16">
+
           {/* Left Content */}
           <div className="space-y-8 lg:col-span-1">
             <h1 className="text-3xl md:text-4xl font-semibold text-primary leading-tight">
@@ -103,26 +108,7 @@ export default function AboutPage() {
               </p>
             </div>
 
-            {/* <div className="pt-8">
-              <h2 className="text-3xl md:text-4xl font-semibold text-primary mb-6">
-                Grow Smarter, Not Harder.
-              </h2>
-
-              <div className="space-y-4 text-muted-foreground leading-relaxed">
-                <p>
-                  From affordable campaigns to real, trusted recommendations, we
-                  help brands boost sales while micro-influencers get rewarded
-                  for their genuine influence.
-                </p>
-
-                <p>
-                  With our easy-to-use platform, building meaningful connections
-                  has never been simpler. And for brands, the results speak for
-                  themselves—higher engagement, better conversions, and more
-                  growth.
-                </p>
-              </div>
-            </div> */}
+            
           </div>
 
           {/* Right Images */}

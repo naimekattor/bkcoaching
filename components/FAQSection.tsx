@@ -65,7 +65,7 @@ const faqs = [
 - Campaign type: Paid, gifted, or both
 - Target audience filters (content niche, demographics, audience size, timezone)
 - Suggested rates or budget
-We’ve made it super simple to set up your campaign so that the right micro-influencers can find it quickly and start growing your brand immediately. Influencers can either repost your existing content, create original content, or do both — whatever works best for your campaign.`,
+We’ve made it super simple to set up your campaign so that the right micro-influencers can find it quickly and start growing your brand immediately.`,
   },
   {
     question: "How do I match with the right micro-influencers?",
@@ -75,7 +75,7 @@ We’ve made it super simple to set up your campaign so that the right micro-inf
   {
     question: "Can I offer free products instead of paying?",
     answer:
-      "Yessss! One of the options for micro-influencers in their profile is how they want to get compensated — gifts only, paid only, or a mix. If an influencer only wants gifts, you can filter for that and only see matches who prefer gifting campaigns. Paid or mixed campaigns work the same way but are agreed on directly between the brand and influencer.",
+      "Yessss! One of the options for micro-influencers in their profile is how they want to get compensated — gifts only, paid only, or a mix. If an influencer only wants gifts, you can filter for that and only see matches who prefer gifting campaigns.",
   },
   {
     question: "Do I have to pay to join as a brand?",
@@ -98,7 +98,7 @@ We’ve made it super simple to set up your campaign so that the right micro-inf
   {
     question: "What if I need help?",
     answer:
-      "Support is always available! You can reach out to us anytime at [insert contact email or link] for assistance.",
+      "Support is always available! You can reach out to us anytime at support@thesocialmarket.com for assistance.",
   },
 ];
 
@@ -106,15 +106,15 @@ export default function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section className="py-16 lg:py-24 bg-white">
+    <section className="py-20 lg:py-28 bg-white">
       <div className="container mx-auto px-4">
-        <h2 className="text-4xl md:text-5xl font-bold mb-8 text-primary text-center">
+        <h2 className="text-4xl md:text-5xl font-bold mb-10 text-primary text-center">
           Frequently Asked Questions
         </h2>
 
-        <div className="space-y-4">
+        <div className="space-y-8"> {/* increased spacing */}
           {faqs.map((faq, index) => (
-            <div key={index} className="border-b border-gray-200 pb-4">
+            <div key={index} className="border-b border-gray-200 pb-6">
               <button
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
                 className="flex justify-between items-center w-full text-left text-primary text-[24px] font-medium cursor-pointer hover:text-secondary transition-colors"
@@ -133,7 +133,7 @@ export default function FAQSection() {
                     animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
                     transition={{ duration: 0.3, ease: "easeInOut" }}
-                    className="mt-2 text-primary text-sm leading-relaxed overflow-hidden whitespace-pre-line"
+                    className="mt-4 text-primary text-base md:text-[17px] leading-relaxed overflow-hidden whitespace-pre-line"
                   >
                     {faq.answer}
                   </motion.p>

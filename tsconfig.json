@@ -28,6 +28,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "components/brand/CreateCampaignModal.jsx"
-  ],
+, "components/dashboard/Sidebar.jsx"  ],
   "exclude": ["node_modules"]
 }

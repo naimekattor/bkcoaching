@@ -384,9 +384,9 @@ export default function MessagesClient() {
                   >
                     Hire
                   </button>
-                  <button className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all duration-200">
+                  {/* <button className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all duration-200">
                     <MoreHorizontal className="h-5 w-5" />
-                  </button>
+                  </button> */}
                 </div>
               </div>
             </div>

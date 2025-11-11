@@ -7,6 +7,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { HelpCircle, Search } from "lucide-react";
 import { apiClient } from "@/lib/apiClient";
 import { SkeletonCard } from "@/components/SkeletoCard";
+import { industriesNiches } from "@/constants/niches";
 
 const PAGE_SIZE = 20;
 
@@ -171,142 +172,145 @@ export default function MicroInfluencersPage() {
         </div>
 
         {/* Search + Filters */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-8 shadow-sm">
-          {/* Search */}
-          <div className="flex gap-4 mb-6">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search by name or keyword..."
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setPage(1);
-                }}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent outline-none"
-              />
-            </div>
-            <button
-              onClick={() => setPage(1)}
-              className="px-8 py-3 bg-secondary text-white rounded-lg hover:bg-[var(--secondaryhover)] transition-colors font-medium flex items-center gap-2"
-            >
-              <Search className="w-4 h-4" />
-              Search
-            </button>
-          </div>
+       <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-8 shadow-lg">
+  {/* Search */}
+  <div className="flex flex-col md:flex-row gap-4 mb-6">
+    <div className="flex-1 relative">
+      <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+      <input
+        type="text"
+        placeholder="Search by name or keyword..."
+        value={searchTerm}
+        onChange={(e) => {
+          setSearchTerm(e.target.value);
+          setPage(1);
+        }}
+        className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition"
+      />
+    </div>
+    <button
+      onClick={() => setPage(1)}
+      className="px-6 md:px-8 py-3 bg-secondary text-white rounded-xl hover:bg-[var(--secondaryhover)] transition-colors font-medium flex items-center gap-2 justify-center shadow-sm"
+    >
+      <Search className="w-4 h-4" />
+      Search
+    </button>
+  </div>
 
-          {/* Filters */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {/* Content Niches */}
-            <select
-              value={filters.contentNiches}
-              onChange={(e) => {
-                setFilters({ ...filters, contentNiches: e.target.value });
-                setPage(1);
-              }}
-              className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent outline-none"
-            >
-              <option value="">Content Niches</option>
-              {/* Add your niches here */}
-              <option value="Fashion">Fashion</option>
-              <option value="Beauty">Beauty</option>
-            </select>
+  {/* Filters */}
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+    {/* Content Niches */}
+    <select
+  value={filters.contentNiches}
+  onChange={(e) => {
+    setFilters({ ...filters, contentNiches: e.target.value });
+    setPage(1);
+  }}
+  className="px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition"
+>
+  <option value="">Content Niches</option>
+  {industriesNiches.map((niche, index) => (
+    <option key={index} value={niche}>
+      {niche}
+    </option>
+  ))}
+</select>
 
-            {/* Budget */}
-            <select
-              value={filters.budgetRange}
-              onChange={(e) => {
-                setFilters({ ...filters, budgetRange: e.target.value });
-                setPage(1);
-              }}
-              className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent outline-none"
-            >
-              <option value="">Budget Range</option>
-              <option value="0-100">$0–$100</option>
-              <option value="100-499">$101–$499</option>
-              <option value="500+">$500+</option>
-            </select>
+    {/* Budget */}
+    <select
+      value={filters.budgetRange}
+      onChange={(e) => {
+        setFilters({ ...filters, budgetRange: e.target.value });
+        setPage(1);
+      }}
+      className="px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition"
+    >
+      <option value="">Budget Range</option>
+      <option value="0-100">$0–$100</option>
+      <option value="100-499">$101–$499</option>
+      <option value="500+">$500+</option>
+    </select>
 
-            {/* Platforms */}
-            <select
-              value={filters.platforms}
-              onChange={(e) => {
-                setFilters({ ...filters, platforms: e.target.value });
-                setPage(1);
-              }}
-              className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent outline-none"
-            >
-              <option value="">Platforms</option>
-              <option value="instagram">Instagram</option>
-              <option value="tiktok">TikTok</option>
-              <option value="youtube">YouTube</option>
-            </select>
+    {/* Platforms */}
+    <select
+      value={filters.platforms}
+      onChange={(e) => {
+        setFilters({ ...filters, platforms: e.target.value });
+        setPage(1);
+      }}
+      className="px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition"
+    >
+      <option value="">Platforms</option>
+      <option value="instagram">Instagram</option>
+      <option value="tiktok">TikTok</option>
+      <option value="youtube">YouTube</option>
+    </select>
 
-            {/* Time Zone */}
-            <select
-              value={filters.timeZone}
-              onChange={(e) => {
-                setFilters({ ...filters, timeZone: e.target.value });
-                setPage(1);
-              }}
-              className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent outline-none"
-            >
-              <option value="">Time Zone</option>
-              {timeZones.map((tz) => (
-                <option key={tz.value} value={tz.value}>
-                  {tz.label}
-                </option>
-              ))}
-              <option value="Others">Others</option>
-            </select>
+    {/* Time Zone */}
+    <select
+      value={filters.timeZone}
+      onChange={(e) => {
+        setFilters({ ...filters, timeZone: e.target.value });
+        setPage(1);
+      }}
+      className="px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition"
+    >
+      <option value="">Time Zone</option>
+      {timeZones.map((tz) => (
+        <option key={tz.value} value={tz.value}>
+          {tz.label}
+        </option>
+      ))}
+      <option value="Others">Others</option>
+    </select>
 
-            {/* Followers */}
-            <div className="relative">
-              <select
-                value={filters.followers}
-                onChange={(e) => {
-                  setFilters({ ...filters, followers: e.target.value });
-                  setPage(1);
-                }}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent outline-none pr-10"
-              >
-                <option value="">Audience Reach</option>
-                <option value="0-1000">0 – 1K</option>
-                <option value="1001-5000">1K – 5K</option>
-                <option value="5001-10000">5K – 10K</option>
-              </select>
-              <HelpCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-            </div>
+    {/* Followers */}
+    <div className="relative">
+      <select
+        value={filters.followers}
+        onChange={(e) => {
+          setFilters({ ...filters, followers: e.target.value });
+          setPage(1);
+        }}
+        className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none pr-10 transition"
+      >
+        <option value="">Audience Reach</option>
+        <option value="0-1000">0 – 1K</option>
+        <option value="1001-5000">1K – 5K</option>
+        <option value="5001-10000">5K – 10K</option>
+      </select>
+      <HelpCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+    </div>
 
-            {/* Gender */}
-            <select
-              value={filters.gender}
-              onChange={(e) => {
-                setFilters({ ...filters, gender: e.target.value });
-                setPage(1);
-              }}
-              className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent outline-none"
-            >
-              <option value="">Gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="non-binary">No preference</option>
-            </select>
-          </div>
+    {/* Gender */}
+    <select
+      value={filters.gender}
+      onChange={(e) => {
+        setFilters({ ...filters, gender: e.target.value });
+        setPage(1);
+      }}
+      className="px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition"
+    >
+      <option value="">Gender</option>
+      <option value="male">Male</option>
+      <option value="female">Female</option>
+      <option value="non-binary">No preference</option>
+    </select>
+  </div>
 
-          {/* Clear Filters */}
-          {hasActiveFilters && (
-            <div className="mt-4 flex justify-end">
-              <button
-                onClick={clearFilters}
-                className="text-sm text-gray-600 hover:text-gray-900 underline"
-              >
-                Clear all filters
-              </button>
-            </div>
-          )}
-        </div>
+  {/* Clear Filters */}
+  {hasActiveFilters && (
+    <div className="mt-4 flex justify-end">
+      <button
+        onClick={clearFilters}
+        className="text-sm text-gray-600 hover:text-gray-900 underline"
+      >
+        Clear all filters
+      </button>
+    </div>
+  )}
+</div>
+
 
         {/* Results */}
         <div className="mb-6">
@@ -411,7 +415,7 @@ export default function MicroInfluencersPage() {
                     </Link>
                     <button
                       onClick={() => alert(`Messaging ${creator.name}`)}
-                      className="flex-1 px-4 py-2 bg-secondary text-white rounded-lg hover:bg-[var(--secondaryhover)] transition-colors text-sm font-medium"
+                      className="flex-1 px-4 py-2 bg-secondary text-primary rounded-lg hover:bg-[var(--secondaryhover)] transition-colors text-sm font-medium"
                     >
                       Message
                     </button>

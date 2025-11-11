@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import OnboardingLayout from "@/components/onboarding/OnboardingLayout";
 import BusinessInfoStep from "@/components/onboarding/brand/BusinessInfoStep";
 import ProfileSetupStep from "@/components/onboarding/brand/ProfileSetupStep";
@@ -45,6 +45,15 @@ const BrandOnboarding = () => {
     // });
     navigate.push("/brand-dashboard");
   };
+
+  useEffect(() => {
+    // Scroll to top whenever currentStep changes
+    window.scrollTo(0, 0);
+
+    // Optional: Also update URL query param to reflect current step
+    const newUrl = `${window.location.pathname}?step=${currentStep}`;
+    window.history.replaceState({ ...window.history.state, as: newUrl, url: newUrl }, '', newUrl);
+  }, [currentStep]);
 
   const renderStep = () => {
     switch (currentStep) {

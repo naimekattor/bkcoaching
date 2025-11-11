@@ -3,26 +3,30 @@ import Image from "next/image";
 export default function PrivacyPage() {
   return (
     <div className="min-h-screen bg-background">
+      {/* Hero Section */}
       <section className="bg-gradient-to-b from-[#ffffff] to-[#E9F4FF]">
         <main className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-2  items-center pt-16 md:pt-24">
+          <div className="grid lg:grid-cols-2 items-center pt-16 md:pt-24 gap-8">
             {/* Left Content */}
-            <div className=" space-y-8 flex-1">
+            <div className="space-y-8 flex-1">
+              {/* ✅ Added short intro paragraph */}
+              <p className="text-primary text-lg md:text-xl mb-4">
+                At The Social Market, we believe privacy and transparency are
+                the foundation of lasting relationships. We’re committed to
+                protecting your personal information and being clear about how
+                we use it.
+              </p>
+
               <div className="space-y-4">
-                <h1 className="text-4xl md:text-5xl  font-bold text-primary leading-tight">
+                <h1 className="text-4xl md:text-5xl font-bold text-primary leading-tight">
                   Empowering Brands and Influencers to{" "}
                   <span className="text-primary">Grow Together</span>
                 </h1>
               </div>
-
-              {/* <p className="text-primary text-[16px] leading-relaxed max-w-lg">
-                This headline speaks to the essence of your platform,
-                emphasizing the collaborative nature.
-              </p> */}
             </div>
 
-            {/* Right Image (1/3) */}
-            <div className="relative  pt-6">
+            {/* ✅ Right Image with extra spacing */}
+            <div className="relative pt-12 md:pt-16">
               <Image
                 width={833}
                 height={519}
@@ -34,6 +38,8 @@ export default function PrivacyPage() {
           </div>
         </main>
       </section>
+
+      {/* Main Content */}
       <main className="container mx-auto px-4 py-16 lg:py-24">
         <div className="container mx-auto">
           <div className="text-center mb-12">
@@ -42,17 +48,19 @@ export default function PrivacyPage() {
             </h1>
           </div>
 
-          <div className="prose prose-lg max-w-none space-y-8">
+          {/* ✅ Added more spacing between numbered paragraphs */}
+          <div className="prose prose-lg max-w-none space-y-12">
             <div className="text-sm text-gray-600 mb-8">
               <p>Effective Date: 02/19/2025</p>
               <p>
                 Thank you for visiting The Social Market. Your privacy is
                 important to us. This Privacy Policy explains how we collect,
                 use, and protect your personal information when you visit or
-                interact with our website www.socialmarket.com
+                interact with our website www.socialmarket.com.
               </p>
             </div>
 
+            {/* 1 */}
             <section>
               <h2 className="text-2xl font-bold text-foreground mb-4">
                 1. Information We Collect
@@ -62,23 +70,25 @@ export default function PrivacyPage() {
               </p>
               <ul className="list-disc pl-6 space-y-2 text-gray-700">
                 <li>
-                  Personal Information: such as your name, email address, phone
-                  number, etc. (only when you submit it voluntarily, e.g.,
-                  through contact forms or account registration)
+                  <strong>Personal Information:</strong> such as your name,
+                  email address, phone number, etc. (only when you submit it
+                  voluntarily, e.g., through contact forms or account
+                  registration)
                 </li>
                 <li>
-                  Usage Data: Information about how you use our website, browser
-                  type, device type, pages visited, time spent on the site, and
-                  other analytical data
+                  <strong>Usage Data:</strong> information about how you use our
+                  website, browser type, device type, pages visited, time spent
+                  on the site, and other analytical data
                 </li>
                 <li>
-                  Cookies and Tracking Technologies: we may use cookies to
-                  enhance your experience, analyze site traffic, and improve our
-                  services
+                  <strong>Cookies and Tracking Technologies:</strong> we may use
+                  cookies to enhance your experience, analyze site traffic, and
+                  improve our services
                 </li>
               </ul>
             </section>
 
+            {/* 2 */}
             <section>
               <h2 className="text-2xl font-bold text-foreground mb-4">
                 2. How We Use Your Information
@@ -88,9 +98,7 @@ export default function PrivacyPage() {
               </p>
               <ul className="list-disc pl-6 space-y-2 text-gray-700">
                 <li>To provide and maintain our website</li>
-                <li>
-                  To respond to your inquiries and provide customer support
-                </li>
+                <li>To respond to your inquiries and provide customer support</li>
                 <li>
                   To send you updates, newsletters, or marketing communications
                   (you can opt out)
@@ -102,6 +110,7 @@ export default function PrivacyPage() {
               </ul>
             </section>
 
+            {/* 3 */}
             <section>
               <h2 className="text-2xl font-bold text-foreground mb-4">
                 3. Sharing Your Information
@@ -112,20 +121,21 @@ export default function PrivacyPage() {
               </p>
               <ul className="list-disc pl-6 space-y-2 text-gray-700">
                 <li>
-                  Service Providers: who assist in operating our site or serving
-                  you
+                  <strong>Service Providers:</strong> who assist in operating
+                  our site or serving you
                 </li>
                 <li>
-                  Business Partners: for joint marketing or promotional
-                  activities
+                  <strong>Business Partners:</strong> for joint marketing or
+                  promotional activities
                 </li>
                 <li>
-                  Legal Authorities: if required by law or to protect our legal
-                  rights
+                  <strong>Legal Authorities:</strong> if required by law or to
+                  protect our legal rights
                 </li>
               </ul>
             </section>
 
+            {/* 4 */}
             <section>
               <h2 className="text-2xl font-bold text-foreground mb-4">
                 4. Your Rights and Choices
@@ -142,6 +152,7 @@ export default function PrivacyPage() {
               </ul>
             </section>
 
+            {/* 5 */}
             <section>
               <h2 className="text-2xl font-bold text-foreground mb-4">
                 5. Security
@@ -153,6 +164,7 @@ export default function PrivacyPage() {
               </p>
             </section>
 
+            {/* 6 */}
             <section>
               <h2 className="text-2xl font-bold text-foreground mb-4">
                 6. Third-Party Links
@@ -163,6 +175,7 @@ export default function PrivacyPage() {
               </p>
             </section>
 
+            {/* 7 */}
             <section>
               <h2 className="text-2xl font-bold text-foreground mb-4">
                 7. Children&apos;s Privacy
@@ -173,6 +186,7 @@ export default function PrivacyPage() {
               </p>
             </section>
 
+            {/* 8 */}
             <section>
               <h2 className="text-2xl font-bold text-foreground mb-4">
                 8. Changes to This Privacy Policy
@@ -184,6 +198,7 @@ export default function PrivacyPage() {
               </p>
             </section>
 
+            {/* 9 */}
             <section>
               <h2 className="text-2xl font-bold text-foreground mb-4">
                 9. Contact Us
@@ -192,7 +207,8 @@ export default function PrivacyPage() {
                 If you have any questions or concerns about this Privacy Policy,
                 please contact us at:
                 <br />
-                [your@email.com] [Your Address, City, Country]
+                [your@email.com] <br />
+                [Your Address, City, Country]
               </p>
             </section>
           </div>
