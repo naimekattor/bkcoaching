@@ -40,6 +40,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { HiSpeakerphone } from "react-icons/hi";
+import { motion } from 'framer-motion';
 
 /* -------------------------------------------------
    Types
@@ -357,13 +358,18 @@ export default function CampaignDashboard() {
                   <div className="text-2xl">{stat.icon}</div>
                 </div>
                 {stat.isAction && (
-                  <button
-                    className="w-full mt-4 bg-secondary hover:bg-[var(--secondaryhover)] text-primary px-4 py-2 rounded-md font-medium transition-colors"
-                    onClick={() => setShowModal(true)}
-                  >
-                    Launch Campaign
-                  </button>
-                )}
+  <motion.button
+    whileHover={{
+      y: -2,               // lift upward (rocket motion)
+      scale: 1.01,         // slightly enlarge
+      transition: { type: "spring", stiffness: 400, damping: 10 },
+    }}
+    className="w-full mt-4 bg-secondary cursor-pointer hover:bg-[var(--secondaryhover)] text-primary px-4 py-2 rounded-md font-semibold shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2"
+    onClick={() => setShowModal(true)}
+  >
+    🚀 Launch Campaign
+  </motion.button>
+)}
               </div>
             </div>
           ))}

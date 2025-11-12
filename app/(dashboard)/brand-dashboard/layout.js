@@ -67,7 +67,7 @@ export default function BrandDashboardLayout({ children }) {
           showSideBar ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <Sidebar links={brandLinks} />
+        <Sidebar links={brandLinks} setShowSideBar={setShowSideBar}/>
       </div>
 
       {/* Main content */}

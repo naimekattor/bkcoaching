@@ -28,7 +28,7 @@ const HowItWorks = () => {
                       Run authentic campaigns that build trust and drive sales.
                   </p>
 
-                  <button className="bg-secondary w-full py-2 font-[600] text-[16px] text-primary rounded cursor-pointer">
+                  <button className="bg-secondary hover:bg-[var(--secondaryhover)] w-full py-2 font-[600] text-[16px] text-primary rounded cursor-pointer">
                      Start Here
                   </button>
                 </div>
@@ -39,7 +39,7 @@ const HowItWorks = () => {
           {/* Center image */}
           <div className="flex justify-center">
             <Image
-              src="/images/hero-img.png"
+              src="/images/work-img.png"
               alt="How it works illustration"
               width={400}
               height={400}
@@ -67,7 +67,7 @@ const HowItWorks = () => {
                     Monetize your influence by sharing products you love.
                   </p>
 
-                  <button className="bg-secondary w-full py-2 font-[600] text-[16px] text-primary rounded cursor-pointer">
+                  <button className="bg-secondary hover:bg-[var(--secondaryhover)] w-full py-2 font-[600] text-[16px] text-primary rounded cursor-pointer">
                     Start Here
                   </button>
                 </div>

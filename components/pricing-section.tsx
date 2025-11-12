@@ -203,7 +203,9 @@ export function PricingSection({planName}:{planName:string}) {
               <div
   key={plan.product_id}
   
-  className="bg-[#f6f8fa] rounded-2xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col"
+  className="bg-[#f6f8fa] rounded-2xl shadow-lg border border-gray-200 overflow-hidden 
+hover:border-primary hover:shadow-[0_10px_30px_rgba(0,0,0,0.15)] hover:-translate-y-2 
+transition-all duration-300 flex flex-col"
 >
   <div className="p-8 text-center flex flex-col flex-grow">
     {/* Title */}

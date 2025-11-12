@@ -32,13 +32,13 @@ export default function BrandCard({
     >
       {/* Image Section */}
       <div className="w-auto flex-shrink-0 relative">
-        <div className="relative w-full h-80 lg:h-full rounded overflow-hidden">
+        <div className="relative w-full h-80 lg:h-full rounded overflow-hidden group ">
           <Image
             width={392}
             height={431}
             src={image}
             alt={name}
-            className="w-[392px] h-[431px] object-cover "
+            className="w-[392px] h-[431px]  object-cover transform transition-transform duration-500 group-hover:scale-105"
           />
         </div>
       </div>
@@ -96,7 +96,7 @@ export default function BrandCard({
         <p className="text-gray-600 mb-6">{description}</p>
 
         <div className="text-left lg:text-left mt-4">
-          <button className="bg-primary text-white font-semibold py-3 px-8 inline-block rounded-lg shadow-md hover:bg-primary transition-colors duration-300">
+          <button className="bg-primary text-white font-semibold py-3 px-8 inline-block rounded-lg shadow-md hover:shadow-lg hover:border-2 hover:border-[#001F3F] hover:bg-white hover:text-[#001F3F] transition-all duration-300 cursor-pointer">
             Explore Brand
           </button>
         </div>

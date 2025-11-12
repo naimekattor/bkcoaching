@@ -223,7 +223,7 @@ export default function MessagesClient() {
 
       {/* Left Sidebar - Contacts */}
       <div
-        className={`w-80 sm:w-72 bg-white border-r border-gray-200 flex flex-col absolute md:relative z-20 md:z-auto h-full transform transition-all duration-300 ease-in-out ${
+        className={`w-full sm:w-72 bg-white border-r border-gray-200 flex flex-col absolute md:relative z-20 md:z-auto h-full transform transition-all duration-300 ease-in-out ${
           showSidebar
             ? "translate-x-0"
             : "-translate-x-[1000px] md:translate-x-0"
@@ -327,11 +327,7 @@ export default function MessagesClient() {
           ))}
         </div>
 
-        <div className="p-4 border-t border-gray-200 bg-gray-50">
-          <button className="text-sm text-primary hover:text-primary font-medium hover:bg-primary px-3 py-2 rounded-lg transition-all duration-200">
-            See more conversations...
-          </button>
-        </div>
+        
       </div>
 
       <div className="flex-1 flex flex-col">
@@ -513,7 +509,7 @@ export default function MessagesClient() {
                 onClick={() => setShowSidebar(true)}
                 className="px-6 py-3 bg-primary  text-white rounded-xl font-medium text-sm shadow-sm transition-all duration-200 md:hidden"
               >
-                View Conversations
+                View Conversations 
               </button>
             </div>
           </div>

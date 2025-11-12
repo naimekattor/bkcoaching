@@ -83,7 +83,7 @@ export default function BrandsPage() {
               <Image
                 width={833}
                 height={519}
-                src={"/images/brand-hero.png"}
+                src={"/images/brand-hero1.png"}
                 alt="Two stylish women representing micro-influencers"
                 className="w-full h-auto max-w-md mx-auto lg:max-w-full"
               />

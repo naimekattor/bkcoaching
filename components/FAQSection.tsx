@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { FaMinus, FaPlus } from "react-icons/fa";
 
 const faqs = [
   // Micro-influencers
@@ -121,7 +122,7 @@ export default function FAQSection() {
               >
                 {faq.question}
                 <span className="text-xl ml-2">
-                  {openIndex === index ? "−" : "+"}
+                  {openIndex === index ? <FaMinus size={14} /> : <FaPlus size={14} />}
                 </span>
               </button>
 

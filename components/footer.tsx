@@ -11,6 +11,7 @@ import {
   DialogTitle,
 } from "./ui/dialog";
 import { Button } from "./ui/button";
+import { motion } from 'framer-motion';
 
 export default function Footer() {
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -31,14 +32,21 @@ export default function Footer() {
               Ready to grow smarter?
             </h2>
 
-            <button
-              onClick={handleSignupRoute}
-              className="inline-block bg-secondary hover:bg-[var(--secondaryhover)] text-primary font-semibold px-8 py-3 rounded-lg transition-colors duration-200 mb-4"
-            >
-              Sign Up Free Today
-            </button>
+            <motion.button
+            onClick={handleSignupRoute}
+            whileHover={{
+              scale: 1.05,
+              boxShadow: "0px 4px 20px rgba(0, 31, 63, 0.3)",
+            }}
+            whileTap={{ scale: 0.97 }}
+            className="inline-block bg-secondary hover:bg-[var(--secondaryhover)] 
+            text-primary font-semibold px-10 py-4 rounded-lg 
+            transition-all duration-200 shadow-md cursor-pointer"
+          >
+            Sign Up Free Today 🚀
+          </motion.button>
 
-            <p className="text-sm text-gray-600 italic">
+            <p className="text-sm text-gray-600 italic mt-4">
               Free for the first 100 users
             </p>
           </div>

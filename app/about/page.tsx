@@ -63,14 +63,14 @@ export default function AboutPage() {
               {/* Feedback Button under paragraph */}
               <button
                 onClick={() => setIsFeedbackOpen(true)}
-                className="mt-4 bg-secondary text-primary font-semibold px-6 py-3 rounded-lg hover:bg-secondary/80 transition"
+                className="mt-4 bg-secondary text-primary font-semibold px-6 py-3 rounded-lg hover:bg-[var(--secondaryhover)] cursor-pointer transition"
               >
                 Share Your Feedback
               </button>
             </div>
 
             {/* Right Image */}
-            <div className="relative">
+            <div className="relative md:block hidden">
               <Image
                 width={833}
                 height={519}
@@ -112,7 +112,7 @@ export default function AboutPage() {
           </div>
 
           {/* Right Images */}
-          <div className="relative">
+          <div className="relative ">
             <div className="grid grid-cols-2">
               <div className="space-y-4">
                 <div className="border-white border-6 bg-white shadow-2xl rounded-full overflow-hidden h-full">
@@ -175,7 +175,7 @@ export default function AboutPage() {
               <textarea
                 value={feedback}
                 onChange={(e) => setFeedback(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded resize-none"
+                className="w-full p-3 border border-gray-300 rounded resize-none text-white"
                 rows={5}
                 required
               />
@@ -189,7 +189,7 @@ export default function AboutPage() {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-secondary text-white rounded hover:bg-secondary/90 transition"
+                  className="px-4 py-2 bg-secondary text-primary cursor-pointer rounded-lg hover:bg-[var(--secondaryhover)] font-semibold transition"
                 >
                   Submit
                 </button>
