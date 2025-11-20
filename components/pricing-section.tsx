@@ -27,56 +27,54 @@ interface ApiResponse {
   meta: { timestamp: string };
 }
 
-export function PricingSection({planName}:{planName:string}) {
+export function PricingSection({ planName,initialData }: {initialData?: ApiResponse; planName: string }) {
   const [isYearly, setIsYearly] = useState(false);
-  const [plans, setPlans] = useState<Plan[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
-
+  console.log(initialData.data);
+  
+  const plans = initialData.data;
   // Replace with your actual base URL
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-  useEffect(() => {
-    const fetchPlans = async () => {
-      try {
-        setLoading(true);
-        const response = await apiClient(
-          `subscription_service/get_subscription_plans/`,
-          {
-            method: "GET",
-          }
-        );
+  // useEffect(() => {
+  //   const fetchPlans = async () => {
+  //     try {
+  //       setLoading(true);
+  //       const response = await apiClient(
+  //         `subscription_service/get_subscription_plans/`,
+  //         {
+  //           method: "GET",
+  //         }
+  //       );
 
-        // if (!response.ok) {
-        //   throw new Error(`HTTP error! status: ${response.status}`);
-        // }
+  //       // if (!response.ok) {
+  //       //   throw new Error(`HTTP error! status: ${response.status}`);
+  //       // }
 
-        const result: ApiResponse = await response;
+  //       const result: ApiResponse = await response;
 
-        if (result.status === "success" && result.data) {
-          // Sort plans: Micro-Influencer -> Businesses -> Both
-          const sortedPlans = result.data.sort((a, b) => {
-            const order = ["Micro-Influencer", "Businesses", "Both"];
-            return order.indexOf(a.name) - order.indexOf(b.name);
-          });
-          setPlans(sortedPlans);
-          console.log(sortedPlans);
-          
-          
-        } else {
-          throw new Error("Invalid response structure");
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load plans");
-        console.error("Error fetching plans:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  //       if (result.status === "success" && result.data) {
+  //         // Sort plans: Micro-Influencer -> Businesses -> Both
+  //         const sortedPlans = result.data.sort((a, b) => {
+  //           const order = ["Micro-Influencer", "Businesses", "Both"];
+  //           return order.indexOf(a.name) - order.indexOf(b.name);
+  //         });
+  //         setPlans(sortedPlans);
+  //         console.log(sortedPlans);
+  //       } else {
+  //         throw new Error("Invalid response structure");
+  //       }
+  //     } catch (err) {
+  //       setError(err instanceof Error ? err.message : "Failed to load plans");
+  //       console.error("Error fetching plans:", err);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetchPlans();
-  }, [baseUrl]);
+  //   fetchPlans();
+  // }, [baseUrl]);
 
   // Helper to get price for current interval
   const getPriceForInterval = (prices: Price[]) => {
@@ -101,10 +99,10 @@ export function PricingSection({planName}:{planName:string}) {
     return (
       <section className="px-4 py-16 lg:py-[100px] container mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {Array.from({ length: 3 }).map((_, i) => (
-        <SkeletonCard key={i} />
-      ))}
-    </div>
+          {Array.from({ length: 3 }).map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
+        </div>
       </section>
     );
   }
@@ -160,30 +158,30 @@ export function PricingSection({planName}:{planName:string}) {
           </p>
 
           {/* Toggle */}
-          {/* Toggle */}
-<div className="inline-flex bg-gray-100 rounded-full shadow-sm p-1 transition-all duration-300">
-  <button
-    onClick={() => setIsYearly(false)}
-    className={`px-8 py-3 rounded-full font-semibold text-lg transition-all duration-200
-      ${!isYearly
-        ? "bg-primary text-white shadow-md scale-105"
-        : "text-gray-600 hover:text-gray-800"
+          <div className="inline-flex bg-gray-100 rounded-full shadow-sm p-1 transition-all duration-300">
+            <button
+              onClick={() => setIsYearly(false)}
+              className={`px-8 py-3 rounded-full font-semibold text-lg transition-all duration-200
+      ${
+        !isYearly
+          ? "bg-primary text-white shadow-md scale-105"
+          : "text-gray-600 hover:text-gray-800"
       }`}
-  >
-    Monthly
-  </button>
-  <button
-    onClick={() => setIsYearly(true)}
-    className={`px-8 py-3 rounded-full font-semibold text-lg transition-all duration-200
-      ${isYearly
-        ? "bg-primary text-white shadow-md scale-105"
-        : "text-gray-600 hover:text-gray-800"
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setIsYearly(true)}
+              className={`px-8 py-3 rounded-full font-semibold text-lg transition-all duration-200
+      ${
+        isYearly
+          ? "bg-primary text-white shadow-md scale-105"
+          : "text-gray-600 hover:text-gray-800"
       }`}
-  >
-    Yearly
-  </button>
-</div>
-
+            >
+              Yearly
+            </button>
+          </div>
         </div>
 
         {/* Pricing Cards */}
@@ -201,57 +199,56 @@ export function PricingSection({planName}:{planName:string}) {
 
             return (
               <div
-  key={plan.product_id}
-  
-  className="bg-[#f6f8fa] rounded-2xl shadow-lg border border-gray-200 overflow-hidden 
+                key={plan.product_id}
+                className="bg-[#f6f8fa] rounded-2xl shadow-lg border border-gray-200 overflow-hidden 
 hover:border-primary hover:shadow-[0_10px_30px_rgba(0,0,0,0.15)] hover:-translate-y-2 
 transition-all duration-300 flex flex-col"
->
-  <div className="p-8 text-center flex flex-col flex-grow">
-    {/* Title */}
-    <h3 className="md:text-[26px] text-[22px] font-semibold text-primary mb-8 min-h-[70px] flex items-center justify-center">
-      {titleMap[plan.name] || plan.name}
-    </h3>
+              >
+                <div className="p-8 text-center flex flex-col flex-grow">
+                  {/* Title */}
+                  <h3 className="md:text-[26px] text-[22px] font-semibold text-primary mb-8 min-h-[70px] flex items-center justify-center">
+                    {titleMap[plan.name] || plan.name}
+                  </h3>
 
-    {/* Price */}
-    <div className="mb-6 min-h-[90px] flex items-end justify-center">
-      <span className="md:text-[64px] text-3xl font-semibold text-primary leading-none">
-        ${price.amount.toFixed(0)}
-      </span>
-      <span className="text-[28px] text-primary font-semibold ml-1 leading-none">
-        /{isYearly ? "Year" : "month"}
-      </span>
-    </div>
+                  {/* Price */}
+                  <div className="mb-6 min-h-[90px] flex items-end justify-center">
+                    <span className="md:text-[64px] text-3xl font-semibold text-primary leading-none">
+                      ${price.amount.toFixed(0)}
+                    </span>
+                    <span className="text-[28px] text-primary font-semibold ml-1 leading-none">
+                      /{isYearly ? "Year" : "month"}
+                    </span>
+                  </div>
 
-    {/* Savings */}
-    <div className="mb-4 min-h-[24px]">
-      {savings && (
-        <span className="text-red-500 font-semibold text-xl">
-          {savings}
-        </span>
-      )}
-      {
-        !isYearly && plan.name==="Both" &&(
-          <span className="text-red-500 font-semibold text-xl">Save 15%</span>
-        )
-      }
-    </div>
+                  {/* Savings */}
+                  <div className="mb-4 min-h-[24px]">
+                    {savings && (
+                      <span className="text-red-500 font-semibold text-xl">
+                        {savings}
+                      </span>
+                    )}
+                    {!isYearly && plan.name === "Both" && (
+                      <span className="text-red-500 font-semibold text-xl">
+                        Save 15%
+                      </span>
+                    )}
+                  </div>
 
-    {/* Description */}
-    <p className="text-primary text-[18px] mb-8 leading-relaxed flex-grow">
-      {plan.description?.charAt(0).toUpperCase() + plan.description?.slice(1).toLowerCase()}
-    </p>
+                  {/* Description */}
+                  <p className="text-primary text-[18px] mb-8 leading-relaxed flex-grow">
+                    {plan.description?.charAt(0).toUpperCase() +
+                      plan.description?.slice(1).toLowerCase()}
+                  </p>
 
-    {/* CTA Button */}
-    <button
-      className="w-full bg-primary cursor-pointer text-white font-semibold py-4 rounded-lg transition-colors duration-200 hover:bg-primary/90"
-      onClick={() => handleCheckout(price.price_id)}
-    >
-      {plan.name === planName ? "Selected" : "Select"}
-    </button>
-  </div>
-</div>
-
+                  {/* CTA Button */}
+                  <button
+                    className="w-full bg-primary cursor-pointer text-white font-semibold py-4 rounded-lg transition-colors duration-200 hover:bg-primary/90"
+                    onClick={() => handleCheckout(price.price_id)}
+                  >
+                    {plan.name === planName ? "Selected" : "Select"}
+                  </button>
+                </div>
+              </div>
             );
           })}
         </div>
