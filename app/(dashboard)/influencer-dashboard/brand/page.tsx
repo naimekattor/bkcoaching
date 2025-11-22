@@ -279,16 +279,16 @@ export default function MicroinfluencersPage() {
                 </div>
 
                 {/* Buttons */}
-                <div className="flex justify-center gap-3">
+                <div className="flex justify-center items-center  gap-3">
                   <Link
                     href={`/influencer-dashboard/brand/${brand.id}`}
                     className="border border-secondary text-primary px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                   >
                     View Profile
                   </Link>
-                  <button className="bg-secondary hover:bg-[var(--secondaryhover)] text-primary px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                  <Link href={`/influencer-dashboard/messages?id=${brand.id}`} className="bg-secondary hover:bg-[var(--secondaryhover)] text-primary px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                     Message
-                  </button>
+                  </Link>
                 </div>
               </div>
             ))}

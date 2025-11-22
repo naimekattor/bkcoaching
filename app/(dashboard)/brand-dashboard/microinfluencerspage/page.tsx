@@ -61,47 +61,55 @@ export default function MicroInfluencersPage() {
 
   // Fetch all influencers
   useEffect(() => {
-    const fetchInfluencers = async () => {
-      try {
-        setLoading(true);
-        const res = await apiClient("user_service/get_all_influencers/", {
-          method: "GET",
-        });
+  const fetchInfluencers = async () => {
+    try {
+      setLoading(true);
 
-        const normalized: Influencer[] = (res.data || []).map((item: any) => {
-          const inf = item.influencer_profile || {};
-          const user = item.user || {};
-          const platforms: string[] = [];
-          if (inf.instagram_handle) platforms.push("instagram");
-          if (inf.tiktok_handle) platforms.push("tiktok");
-          if (inf.youtube_handle) platforms.push("youtube");
+      const res = await apiClient("user_service/get_all_influencers/", {
+        method: "GET",
+      });
 
-          return {
-            id: String(item.id),
-            name:
-              inf.display_name ||
-              `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
-              "Unknown",
-            profileImage: inf.profile_picture || "/placeholder.svg",
-            followers: inf.followers_count
-              ? `${(inf.followers_count / 1000).toFixed(1)}K`
-              : "N/A",
-            socialLinks: platforms,
-            niche: inf.content_niches?.[0] || "Unknown",
-            timeZone: inf.timezone || "Unknown",
-          };
-        });
+      console.log("API Response:", res);
 
-        setAllInfluencers(normalized);
-      } catch (err) {
-        console.error("Failed to fetch influencers", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+      // FIX: backend returns data.results
+      const list = res.data?.results || [];
 
-    fetchInfluencers();
-  }, []);
+      const normalized: Influencer[] = list.map((item: any) => {
+        const inf = item.influencer_profile || {};
+        const user = item.user || {};
+
+        const platforms: string[] = [];
+        if (inf.instagram_handle) platforms.push("instagram");
+        if (inf.tiktok_handle) platforms.push("tiktok");
+        if (inf.youtube_handle) platforms.push("youtube");
+
+        return {
+          id: String(item.id),
+          name:
+            inf.display_name ||
+            `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
+            "Unknown",
+          profileImage: inf.profile_picture || "/placeholder.svg",
+          followers: inf.followers_count
+            ? `${(inf.followers_count / 1000).toFixed(1)}K`
+            : "N/A",
+          socialLinks: platforms,
+          niche: inf.content_niches?.[0] || "Unknown",
+          timeZone: inf.timezone || "Unknown",
+        };
+      });
+
+      setAllInfluencers(normalized);
+    } catch (err) {
+      console.error("Failed to fetch influencers", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchInfluencers();
+}, []);
+
 
   // Filter & search
   const filteredAndSearched = useMemo(() => {
@@ -414,7 +422,7 @@ export default function MicroInfluencersPage() {
                       </button>
                     </Link>
                     <button
-                      onClick={() => alert(`Messaging ${creator.name}`)}
+                      onClick={() => router.push(`/brand-dashboard/messages?id=${creator.id}`)}
                       className="flex-1 px-4 py-2 bg-secondary text-primary rounded-lg hover:bg-[var(--secondaryhover)] transition-colors text-sm font-medium"
                     >
                       Message

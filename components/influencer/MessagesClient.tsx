@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter, useSearchParams, useParams } from "next/navigation";
+import { useState, useEffect, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Search,
   MoreHorizontal,
@@ -9,207 +9,375 @@ import {
   Send,
   Bell,
   ArrowLeft,
+  Loader,
 } from "lucide-react";
 import Image from "next/image";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { apiClient } from "@/lib/apiClient";
 
-// Define TypeScript interfaces for mock data
-interface Contact {
-  id: number;
-  name: string;
-  lastMessage: string;
-  avatar: string;
-  isOnline: boolean;
-  lastSeen: string;
-  hasUnread: boolean;
+interface Room {
+  room_id: string;
+  other_user_id: string;
+  last_message: string;
+  timestamp: string;
+  other_user_name?: string;
+  other_user_avatar?: string;
 }
 
-interface ChatRequest {
+interface HistoryMessage {
   id: number;
-  requester: string;
-  email: string;
+  sender_id: string;
+  is_me: boolean;
   message: string;
-  warning: string;
-  safetyTip: string;
+  timestamp: string;
 }
 
 interface Message {
-  id: number;
-  senderId: string | number;
+  id: number | string;
+  senderId: string;
   senderName: string;
   content: string;
   timestamp: string;
   isOwn: boolean;
 }
 
-// Mock data
-const mockContacts: Contact[] = [
-  {
-    id: 1,
-    name: "Sarah Marketing",
-    lastMessage: "Re: Collaboration Inquiry",
-    avatar:
-      "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-    isOnline: true,
-    lastSeen: "Active 4m ago",
-    hasUnread: false,
-  },
-  {
-    id: 2,
-    name: "Creator Admin",
-    lastMessage: "Your profile is now live!",
-    avatar:
-      "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-    isOnline: false,
-    lastSeen: "2h ago",
-    hasUnread: false,
-  },
-  {
-    id: 3,
-    name: "Emily Business",
-    lastMessage: "Follow up: Tech Gadget Review...",
-    avatar:
-      "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-    isOnline: false,
-    lastSeen: "1d ago",
-    hasUnread: false,
-  },
-  {
-    id: 4,
-    name: "David Creator",
-    lastMessage: "Proposal for Fashion...",
-    avatar:
-      "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-    isOnline: true,
-    lastSeen: "Active now",
-    hasUnread: false,
-  },
-];
-
-const mockChatRequest: ChatRequest = {
-  id: 1,
-  requester: "Market Meetup",
-  email: "fashionistaBusiness@gmail.com",
-  message: "wants to chat with you",
-  warning:
-    "Message from unknown or unexpected people could be spam or phishing attempts. Never share your account information or authorize sign-in requests over chat.",
-  safetyTip: "To be safe, preview their messages.",
-};
-
-const mockMessages: Message[] = [
-  {
-    id: 1,
-    senderId: 1,
-    senderName: "Sarah Marketing",
-    content: "Lorem ipsum dolor sit amet consectetur.",
-    timestamp: "2:30 PM",
-    isOwn: false,
-  },
-  {
-    id: 2,
-    senderId: "current-user",
-    senderName: "You",
-    content:
-      "ype and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in",
-    timestamp: "2:32 PM",
-    isOwn: true,
-  },
-  {
-    id: 3,
-    senderId: 1,
-    senderName: "Sarah Marketing",
-    content: "Lorem ipsum dolor sit amet consectetur.",
-    timestamp: "2:35 PM",
-    isOwn: false,
-  },
-  {
-    id: 4,
-    senderId: "current-user",
-    senderName: "You",
-    content:
-      "ype and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in",
-    timestamp: "2:37 PM",
-    isOwn: true,
-  },
-];
-
 export default function InfluencerMessagesClient() {
-  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [showChatRequest, setShowChatRequest] = useState<boolean>(true);
   const [newMessage, setNewMessage] = useState<string>("");
-  const [messages, setMessages] = useState<Message[]>(mockMessages);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [loadingHistory, setLoadingHistory] = useState<boolean>(false);
+
+  const { user } = useAuthStore();
+  const currentUserId = user?.id;
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const params = useParams();
-  const { id } = params as { id: string }; // Explicitly type id as string
+  const otherUserId = searchParams.get("id");
 
+  const wsRef = useRef<WebSocket | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Create or get room from URL parameter
   useEffect(() => {
-    const userId = searchParams.get("userId");
-    const userName = searchParams.get("userName");
-    const userImage = searchParams.get("userImage");
-
-    if (userId) {
-      let contact = mockContacts.find((c) => c.id === Number.parseInt(userId));
-
-      if (!contact && userName) {
-        contact = {
-          id: Number.parseInt(userId),
-          name: decodeURIComponent(userName),
-          lastMessage: "Start a new conversation",
-          avatar: userImage
-            ? decodeURIComponent(userImage)
-            : "/placeholder.svg",
-          isOnline: true,
-          lastSeen: "Active now",
-          hasUnread: false,
-        };
+    const createRoom = async () => {
+      if (!otherUserId) {
+        console.log("No otherUserId in URL");
+        return;
       }
 
-      if (contact) {
-        setSelectedContact(contact);
-        setShowChatRequest(false);
+      try {
+        console.log("📝 Creating room for user:", otherUserId);
+
+        const token = localStorage.getItem("access_token");
+        if (!token) {
+          console.error("No access token");
+          return;
+        }
+
+        const res = await apiClient("chat_service/get_or_create_room/", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            target_user_id: otherUserId,
+          }),
+        });
+
+        console.log("✅ Room creation response:", res);
+
+        if (res?.data?.room_id) {
+          const roomId = res.data.room_id;
+          console.log("🔑 Room ID:", roomId);
+
+          // Create full Room object
+          const newRoom: Room = {
+            room_id: roomId,
+            other_user_id: otherUserId,
+            last_message: res.data.last_message || "Start a conversation",
+            timestamp: res.data.timestamp || new Date().toISOString(),
+            other_user_name: res.data.other_user_name || `User ${otherUserId}`,
+            other_user_avatar: res.data.other_user_avatar,
+          };
+
+          console.log("🎯 Setting selected room:", newRoom);
+          setSelectedRoom(newRoom);
+        } else {
+          console.error("No room_id in response:", res);
+        }
+      } catch (err) {
+        console.error("Error creating room:", err);
       }
+    };
+
+    createRoom();
+  }, [otherUserId]);
+
+  // Fetch rooms for sidebar
+  useEffect(() => {
+    const fetchRooms = async () => {
+      setLoading(true);
+      try {
+        const token = localStorage.getItem("access_token");
+        if (!token) {
+          router.push("/login");
+          return;
+        }
+
+        const response = await apiClient("chat_service/get_my_rooms/", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response?.data) {
+          setRooms(response.data);
+          console.log(response.data);
+          
+        }
+      } catch (err) {
+        console.error("Failed to fetch rooms:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRooms();
+  }, []);
+
+  // Load chat history when room changes
+  useEffect(() => {
+    const loadChatHistory = async () => {
+      if (!selectedRoom) return;
+
+      setLoadingHistory(true);
+      try {
+        const token = localStorage.getItem("access_token");
+        if (!token) {
+          router.push("/login");
+          return;
+        }
+
+        const response = await apiClient(
+          `chat_service/get_room_history/${selectedRoom.room_id}/`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response?.data) {
+          const formattedMessages: Message[] = response.data.map(
+            (msg: HistoryMessage) => ({
+              id: msg.id,
+              senderId: msg.sender_id,
+              senderName: msg.is_me ? "You" : selectedRoom.other_user_name || "User",
+              content: msg.message,
+              timestamp: new Date(msg.timestamp).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+              isOwn: msg.is_me,
+            })
+          );
+          setMessages(formattedMessages);
+
+          // Scroll to bottom
+          setTimeout(() => {
+            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+          }, 100);
+        }
+      } catch (err) {
+        console.error("Failed to fetch chat history:", err);
+      } finally {
+        setLoadingHistory(false);
+      }
+    };
+
+    loadChatHistory();
+  }, [selectedRoom]);
+
+  // Initialize WebSocket
+  useEffect(() => {
+    if (!selectedRoom || !currentUserId) {
+      console.log("⏳ Waiting for room or currentUserId. Room:", selectedRoom, "UserId:", currentUserId);
+      return;
     }
-  }, [searchParams]);
 
-  const handleContactSelect = (contact: Contact) => {
-    setSelectedContact(contact);
-    setShowChatRequest(false);
-    setShowSidebar(false);
-  };
+    let isMounted = true;
 
-  const handleAcceptRequest = () => {
-    setShowChatRequest(false);
-  };
+    const initiateChat = async () => {
+      try {
+        const token = localStorage.getItem("access_token");
+        if (!token) {
+          console.error("No access token found");
+          alert("Login expired");
+          router.push("/login");
+          return;
+        }
 
-  const handleRejectRequest = () => {
-    setShowChatRequest(false);
-    setSelectedContact(null);
-  };
+        console.log("✨ Initiating WebSocket connection for room:", selectedRoom.room_id);
+
+        // Close any existing connection
+        if (wsRef.current) {
+          console.log("Closing existing WebSocket");
+          wsRef.current.close();
+          wsRef.current = null;
+        }
+
+        // Build WebSocket URL using existing room
+        const wsUrl = `wss://buzz-referral-med-dakota.trycloudflare.com/ws/chat/${selectedRoom.room_id}/?token=${encodeURIComponent(
+          token
+        )}`;
+
+        console.log("🔗 Connecting to WebSocket:", wsUrl);
+
+        const ws = new WebSocket(wsUrl);
+        wsRef.current = ws;
+
+        const userId = String(currentUserId);
+
+        ws.onopen = () => {
+          console.log("✅ WebSocket connected to room:", selectedRoom.room_id);
+          if (isMounted) {
+            // Trigger a re-render to enable send button
+            setMessages(prev => prev);
+          }
+        };
+
+        ws.onmessage = (event) => {
+          if (!isMounted) return;
+
+          try {
+            const payload = JSON.parse(event.data);
+
+            console.log("Message received:", {
+              sender_id: payload.sender_id,
+              current_user: userId,
+              is_own: String(payload.sender_id) === userId,
+            });
+
+            // Only add messages from other users
+            if (payload.message && String(payload.sender_id) !== userId) {
+              setMessages((prev) => [
+                ...prev,
+                {
+                  id: payload.id || Date.now(),
+                  content: payload.message,
+                  senderId: payload.sender_id,
+                  isOwn: false,
+                  timestamp: new Date().toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  }),
+                  senderName: selectedRoom.other_user_name || "User",
+                },
+              ]);
+
+              // Scroll to bottom
+              setTimeout(() => {
+                messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+              }, 100);
+            }
+          } catch (error) {
+            console.error("Error processing message:", error);
+          }
+        };
+
+        ws.onerror = (err) => {
+          console.error("❌ WebSocket error:", err);
+        };
+
+        ws.onclose = () => {
+          console.log("⚠️ WebSocket disconnected");
+        };
+      } catch (err) {
+        console.error("Failed to initiate chat:", err);
+      }
+    };
+
+    initiateChat();
+
+    return () => {
+      isMounted = false;
+      if (wsRef.current) {
+        wsRef.current.close();
+        wsRef.current = null;
+      }
+    };
+  }, [selectedRoom, currentUserId]);
 
   const handleSendMessage = () => {
-    if (newMessage.trim()) {
-      const message: Message = {
-        id: messages.length + 1,
-        senderId: "current-user",
-        senderName: "You",
+    if (!newMessage.trim() || !wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
+      console.warn("Cannot send message:", {
+        emptyMessage: !newMessage.trim(),
+        noWebSocket: !wsRef.current,
+        wsNotOpen: wsRef.current?.readyState !== WebSocket.OPEN,
+      });
+      return;
+    }
+
+    wsRef.current.send(
+      JSON.stringify({
+        type: "chat_message",
+        message: newMessage,
+      })
+    );
+
+    // Optimistic update
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: Date.now(),
         content: newMessage,
+        senderId: currentUserId,
+        senderName: "You",
         timestamp: new Date().toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
         }),
         isOwn: true,
-      };
-      setMessages([...messages, message]);
-      setNewMessage("");
-    }
+      },
+    ]);
+
+    setNewMessage("");
+
+    // Scroll to bottom
+    setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
   };
 
-  const filteredContacts = mockContacts.filter((contact) =>
-    contact.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const handleRoomSelect = (room: Room) => {
+    setSelectedRoom(room);
+    setShowSidebar(false);
+  };
+
+  const filteredRooms = rooms.filter((room) =>
+    (room.other_user_name || room.other_user_id)
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase())
   );
+
+  const formatLastMessage = (msg: string, timestamp: string) => {
+    const date = new Date(timestamp);
+    const today = new Date();
+    const isToday = date.toDateString() === today.toDateString();
+
+    return {
+      message: msg.length > 50 ? msg.substring(0, 50) + "..." : msg,
+      time: isToday
+        ? date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+        : date.toLocaleDateString([], { month: "short", day: "numeric" }),
+    };
+  };
 
   return (
     <div className="h-screen bg-gray-50 flex relative">
@@ -221,7 +389,7 @@ export default function InfluencerMessagesClient() {
         />
       )}
 
-      {/* Left Sidebar - Contacts */}
+      {/* Left Sidebar - Rooms */}
       <div
         className={`w-full sm:w-72 bg-white border-r border-gray-200 flex flex-col absolute md:relative z-20 md:z-auto h-full transform transition-all duration-300 ease-in-out ${
           showSidebar
@@ -245,9 +413,6 @@ export default function InfluencerMessagesClient() {
                 <Bell className="h-5 w-5" />
                 <span className="absolute -top-1 -right-1 w-3 h-3 bg-secondary rounded-full"></span>
               </button>
-              <div className="w-8 h-8 rounded-full bg-secondary text-white flex items-center justify-center text-sm font-semibold shadow-sm">
-                M
-              </div>
             </div>
           </div>
 
@@ -268,7 +433,7 @@ export default function InfluencerMessagesClient() {
             onClick={() => {
               router.push("/influencer-dashboard/message-request");
             }}
-            className="cursor-pointer flex items-center gap-3 p-3 bg-primary/20 rounded-xl  transition-all duration-200"
+            className="cursor-pointer flex items-center gap-3 p-3 bg-primary/20 rounded-xl transition-all duration-200 hover:bg-primary/30"
           >
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-sm">
               <span className="text-white text-sm">💬</span>
@@ -284,236 +449,171 @@ export default function InfluencerMessagesClient() {
         </div>
 
         <div className="flex-1 overflow-y-auto">
-          {filteredContacts.map((contact) => (
-            <div
-              key={contact.id}
-              className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-all duration-200 ${
-                selectedContact?.id === contact.id
-                  ? " border-l-4 border-l-primary"
-                  : ""
-              }`}
-              onClick={() => handleContactSelect(contact)}
-            >
-              <div className="flex items-center gap-3">
-                <div className="relative">
-                  <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-300 shadow-sm">
-                    <Image
-                      width={48}
-                      height={48}
-                      src={contact.avatar || "/placeholder.svg"}
-                      alt={contact.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  {contact.isOnline && (
-                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full shadow-sm"></div>
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <p className="font-semibold text-sm truncate text-gray-900">
-                      {contact.name}
-                    </p>
-                    <span className="text-xs text-gray-400">
-                      {contact.lastSeen}
-                    </span>
-                  </div>
-                  <p className="text-xs text-gray-500 truncate mt-1">
-                    {contact.lastMessage}
-                  </p>
-                </div>
-              </div>
+          {loading ? (
+            <div className="flex items-center justify-center p-8">
+              <Loader className="h-6 w-6 animate-spin text-primary" />
             </div>
-          ))}
-        </div>
+          ) : filteredRooms.length === 0 ? (
+            <div className="p-4 text-center text-gray-500">
+              <p className="text-sm">No conversations yet</p>
+            </div>
+          ) : (
+            filteredRooms.map((room) => {
+              const { message, time } = formatLastMessage(
+                room.last_message,
+                room.timestamp
+              );
 
-        
-      </div>
-
-      <div className="flex-1 flex flex-col">
-        {selectedContact ? (
-          <>
-            <div className="bg-white border-b border-gray-200 p-4 shadow-sm sticky top-0 z-10">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => setShowSidebar(true)}
-                    className="md:hidden p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all duration-200"
-                  >
-                    <MoreHorizontal className="h-5 w-5" />
-                  </button>
-                  <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-300 shadow-sm">
-                    <Image
-                      width={48}
-                      height={48}
-                      src={selectedContact.avatar || "/placeholder.svg"}
-                      alt={selectedContact.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-bold text-gray-900 truncate">
-                      {selectedContact.name}
-                    </p>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className={`w-2 h-2 rounded-full ${
-                          selectedContact.isOnline
-                            ? "bg-green-500"
-                            : "bg-gray-400"
-                        }`}
-                      ></div>
-                      <p className="text-sm text-gray-500 truncate">
-                        {selectedContact.lastSeen}
+              return (
+                <div
+                  key={room.room_id}
+                  className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-all duration-200 ${
+                    selectedRoom?.room_id === room.room_id
+                      ? "border-l-4 border-l-primary bg-gray-50"
+                      : ""
+                  }`}
+                  onClick={() => handleRoomSelect(room)}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="relative flex-shrink-0">
+                      <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold">
+                        {room.other_user_name?.[0] ||
+                          room.other_user_id?.[0] ||
+                          "?"}
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <p className="font-semibold text-sm truncate text-gray-900">
+                          {room.other_user_name || room.other_user_id}
+                        </p>
+                        <span className="text-xs text-gray-400 ml-2">
+                          {time}
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-500 truncate mt-1">
+                        {message}
                       </p>
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  {/* <button
-                    onClick={() => {
-                      router.push(
-                        `/brand-dashboard/influencers/${id}/send-proposal`
-                      );
-                    }}
-                    className="px-4 py-2 bg-secondary text-primary rounded-xl font-semibold transition-all duration-200 cursor-pointer text-sm shadow-sm"
-                  >
-                    Hire
-                  </button> */}
-                  {/* <button className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all duration-200">
-                    <MoreHorizontal className="h-5 w-5" />
-                  </button> */}
-                </div>
-              </div>
-            </div>
+              );
+            })
+          )}
+        </div>
+      </div>
 
-            {showChatRequest ? (
-              <div className="flex-1 flex items-center justify-center p-8">
-                <div className="max-w-md w-full text-center">
-                  <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <div className="w-8 h-8 bg-orange-400 rounded-full"></div>
-                    <div className="w-6 h-6 bg-primary rounded-full -ml-2"></div>
-                  </div>
-                  <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                    {mockChatRequest.requester}
-                  </h2>
-                  <p className="text-gray-600 mb-6">
-                    ({mockChatRequest.email}) {mockChatRequest.message}
-                  </p>
-                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6 text-sm text-gray-600">
-                    <p className="mb-2">{mockChatRequest.warning}</p>
-                    <p>{mockChatRequest.safetyTip}</p>
-                  </div>
-                  <div className="flex gap-3 justify-center">
-                    <button
-                      onClick={handleAcceptRequest}
-                      className="px-6 py-2 bg-orange-400 hover:bg-orange-500 text-white rounded-md font-medium transition-colors"
-                    >
-                      Accept
-                    </button>
-                    <button
-                      onClick={handleRejectRequest}
-                      className="px-6 py-2 border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-md font-medium transition-colors"
-                    >
-                      Reject
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
-                {messages.map((message) => (
-                  <div
-                    key={message.id}
-                    className={`flex ${
-                      message.isOwn ? "justify-end" : "justify-start"
-                    }`}
-                  >
-                    <div className="flex items-end gap-2 max-w-[85%] sm:max-w-xs lg:max-w-md">
-                      {!message.isOwn && (
-                        <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-300 flex-shrink-0 shadow-sm">
-                          <Image
-                            width={32}
-                            height={32}
-                            src={selectedContact.avatar || "/placeholder.svg"}
-                            alt={selectedContact.name}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                      )}
-                      <div
-                        className={`px-4 py-3 rounded-2xl shadow-sm ${
-                          message.isOwn
-                            ? "bg-gradient-to-r from-primary to-primary text-white rounded-br-md"
-                            : "bg-white text-gray-900 rounded-bl-md border border-gray-200"
-                        }`}
-                      >
-                        <p className="text-sm break-words leading-relaxed">
-                          {message.content}
-                        </p>
-                        <p
-                          className={`text-xs mt-1 ${
-                            message.isOwn
-                              ? "text-primary personally want to see a version where the Suspense boundary is implemented directly in the MessagesClient component, rather than creating a separate server component. Can you provide that version with all type errors fixed, maintaining the same functionality and structure?100"
-                              : "text-gray-400"
-                          }`}
-                        >
-                          {message.timestamp}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <div className="bg-white border-t border-gray-200 p-4 sticky bottom-0">
-              <div className="flex items-center gap-3">
-                <button className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all duration-200 flex-shrink-0">
-                  <Paperclip className="h-5 w-5" />
-                </button>
-                <div className="flex-1 relative">
-                  <input
-                    type="text"
-                    placeholder="Type a message..."
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-primary focus:border-primary outline-none text-sm bg-gray-50 focus:bg-white transition-all duration-200"
-                  />
-                </div>
-                <button
-                  onClick={handleSendMessage}
-                  disabled={!newMessage.trim()}
-                  className="p-3 bg-primary  hover:to-primary800 disabled:from-gray-300 disabled:electronics-400 text-white rounded-full transition-all duration-200 flex-shrink-0 shadow-sm disabled:cursor-not-allowed"
-                >
-                  <Send className="h-5 w-5" />
-                </button>
-              </div>
-            </div>
-          </>
-        ) : (
-          <div className="flex-1 flex items-center justify-center p-6 bg-gradient-to-br from-gray-50 to-gray-100">
-            <div className="text-center text-gray-500 max-w-sm">
-              <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
-                <span className="text-3xl">💬</span>
-              </div>
-              <h3 className="text-lg font-semibold text-gray-700 mb-2">
-                Welcome to Messages
-              </h3>
-              <p className="text-sm text-gray-500 mb-6">
-                Select a conversation from the sidebar to start messaging with
-                your contacts
-              </p>
+      {/* Chat Area */}
+      <div className="flex-1 flex flex-col">
+        {/* Chat Header */}
+        <div className="bg-white border-b border-gray-200 p-4 shadow-sm sticky top-0 z-10">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
               <button
                 onClick={() => setShowSidebar(true)}
-                className="px-6 py-3 bg-primary  text-white rounded-xl font-medium text-sm shadow-sm transition-all duration-200 md:hidden"
+                className="md:hidden p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all duration-200"
               >
-                View Conversations
+                <MoreHorizontal className="h-5 w-5" />
               </button>
+              <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold">
+                {selectedRoom?.other_user_name?.[0] ||
+                  selectedRoom?.other_user_id?.[0] ||
+                  "?"}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="font-bold text-gray-900 truncate">
+                  {selectedRoom?.other_user_name || selectedRoom?.other_user_id}
+                </p>
+                <p className="text-sm text-gray-500">Active now</p>
+              </div>
             </div>
           </div>
-        )}
+        </div>
+
+        {/* Messages Area */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+          {loadingHistory ? (
+            <div className="flex items-center justify-center h-full">
+              <Loader className="h-6 w-6 animate-spin text-primary" />
+            </div>
+          ) : messages.length === 0 ? (
+            <div className="flex items-center justify-center h-full text-gray-500">
+              <p className="text-sm">No messages yet. Start a conversation!</p>
+            </div>
+          ) : (
+            messages.map((message) => (
+              <div
+                key={message.id}
+                className={`flex ${
+                  message.isOwn ? "justify-end" : "justify-start"
+                }`}
+              >
+                <div className="flex items-end gap-2 max-w-[85%] sm:max-w-xs lg:max-w-md">
+                  {!message.isOwn && (
+                    <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold text-xs flex-shrink-0">
+                      {selectedRoom?.other_user_name?.[0] ||
+                        selectedRoom?.other_user_id?.[0] ||
+                        "?"}
+                    </div>
+                  )}
+                  <div
+                    className={`px-4 py-3 rounded-2xl shadow-sm ${
+                      message.isOwn
+                        ? "bg-gradient-to-r from-primary to-primary text-white rounded-br-md"
+                        : "bg-white text-gray-900 rounded-bl-md border border-gray-200"
+                    }`}
+                  >
+                    <p className="text-sm break-words leading-relaxed">
+                      {message.content}
+                    </p>
+                    <p
+                      className={`text-xs mt-1 ${
+                        message.isOwn
+                          ? "text-blue-100"
+                          : "text-gray-400"
+                      }`}
+                    >
+                      {message.timestamp}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* Input Area */}
+        <div className="bg-white border-t border-gray-200 p-4 sticky bottom-0">
+          <div className="flex items-center gap-3">
+            <button className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all duration-200 flex-shrink-0">
+              <Paperclip className="h-5 w-5" />
+            </button>
+            <div className="flex-1 relative">
+              <input
+                type="text"
+                placeholder="Type a message..."
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                onKeyPress={(e) =>
+                  e.key === "Enter" && handleSendMessage()
+                }
+                className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-primary focus:border-primary outline-none text-sm bg-gray-50 focus:bg-white transition-all duration-200"
+              />
+            </div>
+            <button
+              onClick={handleSendMessage}
+              disabled={
+                !newMessage.trim() ||
+                !wsRef.current ||
+                wsRef.current.readyState !== WebSocket.OPEN
+              }
+              className="p-3 bg-primary hover:bg-primary-dark disabled:bg-gray-300 text-white rounded-full transition-all duration-200 flex-shrink-0 shadow-sm disabled:cursor-not-allowed"
+            >
+              <Send className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
