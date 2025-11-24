@@ -14,13 +14,14 @@ import {
 import Image from "next/image";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { apiClient } from "@/lib/apiClient"; 
+import { uploadToCloudinary } from "@/lib/fileUpload";
 
 interface Room {
   room_id: string;
   other_user_id: string;
   last_message: string;
   timestamp: string;
-  other_user_name?: string;
+  name?: string;
   other_user_avatar?: string;
 }
 
@@ -39,6 +40,9 @@ interface Message {
   content: string;
   timestamp: string;
   isOwn: boolean;
+  fileUrl?: string;
+  fileType?: string;
+  fileName?: string;
 }
 
 export default function MessagesClient() {
@@ -50,7 +54,10 @@ export default function MessagesClient() {
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingHistory, setLoadingHistory] = useState<boolean>(false);
-
+  const [attachedFile, setAttachedFile] = useState<File | null>(null);
+const [filePreview, setFilePreview] = useState<string | null>(null);
+const [uploading, setUploading] = useState(false);
+const fileInputRef = useRef<HTMLInputElement>(null);
   const { user } = useAuthStore();
   const currentUserId = user?.id;
   console.log(currentUserId);
@@ -89,7 +96,6 @@ export default function MessagesClient() {
   // Fetch rooms for sidebar
   useEffect(() => {
     const fetchRooms = async () => {
-      setLoading(true);
       try {
         const token = localStorage.getItem("access_token");
         if (!token) {
@@ -114,62 +120,85 @@ export default function MessagesClient() {
       }
     };
 
-    fetchRooms();
+    setLoading(true);
+  fetchRooms();
+
+  // Set up polling - fetch every 60 seconds
+  const interval = setInterval(fetchRooms, 60000);
+
+  // Cleanup interval on unmount
+  return () => clearInterval(interval);
   }, []);
 
   // Load chat history when room changes
-  useEffect(() => {
-    const loadChatHistory = async () => {
-      if (!selectedRoom) return;
+useEffect(() => {
+  const loadChatHistory = async () => {
+    if (!selectedRoom) return;
 
-      setLoadingHistory(true);
-      try {
-        const token = localStorage.getItem("access_token");
-        if (!token) {
-          router.push("/login");
-          return;
+    setLoadingHistory(true);
+    try {
+      const token = localStorage.getItem("access_token");
+      if (!token) {
+        router.push("/login");
+        return;
+      }
+
+      const response = await apiClient(
+        `chat_service/get_room_history/${selectedRoom.room_id}/`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
+      );
 
-        const response = await apiClient(
-          `chat_service/get_room_history/${selectedRoom.room_id}/`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+      if (response?.data && Array.isArray(response.data)) {
+        // Transform API response to Message format
+        const formattedMessages: Message[] = response.data.map(
+          (msg: HistoryMessage) => ({
+            id: msg.id,
+            senderId: msg.sender_id,
+            senderName: msg.is_me ? "You" : selectedRoom?.name || "User",
+            content: msg.message,
+            timestamp: new Date(msg.timestamp).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+            isOwn: msg.is_me,
+            rawTimestamp: new Date(msg.timestamp), // Keep for sorting
+          })
         );
 
-        if (response?.data) {
-          const formattedMessages: Message[] = response.data.map(
-            (msg: HistoryMessage) => ({
-              id: msg.id,
-              senderId: msg.sender_id,
-              senderName: msg.is_me ? "You" : selectedRoom?.other_user_name || "User",
-              content: msg.message,
-              timestamp: new Date(msg.timestamp).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              }),
-              isOwn: msg.is_me,
-            })
-          );
-          setMessages(formattedMessages);
+        // Sort messages by timestamp (oldest first)
+        const sortedMessages = formattedMessages.sort(
+          (a, b) => a.rawTimestamp.getTime() - b.rawTimestamp.getTime()
+        );
 
-          // Scroll to bottom
-          setTimeout(() => {
-            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-          }, 100);
-        }
-      } catch (err) {
-        console.error("Failed to fetch chat history:", err);
-      } finally {
-        setLoadingHistory(false);
+        // Remove rawTimestamp before storing (optional cleanup)
+        const cleanedMessages = sortedMessages.map((msg) => {
+          const { rawTimestamp, ...rest } = msg;
+          return rest;
+        });
+
+        console.log("Sorted Messages:", cleanedMessages);
+        setMessages(cleanedMessages);
+
+        // Scroll to bottom after messages load
+        setTimeout(() => {
+          messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
       }
-    };
+    } catch (err) {
+      console.error("Failed to fetch chat history:", err);
+      setMessages([]); // Set empty array on error
+    } finally {
+      setLoadingHistory(false);
+    }
+  };
 
-    loadChatHistory();
-  }, [selectedRoom]);
+  loadChatHistory();
+}, [selectedRoom, router]);
 
   // Initialize WebSocket
   useEffect(() => {
@@ -228,7 +257,7 @@ export default function MessagesClient() {
                     hour: "2-digit",
                     minute: "2-digit",
                   }),
-                  senderName: selectedRoom?.other_user_name || "User",
+                  senderName: selectedRoom?.name || "User",
                 },
               ]);
 
@@ -268,41 +297,64 @@ export default function MessagesClient() {
     };
   }, [selectedRoom, currentUserId]);
 
-  const handleSendMessage = () => {
-    if (!newMessage.trim() || !wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
+  const handleSendMessage = async () => {
+  if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) return;
+
+  const hasText = newMessage.trim();
+  const hasFile = !!attachedFile;
+
+  if (!hasText && !hasFile) return;
+
+  let fileUrl = null;
+  let fileType = null;
+  let fileName = null;
+
+  // Upload file first
+  if (hasFile && attachedFile) {
+    setUploading(true);
+    const result = await uploadToCloudinary(attachedFile);
+    setUploading(false);
+
+    if (!result.success || !result.url) {
+      alert("Upload failed: " + (result.error || ""));
       return;
     }
 
-    wsRef.current.send(
-      JSON.stringify({
-        type: "chat_message",
-        message: newMessage,
-      })
-    );
+    fileUrl = result.url;
+    fileType = attachedFile.type;
+    fileName = result.filename || attachedFile.name;
+  }
 
-    // Optimistic update
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        content: newMessage,
-        senderId: currentUserId,
-        senderName: "You",
-        timestamp: new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-        isOwn: true,
-      },
-    ]);
+  // Send via WebSocket
+  const payload: any = { type: "chat_message" };
+  if (hasText) payload.message = newMessage;
+  if (fileUrl) {
+    payload.file_url = fileUrl;
+    payload.file_type = fileType;
+    payload.file_name = fileName;
+  }
 
-    setNewMessage("");
+  wsRef.current.send(JSON.stringify(payload));
 
-    // Scroll to bottom
-    setTimeout(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, 100);
-  };
+  // Optimistic update
+  setMessages(prev => [...prev, {
+    id: Date.now(),
+    content: hasText ? newMessage : "",
+    senderId: currentUserId!,
+    senderName: "You",
+    isOwn: true,
+    timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    fileUrl,
+    fileType,
+    fileName,
+  }]);
+
+  setNewMessage("");
+  setAttachedFile(null);
+  setFilePreview(null);
+
+  setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
+};
 
   const handleRoomSelect = (room: Room) => {
     setSelectedRoom(room);
@@ -310,7 +362,7 @@ export default function MessagesClient() {
   };
 
   const filteredRooms = rooms.filter((room) =>
-    (room?.other_user_name || room?.other_user_id)
+    (room?.name || room?.other_user_id)
       .toLowerCase()
       .includes(searchQuery.toLowerCase())
   );
@@ -328,8 +380,32 @@ export default function MessagesClient() {
     };
   };
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+
+  // Optional: limit size
+  if (file.size > 15 * 1024 * 1024) {
+    alert("File too large (max 15MB)");
+    return;
+  }
+
+  setAttachedFile(file);
+
+  if (file.type.startsWith("image/") || file.type.startsWith("video/")) {
+    const reader = new FileReader();
+    reader.onload = () => setFilePreview(reader.result as string);
+    reader.readAsDataURL(file);
+  } else {
+    setFilePreview(null);
+  }
+
+  // Clear input
+  if (fileInputRef.current) fileInputRef.current.value = "";
+};
+
   return (
-    <div className="h-screen bg-gray-50 flex relative">
+    <div className="h-[calc(100vh-48px)] bg-gray-50 flex relative">
       {/* Mobile Overlay */}
       {showSidebar && (
         <div
@@ -406,7 +482,7 @@ export default function MessagesClient() {
                   <div className="flex items-center gap-3">
                     <div className="relative flex-shrink-0">
                       <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold">
-                        {room?.other_user_name?.[0] ||
+                        {room?.name?.[0] ||
                           room?.other_user_id?.[0] ||
                           "?"}
                       </div>
@@ -414,7 +490,7 @@ export default function MessagesClient() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
                         <p className="font-semibold text-sm truncate text-gray-900">
-                          {room?.other_user_name || room?.other_user_id}
+                          {room?.name || room?.other_user_id}
                         </p>
                         <span className="text-xs text-gray-400 ml-2">
                           {time}
@@ -447,17 +523,27 @@ export default function MessagesClient() {
                     <MoreHorizontal className="h-5 w-5" />
                   </button>
                   <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold">
-                    {selectedRoom?.other_user_name?.[0] ||
+                    {selectedRoom?.name?.[0] ||
                       selectedRoom?.other_user_id?.[0] ||
                       "?"}
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="font-bold text-gray-900 truncate">
-                      {selectedRoom?.other_user_name || selectedRoom?.other_user_id}
+                      {selectedRoom?.name || selectedRoom?.other_user_id}
                     </p>
                     <p className="text-sm text-gray-500">Active now</p>
                   </div>
                 </div>
+                <button
+                    onClick={() => {
+                      router.push(
+                        `/brand-dashboard/influencers/${selectedRoom?.other_user_id}/send-proposal`
+                      );
+                    }}
+                    className="px-4 py-2 bg-secondary text-primary rounded-xl font-semibold transition-all duration-200 cursor-pointer text-sm shadow-sm"
+                  >
+                    Hire
+                  </button>
               </div>
             </div>
 
@@ -482,7 +568,7 @@ export default function MessagesClient() {
                     <div className="flex items-end gap-2 max-w-[85%] sm:max-w-xs lg:max-w-md">
                       {!message.isOwn && (
                         <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold text-xs flex-shrink-0">
-                          {selectedRoom?.other_user_name?.[0] ||
+                          {selectedRoom?.name?.[0] ||
                             selectedRoom?.other_user_id?.[0] ||
                             "?"}
                         </div>
@@ -494,9 +580,22 @@ export default function MessagesClient() {
                             : "bg-white text-gray-900 rounded-bl-md border border-gray-200"
                         }`}
                       >
-                        <p className="text-sm break-words leading-relaxed">
-                          {message.content}
-                        </p>
+                        {/* Show image/video/file */}
+{message.fileUrl && (
+  <div className="mb-2">
+    {message.fileType?.startsWith("image/") ? (
+      <img src={message.fileUrl} alt="sent" className="rounded-lg max-w-full" />
+    ) : message.fileType?.startsWith("video/") ? (
+      <video src={message.fileUrl} controls className="rounded-lg max-w-full" />
+    ) : (
+      <a href={message.fileUrl} target="_blank" className="text-blue-300 underline flex items-center gap-1">
+        <Paperclip className="h-4 w-4" /> {message.fileName}
+      </a>
+    )}
+  </div>
+)}
+
+{message.content && <p className="text-sm break-words">{message.content}</p>}
                         <p
                           className={`text-xs mt-1 ${
                             message.isOwn
@@ -514,37 +613,92 @@ export default function MessagesClient() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input Area */}
             <div className="bg-white border-t border-gray-200 p-4 sticky bottom-0">
-              <div className="flex items-center gap-3">
-                <button className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all duration-200 flex-shrink-0">
-                  <Paperclip className="h-5 w-5" />
-                </button>
-                <div className="flex-1 relative">
-                  <input
-                    type="text"
-                    placeholder="Type a message..."
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    onKeyPress={(e) =>
-                      e.key === "Enter" && handleSendMessage()
-                    }
-                    className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-primary focus:border-primary outline-none text-sm bg-gray-50 focus:bg-white transition-all duration-200"
-                  />
-                </div>
-                <button
-                  onClick={handleSendMessage}
-                  disabled={
-     !newMessage.trim() || 
-     !wsRef.current || 
-     wsRef.current.readyState !== WebSocket.OPEN
-   }
-                  className="p-3 bg-primary hover:bg-primary-dark disabled:bg-gray-300 text-white rounded-full transition-all duration-200 flex-shrink-0 shadow-sm disabled:cursor-not-allowed"
-                >
-                  <Send className="h-5 w-5" />
-                </button>
-              </div>
+  {/* File Preview */}
+  {attachedFile && (
+    <div className="mb-4 flex items-center gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-200">
+      {filePreview ? (
+        <div className="relative">
+          {attachedFile.type.startsWith("image/") ? (
+            <img src={filePreview} alt="Preview" className="w-20 h-20 object-cover rounded-lg" />
+          ) : attachedFile.type.startsWith("video/") ? (
+            <video src={filePreview} controls className="w-20 h-20 object-cover rounded-lg" />
+          ) : (
+            <div className="w-20 h-20 bg-gray-200 border-2 border-dashed rounded-lg flex items-center justify-center">
+              <Paperclip className="h-8 w-8 text-gray-500" />
             </div>
+          )}
+          {uploading && (
+            <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center">
+              <Loader className="h-6 w-6 text-white animate-spin" />
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="w-20 h-20 bg-gray-200 border-2 border-dashed rounded-lg flex items-center justify-center">
+          <Paperclip className="h-8 w-8 text-gray-500" />
+        </div>
+      )}
+
+      <div className="flex-1">
+        <p className="text-sm font-medium truncate max-w-xs">{attachedFile.name}</p>
+        <p className="text-xs text-gray-500">
+          {(attachedFile.size / 1024 / 1024).toFixed(2)} MB
+        </p>
+      </div>
+
+      <button
+        onClick={() => {
+          setAttachedFile(null);
+          setFilePreview(null);
+        }}
+        className="text-red-500 hover:bg-red-50 p-2 rounded-full transition"
+      >
+        ×
+      </button>
+    </div>
+  )}
+
+  <div className="flex items-center gap-3">
+    <button
+      type="button"
+      onClick={() => fileInputRef.current?.click()}
+      className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all duration-200 flex-shrink-0"
+    >
+      <Paperclip className="h-5 w-5" />
+    </button>
+
+    <input
+      type="text"
+      placeholder="Type a message..."
+      value={newMessage}
+      onChange={(e) => setNewMessage(e.target.value)}
+      onKeyPress={(e) => e.key === "Enter" && !e.shiftKey && handleSendMessage()}
+      className="flex-1 px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-primary outline-none text-sm bg-gray-50 focus:bg-white transition"
+    />
+
+    <button
+      onClick={handleSendMessage}
+      disabled={uploading || (!newMessage.trim() && !attachedFile)}
+      className="p-3 bg-primary hover:bg-primary-dark disabled:bg-gray-300 text-white rounded-full transition-all shadow-sm disabled:cursor-not-allowed relative"
+    >
+      {uploading ? (
+        <Loader className="h-5 w-5 animate-spin" />
+      ) : (
+        <Send className="h-5 w-5" />
+      )}
+    </button>
+  </div>
+
+  {/* Hidden file input */}
+  <input
+    type="file"
+    ref={fileInputRef}
+    className="hidden"
+    accept="image/*,video/*,.pdf,.doc,.docx,.txt"
+    onChange={handleFileSelect}
+  />
+</div>
           
         
       </div>

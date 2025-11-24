@@ -1,211 +1,87 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CheckCircle2, XCircle, AlertCircle } from "lucide-react";
 import { PricingSection } from "@/components/pricing-section";
-import { apiClient } from "@/lib/apiClient";
 import { useRouter } from "next/navigation";
-
-type BillingCycle = "monthly" | "yearly";
-type Status = "active" | "canceled" | "expired";
-
-interface Subscription {
-  id: string;
-  name: string;
-  price: number;
-  billingCycle: BillingCycle;
-  renewalDate: string;
-  status: Status;
-}
-
-const mockCurrentSubscription: Subscription = {
-  id: "sub_123",
-  name: "Pro",
-  price: 20,
-  billingCycle: "monthly",
-  renewalDate: "2025-10-01",
-  status: "active",
-};
+import { apiClient } from "@/lib/apiClient";
 
 export default function SubscriptionPage() {
-  const [currentSubscription, setCurrentSubscription] = useState<Subscription>(
-    mockCurrentSubscription
-  );
-  const [showCancelModal, setShowCancelModal] = useState(false);
-  const [showUpdateModal, setShowUpdateModal] = useState(false);
-  const [planData, setPlanData] = useState({});
-  const [portalData, setPortalData] = useState();
+  const [planData, setPlanData] = useState(null); 
+  const [pricingData, setPricingData] = useState([]); 
+  const [portalData, setPortalData] = useState(null); 
+  const [loading, setLoading] = useState(true);
+
   const router = useRouter();
+  
 
-  const handleCancel = () => {
-    setCurrentSubscription((prev) => ({ ...prev, status: "canceled" }));
-    setShowCancelModal(false);
-  };
-
-  const handleResume = () => {
-    setCurrentSubscription((prev) => ({ ...prev, status: "active" }));
-  };
 
   useEffect(() => {
-    const fetchSubscriptionInformation = async () => {
+    const loadSubscriptionPageData = async () => {
       try {
-        const res = await apiClient(
+        // Get user’s current subscription
+        const subRes = await apiClient(
           "subscription_service/get_user_subscription_information/",
           { auth: true, method: "GET" }
         );
 
-        if (res.status === "success") {
-          console.log("Subscription Info:", res.data);
-          setPlanData(res.data);
-        } else {
-          console.warn("No subscription info:", res.error);
+        if (subRes.status === "success") {
+          setPlanData(subRes.data);
         }
-      } catch (error) {
-        console.error("Failed to fetch subscription info:", error);
-      }
-    };
-    const fetchcustomerPortal = async () => {
-      try {
-        const res = await apiClient("subscription_service/customer-portal/", {
+
+        // Get Stripe portal URL
+        const portalRes = await apiClient("subscription_service/customer-portal/", {
           auth: true,
           method: "GET",
         });
 
-        if (res.status === "success") {
-          console.log("Subscription Info:", res.data);
-          setPortalData(res.data.portal_url);
-        } else {
-          console.warn("No subscription info:", res.error);
+        if (portalRes.status === "success") {
+          setPortalData(portalRes.data.portal_url);
         }
+
+        // Get all subscription plans
+        const plansRes = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}subscription_service/get_subscription_plans/`
+        );
+
+        // Parse the JSON response
+        const plansData = await plansRes.json();
+        console.log("Pricing Plans:", plansData);
+
+        // Check if the response was successful
+        if (plansData.status === "success") {
+          setPricingData(plansData);
+        } else {
+          console.warn("Failed to fetch plans:", plansData.error);
+        }
+
       } catch (error) {
-        console.error("Failed to fetch subscription info:", error);
+        console.error("Failed loading subscription page:", error);
+      } finally {
+        setLoading(false);
       }
     };
-    fetchcustomerPortal();
 
-    fetchSubscriptionInformation();
+    loadSubscriptionPageData();
   }, []);
 
+  if (loading) {
+    return <div className="py-10 text-center text-gray-600">Loading...</div>;
+  }
+
   return (
-    <div className="  mx-auto">
-      {/* <h1 className="text-2xl font-bold mb-6 text-primary">
-        Subscription Management
-      </h1> */}
+    <div className="mx-auto">
+      {/* If planData exists, pass current plan name to PricingSection */}
+      {/* <PricingSection planName={planData?.plan_name} initialData={pricingData}/> */}
 
-      {/* Current Plan */}
-      {/* <div className="bg-white rounded-xl shadow border p-6 mb-10">
-        <h2 className="text-xl font-semibold mb-4 text-primary">
-          Current Plan
-        </h2>
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-          <div>
-            <p className="text-lg font-medium text-gray-900">
-              {planData.plan_name} Plan
-            </p>
-            <p className="text-gray-600">
-              ${currentSubscription.price}/{currentSubscription.billingCycle}
-            </p>
-            <p className="text-sm text-gray-500">
-              Renewal Date:{" "}
-              {new Date(planData.current_period_end).toLocaleDateString(
-                "en-US",
-                { day: "numeric", month: "long", year: "numeric" }
-              )}
-            </p>
-            <p className="flex items-center gap-1 text-sm mt-2">
-              {currentSubscription.status === "active" && (
-                <CheckCircle2 className="w-4 h-4 text-green-500" />
-              )}
-              {currentSubscription.status === "canceled" && (
-                <XCircle className="w-4 h-4 text-secondary" />
-              )}
-              {currentSubscription.status === "expired" && (
-                <AlertCircle className="w-4 h-4 text-secondary" />
-              )}
-              Status: <span className="capitalize">{planData.status}</span>
-            </p>
-          </div>
-
-          <div className="flex gap-3 mt-4 md:mt-0">
-            {currentSubscription.status === "active" && (
-              <>
-                <button
-                  onClick={() => router.push(portalData)}
-                  className="px-4 py-2 bg-secondary text-primary font-semibold rounded-lg hover:bg-[var(--secondaryhover)]"
-                >
-                  Update Plan
-                </button>
-                <button
-                  onClick={() => setShowCancelModal(true)}
-                  className="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200"
-                >
-                  Cancel Plan
-                </button>
-              </>
-            )}
-            {currentSubscription.status === "canceled" && (
-              <button
-                onClick={handleResume}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-              >
-                Resume Plan
-              </button>
-            )}
-          </div>
-        </div>
-      </div> */}
-
-      {/* Available Plans */}
-      {/* <h2 className="text-xl font-semibold mb-4">Available Plans</h2> */}
-      <PricingSection planName={planData.plan_name}/>
-
-      {/* Cancel Confirmation Modal */}
-      {showCancelModal && (
-        <div className="fixed inset-0 bg-black/40  flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-lg p-6 max-w-md w-full">
-            <h3 className="text-lg font-semibold mb-4">Cancel Plan?</h3>
-            <p className="text-gray-600 mb-6">
-              Are you sure you want to cancel your current plan? You will lose
-              access at the end of your billing period.
-            </p>
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setShowCancelModal(false)}
-                className="px-4 py-2 rounded-lg border hover:bg-gray-100"
-              >
-                Go Back
-              </button>
-              <button
-                onClick={handleCancel}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-              >
-                Confirm Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Update Plan Modal */}
-      {showUpdateModal && (
-        <div className="fixed inset-0 bg-black/50  flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-lg p-6 max-w-md w-full">
-            <h3 className="text-lg font-semibold mb-4">Update Plan</h3>
-            <p className="text-gray-600 mb-6">
-              This will take you to checkout flow to update your plan.
-            </p>
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setShowUpdateModal(false)}
-                className="px-4 py-2 rounded-lg border hover:bg-gray-100"
-              >
-                Cancel
-              </button>
-              <button className="px-4 py-2 bg-secondary text-white rounded-lg hover:bg-[var(--secondaryhover)]">
-                Continue to Checkout
-              </button>
-            </div>
-          </div>
+      {/* If user clicks Upgrade/Change Plan */}
+      {portalData && (
+        <div className="text-center mt-6">
+          <button
+            onClick={() => router.push(portalData)}
+            className="px-5 py-2 bg-secondary text-primary font-semibold rounded-lg hover:bg-[var(--secondaryhover)]"
+          >
+            Manage Billing in Stripe
+          </button>
         </div>
       )}
     </div>

@@ -6,7 +6,7 @@ import HowItWorks from "@/components/HowItWorks";
 import { PricingSection } from "@/components/pricing-section";
 import WhySocial from "@/components/WhySocial";
 import React from "react";
-export const revalidate = 60; // ISR: re-fetch every 60s
+export const revalidate = 60; 
 
 async function getPlans() {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}subscription_service/get_subscription_plans/`, {
@@ -24,7 +24,7 @@ const page = async() => {
       <HowItWorks />
       <WhySocial />
       <Feature />
-      <PricingSection initialData={data}/>
+      <PricingSection initialData={data} planName="Your Plan"/>
       <GlobalSection />
       {/* <FAQSection /> */}
     </div>

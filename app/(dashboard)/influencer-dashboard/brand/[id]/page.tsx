@@ -199,14 +199,16 @@ export default function BrandProfilePage() {
             </div>
 
             <div className="flex gap-3">
+              <Link href={`/influencer-dashboard/messages?id=${brand.id}`}>
               <button className="bg-yellow-500 hover:bg-[var(--secondaryhover)] text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2">
                 <MessageCircle className="w-4 h-4" />
                 Message
               </button>
-              <button className="border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2">
+              </Link>
+              {/* <button className="border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2">
                 <Bookmark className="w-4 h-4" />
                 Save
-              </button>
+              </button> */}
             </div>
           </div>
         </div>

@@ -1,8 +1,7 @@
 "use client";
 
 import { apiClient } from "@/lib/apiClient";
-import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { SkeletonCard } from "./SkeletoCard";
 
 interface Price {
@@ -31,52 +30,15 @@ export function PricingSection({ planName,initialData }: {initialData?: ApiRespo
   const [isYearly, setIsYearly] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  console.log(initialData.data);
+  const [plans, setPlans] = useState<Plan[]>(initialData?.data || []);
+  console.log(initialData);
   
-  const plans = initialData.data;
-  // Replace with your actual base URL
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-
-  // useEffect(() => {
-  //   const fetchPlans = async () => {
-  //     try {
-  //       setLoading(true);
-  //       const response = await apiClient(
-  //         `subscription_service/get_subscription_plans/`,
-  //         {
-  //           method: "GET",
-  //         }
-  //       );
-
-  //       // if (!response.ok) {
-  //       //   throw new Error(`HTTP error! status: ${response.status}`);
-  //       // }
-
-  //       const result: ApiResponse = await response;
-
-  //       if (result.status === "success" && result.data) {
-  //         // Sort plans: Micro-Influencer -> Businesses -> Both
-  //         const sortedPlans = result.data.sort((a, b) => {
-  //           const order = ["Micro-Influencer", "Businesses", "Both"];
-  //           return order.indexOf(a.name) - order.indexOf(b.name);
-  //         });
-  //         setPlans(sortedPlans);
-  //         console.log(sortedPlans);
-  //       } else {
-  //         throw new Error("Invalid response structure");
-  //       }
-  //     } catch (err) {
-  //       setError(err instanceof Error ? err.message : "Failed to load plans");
-  //       console.error("Error fetching plans:", err);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchPlans();
-  // }, [baseUrl]);
-
-  // Helper to get price for current interval
+  useEffect(() => {
+    if (initialData?.data && initialData.data.length > 0) {
+      setPlans(initialData.data);
+      setLoading(false);
+    }
+  }, [initialData]);
   const getPriceForInterval = (prices: Price[]) => {
     return (
       prices.find((p) => p.interval === (isYearly ? "year" : "month")) ||

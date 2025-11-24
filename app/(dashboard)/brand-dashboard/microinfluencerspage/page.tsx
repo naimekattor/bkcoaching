@@ -9,7 +9,7 @@ import { apiClient } from "@/lib/apiClient";
 import { SkeletonCard } from "@/components/SkeletoCard";
 import { industriesNiches } from "@/constants/niches";
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 10;
 
 interface Influencer {
   id: string;
@@ -19,6 +19,13 @@ interface Influencer {
   socialLinks: string[];
   niche: string;
   timeZone: string;
+}
+
+interface ApiResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: any[];
 }
 
 export default function MicroInfluencersPage() {
@@ -46,8 +53,10 @@ export default function MicroInfluencersPage() {
     followers: "",
     gender: "",
   });
-  const [allInfluencers, setAllInfluencers] = useState<Influencer[]>([]);
+  const [influencers, setInfluencers] = useState<Influencer[]>([]);
   const [loading, setLoading] = useState(true);
+  const [totalCount, setTotalCount] = useState(0);
+  const [hasNextPage, setHasNextPage] = useState(false);
 
   const timeZones = [
     { value: "America/New_York", label: "Eastern (ET)" },
@@ -59,89 +68,82 @@ export default function MicroInfluencersPage() {
     { value: "Pacific/Honolulu", label: "Hawaii (HST)" },
   ];
 
-  // Fetch all influencers
+  // Fetch influencers based on current page
   useEffect(() => {
-  const fetchInfluencers = async () => {
-    try {
-      setLoading(true);
+    const fetchInfluencers = async () => {
+      try {
+        setLoading(true);
 
-      const res = await apiClient("user_service/get_all_influencers/", {
-        method: "GET",
-      });
+        // Build query params
+        const queryParams = new URLSearchParams();
+        queryParams.set("page", String(currentPage));
 
-      console.log("API Response:", res);
+        // Add filters to query if they exist
+        if (searchTerm.trim()) {
+          queryParams.set("search", searchTerm.trim());
+        }
+        if (filters.contentNiches) {
+          queryParams.set("niche", filters.contentNiches);
+        }
+        if (filters.platforms) {
+          queryParams.set("platform", filters.platforms);
+        }
+        if (filters.timeZone && filters.timeZone !== "Others") {
+          queryParams.set("timezone", filters.timeZone);
+        }
 
-      // FIX: backend returns data.results
-      const list = res.data?.results || [];
+        const res = await apiClient(
+          `user_service/get_all_influencers/?${queryParams.toString()}`,
+          {
+            method: "GET",
+          }
+        );
 
-      const normalized: Influencer[] = list.map((item: any) => {
-        const inf = item.influencer_profile || {};
-        const user = item.user || {};
+        console.log("API Response:", res);
 
-        const platforms: string[] = [];
-        if (inf.instagram_handle) platforms.push("instagram");
-        if (inf.tiktok_handle) platforms.push("tiktok");
-        if (inf.youtube_handle) platforms.push("youtube");
+        const apiData: ApiResponse = res.data;
+        const list = apiData.results || [];
 
-        return {
-          id: String(item.id),
-          name:
-            inf.display_name ||
-            `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
-            "Unknown",
-          profileImage: inf.profile_picture || "/placeholder.svg",
-          followers: inf.followers_count
-            ? `${(inf.followers_count / 1000).toFixed(1)}K`
-            : "N/A",
-          socialLinks: platforms,
-          niche: inf.content_niches?.[0] || "Unknown",
-          timeZone: inf.timezone || "Unknown",
-        };
-      });
+        const normalized: Influencer[] = list.map((item: any) => {
+          const inf = item.influencer_profile || {};
+          const user = item.user || {};
 
-      setAllInfluencers(normalized);
-    } catch (err) {
-      console.error("Failed to fetch influencers", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+          const platforms: string[] = [];
+          if (inf.instagram_handle) platforms.push("instagram");
+          if (inf.tiktok_handle) platforms.push("tiktok");
+          if (inf.youtube_handle) platforms.push("youtube");
 
-  fetchInfluencers();
-}, []);
+          return {
+            id: String(item.id),
+            name:
+              inf.display_name ||
+              `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
+              "Unknown",
+            profileImage: inf.profile_picture || "/placeholder.svg",
+            followers: inf.followers_count
+              ? `${(inf.followers_count / 1000).toFixed(1)}K`
+              : "N/A",
+            socialLinks: platforms,
+            niche: inf.content_niches?.[0] || "Unknown",
+            timeZone: inf.timezone || "Unknown",
+          };
+        });
 
+        setInfluencers(normalized);
+        setTotalCount(apiData.count);
+        setHasNextPage(apiData.next !== null);
+      } catch (err) {
+        console.error("Failed to fetch influencers", err);
+        setInfluencers([]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Filter & search
-  const filteredAndSearched = useMemo(() => {
-    let list = [...allInfluencers];
+    fetchInfluencers();
+  }, [currentPage, searchTerm, filters]);
 
-    if (searchTerm.trim()) {
-      const q = searchTerm.toLowerCase();
-      list = list.filter((c) => c.name.toLowerCase().includes(q));
-    }
-
-    if (filters.contentNiches) {
-      list = list.filter((c) => c.niche === filters.contentNiches);
-    }
-
-    if (filters.platforms) {
-      list = list.filter((c) => c.socialLinks.includes(filters.platforms));
-    }
-
-    if (filters.timeZone && filters.timeZone !== "Others") {
-      list = list.filter((c) => c.timeZone === filters.timeZone);
-    }
-
-    return list;
-  }, [allInfluencers, searchTerm, filters]);
-
-  // Pagination
-  const paginated = useMemo(() => {
-    const start = (currentPage - 1) * PAGE_SIZE;
-    return filteredAndSearched.slice(start, start + PAGE_SIZE);
-  }, [filteredAndSearched, currentPage]);
-
-  const totalPages = Math.ceil(filteredAndSearched.length / PAGE_SIZE);
+  const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
   const clearFilters = () => {
     setSearchTerm("");
@@ -160,14 +162,14 @@ export default function MicroInfluencersPage() {
 
   // Loading
   if (loading) {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {Array.from({ length: PAGE_SIZE }).map((_, i) => (
-        <SkeletonCard key={i} />
-      ))}
-    </div>
-  );
-}
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {Array.from({ length: PAGE_SIZE }).map((_, i) => (
+          <SkeletonCard key={i} />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen">
@@ -180,145 +182,144 @@ export default function MicroInfluencersPage() {
         </div>
 
         {/* Search + Filters */}
-       <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-8 shadow-lg">
-  {/* Search */}
-  <div className="flex flex-col md:flex-row gap-4 mb-6">
-    <div className="flex-1 relative">
-      <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-      <input
-        type="text"
-        placeholder="Search by name or keyword..."
-        value={searchTerm}
-        onChange={(e) => {
-          setSearchTerm(e.target.value);
-          setPage(1);
-        }}
-        className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition"
-      />
-    </div>
-    <button
-      onClick={() => setPage(1)}
-      className="px-6 md:px-8 py-3 bg-secondary text-white rounded-xl hover:bg-[var(--secondaryhover)] transition-colors font-medium flex items-center gap-2 justify-center shadow-sm"
-    >
-      <Search className="w-4 h-4" />
-      Search
-    </button>
-  </div>
+        <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-8 shadow-lg">
+          {/* Search */}
+          <div className="flex flex-col md:flex-row gap-4 mb-6">
+            <div className="flex-1 relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search by name or keyword..."
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setPage(1);
+                }}
+                className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition"
+              />
+            </div>
+            <button
+              onClick={() => setPage(1)}
+              className="px-6 md:px-8 py-3 bg-secondary text-white rounded-xl hover:bg-[var(--secondaryhover)] transition-colors font-medium flex items-center gap-2 justify-center shadow-sm"
+            >
+              <Search className="w-4 h-4" />
+              Search
+            </button>
+          </div>
 
-  {/* Filters */}
-  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-    {/* Content Niches */}
-    <select
-  value={filters.contentNiches}
-  onChange={(e) => {
-    setFilters({ ...filters, contentNiches: e.target.value });
-    setPage(1);
-  }}
-  className="px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition"
->
-  <option value="">Content Niches</option>
-  {industriesNiches.map((niche, index) => (
-    <option key={index} value={niche}>
-      {niche}
-    </option>
-  ))}
-</select>
+          {/* Filters */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {/* Content Niches */}
+            <select
+              value={filters.contentNiches}
+              onChange={(e) => {
+                setFilters({ ...filters, contentNiches: e.target.value });
+                setPage(1);
+              }}
+              className="px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition"
+            >
+              <option value="">Content Niches</option>
+              {industriesNiches.map((niche, index) => (
+                <option key={index} value={niche}>
+                  {niche}
+                </option>
+              ))}
+            </select>
 
-    {/* Budget */}
-    <select
-      value={filters.budgetRange}
-      onChange={(e) => {
-        setFilters({ ...filters, budgetRange: e.target.value });
-        setPage(1);
-      }}
-      className="px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition"
-    >
-      <option value="">Budget Range</option>
-      <option value="0-100">$0–$100</option>
-      <option value="100-499">$101–$499</option>
-      <option value="500+">$500+</option>
-    </select>
+            {/* Budget */}
+            <select
+              value={filters.budgetRange}
+              onChange={(e) => {
+                setFilters({ ...filters, budgetRange: e.target.value });
+                setPage(1);
+              }}
+              className="px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition"
+            >
+              <option value="">Budget Range</option>
+              <option value="0-100">$0–$100</option>
+              <option value="100-499">$101–$499</option>
+              <option value="500+">$500+</option>
+            </select>
 
-    {/* Platforms */}
-    <select
-      value={filters.platforms}
-      onChange={(e) => {
-        setFilters({ ...filters, platforms: e.target.value });
-        setPage(1);
-      }}
-      className="px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition"
-    >
-      <option value="">Platforms</option>
-      <option value="instagram">Instagram</option>
-      <option value="tiktok">TikTok</option>
-      <option value="youtube">YouTube</option>
-    </select>
+            {/* Platforms */}
+            <select
+              value={filters.platforms}
+              onChange={(e) => {
+                setFilters({ ...filters, platforms: e.target.value });
+                setPage(1);
+              }}
+              className="px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition"
+            >
+              <option value="">Platforms</option>
+              <option value="instagram">Instagram</option>
+              <option value="tiktok">TikTok</option>
+              <option value="youtube">YouTube</option>
+            </select>
 
-    {/* Time Zone */}
-    <select
-      value={filters.timeZone}
-      onChange={(e) => {
-        setFilters({ ...filters, timeZone: e.target.value });
-        setPage(1);
-      }}
-      className="px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition"
-    >
-      <option value="">Time Zone</option>
-      {timeZones.map((tz) => (
-        <option key={tz.value} value={tz.value}>
-          {tz.label}
-        </option>
-      ))}
-      <option value="Others">Others</option>
-    </select>
+            {/* Time Zone */}
+            <select
+              value={filters.timeZone}
+              onChange={(e) => {
+                setFilters({ ...filters, timeZone: e.target.value });
+                setPage(1);
+              }}
+              className="px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition"
+            >
+              <option value="">Time Zone</option>
+              {timeZones.map((tz) => (
+                <option key={tz.value} value={tz.value}>
+                  {tz.label}
+                </option>
+              ))}
+              <option value="Others">Others</option>
+            </select>
 
-    {/* Followers */}
-    <div className="relative">
-      <select
-        value={filters.followers}
-        onChange={(e) => {
-          setFilters({ ...filters, followers: e.target.value });
-          setPage(1);
-        }}
-        className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none pr-10 transition"
-      >
-        <option value="">Audience Reach</option>
-        <option value="0-1000">0 – 1K</option>
-        <option value="1001-5000">1K – 5K</option>
-        <option value="5001-10000">5K – 10K</option>
-      </select>
-      <HelpCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-    </div>
+            {/* Followers */}
+            <div className="relative">
+              <select
+                value={filters.followers}
+                onChange={(e) => {
+                  setFilters({ ...filters, followers: e.target.value });
+                  setPage(1);
+                }}
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none pr-10 transition"
+              >
+                <option value="">Audience Reach</option>
+                <option value="0-1000">0 – 1K</option>
+                <option value="1001-5000">1K – 5K</option>
+                <option value="5001-10000">5K – 10K</option>
+              </select>
+              <HelpCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+            </div>
 
-    {/* Gender */}
-    <select
-      value={filters.gender}
-      onChange={(e) => {
-        setFilters({ ...filters, gender: e.target.value });
-        setPage(1);
-      }}
-      className="px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition"
-    >
-      <option value="">Gender</option>
-      <option value="male">Male</option>
-      <option value="female">Female</option>
-      <option value="non-binary">No preference</option>
-    </select>
-  </div>
+            {/* Gender */}
+            <select
+              value={filters.gender}
+              onChange={(e) => {
+                setFilters({ ...filters, gender: e.target.value });
+                setPage(1);
+              }}
+              className="px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition"
+            >
+              <option value="">Gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="non-binary">No preference</option>
+            </select>
+          </div>
 
-  {/* Clear Filters */}
-  {hasActiveFilters && (
-    <div className="mt-4 flex justify-end">
-      <button
-        onClick={clearFilters}
-        className="text-sm text-gray-600 hover:text-gray-900 underline"
-      >
-        Clear all filters
-      </button>
-    </div>
-  )}
-</div>
-
+          {/* Clear Filters */}
+          {hasActiveFilters && (
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={clearFilters}
+                className="text-sm text-gray-600 hover:text-gray-900 underline"
+              >
+                Clear all filters
+              </button>
+            </div>
+          )}
+        </div>
 
         {/* Results */}
         <div className="mb-6">
@@ -327,12 +328,12 @@ export default function MicroInfluencersPage() {
               Featured Micro-influencers
             </h2>
             <p className="text-sm text-gray-600">
-              Showing {paginated.length} of {filteredAndSearched.length}
+              Showing {influencers.length} of {totalCount}
             </p>
           </div>
 
           {/* Grid */}
-          {paginated.length === 0 ? (
+          {influencers.length === 0 ? (
             <div className="text-center py-16">
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Search className="w-8 h-8 text-gray-400" />
@@ -346,7 +347,7 @@ export default function MicroInfluencersPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {paginated.map((creator) => (
+              {influencers.map((creator) => (
                 <div
                   key={creator.id}
                   className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-lg transition-shadow"
@@ -422,7 +423,9 @@ export default function MicroInfluencersPage() {
                       </button>
                     </Link>
                     <button
-                      onClick={() => router.push(`/brand-dashboard/messages?id=${creator.id}`)}
+                      onClick={() =>
+                        router.push(`/brand-dashboard/messages?id=${creator.id}`)
+                      }
                       className="flex-1 px-4 py-2 bg-secondary text-primary rounded-lg hover:bg-[var(--secondaryhover)] transition-colors text-sm font-medium"
                     >
                       Message

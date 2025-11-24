@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { LogOut } from "lucide-react";
 
-export function Sidebar({ links = [],setShowSideBar }) {
+export function Sidebar({ links = [] ,setShowSideBar}) {
   const pathname = usePathname() || "";
   const router = useRouter();
   const { user, logout } = useAuthStore();

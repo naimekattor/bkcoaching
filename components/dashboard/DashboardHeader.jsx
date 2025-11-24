@@ -23,7 +23,7 @@ export function DashboardHeader() {
             </div>
             <div>
               <h2 className="text-xl font-bold text-slate-800">
-                {user?.business_name}
+                {user?.brand_profile?.business_name}
               </h2>
               <p className="text-slate-600">Skincare & Wellness | Remote</p>
             </div>
