@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { LogOut } from "lucide-react";
 
-export function Sidebar({ links = [] ,setShowSideBar}) {
+export function Sidebar({ links = [], setShowSideBar }) {
   const pathname = usePathname() || "";
   const router = useRouter();
   const { user, logout } = useAuthStore();
@@ -44,7 +44,10 @@ export function Sidebar({ links = [] ,setShowSideBar}) {
                 : "text-slate-300 hover:bg-primary hover:text-white hover:text-white"
             }`;
             return (
-              <li key={item.name} onClick={()=>setShowSideBar(false)}>
+              <li
+                key={item.name}
+                onClick={() => setShowSideBar?.(false)}
+              >
                 <Link href={item.path} className={linkClass}>
                   <span className="text-lg">{item.icon}</span>
                   <span>{item.name}</span>

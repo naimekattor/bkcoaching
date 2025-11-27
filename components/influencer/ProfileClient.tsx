@@ -89,7 +89,28 @@ const formatIdToField = Object.fromEntries(
   Object.entries(fieldToFormatId).map(([k, v]) => [v, k])
 );
 
-export default function ProfileClient({ initialData }: { initialData: any }) {
+interface InfluencerProfileData {
+  content_niches?: string | null;
+  content_formats?: string | null;
+  payment_preferences?: string | null;
+  rate_range_for_affiliate_marketing_percent?: string;
+  display_name?: string | null;
+  short_bio?: string | null;
+  instagram_handle?: string | null;
+  tiktok_handle?: string | null;
+  youtube_handle?: string | null;
+  twitter_handle?: string | null;
+  linkedin_handle?: string | null;
+  whatsapp_handle?: string | null;
+  profile_picture?: string | null;
+  [key: string]: string | null | undefined;
+}
+
+export default function ProfileClient({
+  initialData,
+}: {
+  initialData: InfluencerProfileData;
+}) {
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -160,7 +181,11 @@ export default function ProfileClient({ initialData }: { initialData: any }) {
     if (!file) return;
     setLoading(true);
     try {
-      const url = await uploadToCloudinary(file);
+      const { url } = await uploadToCloudinary(file);
+      if (!url) {
+        toast.error("Upload failed");
+        return;
+      }
       setImagePreview(url);
       toast.success("Image uploaded!");
     } catch (err) {

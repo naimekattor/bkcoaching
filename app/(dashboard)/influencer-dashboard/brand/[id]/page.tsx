@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import {
   ArrowLeft,
   MessageCircle,
-  Bookmark,
   Copy,
   Star,
   MapPin,
@@ -26,6 +25,39 @@ import { notFound, useParams } from "next/navigation";
 import { apiClient } from "@/lib/apiClient";
 import type { Brand } from "@/types/brand";
 
+interface BrandProfileResponse {
+  id?: string | number;
+  business_name?: string;
+  short_bio?: string;
+  logo?: string;
+  is_verified?: boolean;
+  timezone?: string;
+  website?: string;
+  email?: string;
+  phone?: string;
+  instagram_handle?: string;
+  tiktok_handle?: string;
+  linkedin_profile?: string;
+  x_handle?: string;
+  mission?: string;
+  business_type?: string;
+  contact_person_title?: string;
+  designation?: string;
+  campaigns_total?: number;
+  campaigns_creators?: number;
+  campaigns_avg_rating?: number;
+  campaigns_total_invested?: number;
+  active_campaigns?: unknown[];
+  reviews?: unknown[];
+  resources?: unknown[];
+  platforms?: string[];
+  youtube_handle?: string;
+}
+
+interface BrandResponse {
+  brand_profile?: BrandProfileResponse;
+}
+
 export default function BrandProfilePage() {
   const { id } = useParams<{ id: string }>();
   const [brand, setBrand] = useState<Brand | null>(null);
@@ -44,8 +76,8 @@ export default function BrandProfilePage() {
         });
 
         // ---- Normalise API → Brand ----
-        const raw = res.data?.brand_profile ?? {};
-        console.log(raw);
+        const raw =
+          (res.data as BrandResponse | undefined)?.brand_profile ?? {};
 
         const platforms: string[] = Array.isArray(raw.platforms)
           ? raw.platforms
@@ -57,22 +89,22 @@ export default function BrandProfilePage() {
           description: raw.short_bio ?? "",
           logo: raw.logo ?? undefined,
           verified: raw.is_verified ?? false,
-          location: raw.timezone ?? "—",
+          location: raw.timezone ?? "",
           website: raw.website ?? "user.com",
-          email: raw.email ?? "user@domain.com",
-          phone: raw.phone ?? "—",
+          email: raw.email ?? "",
+          phone: raw.phone ?? "",
           socialLinks: {
-            instagram: platforms.includes("instagram") ? "#" : undefined,
-            tiktok: platforms.includes("tiktok") ? "#" : undefined,
-            youtube: platforms.includes("youtube") ? "#" : undefined,
-            linkedin: platforms.includes("linkedin") ? "#" : undefined,
-            twitter: platforms.includes("twitter") ? "#" : undefined,
+            instagram: raw?.instagram_handle,
+            tiktok: raw?.tiktok_handle,
+            youtube: raw?.youtube_handle,
+            linkedin: raw?.linkedin_profile,
+            twitter: raw?.x_handle,
           },
-          mission: raw.mission ?? "—",
-          businessType: raw.business_type ?? "—",
+          mission: raw.mission ?? "",
+          businessType: raw.business_type ?? "",
           contactPerson: {
-            name: raw.business_name ?? "—",
-            title: raw.contact_person_title ?? "—",
+            name: raw.business_name ?? "",
+            title: raw.contact_person_title ?? "",
           },
           // ---- Campaign stats (fallback to 0) ----
           campaigns: {
@@ -90,10 +122,18 @@ export default function BrandProfilePage() {
         };
 
         setBrand(normalised);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Brand fetch error:", err);
-        // 404 from backend → treat as not-found
-        if (err?.response?.status === 404) {
+        const status =
+          typeof err === "object" &&
+          err !== null &&
+          "response" in err &&
+          typeof (err as { response?: { status?: number } }).response ===
+            "object" &&
+          (err as { response?: { status?: number } }).response !== null
+            ? (err as { response?: { status?: number } }).response?.status
+            : undefined;
+        if (status === 404) {
           notFound();
         }
       } finally {
@@ -188,18 +228,18 @@ export default function BrandProfilePage() {
                       </a>
                     </div>
                   )}
-                  {brand.location && (
+                  {/* {brand.location && (
                     <div className="flex items-center gap-1">
                       <MapPin className="w-4 h-4" />
                       {brand.location}
                     </div>
-                  )}
+                  )} */}
                 </div>
               </div>
             </div>
 
             <div className="flex gap-3">
-              <Link href={`/influencer-dashboard/messages?id=${brand.id}`}>
+              <Link href={`/influencer-dashboard/messages?id=${id}`}>
               <button className="bg-yellow-500 hover:bg-[var(--secondaryhover)] text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2">
                 <MessageCircle className="w-4 h-4" />
                 Message
@@ -376,10 +416,10 @@ export default function BrandProfilePage() {
               <div className="space-y-4">
                 <div>
                   <div className="font-medium text-gray-900 mb-1">
-                    {brand.contactPerson?.name ?? "—"}
+                    {brand.contactPerson?.name ?? ""}
                   </div>
                   <div className="text-sm text-gray-600">
-                    {brand.contactPerson?.title ?? "—"}
+                    {brand.contactPerson?.title}
                   </div>
                 </div>
                 {brand.email && (
@@ -388,12 +428,12 @@ export default function BrandProfilePage() {
                     {brand.email}
                   </div>
                 )}
-                {brand.phone && (
+                {/* {brand.phone && (
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Phone className="w-4 h-4" />
                     {brand.phone}
                   </div>
-                )}
+                )} */}
                 <div className="flex gap-2">
                   {brand.socialLinks?.linkedin && (
                     <a

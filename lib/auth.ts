@@ -8,6 +8,7 @@ export async function signup(payload: {
   password: string;
   signup_method?: string;
   signed_up_as?: string;
+  state?: string;
 }) {
   return apiClient("user_service/signup/", {
     method: "POST",
@@ -54,9 +55,9 @@ interface SignupResponse {
     Message: string;
     refresh_token: string;
     access_token: string;
-    user?: any; // Add proper user type if returned
+    user?: Record<string, unknown>; // Add proper user type if returned
   };
-  error: Record<string, any>;
+  error: Record<string, unknown>;
   meta: {
     timestamp: string;
   };

@@ -11,7 +11,34 @@ import { apiClient } from "@/lib/apiClient";
 interface CompletionStepProps {
   onComplete: () => void;
 }
-const transformProfileDataForAPI = (data: any) => {
+
+interface OnboardingData {
+  businessName?: string;
+  website?: string;
+  timeZone?: string;
+  bio?: string;
+  businessTypes?: string[];
+  logoUrl?: string;
+  targetAudience?: string[];
+  keywords?: string;
+  demographics?: string[];
+  values?: string[];
+  selectedPlan?: string;
+  billingCycle?: string;
+  campaignName?: string;
+  objective?: string;
+  budget?: Array<number | string>;
+  budgetType?: string;
+  paymentPreferences?: string[];
+  description?: string;
+  deliverables?: string[];
+  timeline?: string;
+  approvalRequired?: boolean;
+  autoMatch?: boolean;
+  targetAudienceCampaign?: string;
+}
+
+const transformProfileDataForAPI = (data: OnboardingData) => {
   const profilePayload = {
     brand_profile: {
       business_name: data.businessName,
@@ -37,12 +64,12 @@ const transformProfileDataForAPI = (data: any) => {
   return profilePayload;
 };
 
-const transformCampaignDataForAPI = (data: any) => {
+const transformCampaignDataForAPI = (data: OnboardingData) => {
   const campaignPayload = {
     campaign_name: data.campaignName,
     campaign_objective: data.objective,
     budget_range: Array.isArray(data.budget)
-      ? data.budget.map((num: any) => num.toString()).join(", ")
+      ? data.budget.map((num) => num.toString()).join(", ")
       : "",
     budget_type: data.budgetType,
     payment_preference: Array.isArray(data.paymentPreferences)
@@ -109,7 +136,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
 
       try {
         console.log("Parsing stored data...");
-        const onboardingData = JSON.parse(storedData);
+        const onboardingData = JSON.parse(storedData) as OnboardingData;
         console.log("Parsed onboarding data:", onboardingData);
 
         // Submit profile data to user_service

@@ -7,13 +7,20 @@ import { TbMessageCircleFilled } from "react-icons/tb";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/stores/useAuthStore";
 
+interface InfluencerProfileInfo {
+  profile_picture?: string | null;
+  display_name?: string;
+  content_niches?: string;
+}
+
 const analyticsData = [
-  { value: "12", label: "Total Campaigns", color: "#F3EFFF" },
-  { value: "$2250", label: "Earnings", color: "#E1F5FF" },
+  { value: "12", label: "Total Campaigns", color: "#ffc006" },
+  { value: "$2250", label: "Earnings", color: "#dcfce7" },
   { value: "5", label: "New Messages", color: "#FEFCE8" },
 ];
 export default function Page() {
-  const [influencerProfile, setInfluencerProfile] = useState();
+  const [influencerProfile, setInfluencerProfile] =
+    useState<InfluencerProfileInfo | null>(null);
 
   const store = useAuthStore.getState();
   useEffect(() => {
@@ -80,8 +87,8 @@ export default function Page() {
                 className=" rounded-lg p-6 text-center"
                 style={{ backgroundColor: item.color }}
               >
-                <div className="text-3xl font-bold mb-2">{item.value}</div>
-                <div className="text-slate-600 text-sm font-medium">
+                <div className="text-3xl text-primary font-bold mb-2">{item.value}</div>
+                <div className="text-primary text-sm font-medium">
                   {item.label}
                 </div>
               </div>

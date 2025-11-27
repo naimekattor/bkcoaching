@@ -12,11 +12,15 @@ const handler = NextAuth({
 
   callbacks: {
     async jwt({ token, account, profile }) {
-      if (account && profile) {
+      if (account && profile && account.provider === "google") {
+        const googleProfile = profile as typeof profile & {
+          given_name?: string;
+          family_name?: string;
+        };
         token.googleUser = {
-          email: profile.email,
-          first_name: profile.given_name,
-          last_name: profile.family_name,
+          email: googleProfile.email,
+          first_name: googleProfile.given_name ?? "",
+          last_name: googleProfile.family_name ?? "",
         };
       }
       return token;

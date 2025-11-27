@@ -9,18 +9,14 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { setAuthFromResponse, signup } from "@/lib/auth";
-import { useAuthStore } from "@/stores/useAuthStore";
-import { signIn, useSession } from "next-auth/react";
-import { apiClient } from "@/lib/apiClient";
+import { signIn } from "next-auth/react";
 
 export default function SignupPage() {
   const router = useRouter();
   const params = useSearchParams();
   const returnTo = params.get("returnTo") || "";
-  console.log(returnTo);
   const match = returnTo.match(/^\/([^-]+)/);
   const result = match ? match[1] : null;
-  console.log(result);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -35,11 +31,6 @@ export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const { token, user, setToken, setUser, logout } = useAuthStore();
-  const { data: session } = useSession();
-  console.log(session);
-  console.log(user, token);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: { [key: string]: string } = {};
@@ -60,30 +51,21 @@ export default function SignupPage() {
       const res = await signup({
         ...formData,
         signup_method: "normal",
-        signed_up_as: result,
-        state: result,
+        signed_up_as: result ?? undefined,
+        state: result ?? undefined,
       });
-      console.log();
-
       setAuthFromResponse(res);
 
       if (res.status === "Success") {
-        console.log(
-          "Response successful, redirecting to:",
-          `/auth/verify-email?returnTo=${returnTo}`
-        );
-        console.log("About to execute router.push...");
         router.push(`/auth/verify-email?returnTo=${returnTo}`);
-        console.log("router.push executed successfully");
       } else {
-        console.log(res);
-        
         setError(res?.error || "Signup failed");
       }
 
-      console.log(res);
-    } catch (err: any) {
-      setError(err.message || "signup failed");
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "signup failed";
+      setError(message);
     } finally {
       setLoading(false);
     }

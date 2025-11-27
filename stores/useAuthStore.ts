@@ -2,12 +2,20 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
+type NestedUser = {
+  email?: string;
+  [key: string]: unknown;
+};
+
 type User = {
   id?: string;
-  email?: string;
-  first_name?: string;
-  last_name?: string;
+  email?: string | null;
+  first_name?: string | null;
+  last_name?: string | null;
   // add other fields from your backend
+  brand_profile?: Record<string, unknown>;
+  influencer_profile?: Record<string, unknown>;
+  user?: NestedUser;
 };
 
 interface AuthState {

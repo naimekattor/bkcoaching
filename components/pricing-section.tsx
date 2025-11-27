@@ -18,7 +18,7 @@ interface Plan {
   prices: Price[];
 }
 
-interface ApiResponse {
+export interface PricingApiResponse {
   status: string;
   code: number;
   data: Plan[];
@@ -26,7 +26,13 @@ interface ApiResponse {
   meta: { timestamp: string };
 }
 
-export function PricingSection({ planName,initialData }: {initialData?: ApiResponse; planName: string }) {
+export function PricingSection({
+  planName,
+  initialData,
+}: {
+  initialData?: PricingApiResponse;
+  planName: string;
+}) {
   const [isYearly, setIsYearly] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

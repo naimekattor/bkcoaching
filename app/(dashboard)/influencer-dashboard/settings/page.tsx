@@ -662,6 +662,14 @@ import Image from "next/image";
 import { uploadToCloudinary } from "@/lib/fileUpload";
 import { apiClient } from "@/lib/apiClient";
 import { toast } from "react-toastify";
+
+type StoredInfluencerProfile = {
+  content_niches?: string | null;
+  content_formats?: string | null;
+  payment_preferences?: string | null;
+  rate_range_for_affiliate_marketing_percent?: string | null;
+  [key: string]: string | null | undefined;
+};
 import { useAuthStore } from "@/stores/useAuthStore";
 
 const contentNiches = [
@@ -723,7 +731,8 @@ const fieldMap: Record<string, string> = {
 
 export default function ProfilePage() {
   const { user } = useAuthStore();
-  const p = user?.influencer_profile || {};
+  const p: StoredInfluencerProfile =
+    (user?.influencer_profile as StoredInfluencerProfile | undefined) ?? {};
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Parse from user object
@@ -749,8 +758,9 @@ export default function ProfilePage() {
   // Rates: CORRECTLY loaded from backend fields
   const [rates, setRates] = useState<Record<string, { type: string; custom: string }>>(
     Object.fromEntries(
-      contentFormats.map(f => {
-        const value = p[fieldMap[f.id]] || "";
+      contentFormats.map((f) => {
+        const rawValue = p[fieldMap[f.id]];
+        const value = typeof rawValue === "string" ? rawValue : "";
         const isCustom = value && !["free", "0-100", "101-499", "500+"].includes(value);
         return [f.id, { type: isCustom ? "custom" : value, custom: isCustom ? value : "" }];
       })
@@ -832,6 +842,10 @@ export default function ProfilePage() {
     if (!file) return;
     try {
       const { url } = await uploadToCloudinary(file);
+      if (!url) {
+        toast.error("Upload failed");
+        return;
+      }
       setImagePreview(url);
       toast.success("Image uploaded");
     } catch {

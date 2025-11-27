@@ -2,14 +2,14 @@
 
 import type React from "react";
 
-import { useState, useRef } from "react";
+import { Suspense, useState, useRef } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { apiClient } from "@/lib/apiClient";
 import { useSearchParams } from "next/navigation";
 
-export default function VerifyResetPage() {
+function VerifyResetContent() {
   const [code, setCode] = useState(["", "", "", ""]);
   const [error, setError] = useState("");
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -165,5 +165,13 @@ export default function VerifyResetPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function VerifyResetPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-50" />}>
+      <VerifyResetContent />
+    </Suspense>
   );
 }

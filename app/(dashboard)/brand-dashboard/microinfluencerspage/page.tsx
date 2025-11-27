@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -21,14 +21,45 @@ interface Influencer {
   timeZone: string;
 }
 
+interface InfluencerProfile {
+  display_name?: string;
+  profile_picture?: string | null;
+  followers_count?: number;
+  content_niches?: string[];
+  timezone?: string;
+  instagram_handle?: string;
+  tiktok_handle?: string;
+  youtube_handle?: string;
+}
+
+interface InfluencerUser {
+  first_name?: string;
+  last_name?: string;
+}
+
+interface InfluencerRecord {
+  id: string | number;
+  influencer_profile?: InfluencerProfile | null;
+  user?: InfluencerUser | null;
+}
+
 interface ApiResponse {
   count: number;
   next: string | null;
   previous: string | null;
-  results: any[];
+  results: InfluencerRecord[];
 }
 
-export default function MicroInfluencersPage() {
+const DEFAULT_AVATAR = "/images/person.jpg";
+const sanitizeImageSrc = (src?: string | null) => {
+  if (!src) return DEFAULT_AVATAR;
+  const value = src.trim();
+  if (value.startsWith("/")) return value;
+  if (/^https?:\/\//i.test(value)) return value;
+  return DEFAULT_AVATAR;
+};
+
+function MicroInfluencersPageContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -68,70 +99,117 @@ export default function MicroInfluencersPage() {
     { value: "Pacific/Honolulu", label: "Hawaii (HST)" },
   ];
 
-  // Fetch influencers based on current page
+  // Check if any filters are active
+  const hasActiveFilters =
+    searchTerm ||
+    Object.values(filters).some((f) => f && f !== "");
+
+  // Fetch influencers based on current page or filters
   useEffect(() => {
     const fetchInfluencers = async () => {
       try {
         setLoading(true);
 
-        // Build query params
-        const queryParams = new URLSearchParams();
-        queryParams.set("page", String(currentPage));
+        let res;
 
-        // Add filters to query if they exist
-        if (searchTerm.trim()) {
-          queryParams.set("search", searchTerm.trim());
-        }
-        if (filters.contentNiches) {
-          queryParams.set("niche", filters.contentNiches);
-        }
-        if (filters.platforms) {
-          queryParams.set("platform", filters.platforms);
-        }
-        if (filters.timeZone && filters.timeZone !== "Others") {
-          queryParams.set("timezone", filters.timeZone);
-        }
-
-        const res = await apiClient(
-          `user_service/get_all_influencers/?${queryParams.toString()}`,
-          {
-            method: "GET",
-          }
-        );
-
-        console.log("API Response:", res);
-
-        const apiData: ApiResponse = res.data;
-        const list = apiData.results || [];
-
-        const normalized: Influencer[] = list.map((item: any) => {
-          const inf = item.influencer_profile || {};
-          const user = item.user || {};
-
-          const platforms: string[] = [];
-          if (inf.instagram_handle) platforms.push("instagram");
-          if (inf.tiktok_handle) platforms.push("tiktok");
-          if (inf.youtube_handle) platforms.push("youtube");
-
-          return {
-            id: String(item.id),
-            name:
-              inf.display_name ||
-              `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
-              "Unknown",
-            profileImage: inf.profile_picture || "/placeholder.svg",
-            followers: inf.followers_count
-              ? `${(inf.followers_count / 1000).toFixed(1)}K`
-              : "N/A",
-            socialLinks: platforms,
-            niche: inf.content_niches?.[0] || "Unknown",
-            timeZone: inf.timezone || "Unknown",
+        // If filters are active, use filter endpoint
+        if (hasActiveFilters) {
+          const filterPayload = {
+            search: searchTerm.trim(),
+            "Platforms": filters.platforms,
+            "Budget Range": filters.budgetRange,
+            "Time Zone": filters.timeZone,
+            "Gender": filters.gender,
+            "Audience Reach": filters.followers,
+            "content niches": filters.contentNiches,
           };
-        });
 
-        setInfluencers(normalized);
-        setTotalCount(apiData.count);
-        setHasNextPage(apiData.next !== null);
+          console.log("Using filter endpoint with:", filterPayload);
+
+          res = await apiClient("user_service/filter_influencers/", {
+            method: "POST",
+            body: JSON.stringify(filterPayload),
+          });
+
+          // Filter endpoint returns array directly
+          const list: InfluencerRecord[] = Array.isArray(res.data)
+            ? res.data
+            : [];
+
+          const normalized: Influencer[] = list.map((item) => {
+            const inf = item.influencer_profile ?? {};
+            const user = item.user ?? {};
+
+            const platforms: string[] = [];
+            if (inf.instagram_handle) platforms.push("instagram");
+            if (inf.tiktok_handle) platforms.push("tiktok");
+            if (inf.youtube_handle) platforms.push("youtube");
+
+            return {
+              id: String(item.id),
+              name:
+                inf.display_name ||
+                `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
+                "Unknown",
+              profileImage: sanitizeImageSrc(inf.profile_picture),
+              followers: inf.followers_count
+                ? `${(inf.followers_count / 1000).toFixed(1)}K`
+                : "N/A",
+              socialLinks: platforms,
+              niche: inf.content_niches?.[0] || "Unknown",
+              timeZone: inf.timezone || "Unknown",
+            };
+          });
+
+          setInfluencers(normalized);
+          setTotalCount(normalized.length);
+          setHasNextPage(false);
+        } else {
+          // No filters - use pagination endpoint
+          const queryParams = new URLSearchParams();
+          queryParams.set("page", String(currentPage));
+
+          console.log("Using pagination endpoint for page:", currentPage);
+
+          res = await apiClient(
+            `user_service/get_all_influencers/?${queryParams.toString()}`,
+            {
+              method: "GET",
+            }
+          );
+
+          const apiData: ApiResponse = res.data;
+          const list = apiData.results || [];
+
+          const normalized: Influencer[] = list.map((item) => {
+            const inf = item.influencer_profile ?? {};
+            const user = item.user ?? {};
+
+            const platforms: string[] = [];
+            if (inf.instagram_handle) platforms.push("instagram");
+            if (inf.tiktok_handle) platforms.push("tiktok");
+            if (inf.youtube_handle) platforms.push("youtube");
+
+            return {
+              id: String(item.id),
+              name:
+                inf.display_name ||
+                `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
+                "Unknown",
+              profileImage: sanitizeImageSrc(inf.profile_picture),
+              followers: inf.followers_count
+                ? `${(inf.followers_count / 1000).toFixed(1)}K`
+                : "N/A",
+              socialLinks: platforms,
+              niche: inf.content_niches?.[0] || "Unknown",
+              timeZone: inf.timezone || "Unknown",
+            };
+          });
+
+          setInfluencers(normalized);
+          setTotalCount(apiData.count);
+          setHasNextPage(apiData.next !== null);
+        }
       } catch (err) {
         console.error("Failed to fetch influencers", err);
         setInfluencers([]);
@@ -141,7 +219,7 @@ export default function MicroInfluencersPage() {
     };
 
     fetchInfluencers();
-  }, [currentPage, searchTerm, filters]);
+  }, [currentPage, searchTerm, filters, hasActiveFilters]);
 
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
@@ -157,8 +235,6 @@ export default function MicroInfluencersPage() {
     });
     setPage(1);
   };
-
-  const hasActiveFilters = searchTerm || Object.values(filters).some((f) => f);
 
   // Loading
   if (loading) {
@@ -437,8 +513,8 @@ export default function MicroInfluencersPage() {
           )}
         </div>
 
-        {/* Pagination */}
-        {totalPages > 1 && (
+        {/* Pagination - Only show when no filters */}
+        {totalPages > 1 && !hasActiveFilters && (
           <div className="flex justify-center items-center gap-2 mt-12">
             <button
               onClick={() => setPage(currentPage - 1)}
@@ -488,5 +564,13 @@ export default function MicroInfluencersPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function MicroInfluencersPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-white" />}>
+      <MicroInfluencersPageContent />
+    </Suspense>
   );
 }

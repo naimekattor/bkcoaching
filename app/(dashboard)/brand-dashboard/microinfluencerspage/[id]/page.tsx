@@ -21,15 +21,73 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound, useParams } from "next/navigation";
+import { notFound, useParams, useRouter } from "next/navigation";
 import { apiClient } from "@/lib/apiClient";
 import { MicroInfluencer } from "@/types/micro-influencer";
+
+interface ActiveCampaignRecord {
+  id?: string | number;
+  title?: string;
+  status?: string;
+  description?: string;
+  deadline?: string;
+  creators_needed?: number;
+}
+
+interface ReviewRecord {
+  id?: string | number;
+  comment?: string;
+  reviewer?: string;
+}
+
+interface ResourceRecord {
+  type?: string;
+  title?: string;
+  url?: string;
+}
+
+interface InfluencerProfileResponse {
+  id?: string | number;
+  instagram_handle?: string;
+  tiktok_handle?: string;
+  youtube_handle?: string;
+  linkedin_handle?: string;
+  twitter_handle?: string;
+  display_name?: string;
+  short_bio?: string;
+  profile_picture?: string | null;
+  is_verified?: boolean;
+  timezone?: string;
+  website?: string;
+  email?: string;
+  phone?: string;
+  platforms?: string[];
+  mission?: string;
+  niche?: string;
+  category?: string;
+  role?: string;
+  title?: string;
+  campaigns_total?: number;
+  campaigns_creators?: number;
+  engagement_rate?: number;
+  campaigns_avg_rating?: number;
+  campaigns_total_invested?: number;
+  active_campaigns?: ActiveCampaignRecord[];
+  reviews?: ReviewRecord[];
+  resources?: ResourceRecord[];
+  content_niches?: string;
+}
+
+interface ApiResponse {
+  influencer_profile?: InfluencerProfileResponse;
+}
 
 export default function BrandProfilePage() {
   const { id } = useParams<{ id: string }>();
   const [influencer, SetInfluencer] = useState<MicroInfluencer | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const router=useRouter();
 
   // -------------------------------------------------
   // 1. FETCH influencerby id
@@ -41,32 +99,31 @@ export default function BrandProfilePage() {
       try {
         setLoading(true);
 
-        const res = await apiClient(`user_service/get_a_brand/${id}/`, {
+        const res = await apiClient(`user_service/get_a_influencer/${id}/`, {
           method: "GET",
         });
 
-        const profile = res.data?.influencer_profile;
+        const profile = (res.data as ApiResponse | undefined)?.influencer_profile;
 
         if (!profile) {
           throw new Error("Influencer profile not found");
         }
 
         // Helper: safe string (handles null, undefined, "null")
-        const str = (v: any, fallback = "—") =>
-          v != null && v !== "null" && v !== "" ? String(v) : fallback;
+        const str = (value: unknown, fallback = "—"): string => {
+          if (value == null) return fallback;
+          if (typeof value === "string") {
+            const trimmed = value.trim();
+            return trimmed && trimmed !== "null" ? trimmed : fallback;
+          }
+          return String(value);
+        };
 
         // Helper: safe number
-        const num = (v: any, fallback = 0) =>
-          typeof v === "number" ? v : fallback;
+        const num = (value: unknown, fallback = 0): number =>
+          typeof value === "number" ? value : fallback;
 
-        // Build social links from platforms array
-        const buildSocial = (platforms: string[] = []) => ({
-          instagram: platforms.includes("instagram") ? "#" : undefined,
-          tiktok: platforms.includes("tiktok") ? "#" : undefined,
-          youtube: platforms.includes("youtube") ? "#" : undefined,
-          linkedin: platforms.includes("linkedin") ? "#" : undefined,
-          twitter: platforms.includes("twitter") ? "#" : undefined,
-        });
+        
 
         // Map ONLY influencer_profile → MicroInfluencer
         const normalised: MicroInfluencer = {
@@ -83,9 +140,13 @@ export default function BrandProfilePage() {
           email: str(profile.email, "user@domain.com"),
           phone: str(profile.phone),
 
-          socialLinks: buildSocial(
-            Array.isArray(profile.platforms) ? profile.platforms : []
-          ),
+          socialLinks: {
+            instagram: profile?.instagram_handle ,
+            tiktok: profile?.tiktok_handle,
+            youtube: profile?.youtube_handle,
+            linkedin: profile?.linkedin_handle,
+            twitter: profile?.twitter_handle,
+          },
 
           mission: str(profile.mission),
           businessType: str(profile.niche || profile.category, "—"), // fallback to niche or category
@@ -105,7 +166,7 @@ export default function BrandProfilePage() {
           },
 
           activeCampaigns: Array.isArray(profile.active_campaigns)
-            ? profile.active_campaigns.map((c: any) => ({
+            ? profile.active_campaigns.map((c) => ({
                 id: String(c.id ?? ""),
                 title: str(c.title),
                 status: str(c.status, "Active"),
@@ -116,7 +177,7 @@ export default function BrandProfilePage() {
             : [],
 
           reviews: Array.isArray(profile.reviews)
-            ? profile.reviews.map((r: any) => ({
+            ? profile.reviews.map((r) => ({
                 id: String(r.id ?? ""),
                 comment: str(r.comment),
                 reviewer: str(r.reviewer),
@@ -124,7 +185,7 @@ export default function BrandProfilePage() {
             : [],
 
           resources: Array.isArray(profile.resources)
-            ? profile.resources.map((r: any) => ({
+            ? profile.resources.map((r) => ({
                 type: str(r.type, "Document"),
                 title: str(r.title),
                 url: str(r.url),
@@ -146,9 +207,18 @@ export default function BrandProfilePage() {
         };
 
         SetInfluencer(normalised);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Influencer fetch error:", err);
-        if (err?.response?.status === 404 || !res.data?.influencer_profile) {
+        const status =
+          typeof err === "object" &&
+          err !== null &&
+          "response" in err &&
+          typeof (err as { response?: { status?: number } }).response ===
+            "object" &&
+          (err as { response?: { status?: number } }).response !== null
+            ? (err as { response?: { status?: number } }).response?.status
+            : undefined;
+        if (status === 404) {
           notFound();
         }
       } finally {
@@ -230,7 +300,7 @@ export default function BrandProfilePage() {
                   )}
                 </div>
                 <p className="text-gray-600 mb-2">{influencer.description}</p>
-                <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+                {/* <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
                   {influencer.website && (
                     <div className="flex items-center gap-1">
                       <Globe className="w-4 h-4" />
@@ -249,19 +319,20 @@ export default function BrandProfilePage() {
                       {influencer.location}
                     </div>
                   )}
-                </div>
+                </div> */}
               </div>
             </div>
 
             <div className="flex gap-3">
-              <button className="bg-yellow-500 hover:bg-[var(--secondaryhover)] text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2">
+              <button className="bg-yellow-500 hover:bg-[var(--secondaryhover)] text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2"
+              onClick={()=>router.push(`/brand-dashboard/messages?id=${id}`)}>
                 <MessageCircle className="w-4 h-4" />
                 Message
               </button>
-              <button className="border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2">
+              {/* <button className="border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2">
                 <Bookmark className="w-4 h-4" />
                 Save
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
@@ -454,18 +525,18 @@ export default function BrandProfilePage() {
                     {influencer.contactPerson?.title ?? "—"}
                   </div>
                 </div>
-                {influencer.email && (
+                {/* {influencer.email && (
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Mail className="w-4 h-4" />
                     {influencer.email}
                   </div>
-                )}
-                {influencer.phone && (
+                )} */}
+                {/* {influencer.phone && (
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Phone className="w-4 h-4" />
                     {influencer.phone}
                   </div>
-                )}
+                )} */}
                 <div className="flex gap-2">
                   {influencer.socialLinks?.linkedin && (
                     <a

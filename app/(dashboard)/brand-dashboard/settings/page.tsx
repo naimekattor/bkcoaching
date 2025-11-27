@@ -20,6 +20,44 @@ import { apiClient } from "@/lib/apiClient";
 import { toast } from "react-toastify";
 import { useAuthStore } from "@/stores/useAuthStore";
 
+type BrandProfile = Partial<{
+  business_name: string | null;
+  display_name: string | null;
+  short_bio: string | null;
+  mission: string | null;
+  designation: string | null;
+  logo: string | null;
+  business_type: string | null;
+  website: string | null;
+  timezone: string | null;
+  description: string | null;
+  instagram_handle: string | null;
+  tiktok_handle: string | null;
+  x_handle: string | null;
+  linkedin_profile: string | null;
+  whatsapp_business: string | null;
+  email_notifications: boolean;
+}>;
+
+type FormDataState = {
+  business_name: string;
+  display_name: string;
+  short_bio: string;
+  mission: string;
+  designation: string;
+  logo: string | null;
+  business_type: string;
+  website: string;
+  timezone: string;
+  description: string;
+  instagramHandle: string;
+  tiktokHandle: string;
+  xHandle: string;
+  linkedinProfile: string;
+  whatsappBusiness: string;
+  emailNotifications: boolean;
+};
+
 const timeZones = [
   { value: "America/New_York", label: "Eastern (ET)" },
   { value: "America/Chicago", label: "Central (CT)" },
@@ -52,10 +90,10 @@ const businessTypes = [
 
 export default function BrandSetupPage() {
   const { user } = useAuthStore();
-  const p = user?.brand_profile || {};
+  const profile = (user?.brand_profile as BrandProfile | undefined) ?? {};
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormDataState>({
     business_name: "",
     display_name: "",
     short_bio: "",
@@ -78,29 +116,32 @@ export default function BrandSetupPage() {
 
   // Load data from user.brand_profile
   useEffect(() => {
-    if (!p || Object.keys(p).length === 0) return;
+    if (!profile || Object.keys(profile).length === 0) return;
 
     setFormData({
-      business_name: p.business_name || "",
-      display_name: p.display_name || "",
-      short_bio: p.short_bio || "",
-      mission: p.mission || "",
-      designation: p.designation || "",
-      logo: p.logo || null,
-      business_type: p.business_type || "",
-      website: p.website || "",
-      timezone: p.timezone || "",
-      description: p.description || "",
-      instagramHandle: p.instagram_handle || "",
-      tiktokHandle: p.tiktok_handle || "",
-      xHandle: p.x_handle || "",
-      linkedinProfile: p.linkedin_profile || "",
-      whatsappBusiness: p.whatsapp_business || "",
-      emailNotifications: p.email_notifications ?? true,
+      business_name: profile.business_name || "",
+      display_name: profile.display_name || "",
+      short_bio: profile.short_bio || "",
+      mission: profile.mission || "",
+      designation: profile.designation || "",
+      logo: profile.logo || null,
+      business_type: profile.business_type || "",
+      website: profile.website || "",
+      timezone: profile.timezone || "",
+      description: profile.description || "",
+      instagramHandle: profile.instagram_handle || "",
+      tiktokHandle: profile.tiktok_handle || "",
+      xHandle: profile.x_handle || "",
+      linkedinProfile: profile.linkedin_profile || "",
+      whatsappBusiness: profile.whatsapp_business || "",
+      emailNotifications: profile.email_notifications ?? true,
     });
-  }, [p]);
+  }, [profile]);
 
-  const handleInputChange = (field: keyof typeof formData, value: any) => {
+  const handleInputChange = <K extends keyof FormDataState>(
+    field: K,
+    value: FormDataState[K]
+  ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -109,6 +150,10 @@ export default function BrandSetupPage() {
     if (!file) return;
     try {
       const { url } = await uploadToCloudinary(file);
+      if (!url) {
+        toast.error("Upload failed");
+        return;
+      }
       setFormData((prev) => ({ ...prev, logo: url }));
       toast.success("Logo uploaded");
     } catch {
@@ -141,7 +186,7 @@ export default function BrandSetupPage() {
     };
 
     try {
-      const res = await apiClient("user_service/update_user_profile/", {
+      await apiClient("user_service/update_user_profile/", {
         method: "PATCH",
         auth: true,
         body: JSON.stringify(payload),

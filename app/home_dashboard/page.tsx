@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { apiClient } from "@/lib/apiClient";
@@ -9,7 +9,7 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { setAuthFromResponse } from "@/lib/auth";
 
-export default function DashboardPage() {
+function DashboardPageContent() {
   const router = useRouter();
   const params = useSearchParams();
 
@@ -95,12 +95,10 @@ export default function DashboardPage() {
         const userData = userInfo.data;
 
         const hasBrandProfile =
-          userData.brand_profile?.business_name != null &&
-          userData.brand_profile.business_name !== "null";
+          userData.signed_up_as == "brand";
 
         const hasInfluencerProfile =
-          userData.influencer_profile?.display_name != null &&
-          userData.influencer_profile.display_name !== "null";
+          userData.signed_up_as == "influencer";
 
         let redirectPath = "/influencer-dashboard";
         if (hasBrandProfile && !hasInfluencerProfile) {
@@ -112,8 +110,8 @@ export default function DashboardPage() {
         } else {
           router.replace(redirectPath);
         }
-      } catch (err: any) {
-        console.error("Profile check failed:", err);
+      } catch (error: unknown) {
+        console.error("Profile check failed:", error);
         setError(
           "Could not retrieve your profile. Please try logging in again."
         );
@@ -144,5 +142,13 @@ export default function DashboardPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-50" />}>
+      <DashboardPageContent />
+    </Suspense>
   );
 }

@@ -13,7 +13,43 @@ interface CompletionStepProps {
   onComplete: () => void;
 }
 
-const transformInfluencerDataForAPI = (data: any) => {
+interface InfluencerOnboardingData {
+  display_name?: string;
+  short_bio?: string;
+  profile_picture?: string;
+  instagram_handle?: string;
+  tiktok_handle?: string | null;
+  youtube_handle?: string;
+  twitter_handle?: string;
+  linkedin_handle?: string;
+  whatsapp_handle?: string;
+  content_niches?: string[];
+  audience_demographics?: string[];
+  keyword_and_tags?: string;
+  content_formats?: string[];
+  payment_preferences?: string[];
+  rate_range_for_social_post?: string;
+  rate_range_for_youtube_video?: string;
+  rate_range_for_blog_post?: string;
+  rate_range_for_youtube_short?: string;
+  rate_range_for_repost?: string;
+  rate_range_for_instagram_story?: string;
+  rate_range_for_instagram_reel?: string;
+  rate_range_for_tiktok_video?: string;
+  rate_range_for_podcast_mention?: string;
+  rate_range_for_live_stream?: string;
+  rate_range_for_ugc_creation?: string;
+  rate_range_for_whatsapp_status_post?: string;
+  rate_range_for_affiliate_marketing_percent?: string;
+  response_time?: string;
+  payment_method?: string;
+  account_holder_name?: string;
+  account_number?: string | number;
+  bank_name?: string;
+  paypal_email?: string;
+}
+
+const transformInfluencerDataForAPI = (data: InfluencerOnboardingData) => {
   console.log("profile_picture:", data.profile_picture);
 
   const payload = {
@@ -102,7 +138,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
       if (!storedData) return;
 
       try {
-        const onboardingData = JSON.parse(storedData);
+        const onboardingData = JSON.parse(storedData) as InfluencerOnboardingData;
         console.log("profile_picture:", onboardingData.profile_picture);
 
         const apiPayload = transformInfluencerDataForAPI(onboardingData);

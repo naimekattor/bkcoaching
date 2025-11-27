@@ -13,13 +13,19 @@ export function DashboardHeader() {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <div className="w-16 h-16 bg-slate-800 rounded-lg flex items-center justify-center">
-              <Image
-                width={64}
-                height={64}
-                src={user?.brand_profile?.logo }
-                alt="logo"
-                className="h-full w-full rounded-md"
-              />
+              {user?.brand_profile?.logo ? (
+                <Image
+                  width={64}
+                  height={64}
+                  src={user.brand_profile.logo}
+                  alt="Brand logo"
+                  className="h-full w-full rounded-md object-cover"
+                />
+              ) : (
+                <span className="text-white font-semibold text-lg">
+                  {user?.brand_profile?.business_name?.[0] || "B"}
+                </span>
+              )}
             </div>
             <div>
               <h2 className="text-xl font-bold text-slate-800">

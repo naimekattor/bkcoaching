@@ -82,6 +82,25 @@ interface Creator {
   followers?: string;
 }
 
+type CampaignApiResponse = {
+  id: string;
+  campaign_name?: string;
+  campaign_description?: string;
+  campaign_poster?: string;
+  campaign_status?: string;
+  budget_range?: string;
+  budget_type?: string;
+  campaign_timeline?: string;
+  campaign_objective?: string;
+  content_deliverables?: string;
+  payment_preference?: string;
+  keywords_and_hashtags?: string;
+  target_audience?: string;
+  content_approval_required?: boolean;
+  auto_match_micro_influencers?: boolean;
+  campaign_owner: string;
+};
+
 /* -------------------------------------------------
    Platform icons
 ------------------------------------------------- */
@@ -219,7 +238,7 @@ export default function CampaignDashboard() {
           ? [...res.data].reverse()
           : [];
 
-        const transformed: Campaign[] = campaignsArray.map((c: any) => ({
+        const transformed: Campaign[] = campaignsArray.map((c: CampaignApiResponse) => ({
           id: c.id,
           title: c.campaign_name || "Untitled Campaign",
           description: c.campaign_description || "",
@@ -270,8 +289,9 @@ export default function CampaignDashboard() {
   }, []);
 
   /* ---------- Pause / Resume ---------- */
-  const handlePauseResume = async (e: React.MouseEvent, campaign: Campaign) => {
-    e.stopPropagation();
+  const handlePauseResume = async (event: Event, campaign: Campaign) => {
+    event.preventDefault();
+    event.stopPropagation();
 
     const isActive = campaign.status.toLowerCase() === "active";
     const newStatus = isActive ? "paused" : "active";
@@ -296,8 +316,9 @@ export default function CampaignDashboard() {
   };
 
   /* ---------- Delete ---------- */
-  const handleDelete = async (e: React.MouseEvent, campaign: Campaign) => {
-    e.stopPropagation();
+  const handleDelete = async (event: Event, campaign: Campaign) => {
+    event.preventDefault();
+    event.stopPropagation();
     try {
       await apiClient(`campaign_service/delete_a_campaign/${campaign.id}/`, {
         method: "DELETE",
@@ -453,7 +474,7 @@ export default function CampaignDashboard() {
 
                   <DropdownMenuContent align="end" className="w-40">
                     <DropdownMenuItem
-                      onSelect={(e) => handlePauseResume(e as any, campaign)}
+                      onSelect={(event) => handlePauseResume(event, campaign)}
                     >
                       {campaign.status.toLowerCase() === "active" ? (
                         <>
@@ -468,7 +489,7 @@ export default function CampaignDashboard() {
 
                     <DropdownMenuItem
                       className="text-red-600"
-                      onSelect={(e) => handleDelete(e as any, campaign)}
+                      onSelect={(event) => handleDelete(event, campaign)}
                     >
                       <Trash className="mr-2 h-4 w-4" /> Delete
                     </DropdownMenuItem>

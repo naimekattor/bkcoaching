@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { apiClient } from "@/lib/apiClient";
 
 export function AnalyticsCards({ allCampaigns }) {
   const analyticsData = [

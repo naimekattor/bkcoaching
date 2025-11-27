@@ -9,6 +9,20 @@ import { MdInsertEmoticon } from "react-icons/md";
 import { apiClient } from "@/lib/apiClient";
 import type { Brand } from "@/types/brand";
 
+interface BrandProfileResponse {
+  business_name?: string;
+  short_bio?: string;
+  logo?: string;
+  business_type?: string;
+  website?: string;
+  platforms?: string[];
+}
+
+interface BrandApiResponse {
+  id?: string | number;
+  brand_profile?: BrandProfileResponse | null;
+}
+
 const PAGE_SIZE = 20;
 
 export default function MicroinfluencersPage() {
@@ -60,7 +74,11 @@ export default function MicroinfluencersPage() {
           method: "GET",
         });
 
-        const normalised: Brand[] = (res.data ?? []).map((raw: any) => {
+        const data: BrandApiResponse[] = Array.isArray(res.data)
+          ? res.data
+          : [];
+
+        const normalised: Brand[] = data.map((raw) => {
           const bp = raw.brand_profile ?? {};
           const platforms: string[] = Array.isArray(bp.platforms)
             ? bp.platforms

@@ -17,6 +17,8 @@ export default function VerifyEmailPage() {
   const [error, setError] = useState("");
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [userEmail, setUserEmail] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -27,22 +29,25 @@ export default function VerifyEmailPage() {
 
         const email = res.data.user.email;
         setUserEmail(email);
-
         console.log("Email:", email);
 
+        // Send OTP only once
         await apiClient("user_service/send_otp/", {
           method: "POST",
           body: JSON.stringify({ email }),
         });
 
+        setOtpSent(true);
+        console.log("✅ OTP sent to email:", email);
         console.log("✅ User full Info:", res.data);
       } catch (error) {
         console.error("❌ API Error:", error);
+        setError("Failed to send verification code. Please try again.");
       }
     };
 
     fetchUser();
-  }, []);
+  }, []); // Empty dependency array - runs only once on mount
 
   const handleInputChange = (index: number, value: string) => {
     if (value.length > 1) return;
@@ -71,29 +76,49 @@ export default function VerifyEmailPage() {
       setError("Please enter the complete verification code");
       return;
     }
-    localStorage.setItem("emailVerified", "true");
-    const res = await apiClient("user_service/verify_email/", {
-      method: "POST",
-      body: JSON.stringify({ email: userEmail, otp: verificationCode }),
-    });
 
-    console.log(res.code);
+    try {
+      const res = await apiClient("user_service/verify_email/", {
+        method: "POST",
+        body: JSON.stringify({ email: userEmail, otp: verificationCode }),
+      });
 
-    // Redirect to correct onboarding
-    if (res.code == "200" && returnTo) {
-      router.push(returnTo);
-    } else {
-      // router.push("/brand-dashboard"); // fallback
+      console.log("Verification response:", res);
+
+      if (res.code === 200) {
+        localStorage.setItem("emailVerified", "true");
+        console.log("✅ Email verified successfully");
+
+        // Redirect to correct onboarding
+        if (returnTo) {
+          router.push(returnTo);
+        } else {
+          router.push("/brand-dashboard");
+        }
+      } else {
+        setError("Invalid verification code. Please try again.");
+      }
+    } catch (error) {
+      console.error("❌ Verification Error:", error);
+      setError("Verification failed. Please try again.");
     }
   };
 
   const handleResendCode = async () => {
-    // Handle resend code logic
-    await apiClient("user_service/send_otp/", {
-      method: "POST",
-      body: JSON.stringify(userEmail),
-    });
-    console.log("Resending verification code...");
+    try {
+      setError("");
+      await apiClient("user_service/send_otp/", {
+        method: "POST",
+        body: JSON.stringify({ email: userEmail }),
+      });
+
+      console.log("✅ Verification code resent to:", userEmail);
+      setError(""); // Clear any previous errors
+      alert("Verification code resent to your email!");
+    } catch (error) {
+      console.error("❌ Resend Error:", error);
+      setError("Failed to resend code. Please try again.");
+    }
   };
 
   return (
@@ -123,7 +148,7 @@ export default function VerifyEmailPage() {
               <p className="text-slate-300 mb-1">
                 Enter The 4 Digit Code Sent To
               </p>
-              <p className="text-slate-300">{userEmail}</p>
+              <p className="text-slate-300">{userEmail || "your email"}</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -139,7 +164,7 @@ export default function VerifyEmailPage() {
                     value={digit}
                     onChange={(e) => handleInputChange(index, e.target.value)}
                     onKeyDown={(e) => handleKeyDown(index, e)}
-                    className="w-12 h-12 text-center rounded-md border text-white"
+                    className="w-12 h-12 text-center rounded-md border border-slate-400 text-white bg-slate-700 focus:outline-none focus:ring-2 focus:ring-secondary"
                   />
                 ))}
 

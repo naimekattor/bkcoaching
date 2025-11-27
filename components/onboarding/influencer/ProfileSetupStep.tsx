@@ -52,13 +52,16 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
     setPreview(localPreview);
     try {
       setUploading(true);
-      const res = await uploadToCloudinary(file);
-      const imgUrl = res.url;
+      const { url } = await uploadToCloudinary(file);
+      if (!url) {
+        console.error("Upload failed: missing URL");
+        return;
+      }
 
       // 3️⃣ update onboarding data with Cloudinary URL
-      setOnboardingDataInfluencer((prev: any) => ({
+      setOnboardingDataInfluencer((prev) => ({
         ...prev,
-        profile_picture: imgUrl,
+        profile_picture: url,
       }));
     } catch (err) {
       console.error("Upload failed:", err);

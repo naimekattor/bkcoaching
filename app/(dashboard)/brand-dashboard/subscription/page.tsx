@@ -1,14 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { PricingSection } from "@/components/pricing-section";
+import { PricingSection, type PricingApiResponse } from "@/components/pricing-section";
 import { useRouter } from "next/navigation";
 import { apiClient } from "@/lib/apiClient";
 
+interface SubscriptionInfo {
+  plan_name?: string;
+  [key: string]: unknown;
+}
+
 export default function SubscriptionPage() {
-  const [planData, setPlanData] = useState(null); 
-  const [pricingData, setPricingData] = useState([]); 
-  const [portalData, setPortalData] = useState(null); 
+  const [planData, setPlanData] = useState<SubscriptionInfo | null>(null);
+  const [pricingData, setPricingData] = useState<PricingApiResponse | null>(null);
+  const [portalData, setPortalData] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   const router = useRouter();
@@ -18,6 +23,22 @@ export default function SubscriptionPage() {
   useEffect(() => {
     const loadSubscriptionPageData = async () => {
       try {
+        // Get all subscription plans
+        const plansRes = await apiClient('subscription_service/get_subscription_plans/',{
+          method:"GET"
+        });
+        const plansData = plansRes as PricingApiResponse;
+        console.log(plansData);
+        
+
+        
+        // Check if the response was successful
+        if (plansData.status === "success") {
+          setPricingData(plansData);
+        } else {
+          console.warn("Failed to fetch plans:", plansData.error);
+        }
+
         // Get user’s current subscription
         const subRes = await apiClient(
           "subscription_service/get_user_subscription_information/",
@@ -38,21 +59,11 @@ export default function SubscriptionPage() {
           setPortalData(portalRes.data.portal_url);
         }
 
-        // Get all subscription plans
-        const plansRes = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}subscription_service/get_subscription_plans/`
-        );
+        
 
-        // Parse the JSON response
-        const plansData = await plansRes.json();
-        console.log("Pricing Plans:", plansData);
+        
+       
 
-        // Check if the response was successful
-        if (plansData.status === "success") {
-          setPricingData(plansData);
-        } else {
-          console.warn("Failed to fetch plans:", plansData.error);
-        }
 
       } catch (error) {
         console.error("Failed loading subscription page:", error);
@@ -71,7 +82,10 @@ export default function SubscriptionPage() {
   return (
     <div className="mx-auto">
       {/* If planData exists, pass current plan name to PricingSection */}
-      {/* <PricingSection planName={planData?.plan_name} initialData={pricingData}/> */}
+      <PricingSection
+        planName={planData?.plan_name ?? ""}
+        initialData={pricingData ?? undefined}
+      />
 
       {/* If user clicks Upgrade/Change Plan */}
       {portalData && (

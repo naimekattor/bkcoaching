@@ -11,7 +11,7 @@ export function BusinessBio() {
       </h3>
 
       <div className="space-y-4">
-        <p className="text-slate-600 leading-relaxed">{user?.short_bio}</p>
+        <p className="text-slate-600 leading-relaxed">{user?.brand_profile?.short_bio}</p>
 
         {/* <div>
           <h4 className="font-medium text-slate-800 mb-2">Mission:</h4>
@@ -20,21 +20,23 @@ export function BusinessBio() {
           </p>
         </div> */}
 
-        <div className="flex gap-5">
-          <h4 className="font-medium text-slate-800 mb-2">Business:</h4>
-          {user?.business_type
-            ?.split(",")
-            .map((tag) => tag.trim())
-            .filter((tag) => tag.length > 0)
-            .map((tag, i) => (
-              <span
-                key={i}
-                className="inline-block bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm mr-2 mb-2"
-              >
-                {tag}
-              </span>
-            ))}
-        </div>
+<div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm sm:text-base">
+  <h4 className="font-medium text-slate-800 whitespace-nowrap">Business:</h4>
+  <div className="flex flex-wrap gap-1.5 sm:gap-2">
+    {user?.brand_profile?.business_type
+      ?.split(",")
+      .map((tag) => tag.trim())
+      .filter(Boolean)
+      .map((tag, i) => (
+        <span
+          key={i}
+          className="rounded-full bg-secondary px-2.5 py-1 text-xs font-medium text-primary sm:px-3 sm:text-sm"
+        >
+          {tag}
+        </span>
+      ))}
+  </div>
+</div>
 
         <div className="flex space-x-3 pt-2">
           <TbWorld />

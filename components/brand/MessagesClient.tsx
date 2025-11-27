@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { apiClient } from "@/lib/apiClient"; 
+import { apiClient } from "@/lib/apiClient";
 import { uploadToCloudinary } from "@/lib/fileUpload";
 
 interface Room {
@@ -31,6 +31,7 @@ interface HistoryMessage {
   is_me: boolean;
   message: string;
   timestamp: string;
+  file: string;
 }
 
 interface Message {
@@ -45,6 +46,48 @@ interface Message {
   fileName?: string;
 }
 
+type MessageWithRawTimestamp = Message & { rawTimestamp: Date };
+
+interface ChatMessagePayload {
+  type: "chat_message";
+  message?: string;
+  file?: string;
+}
+
+const IMAGE_EXTENSIONS = new Set([
+  "png",
+  "jpg",
+  "jpeg",
+  "gif",
+  "webp",
+  "bmp",
+  "svg",
+]);
+
+const VIDEO_EXTENSIONS = new Set(["mp4", "mov", "webm", "avi", "mkv"]);
+
+const looksLikeHttpUrl = (value?: string | null) =>
+  !!value && /^https?:\/\//i.test(value.trim());
+
+const inferFileMetaFromUrl = (url: string) => {
+  const cleanUrl = url.split("?")[0];
+  const fileName = cleanUrl.split("/").pop() || "file";
+  const ext = fileName.split(".").pop()?.toLowerCase();
+
+  if (!ext) return { fileType: undefined as string | undefined, fileName };
+
+  if (IMAGE_EXTENSIONS.has(ext)) {
+    const normalized = ext === "jpg" ? "jpeg" : ext;
+    return { fileType: `image/${normalized}`, fileName };
+  }
+
+  if (VIDEO_EXTENSIONS.has(ext)) {
+    return { fileType: `video/${ext}`, fileName };
+  }
+
+  return { fileType: undefined as string | undefined, fileName };
+};
+
 export default function MessagesClient() {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
@@ -55,13 +98,13 @@ export default function MessagesClient() {
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingHistory, setLoadingHistory] = useState<boolean>(false);
   const [attachedFile, setAttachedFile] = useState<File | null>(null);
-const [filePreview, setFilePreview] = useState<string | null>(null);
-const [uploading, setUploading] = useState(false);
-const fileInputRef = useRef<HTMLInputElement>(null);
+  const [filePreview, setFilePreview] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { user } = useAuthStore();
   const currentUserId = user?.id;
   console.log(currentUserId);
-  
+
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -83,7 +126,17 @@ const fileInputRef = useRef<HTMLInputElement>(null);
             target_user_id: Number(otherUserId),
           }),
         });
-        setSelectedRoom({room_id:res?.data.room_id})
+        setSelectedRoom((prev) =>
+          prev
+            ? { ...prev, room_id: res?.data.room_id ?? prev.room_id }
+            : {
+              room_id: res?.data.room_id ?? "",
+              other_user_id: String(otherUserId),
+              last_message: "",
+              timestamp: new Date().toISOString(),
+              name: "",
+            }
+        );
         // handle res if needed
       } catch (err) {
         console.log("error", err);
@@ -121,95 +174,94 @@ const fileInputRef = useRef<HTMLInputElement>(null);
     };
 
     setLoading(true);
-  fetchRooms();
+    fetchRooms();
 
-  // Set up polling - fetch every 60 seconds
-  const interval = setInterval(fetchRooms, 60000);
+    // Set up polling - fetch every 60 seconds
+    const interval = setInterval(fetchRooms, 60000);
 
-  // Cleanup interval on unmount
-  return () => clearInterval(interval);
+    // Cleanup interval on unmount
+    return () => clearInterval(interval);
   }, []);
 
   // Load chat history when room changes
-useEffect(() => {
-  const loadChatHistory = async () => {
-    if (!selectedRoom) return;
+  useEffect(() => {
+    const loadChatHistory = async () => {
+      if (!selectedRoom) return;
 
-    setLoadingHistory(true);
-    try {
-      const token = localStorage.getItem("access_token");
-      if (!token) {
-        router.push("/login");
-        return;
-      }
-
-      const response = await apiClient(
-        `chat_service/get_room_history/${selectedRoom.room_id}/`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      setLoadingHistory(true);
+      try {
+        const token = localStorage.getItem("access_token");
+        if (!token) {
+          router.push("/login");
+          return;
         }
-      );
 
-      if (response?.data && Array.isArray(response.data)) {
-        // Transform API response to Message format
-        const formattedMessages: Message[] = response.data.map(
-          (msg: HistoryMessage) => ({
-            id: msg.id,
-            senderId: msg.sender_id,
-            senderName: msg.is_me ? "You" : selectedRoom?.name || "User",
-            content: msg.message,
-            timestamp: new Date(msg.timestamp).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            }),
-            isOwn: msg.is_me,
-            rawTimestamp: new Date(msg.timestamp), // Keep for sorting
-          })
+        const response = await apiClient(
+          `chat_service/get_room_history/${selectedRoom.room_id}/`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
 
-        // Sort messages by timestamp (oldest first)
-        const sortedMessages = formattedMessages.sort(
-          (a, b) => a.rawTimestamp.getTime() - b.rawTimestamp.getTime()
-        );
+        if (response?.data && Array.isArray(response.data)) {
+          // Transform API response to Message format
+          const formattedMessages: MessageWithRawTimestamp[] = response.data.map(
+            (msg: HistoryMessage) => ({
+              id: msg.id,
+              senderId: msg.sender_id,
+              senderName: msg.is_me ? "You" : selectedRoom?.name || "User",
+              content: msg.message,
+              fileUrl: msg.file,
+              timestamp: new Date(msg.timestamp).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+              isOwn: msg.is_me,
+              rawTimestamp: new Date(msg.timestamp), // Keep for sorting
+            })
+          );
 
-        // Remove rawTimestamp before storing (optional cleanup)
-        const cleanedMessages = sortedMessages.map((msg) => {
-          const { rawTimestamp, ...rest } = msg;
-          return rest;
-        });
+          // Sort messages by timestamp (oldest first)
+          const sortedMessages = formattedMessages.sort(
+            (a, b) => a.rawTimestamp.getTime() - b.rawTimestamp.getTime()
+          );
 
-        console.log("Sorted Messages:", cleanedMessages);
-        setMessages(cleanedMessages);
+          // Remove rawTimestamp before storing (optional cleanup)
+          const cleanedMessages: Message[] = sortedMessages.map((msg) => {
+            const { rawTimestamp, ...rest } = msg;
+            return rest;
+          });
 
-        // Scroll to bottom after messages load
-        setTimeout(() => {
-          messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-        }, 100);
+          console.log("Sorted Messages:", cleanedMessages);
+          setMessages(cleanedMessages);
+
+          // Scroll to bottom after messages load
+          setTimeout(() => {
+            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+          }, 100);
+        }
+      } catch (err) {
+        console.error("Failed to fetch chat history:", err);
+        setMessages([]); // Set empty array on error
+      } finally {
+        setLoadingHistory(false);
       }
-    } catch (err) {
-      console.error("Failed to fetch chat history:", err);
-      setMessages([]); // Set empty array on error
-    } finally {
-      setLoadingHistory(false);
-    }
-  };
+    };
 
-  loadChatHistory();
-}, [selectedRoom, router]);
+    loadChatHistory();
+  }, [selectedRoom, router]);
 
   // Initialize WebSocket
   useEffect(() => {
-      if (!selectedRoom || !currentUserId) {
-    console.log("Waiting for room or currentUserId. Room:", selectedRoom, "UserId:", currentUserId);
-    return;
-  }
+    if (!selectedRoom || !currentUserId) {
+      console.log("Waiting for room or currentUserId. Room:", selectedRoom, "UserId:", currentUserId);
+      return;
+    }
 
-  let isMounted = true;
 
-    if (!selectedRoom || !currentUserId) return;
 
     const initiateChat = async () => {
       try {
@@ -237,6 +289,8 @@ useEffect(() => {
         ws.onmessage = (event) => {
           try {
             const payload = JSON.parse(event.data);
+            console.log(payload);
+
 
             console.log("Message received:", {
               sender_id: payload.sender_id,
@@ -244,13 +298,34 @@ useEffect(() => {
               is_own: String(payload.sender_id) === userId,
             });
 
-            // Only add messages from other users
-            if (payload.message && String(payload.sender_id) !== userId) {
+            let incomingMessage = payload.message ?? "";
+            let fileUrl: string | undefined = payload.file ?? undefined;
+            let fileType: string | undefined =
+              payload.file_type ?? undefined;
+            let fileName: string | undefined =
+              payload.file_name ?? undefined;
+
+            if (!fileUrl && looksLikeHttpUrl(incomingMessage)) {
+              const trimmed = incomingMessage.trim();
+              if (trimmed) {
+                fileUrl = trimmed;
+                const meta = inferFileMetaFromUrl(trimmed);
+                fileType = fileType ?? meta.fileType;
+                fileName = fileName ?? meta.fileName;
+                incomingMessage = "";
+              }
+            }
+
+            const hasContent = Boolean(incomingMessage || fileUrl);
+            if (hasContent && String(payload.sender_id) !== userId) {
               setMessages((prev) => [
                 ...prev,
                 {
                   id: payload.id || Date.now(),
-                  content: payload.message,
+                  content: incomingMessage,
+                  fileUrl,
+                  fileType,
+                  fileName,
                   senderId: payload.sender_id,
                   isOwn: false,
                   timestamp: new Date().toLocaleTimeString([], {
@@ -298,63 +373,63 @@ useEffect(() => {
   }, [selectedRoom, currentUserId]);
 
   const handleSendMessage = async () => {
-  if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) return;
+    if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) return;
 
-  const hasText = newMessage.trim();
-  const hasFile = !!attachedFile;
+    const hasText = newMessage.trim();
+    const hasFile = !!attachedFile;
 
-  if (!hasText && !hasFile) return;
+    if (!hasText && !hasFile) return;
 
-  let fileUrl = null;
-  let fileType = null;
-  let fileName = null;
+    let fileUrl: string | undefined;
+    let fileType: string | undefined;
+    let fileName: string | undefined;
 
-  // Upload file first
-  if (hasFile && attachedFile) {
-    setUploading(true);
-    const result = await uploadToCloudinary(attachedFile);
-    setUploading(false);
+    // Upload file first
+    if (hasFile && attachedFile) {
+      setUploading(true);
+      const result = await uploadToCloudinary(attachedFile);
+      setUploading(false);
 
-    if (!result.success || !result.url) {
-      alert("Upload failed: " + (result.error || ""));
-      return;
+      if (!result.success || !result.url) {
+        alert("Upload failed: " + (result.error || ""));
+        return;
+      }
+
+      fileUrl = result.url;
+      fileType = attachedFile.type;
+      fileName = result.filename || attachedFile.name;
     }
 
-    fileUrl = result.url;
-    fileType = attachedFile.type;
-    fileName = result.filename || attachedFile.name;
-  }
+    // Send via WebSocket
+    const payload: ChatMessagePayload = { type: "chat_message" };
+    if (hasText) payload.message = newMessage;
+    if (fileUrl) {
+      payload.file = fileUrl;
+      // payload.file_type = fileType;
+      // payload.file_name = fileName;
+    }
 
-  // Send via WebSocket
-  const payload: any = { type: "chat_message" };
-  if (hasText) payload.message = newMessage;
-  if (fileUrl) {
-    payload.file_url = fileUrl;
-    payload.file_type = fileType;
-    payload.file_name = fileName;
-  }
+    wsRef.current.send(JSON.stringify(payload));
 
-  wsRef.current.send(JSON.stringify(payload));
+    // Optimistic update
+    setMessages(prev => [...prev, {
+      id: Date.now(),
+      content: hasText ? newMessage : "",
+      senderId: currentUserId!,
+      senderName: "You",
+      isOwn: true,
+      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      fileUrl,
+      fileType,
+      fileName,
+    }]);
 
-  // Optimistic update
-  setMessages(prev => [...prev, {
-    id: Date.now(),
-    content: hasText ? newMessage : "",
-    senderId: currentUserId!,
-    senderName: "You",
-    isOwn: true,
-    timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-    fileUrl,
-    fileType,
-    fileName,
-  }]);
+    setNewMessage("");
+    setAttachedFile(null);
+    setFilePreview(null);
 
-  setNewMessage("");
-  setAttachedFile(null);
-  setFilePreview(null);
-
-  setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
-};
+    setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
+  };
 
   const handleRoomSelect = (room: Room) => {
     setSelectedRoom(room);
@@ -368,12 +443,16 @@ useEffect(() => {
   );
 
   const formatLastMessage = (msg: string, timestamp: string) => {
+    const safeMsg = msg || "No messages yet";
     const date = new Date(timestamp);
     const today = new Date();
     const isToday = date.toDateString() === today.toDateString();
+    const displayedMessage = safeMsg.length > 50
+      ? safeMsg.substring(0, 50) + "..."
+      : safeMsg;
 
     return {
-      message: msg.length > 50 ? msg.substring(0, 50) + "..." : msg,
+      message: displayedMessage,
       time: isToday
         ? date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
         : date.toLocaleDateString([], { month: "short", day: "numeric" }),
@@ -381,28 +460,28 @@ useEffect(() => {
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const file = e.target.files?.[0];
-  if (!file) return;
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-  // Optional: limit size
-  if (file.size > 15 * 1024 * 1024) {
-    alert("File too large (max 15MB)");
-    return;
-  }
+    // Optional: limit size
+    if (file.size > 15 * 1024 * 1024) {
+      alert("File too large (max 15MB)");
+      return;
+    }
 
-  setAttachedFile(file);
+    setAttachedFile(file);
 
-  if (file.type.startsWith("image/") || file.type.startsWith("video/")) {
-    const reader = new FileReader();
-    reader.onload = () => setFilePreview(reader.result as string);
-    reader.readAsDataURL(file);
-  } else {
-    setFilePreview(null);
-  }
+    if (file.type.startsWith("image/") || file.type.startsWith("video/")) {
+      const reader = new FileReader();
+      reader.onload = () => setFilePreview(reader.result as string);
+      reader.readAsDataURL(file);
+    } else {
+      setFilePreview(null);
+    }
 
-  // Clear input
-  if (fileInputRef.current) fileInputRef.current.value = "";
-};
+    // Clear input
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
 
   return (
     <div className="h-[calc(100vh-48px)] bg-gray-50 flex relative">
@@ -416,11 +495,10 @@ useEffect(() => {
 
       {/* Left Sidebar - Rooms */}
       <div
-        className={`w-full sm:w-72 bg-white border-r border-gray-200 flex flex-col absolute md:relative z-20 md:z-auto h-full transform transition-all duration-300 ease-in-out ${
-          showSidebar
+        className={`w-full sm:w-72 bg-white border-r border-gray-200 flex flex-col absolute md:relative z-20 md:z-auto h-full transform transition-all duration-300 ease-in-out ${showSidebar
             ? "translate-x-0"
             : "-translate-x-[1000px] md:translate-x-0"
-        }`}
+          }`}
       >
         <div className="p-4 border-b border-gray-200 bg-white">
           <div className="flex items-center justify-between mb-4">
@@ -472,11 +550,10 @@ useEffect(() => {
               return (
                 <div
                   key={room.room_id}
-                  className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-all duration-200 ${
-                    selectedRoom?.room_id === room.room_id
+                  className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-all duration-200 ${selectedRoom?.room_id === room.room_id
                       ? "border-l-4 border-l-primary bg-gray-50"
                       : ""
-                  }`}
+                    }`}
                   onClick={() => handleRoomSelect(room)}
                 >
                   <div className="flex items-center gap-3">
@@ -510,197 +587,206 @@ useEffect(() => {
 
       {/* Chat Area */}
       <div className="flex-1 flex flex-col">
-       
-         
-            {/* Chat Header */}
-            <div className="bg-white border-b border-gray-200 p-4 shadow-sm sticky top-0 z-10">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => setShowSidebar(true)}
-                    className="md:hidden p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all duration-200"
-                  >
-                    <MoreHorizontal className="h-5 w-5" />
-                  </button>
-                  <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold">
-                    {selectedRoom?.name?.[0] ||
-                      selectedRoom?.other_user_id?.[0] ||
-                      "?"}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-bold text-gray-900 truncate">
-                      {selectedRoom?.name || selectedRoom?.other_user_id}
-                    </p>
-                    <p className="text-sm text-gray-500">Active now</p>
-                  </div>
-                </div>
-                <button
-                    onClick={() => {
-                      router.push(
-                        `/brand-dashboard/influencers/${selectedRoom?.other_user_id}/send-proposal`
-                      );
-                    }}
-                    className="px-4 py-2 bg-secondary text-primary rounded-xl font-semibold transition-all duration-200 cursor-pointer text-sm shadow-sm"
-                  >
-                    Hire
-                  </button>
+
+
+        {/* Chat Header */}
+        <div className="bg-white border-b border-gray-200 p-4 shadow-sm sticky top-0 z-10">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowSidebar(true)}
+                className="md:hidden p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all duration-200"
+              >
+                <MoreHorizontal className="h-5 w-5" />
+              </button>
+              <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold">
+                {selectedRoom?.name?.[0] ||
+                  selectedRoom?.other_user_id?.[0] ||
+                  "?"}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="font-bold text-gray-900 truncate">
+                  {selectedRoom?.name || selectedRoom?.other_user_id}
+                </p>
+                <p className="text-sm text-gray-500">Active now</p>
               </div>
             </div>
+            <button
+              onClick={() => {
+                router.push(
+                  `/brand-dashboard/influencers/${selectedRoom?.other_user_id}/send-proposal`
+                );
+              }}
+              className="px-4 py-2 bg-secondary text-primary rounded-xl font-semibold transition-all duration-200 cursor-pointer text-sm shadow-sm"
+            >
+              Hire
+            </button>
+          </div>
+        </div>
 
-            {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
-              {loadingHistory ? (
-                <div className="flex items-center justify-center h-full">
-                  <Loader className="h-6 w-6 animate-spin text-primary" />
+        {/* Messages Area */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+          {loadingHistory ? (
+            <div className="flex items-center justify-center h-full">
+              <Loader className="h-6 w-6 animate-spin text-primary" />
+            </div>
+          ) : messages.length === 0 ? (
+            <div className="flex items-center justify-center h-full text-gray-500">
+              <p className="text-sm">No messages yet. Start a conversation!</p>
+            </div>
+          ) : (
+            messages.map((message) => (
+              <div
+                key={message.id}
+                className={`flex ${message.isOwn ? "justify-end" : "justify-start"
+                  }`}
+              >
+                <div className="flex items-end gap-2 max-w-[85%] sm:max-w-xs lg:max-w-md">
+                  {!message.isOwn && (
+                    <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold text-xs flex-shrink-0">
+                      {selectedRoom?.name?.[0] ||
+                        selectedRoom?.other_user_id?.[0] ||
+                        "?"}
+                    </div>
+                  )}
+                  <div
+                    className={`px-4 py-3 rounded-2xl shadow-sm ${message.isOwn
+                        ? "bg-gradient-to-r from-primary to-primary text-white rounded-br-md"
+                        : "bg-white text-gray-900 rounded-bl-md border border-gray-200"
+                      }`}
+                  >
+                    {/* Show image/video/file */}
+                    {message.fileUrl && (
+                      <div className="mb-2 rounded-lg overflow-hidden bg-black/5">
+                        {message.fileType?.startsWith("image/") ? (
+                          <img
+                            src={message.fileUrl}
+                            alt="sent attachment"
+                            className="w-full h-full object-contain"
+                          />
+                        ) : message.fileType?.startsWith("video/") ? (
+                          <video
+                            src={message.fileUrl}
+                            controls
+                            className="w-full h-full object-contain"
+                          />
+                        ) : (
+                          <Image
+                            src={message.fileUrl}
+                            alt={message.fileUrl}
+                            width={320}
+                            height={320}
+                            className="w-full h-full object-contain"
+                          />
+                        )}
+                      </div>
+                    )}
+
+                    {message.content && <p className="text-sm break-words">{message.content}</p>}
+                    <p
+                      className={`text-xs mt-1 ${message.isOwn
+                          ? "text-blue-100"
+                          : "text-gray-400"
+                        }`}
+                    >
+                      {message.timestamp}
+                    </p>
+                  </div>
                 </div>
-              ) : messages.length === 0 ? (
-                <div className="flex items-center justify-center h-full text-gray-500">
-                  <p className="text-sm">No messages yet. Start a conversation!</p>
+              </div>
+            ))
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+
+        <div className="bg-white border-t border-gray-200 p-4 sticky bottom-0">
+          {/* File Preview */}
+          {attachedFile && (
+            <div className="mb-4 flex items-center gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-200">
+              {filePreview ? (
+                <div className="relative">
+                  {attachedFile.type.startsWith("image/") ? (
+                    <img src={filePreview} alt="Preview" className="w-20 h-20 object-cover rounded-lg" />
+                  ) : attachedFile.type.startsWith("video/") ? (
+                    <video src={filePreview} controls className="w-20 h-20 object-cover rounded-lg" />
+                  ) : (
+                    <div className="w-20 h-20 bg-gray-200 border-2 border-dashed rounded-lg flex items-center justify-center">
+                      <Paperclip className="h-8 w-8 text-gray-500" />
+                    </div>
+                  )}
+                  {uploading && (
+                    <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center">
+                      <Loader className="h-6 w-6 text-white animate-spin" />
+                    </div>
+                  )}
                 </div>
               ) : (
-                messages.map((message) => (
-                  <div
-                    key={message.id}
-                    className={`flex ${
-                      message.isOwn ? "justify-end" : "justify-start"
-                    }`}
-                  >
-                    <div className="flex items-end gap-2 max-w-[85%] sm:max-w-xs lg:max-w-md">
-                      {!message.isOwn && (
-                        <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold text-xs flex-shrink-0">
-                          {selectedRoom?.name?.[0] ||
-                            selectedRoom?.other_user_id?.[0] ||
-                            "?"}
-                        </div>
-                      )}
-                      <div
-                        className={`px-4 py-3 rounded-2xl shadow-sm ${
-                          message.isOwn
-                            ? "bg-gradient-to-r from-primary to-primary text-white rounded-br-md"
-                            : "bg-white text-gray-900 rounded-bl-md border border-gray-200"
-                        }`}
-                      >
-                        {/* Show image/video/file */}
-{message.fileUrl && (
-  <div className="mb-2">
-    {message.fileType?.startsWith("image/") ? (
-      <img src={message.fileUrl} alt="sent" className="rounded-lg max-w-full" />
-    ) : message.fileType?.startsWith("video/") ? (
-      <video src={message.fileUrl} controls className="rounded-lg max-w-full" />
-    ) : (
-      <a href={message.fileUrl} target="_blank" className="text-blue-300 underline flex items-center gap-1">
-        <Paperclip className="h-4 w-4" /> {message.fileName}
-      </a>
-    )}
-  </div>
-)}
-
-{message.content && <p className="text-sm break-words">{message.content}</p>}
-                        <p
-                          className={`text-xs mt-1 ${
-                            message.isOwn
-                              ? "text-blue-100"
-                              : "text-gray-400"
-                          }`}
-                        >
-                          {message.timestamp}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))
+                <div className="w-20 h-20 bg-gray-200 border-2 border-dashed rounded-lg flex items-center justify-center">
+                  <Paperclip className="h-8 w-8 text-gray-500" />
+                </div>
               )}
-              <div ref={messagesEndRef} />
-            </div>
 
-            <div className="bg-white border-t border-gray-200 p-4 sticky bottom-0">
-  {/* File Preview */}
-  {attachedFile && (
-    <div className="mb-4 flex items-center gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-200">
-      {filePreview ? (
-        <div className="relative">
-          {attachedFile.type.startsWith("image/") ? (
-            <img src={filePreview} alt="Preview" className="w-20 h-20 object-cover rounded-lg" />
-          ) : attachedFile.type.startsWith("video/") ? (
-            <video src={filePreview} controls className="w-20 h-20 object-cover rounded-lg" />
-          ) : (
-            <div className="w-20 h-20 bg-gray-200 border-2 border-dashed rounded-lg flex items-center justify-center">
-              <Paperclip className="h-8 w-8 text-gray-500" />
-            </div>
-          )}
-          {uploading && (
-            <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center">
-              <Loader className="h-6 w-6 text-white animate-spin" />
+              <div className="flex-1">
+                <p className="text-sm font-medium truncate max-w-xs">{attachedFile.name}</p>
+                <p className="text-xs text-gray-500">
+                  {(attachedFile.size / 1024 / 1024).toFixed(2)} MB
+                </p>
+              </div>
+
+              <button
+                onClick={() => {
+                  setAttachedFile(null);
+                  setFilePreview(null);
+                }}
+                className="text-red-500 hover:bg-red-50 p-2 rounded-full transition"
+              >
+                ×
+              </button>
             </div>
           )}
+
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all duration-200 flex-shrink-0"
+            >
+              <Paperclip className="h-5 w-5" />
+            </button>
+
+            <input
+              type="text"
+              placeholder="Type a message..."
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              onKeyPress={(e) => e.key === "Enter" && !e.shiftKey && handleSendMessage()}
+              className="flex-1 px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-primary outline-none text-sm bg-gray-50 focus:bg-white transition"
+            />
+
+            <button
+              onClick={handleSendMessage}
+              disabled={uploading || (!newMessage.trim() && !attachedFile)}
+              className="p-3 bg-primary hover:bg-primary-dark disabled:bg-gray-300 text-white rounded-full transition-all shadow-sm disabled:cursor-not-allowed relative"
+            >
+              {uploading ? (
+                <Loader className="h-5 w-5 animate-spin" />
+              ) : (
+                <Send className="h-5 w-5" />
+              )}
+            </button>
+          </div>
+
+          {/* Hidden file input */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            accept="image/*,video/*,.pdf,.doc,.docx,.txt"
+            onChange={handleFileSelect}
+          />
         </div>
-      ) : (
-        <div className="w-20 h-20 bg-gray-200 border-2 border-dashed rounded-lg flex items-center justify-center">
-          <Paperclip className="h-8 w-8 text-gray-500" />
-        </div>
-      )}
 
-      <div className="flex-1">
-        <p className="text-sm font-medium truncate max-w-xs">{attachedFile.name}</p>
-        <p className="text-xs text-gray-500">
-          {(attachedFile.size / 1024 / 1024).toFixed(2)} MB
-        </p>
-      </div>
 
-      <button
-        onClick={() => {
-          setAttachedFile(null);
-          setFilePreview(null);
-        }}
-        className="text-red-500 hover:bg-red-50 p-2 rounded-full transition"
-      >
-        ×
-      </button>
-    </div>
-  )}
-
-  <div className="flex items-center gap-3">
-    <button
-      type="button"
-      onClick={() => fileInputRef.current?.click()}
-      className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all duration-200 flex-shrink-0"
-    >
-      <Paperclip className="h-5 w-5" />
-    </button>
-
-    <input
-      type="text"
-      placeholder="Type a message..."
-      value={newMessage}
-      onChange={(e) => setNewMessage(e.target.value)}
-      onKeyPress={(e) => e.key === "Enter" && !e.shiftKey && handleSendMessage()}
-      className="flex-1 px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-primary outline-none text-sm bg-gray-50 focus:bg-white transition"
-    />
-
-    <button
-      onClick={handleSendMessage}
-      disabled={uploading || (!newMessage.trim() && !attachedFile)}
-      className="p-3 bg-primary hover:bg-primary-dark disabled:bg-gray-300 text-white rounded-full transition-all shadow-sm disabled:cursor-not-allowed relative"
-    >
-      {uploading ? (
-        <Loader className="h-5 w-5 animate-spin" />
-      ) : (
-        <Send className="h-5 w-5" />
-      )}
-    </button>
-  </div>
-
-  {/* Hidden file input */}
-  <input
-    type="file"
-    ref={fileInputRef}
-    className="hidden"
-    accept="image/*,video/*,.pdf,.doc,.docx,.txt"
-    onChange={handleFileSelect}
-  />
-</div>
-          
-        
       </div>
     </div>
   );

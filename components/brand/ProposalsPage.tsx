@@ -2,14 +2,14 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 type ProposalForm = {
   proposalMessage: string;
   startDate: string;
   endDate: string;
   campaignBrief: File | null;
-  attachments: File[];
+  productPhotos: File | null;
   deliverables: string[];
 };
 
@@ -34,15 +34,19 @@ export default function ProposalsPage() {
     startDate: "",
     endDate: "",
     campaignBrief: null,
-    attachments: null,
+    productPhotos: null,
     deliverables: [],
   });
 
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [successData, setSuccessData] = useState<any>(null);
   const router = useRouter();
+  const params = useParams<{ id: string }>();
+  const profileId = params.id; 
+  console.log(profileId);
+  
+    
 
   const handleInputChange = (field: keyof ProposalForm, value: string) => {
     setFormData((prev) => ({
@@ -91,22 +95,27 @@ export default function ProposalsPage() {
       formPayload.append("end_date", formData.endDate || "");
       formPayload.append("proposal_message", formData.proposalMessage || "");
       formPayload.append("campaign_deliverables", JSON.stringify(formData.deliverables));
+       if (formData.campaignBrief) {
+        formPayload.append("attachments", formData.campaignBrief);
+      }
 
-      if (formData.campaignBrief) {
-  formPayload.append("campaign_brief", formData.campaignBrief);  
-}
-
-      formData.attachments.forEach((file) => {
-  formPayload.append("attachments[]", file); 
-});
+      if (formData.productPhotos) {
+        formPayload.append("attachments", formData.productPhotos);
+      }
+     
+      
 
       console.log("Sending proposal with FormData");
+
+      
+
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}campaign_service/hire_influencer/`,
         {
           method: "POST",
           headers: {
+           
             Authorization: `Bearer ${token}`,
           },
           body: formPayload,
@@ -121,7 +130,6 @@ export default function ProposalsPage() {
 
       if (result.status === "success") {
         console.log("Proposal sent successfully:", result.data);
-        setSuccessData(result.data);
         setShowReviewModal(false);
         setShowSuccessModal(true);
       } else {
@@ -140,10 +148,10 @@ export default function ProposalsPage() {
     }
   };
 
-  const handleSaveAsDraft = () => {
-    console.log("Saved as draft:", formData);
-    setShowReviewModal(false);
-  };
+  // const handleSaveAsDraft = () => {
+  //   console.log("Saved as draft:", formData);
+  //   setShowReviewModal(false);
+  // };
 
   const handleCloseSuccess = () => {
     setShowSuccessModal(false);
@@ -152,7 +160,7 @@ export default function ProposalsPage() {
       startDate: "",
       endDate: "",
       campaignBrief: null,
-      attachments: null,
+      productPhotos: null,
       deliverables: [],
     });
   };
@@ -256,7 +264,7 @@ export default function ProposalsPage() {
                       }
                       className="w-4 h-4 text-primary rounded focus:ring-2 focus:ring-primary"
                     />
-                    <span className="text-lg">{deliverable.icon}</span>
+                    {/* <span className="text-lg">{deliverable.icon}</span> */}
                     <label
                       htmlFor={deliverable.id}
                       className="text-sm font-normal cursor-pointer text-gray-700"
@@ -303,11 +311,8 @@ export default function ProposalsPage() {
                   <input
                     type="file"
                     accept="image/*"
-                    multiple
-                    onChange={(e) => {
-  const files = e.target.files ? Array.from(e.target.files) : [];
-  setFormData(prev => ({ ...prev, attachments: files }));
-}}
+                    
+                    onChange={(e) => handleFileChange(e, "productPhotos")}
                     className="mt-2 text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-secondary file:text-primary hover:file:bg-primary"
                   />
                   <span className="text-xs text-gray-500 block pl-6">
@@ -454,8 +459,10 @@ export default function ProposalsPage() {
                     <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-100 rounded-lg p-2">
                       <span>📷</span>
                       <span className="truncate">
-                        {formData.attachments?.name ||
-                          "Product photos (optional)"}
+                        {formData.productPhotos
+      ? formData.productPhotos.name
+      : "Product photos (optional)"}
+
                       </span>
                     </div>
                   </div>
@@ -469,13 +476,13 @@ export default function ProposalsPage() {
                   >
                     {loading ? "Sending..." : "Send Proposal"}
                   </button>
-                  <button
+                  {/* <button
                     onClick={handleSaveAsDraft}
                     disabled={loading}
                     className="flex-1 border border-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-50 disabled:opacity-50 transition-colors"
                   >
                     Save as Draft
-                  </button>
+                  </button> */}
                 </div>
               </div>
             </div>
@@ -505,12 +512,12 @@ export default function ProposalsPage() {
                 >
                   Continue
                 </button>
-                <button
+                {/* <button
                   onClick={handleCloseSuccess}
                   className="flex-1 border border-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-50 transition-colors"
                 >
                   View Profile
-                </button>
+                </button> */}
               </div>
             </div>
           </div>

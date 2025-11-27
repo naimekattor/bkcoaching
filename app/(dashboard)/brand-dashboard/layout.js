@@ -1,6 +1,6 @@
 // app/brand-dashboard/layout.js
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { Sidebar } from "../../../components/dashboard/Sidebar";
 import { HiMenu, HiX } from "react-icons/hi";
 import { brandLinks } from "../../../config/sidebarLinks";
@@ -8,12 +8,28 @@ import DashboardTopHeader from "../../../components/dashboard/DashboardTopHeader
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 
+function SubscriptionStatusToast() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  useEffect(() => {
+    const status = searchParams.get("status");
+    if (status === "success") {
+      toast("Subscription completed successfully! 🎉");
+
+      const url = new URL(window.location.href);
+      url.searchParams.delete("status");
+      router.replace(url.pathname);
+    }
+  }, [searchParams, router]);
+
+  return null;
+}
+
 export default function BrandDashboardLayout({ children }) {
   const [showSideBar, setShowSideBar] = useState(false);
   const sideBarRef = useRef(null);
   const path = usePathname();
-  const searchParams = useSearchParams();
-  const router = useRouter();
 
   useEffect(() => {
     const clickOutSideSideBar = (event) => {
@@ -33,20 +49,11 @@ export default function BrandDashboardLayout({ children }) {
     };
   }, [showSideBar]);
 
-  useEffect(() => {
-    const status = searchParams.get("status");
-    if (status === "success") {
-      toast("Subscription completed successfully! 🎉");
-
-      // Clean up the URL
-      const url = new URL(window.location.href);
-      url.searchParams.delete("status");
-      router.replace(url.pathname);
-    }
-  }, [searchParams, router]);
-
   return (
     <div className="flex min-h-screen bg-[#FFFFFF]">
+      <Suspense fallback={null}>
+        <SubscriptionStatusToast />
+      </Suspense>
       {/* Sidebar fixed (desktop) */}
       <aside className="fixed left-0 top-0 h-screen w-64 bg-white shadow z-10 hidden md:block">
         <Sidebar links={brandLinks} />

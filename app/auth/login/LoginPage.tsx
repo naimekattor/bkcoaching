@@ -1,6 +1,6 @@
 "use client";
 import type React from "react";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,16 +8,12 @@ import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { login, setAuthFromResponse } from "@/lib/auth";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { apiClient } from "@/lib/apiClient";
 import { signIn } from "next-auth/react";
 
-export default function LoginPage() {
+function LoginPageContent() {
   const router = useRouter();
   const params = useSearchParams();
-    const returnTo = params.get("returnTo");
-
-  console.log(returnTo);
-  
+  const returnTo = params.get("returnTo");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -27,7 +23,6 @@ export default function LoginPage() {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [loading, setLoading] = useState(false);
   const { user } = useAuthStore();
-  console.log(user);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,8 +54,10 @@ export default function LoginPage() {
       }
 
       
-    } catch (err: any) {
-      setErrors({ general: err.message || "Login failed" });
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "Login failed";
+      setErrors({ general: message });
     } finally {
       setLoading(false);
     }
@@ -257,5 +254,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-50" />}>
+      <LoginPageContent />
+    </Suspense>
   );
 }

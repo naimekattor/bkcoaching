@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // lib/apiClient.ts
 export interface ApiOptions extends RequestInit {
   auth?: boolean;
@@ -49,3 +50,4 @@ export async function apiClient<T = any>(
 
   return data as T;
 }
+/* eslint-enable @typescript-eslint/no-explicit-any */
