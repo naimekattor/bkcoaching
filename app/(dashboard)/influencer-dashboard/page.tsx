@@ -12,7 +12,19 @@ interface InfluencerProfileInfo {
   display_name?: string;
   content_niches?: string;
 }
-
+interface RoomData {
+  room_id: string;
+  other_user_id: string;
+  other_user_avatar?: string | null;
+  name?: string | null;
+  last_message?: string | null;
+  timestamp: string; // ISO string like "2025-04-05T10:30:00Z"
+  brand_logo?: string | null;
+  // Add more fields if your API returns them
+  unread_count?: number;
+  is_online?: boolean;
+  profile_picture?:string;
+}
 const analyticsData = [
   { value: "12", label: "Total Campaigns", color: "#ffc006" },
   { value: "$2250", label: "Earnings", color: "#dcfce7" },
@@ -21,6 +33,7 @@ const analyticsData = [
 export default function Page() {
   const [influencerProfile, setInfluencerProfile] =
     useState<InfluencerProfileInfo | null>(null);
+    const [roomData,setRoomData]=useState<RoomData[]>([]);
 
   const store = useAuthStore.getState();
   useEffect(() => {
@@ -43,6 +56,39 @@ export default function Page() {
 
     fetchUser();
   }, []);
+  
+
+
+  useEffect(() => {
+    const fetchAllRooms = async () => {
+      try {
+        const res = await apiClient("chat_service/get_my_rooms/", {
+          method: "GET",
+          auth: true,
+        });
+        setRoomData(res.data);
+
+        
+      } catch (error) {
+        console.error("❌ API Error:", error);
+      }
+    };
+
+    fetchAllRooms();
+  }, []);
+
+
+  const formatTime = (timestamp: string) => {
+  const date = new Date(timestamp);
+  const now = new Date();
+  const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / 60000);
+
+  if (diffInMinutes < 1) return "Just now";
+  if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+  if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
+  return date.toLocaleDateString();
+};
+
 
   return (
     <div className="">
@@ -210,48 +256,40 @@ export default function Page() {
                 <h2 className="text-xl font-bold text-gray-900">Messages</h2>
               </div>
               <div className="space-y-4">
-                {/* Message Item 1 */}
-                <div className="flex items-start space-x-4">
-                  <Image
-                    width={40}
-                    height={40}
-                    className="h-10 w-10 rounded-full"
-                    src="/images/person.jpg"
-                    alt="TechBusiness Inc. avatar"
-                  />
-                  <div className="flex-grow">
-                    <div className="flex justify-between items-center">
-                      <span className="font-semibold text-gray-900">
-                        TechBusiness Inc.
-                      </span>
-                      <span className="text-xs text-gray-400">2h ago</span>
-                    </div>
-                    <p className="text-gray-600">
-                      Great content! When can we schedule the next post?
-                    </p>
-                  </div>
-                </div>
-                {/* Message Item 2 */}
-                <div className="flex items-start space-x-4">
-                  <Image
-                    width={40}
-                    height={40}
-                    className="h-10 w-10 rounded-full"
-                    src="/images/person.jpg"
-                    alt="Fashion Forward avatar"
-                  />
-                  <div className="flex-grow">
-                    <div className="flex justify-between items-center">
-                      <span className="font-semibold text-gray-900">
-                        Fashion Forward
-                      </span>
-                      <span className="text-xs text-gray-400">1d ago</span>
-                    </div>
-                    <p className="text-gray-600">
-                      Payment has been processed successfully
-                    </p>
-                  </div>
-                </div>
+                {roomData.length === 0 ? (
+  <div className="text-center text-gray-500 py-8">
+    No messages found
+  </div>
+) : (
+  roomData.slice(0,2).map((room, index) => (
+    <div key={room.room_id || index} className="flex items-start space-x-4 py-4 border-b border-gray-100 last:border-0">
+      <Image
+        width={40}
+        height={40}
+        className="h-10 w-10 rounded-full object-cover flex-shrink-0"
+        src={room.profile_picture || room.brand_logo || "/images/person.jpg"}
+        alt={`${room.name || "User"} avatar`}
+      />
+      
+      <div className="flex-grow min-w-0">
+        <div className="flex justify-between items-center mb-1">
+          <span className="font-semibold text-gray-900 truncate">
+            {room.name || room.other_user_id || "Unknown User"}
+          </span>
+          <span className="text-xs text-gray-400 flex-shrink-0 ml-2">
+            {formatTime(room.timestamp)}
+          </span>
+        </div>
+        
+        <p className="text-gray-600 text-sm line-clamp-2">
+          {room.last_message || "No messages yet"}
+        </p>
+      </div>
+    </div>
+  ))
+)}
+                
+                
               </div>
             </div>
 
@@ -319,7 +357,7 @@ export default function Page() {
                 {influencerProfile?.content_niches?.split(",").map((tag) => (
                   <span
                     key={tag}
-                    className="bg-gray-200 text-gray-700 rounded-full px-4 py-2 text-sm font-medium"
+                    className="bg-secondary text-primary rounded-full px-4 py-2 text-sm font-medium"
                   >
                     {tag}
                   </span>

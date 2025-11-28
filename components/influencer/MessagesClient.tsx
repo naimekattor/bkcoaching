@@ -23,6 +23,7 @@ interface Room {
   timestamp: string;
   name?: string;
   other_user_avatar?: string;
+  profile_picture?: string;
 }
 
 interface HistoryMessage {
@@ -31,7 +32,7 @@ interface HistoryMessage {
   is_me: boolean;
   message: string;
   timestamp: string;
-  file:string;
+  file: string;
 }
 
 interface Message {
@@ -173,7 +174,6 @@ export default function InfluencerMessagesClient() {
   // Fetch rooms for sidebar
   useEffect(() => {
     const fetchRooms = async () => {
-
       try {
         const token = localStorage.getItem("access_token");
         if (!token) {
@@ -191,7 +191,6 @@ export default function InfluencerMessagesClient() {
         if (response?.data) {
           setRooms(response.data);
           console.log(response.data);
-
         }
       } catch (err) {
         console.error("Failed to fetch rooms:", err);
@@ -203,8 +202,8 @@ export default function InfluencerMessagesClient() {
     setLoading(true);
     fetchRooms();
 
-    // Set up polling - fetch every 60 seconds
-    const interval = setInterval(fetchRooms, 60000);
+    // Set up polling - fetch every 10 seconds
+    const interval = setInterval(fetchRooms, 10000);
 
     // Cleanup interval on unmount
     return () => clearInterval(interval);
@@ -235,8 +234,8 @@ export default function InfluencerMessagesClient() {
 
         if (response?.data && Array.isArray(response.data)) {
           // Transform API response to Message format
-          const formattedMessages: MessageWithRawTimestamp[] = response.data.map(
-            (msg: HistoryMessage) => ({
+          const formattedMessages: MessageWithRawTimestamp[] =
+            response.data.map((msg: HistoryMessage) => ({
               id: msg.id,
               senderId: msg.sender_id,
               senderName: msg.is_me ? "You" : selectedRoom?.name || "User",
@@ -248,8 +247,7 @@ export default function InfluencerMessagesClient() {
               }),
               isOwn: msg.is_me,
               rawTimestamp: new Date(msg.timestamp), // Keep for sorting
-            })
-          );
+            }));
 
           // Sort messages by timestamp (oldest first)
           const sortedMessages = formattedMessages.sort(
@@ -284,7 +282,12 @@ export default function InfluencerMessagesClient() {
   // Initialize WebSocket
   useEffect(() => {
     if (!selectedRoom || !currentUserId) {
-      console.log("⏳ Waiting for room or currentUserId. Room:", selectedRoom, "UserId:", currentUserId);
+      console.log(
+        "⏳ Waiting for room or currentUserId. Room:",
+        selectedRoom,
+        "UserId:",
+        currentUserId
+      );
       return;
     }
 
@@ -300,7 +303,10 @@ export default function InfluencerMessagesClient() {
           return;
         }
 
-        console.log("✨ Initiating WebSocket connection for room:", selectedRoom.room_id);
+        console.log(
+          "✨ Initiating WebSocket connection for room:",
+          selectedRoom.room_id
+        );
 
         // Close any existing connection
         if (wsRef.current) {
@@ -310,9 +316,9 @@ export default function InfluencerMessagesClient() {
         }
 
         // Build WebSocket URL using existing room
-        const wsUrl = `wss://buzz-referral-med-dakota.trycloudflare.com/ws/chat/${selectedRoom.room_id}/?token=${encodeURIComponent(
-          token
-        )}`;
+        const wsUrl = `wss://buzz-referral-med-dakota.trycloudflare.com/ws/chat/${
+          selectedRoom.room_id
+        }/?token=${encodeURIComponent(token)}`;
 
         console.log("🔗 Connecting to WebSocket:", wsUrl);
 
@@ -325,7 +331,7 @@ export default function InfluencerMessagesClient() {
           console.log("✅ WebSocket connected to room:", selectedRoom.room_id);
           if (isMounted) {
             // Trigger a re-render to enable send button
-            setMessages(prev => prev);
+            setMessages((prev) => prev);
           }
         };
 
@@ -354,8 +360,10 @@ export default function InfluencerMessagesClient() {
               incomingMessage = "";
             }
 
-
-            if ((incomingMessage || fileUrl) && String(payload.sender_id) !== userId) {
+            if (
+              (incomingMessage || fileUrl) &&
+              String(payload.sender_id) !== userId
+            ) {
               setMessages((prev) => [
                 ...prev,
                 {
@@ -428,7 +436,9 @@ export default function InfluencerMessagesClient() {
       const uploadResult = await uploadToCloudinary(attachedFile);
 
       if (!uploadResult.success || !uploadResult.url) {
-        alert("Failed to upload file: " + (uploadResult.error || "Unknown error"));
+        alert(
+          "Failed to upload file: " + (uploadResult.error || "Unknown error")
+        );
         setUploading(false);
         return;
       }
@@ -463,7 +473,10 @@ export default function InfluencerMessagesClient() {
 
         senderId: currentUserId!,
         senderName: "You",
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
         isOwn: true,
         fileUrl: fileUrl || undefined,
         fileType,
@@ -498,9 +511,8 @@ export default function InfluencerMessagesClient() {
     const date = new Date(timestamp);
     const today = new Date();
     const isToday = date.toDateString() === today.toDateString();
-    const displayedMessage = safeMsg.length > 50
-      ? safeMsg.substring(0, 50) + "..."
-      : safeMsg;
+    const displayedMessage =
+      safeMsg.length > 50 ? safeMsg.substring(0, 50) + "..." : safeMsg;
 
     return {
       message: displayedMessage,
@@ -509,7 +521,6 @@ export default function InfluencerMessagesClient() {
         : date.toLocaleDateString([], { month: "short", day: "numeric" }),
     };
   };
-
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -548,10 +559,11 @@ export default function InfluencerMessagesClient() {
 
       {/* Left Sidebar - Rooms */}
       <div
-        className={`w-full sm:w-72 bg-white border-r border-gray-200 flex flex-col absolute md:relative z-20 md:z-auto h-full transform transition-all duration-300 ease-in-out ${showSidebar
+        className={`w-full sm:w-72 bg-white border-r border-gray-200 flex flex-col absolute md:relative z-20 md:z-auto h-full transform transition-all duration-300 ease-in-out ${
+          showSidebar
             ? "translate-x-0"
             : "-translate-x-[1000px] md:translate-x-0"
-          }`}
+        }`}
       >
         <div className="p-4 border-b border-gray-200 bg-white">
           <div className="flex items-center justify-between mb-4">
@@ -623,19 +635,28 @@ export default function InfluencerMessagesClient() {
               return (
                 <div
                   key={room.room_id}
-                  className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-all duration-200 ${selectedRoom?.room_id === room.room_id
+                  className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-all duration-200 ${
+                    selectedRoom?.room_id === room.room_id
                       ? "border-l-4 border-l-primary bg-gray-50"
                       : ""
-                    }`}
+                  }`}
                   onClick={() => handleRoomSelect(room)}
                 >
                   <div className="flex items-center gap-3">
                     <div className="relative flex-shrink-0">
-                      <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold">
-                        {room.name?.[0] ||
-                          room.other_user_id?.[0] ||
-                          "?"}
-                      </div>
+                      {room?.profile_picture ? (
+                        <Image
+                          src={room?.profile_picture}
+                          alt="name"
+                          width={48}
+                          height={48}
+                          className="w-12 h-12 rounded-full overflow-hidden"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold">
+                          {room.name?.[0] || room.other_user_id?.[0] || "?"}
+                        </div>
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
@@ -658,196 +679,226 @@ export default function InfluencerMessagesClient() {
         </div>
       </div>
 
-      {/* Chat Area */}
-      <div className="flex-1 flex flex-col">
-        {/* Chat Header */}
-        <div className="bg-white border-b border-gray-200 p-4 shadow-sm sticky top-0 z-10">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setShowSidebar(true)}
-                className="md:hidden p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all duration-200"
-              >
-                <MoreHorizontal className="h-5 w-5" />
-              </button>
-              <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold">
-                {selectedRoom?.name?.[0] ||
-                  selectedRoom?.other_user_id?.[0] ||
-                  "?"}
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="font-bold text-gray-900 truncate">
-                  {selectedRoom?.name || selectedRoom?.other_user_id}
-                </p>
-                {/* <p className="text-sm text-gray-500">Active now</p> */}
+      {!selectedRoom ? (
+        <div className="flex-1 flex flex-col items-center justify-center bg-gray-50 text-gray-500">
+          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mb-4">
+            <Search className="h-8 w-8 text-gray-400" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-700">
+            Select a conversation
+          </h3>
+          <p className="text-sm">
+            Choose a chat from the left to start messaging
+          </p>
+        </div>
+      ) : (
+        <div className="flex-1 flex flex-col">
+          {/* Chat Header */}
+          <div className="bg-white border-b border-gray-200 p-4 shadow-sm sticky top-0 z-10">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setShowSidebar(true)}
+                  className="md:hidden p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all duration-200"
+                >
+                  <MoreHorizontal className="h-5 w-5" />
+                </button>
+                <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold">
+                  {selectedRoom?.name?.[0] ||
+                    selectedRoom?.other_user_id?.[0] ||
+                    "?"}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="font-bold text-gray-900 truncate">
+                    {selectedRoom?.name || selectedRoom?.other_user_id}
+                  </p>
+                  {/* <p className="text-sm text-gray-500">Active now</p> */}
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
-          {loadingHistory ? (
-            <div className="flex items-center justify-center h-full">
-              <Loader className="h-6 w-6 animate-spin text-primary" />
-            </div>
-          ) : messages.length === 0 ? (
-            <div className="flex items-center justify-center h-full text-gray-500">
-              <p className="text-sm">No messages yet. Start a conversation!</p>
-            </div>
-          ) : (
-            messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${message.isOwn ? "justify-end" : "justify-start"
+          {/* Messages Area */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+            {loadingHistory ? (
+              <div className="flex items-center justify-center h-full">
+                <Loader className="h-6 w-6 animate-spin text-primary" />
+              </div>
+            ) : messages.length === 0 ? (
+              <div className="flex items-center justify-center h-full text-gray-500">
+                <p className="text-sm">
+                  No messages yet. Start a conversation!
+                </p>
+              </div>
+            ) : (
+              messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`flex ${
+                    message.isOwn ? "justify-end" : "justify-start"
                   }`}
-              >
-                <div className="flex items-end gap-2 max-w-[85%] sm:max-w-xs lg:max-w-md">
-                  {!message.isOwn && (
-                    <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold text-xs flex-shrink-0">
-                      {selectedRoom?.name?.[0] ||
-                        selectedRoom?.other_user_id?.[0] ||
-                        "?"}
-                    </div>
-                  )}
-                  <div
-                    className={`px-4 py-3 rounded-2xl shadow-sm ${message.isOwn
-                        ? "bg-gradient-to-r from-primary to-primary text-white rounded-br-md"
-                        : "bg-white text-gray-900 rounded-bl-md border border-gray-200"
-                      }`}
-                  >
-                    {/* Show image/video/file */}
-                    {message.fileUrl && (
-                      <div className="mb-2 rounded-lg overflow-hidden bg-black/5">
-                        {message.fileType?.startsWith("image/") ? (
-                          <img
-                            src={message.fileUrl}
-                            alt="sent attachment"
-                            className="w-full h-full object-contain"
-                          />
-                        ) : message.fileType?.startsWith("video/") ? (
-                          <video
-                            src={message.fileUrl}
-                            controls
-                            className="w-full h-full object-contain"
-                          />
-                        ) : (
-                          <Image
-                            src={message.fileUrl}
-                            alt={message.fileUrl}
-                            width={320}
-                            height={320}
-                            className="w-full h-full object-contain"
-                          />
-                        )}
+                >
+                  <div className="flex items-end gap-2 max-w-[85%] sm:max-w-xs lg:max-w-md">
+                    {!message.isOwn && (
+                      <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold text-xs flex-shrink-0">
+                        {selectedRoom?.name?.[0] ||
+                          selectedRoom?.other_user_id?.[0] ||
+                          "?"}
                       </div>
                     )}
-
-                    {message.content && <p className="text-sm break-words">{message.content}</p>}
-                    <p
-                      className={`text-xs mt-1 ${message.isOwn
-                          ? "text-blue-100"
-                          : "text-gray-400"
-                        }`}
+                    <div
+                      className={`px-4 py-3 rounded-2xl shadow-sm ${
+                        message.isOwn
+                          ? "bg-gradient-to-r from-primary to-primary text-white rounded-br-md"
+                          : "bg-white text-gray-900 rounded-bl-md border border-gray-200"
+                      }`}
                     >
-                      {message.timestamp}
-                    </p>
+                      {/* Show image/video/file */}
+                      {message.fileUrl && (
+                        <div className="mb-2 rounded-lg overflow-hidden bg-black/5">
+                          {message.fileType?.startsWith("image/") ? (
+                            <img
+                              src={message.fileUrl}
+                              alt="sent attachment"
+                              className="w-full h-full object-contain"
+                            />
+                          ) : message.fileType?.startsWith("video/") ? (
+                            <video
+                              src={message.fileUrl}
+                              controls
+                              className="w-full h-full object-contain"
+                            />
+                          ) : (
+                            <Image
+                              src={message.fileUrl}
+                              alt={message.fileUrl}
+                              width={320}
+                              height={320}
+                              className="w-full h-full object-contain"
+                            />
+                          )}
+                        </div>
+                      )}
+
+                      {message.content && (
+                        <p className="text-sm break-words">{message.content}</p>
+                      )}
+                      <p
+                        className={`text-xs mt-1 ${
+                          message.isOwn ? "text-blue-100" : "text-gray-400"
+                        }`}
+                      >
+                        {message.timestamp}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
-          )}
-          <div ref={messagesEndRef} />
-        </div>
-
-        {/* Input Area */}
-        <div className="bg-white border-t border-gray-200 p-4 sticky bottom-0">
-          {/* File Preview */}
-          {attachedFile && (
-            <div className="mb-4 flex items-center gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-200">
-              {filePreview ? (
-                <div className="relative">
-                  {attachedFile.type.startsWith("image/") ? (
-                    <img src={filePreview} alt="Preview" className="w-20 h-20 object-cover rounded-lg" />
-                  ) : attachedFile.type.startsWith("video/") ? (
-                    <video src={filePreview} controls className="w-20 h-20 object-cover rounded-lg" />
-                  ) : (
-                    <div className="w-20 h-20 bg-gray-200 border-2 border-dashed rounded-lg flex items-center justify-center">
-                      <Paperclip className="h-8 w-8 text-gray-500" />
-                    </div>
-                  )}
-                  {uploading && (
-                    <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center">
-                      <Loader className="h-6 w-6 text-white animate-spin" />
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className="w-20 h-20 bg-gray-200 border-2 border-dashed rounded-lg flex items-center justify-center">
-                  <Paperclip className="h-8 w-8 text-gray-500" />
-                </div>
-              )}
-
-              <div className="flex-1">
-                <p className="text-sm font-medium truncate max-w-xs">{attachedFile.name}</p>
-                <p className="text-xs text-gray-500">
-                  {(attachedFile.size / 1024 / 1024).toFixed(2)} MB
-                </p>
-              </div>
-
-              <button
-                onClick={() => {
-                  setAttachedFile(null);
-                  setFilePreview(null);
-                }}
-                className="text-red-500 hover:bg-red-50 p-2 rounded-full transition"
-              >
-                ×
-              </button>
-            </div>
-          )}
-
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all duration-200 flex-shrink-0"
-            >
-              <Paperclip className="h-5 w-5" />
-            </button>
-
-            <input
-              type="text"
-              placeholder="Type a message..."
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && !e.shiftKey && handleSendMessage()}
-              className="flex-1 px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-primary outline-none text-sm bg-gray-50 focus:bg-white transition"
-            />
-
-            <button
-              onClick={handleSendMessage}
-              disabled={uploading || (!newMessage.trim() && !attachedFile)}
-              className="p-3 bg-primary hover:bg-primary-dark disabled:bg-gray-300 text-white rounded-full transition-all shadow-sm disabled:cursor-not-allowed relative"
-            >
-              {uploading ? (
-                <Loader className="h-5 w-5 animate-spin" />
-              ) : (
-                <Send className="h-5 w-5" />
-              )}
-            </button>
+              ))
+            )}
+            <div ref={messagesEndRef} />
           </div>
 
-          {/* Hidden file input */}
-          <input
-            type="file"
-            ref={fileInputRef}
-            className="hidden"
-            accept="image/*,video/*,.pdf,.doc,.docx,.txt"
-            onChange={handleFileSelect}
-          />
+          {/* Input Area */}
+          <div className="bg-white border-t border-gray-200 p-4 sticky bottom-0">
+            {/* File Preview */}
+            {attachedFile && (
+              <div className="mb-4 flex items-center gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-200">
+                {filePreview ? (
+                  <div className="relative">
+                    {attachedFile.type.startsWith("image/") ? (
+                      <img
+                        src={filePreview}
+                        alt="Preview"
+                        className="w-20 h-20 object-cover rounded-lg"
+                      />
+                    ) : attachedFile.type.startsWith("video/") ? (
+                      <video
+                        src={filePreview}
+                        controls
+                        className="w-20 h-20 object-cover rounded-lg"
+                      />
+                    ) : (
+                      <div className="w-20 h-20 bg-gray-200 border-2 border-dashed rounded-lg flex items-center justify-center">
+                        <Paperclip className="h-8 w-8 text-gray-500" />
+                      </div>
+                    )}
+                    {uploading && (
+                      <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center">
+                        <Loader className="h-6 w-6 text-white animate-spin" />
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="w-20 h-20 bg-gray-200 border-2 border-dashed rounded-lg flex items-center justify-center">
+                    <Paperclip className="h-8 w-8 text-gray-500" />
+                  </div>
+                )}
+
+                <div className="flex-1">
+                  <p className="text-sm font-medium truncate max-w-xs">
+                    {attachedFile.name}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {(attachedFile.size / 1024 / 1024).toFixed(2)} MB
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => {
+                    setAttachedFile(null);
+                    setFilePreview(null);
+                  }}
+                  className="text-red-500 hover:bg-red-50 p-2 rounded-full transition"
+                >
+                  ×
+                </button>
+              </div>
+            )}
+
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all duration-200 flex-shrink-0"
+              >
+                <Paperclip className="h-5 w-5" />
+              </button>
+
+              <input
+                type="text"
+                placeholder="Type a message..."
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                onKeyPress={(e) =>
+                  e.key === "Enter" && !e.shiftKey && handleSendMessage()
+                }
+                className="flex-1 px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-primary outline-none text-sm bg-gray-50 focus:bg-white transition"
+              />
+
+              <button
+                onClick={handleSendMessage}
+                disabled={uploading || (!newMessage.trim() && !attachedFile)}
+                className="p-3 bg-primary hover:bg-primary-dark disabled:bg-gray-300 text-white rounded-full transition-all shadow-sm disabled:cursor-not-allowed relative"
+              >
+                {uploading ? (
+                  <Loader className="h-5 w-5 animate-spin" />
+                ) : (
+                  <Send className="h-5 w-5" />
+                )}
+              </button>
+            </div>
+
+            {/* Hidden file input */}
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
+              accept="image/*,video/*,.pdf,.doc,.docx,.txt"
+              onChange={handleFileSelect}
+            />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
