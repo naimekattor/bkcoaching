@@ -161,9 +161,10 @@ export default function MessagesClient() {
 
   useEffect(()=>{
         const fetchOtherUserProfile=async()=>{
-    if (!otherUserId) return;
+          const targetId = selectedRoom?.other_user_id || otherUserId;
+    if (!targetId) return;
     try {
-      const response=await apiClient(`user_service/get_a_brand/${otherUserId}/`,{
+      const response=await apiClient(`user_service/get_a_brand/${targetId}/`,{
         method:"GET"
       });
       setOtherUserProfile(response?.data);
@@ -174,7 +175,7 @@ export default function MessagesClient() {
     }
         }
         fetchOtherUserProfile();
-  },[otherUserId])
+  },[otherUserId,selectedRoom])
 
   const avatarSrc = otherUserProfile?.brand_profile?.logo || otherUserProfile?.influencer_profile?.profile_picture;
 
@@ -269,14 +270,11 @@ export default function MessagesClient() {
           console.log("Sorted Messages:", cleanedMessages);
           setMessages(cleanedMessages);
 
-          // Scroll to bottom after messages load
-          setTimeout(() => {
-            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-          }, 100);
+          
         }
       } catch (err) {
         console.error("Failed to fetch chat history:", err);
-        setMessages([]); // Set empty array on error
+        setMessages([]); 
       } finally {
         setLoadingHistory(false);
       }
@@ -284,6 +282,23 @@ export default function MessagesClient() {
 
     loadChatHistory();
   }, [selectedRoom, router]);
+
+  useEffect(() => {
+  if (messagesEndRef.current) {
+    messagesEndRef.current.scrollIntoView({ 
+  behavior: "smooth", 
+  block: "end",   
+  inline: "nearest" 
+});
+
+   
+    const timeout = setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    }, 200);
+
+    return () => clearTimeout(timeout);
+  }
+}, [messages]);
 
   // Initialize WebSocket
   useEffect(() => {
@@ -670,7 +685,7 @@ export default function MessagesClient() {
                     otherUserProfile?.influencer_profile?.display_name ||
                     "?"}
                   </p>
-                  <p className="text-sm text-gray-500">Active now</p>
+                  {/* <p className="text-sm text-gray-500">Active now</p> */}
                 </div>
               </div>
               <button

@@ -11,6 +11,7 @@ type ProposalForm = {
   campaignBrief: File | null;
   productPhotos: File | null;
   deliverables: string[];
+  budget: string;
 };
 
 const deliverableTypes = [
@@ -36,6 +37,7 @@ export default function ProposalsPage() {
     campaignBrief: null,
     productPhotos: null,
     deliverables: [],
+    budget: "",
   });
 
   const [showReviewModal, setShowReviewModal] = useState(false);
@@ -85,7 +87,7 @@ export default function ProposalsPage() {
     try {
       const token = localStorage.getItem("access_token");
       if (!token) {
-        router.push("/login");
+        router.push("/auth/login");
         return;
       }
 
@@ -95,6 +97,9 @@ export default function ProposalsPage() {
       formPayload.append("end_date", formData.endDate || "");
       formPayload.append("proposal_message", formData.proposalMessage || "");
       formPayload.append("campaign_deliverables", JSON.stringify(formData.deliverables));
+      const cleanBudget = formData.budget.replace(/[^0-9.]/g, ''); 
+      formPayload.append("budget", cleanBudget); 
+      formPayload.append("influencer_id", profileId);
        if (formData.campaignBrief) {
         formPayload.append("attachments", formData.campaignBrief);
       }
@@ -162,6 +167,7 @@ export default function ProposalsPage() {
       campaignBrief: null,
       productPhotos: null,
       deliverables: [],
+      budget: "",
     });
   };
 
@@ -183,7 +189,9 @@ export default function ProposalsPage() {
         <div className="">
           <form onSubmit={handleSubmitForm} className="mx-auto">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+              
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
                 <div className="px-3">
                   <h4 className="font-medium text-gray-900 mb-4">
                     Project Timeline
@@ -218,6 +226,21 @@ export default function ProposalsPage() {
                       />
                     </div>
                   </div>
+                </div>
+                {/* Budget */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Budget
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="$200"
+                    value={formData.budget}
+                    onChange={(e) =>
+                      handleInputChange("budget", e.target.value)
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  />
                 </div>
               </div>
             </div>
@@ -294,7 +317,7 @@ export default function ProposalsPage() {
                     type="file"
                     accept=".pdf"
                     onChange={(e) => handleFileChange(e, "campaignBrief")}
-                    className="mt-2 text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-secondary file:text-primary hover:file:bg-primary"
+                    className="mt-2 text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-secondary file:text-primary "
                   />
                   <span className="text-xs text-gray-500 block pl-6">
                     (PDF only)
@@ -313,7 +336,7 @@ export default function ProposalsPage() {
                     accept="image/*"
                     
                     onChange={(e) => handleFileChange(e, "productPhotos")}
-                    className="mt-2 text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-secondary file:text-primary hover:file:bg-primary"
+                    className="mt-2 text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-secondary file:text-primary "
                   />
                   <span className="text-xs text-gray-500 block pl-6">
                     (Images only)

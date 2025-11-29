@@ -25,7 +25,18 @@ interface Room {
   other_user_avatar?: string;
   profile_picture?: string;
 }
-
+interface OtherUserProfile {
+  id:string;
+  first_name:string;
+  brand_profile:{
+    business_name:string;
+    logo:string;
+  }
+  influencer_profile:{
+    display_name:string;
+    profile_picture:string;
+  }
+}
 interface HistoryMessage {
   id: number;
   sender_id: string;
@@ -102,6 +113,7 @@ export default function InfluencerMessagesClient() {
   const [loadingHistory, setLoadingHistory] = useState<boolean>(false);
   const [attachedFile, setAttachedFile] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
+  const [otherUserProfile,setOtherUserProfile]=useState<OtherUserProfile | null>(null);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -170,6 +182,27 @@ export default function InfluencerMessagesClient() {
 
     createRoom();
   }, [otherUserId]);
+
+  useEffect(()=>{
+        const fetchOtherUserProfile=async()=>{
+          const targetId = selectedRoom?.other_user_id || otherUserId;
+    if (!targetId) return;
+    try {
+      const response=await apiClient(`user_service/get_a_brand/${targetId}/`,{
+        method:"GET"
+      });
+      setOtherUserProfile(response?.data);
+      
+    } catch (error) {
+      console.log("error",error);
+      
+    }
+        }
+        fetchOtherUserProfile();
+  },[otherUserId,selectedRoom])
+
+  const avatarSrc = otherUserProfile?.brand_profile?.logo || otherUserProfile?.influencer_profile?.profile_picture;
+
 
   // Fetch rooms for sidebar
   useEffect(() => {
@@ -263,10 +296,7 @@ export default function InfluencerMessagesClient() {
           console.log("Sorted Messages:", cleanedMessages);
           setMessages(cleanedMessages);
 
-          // Scroll to bottom after messages load
-          setTimeout(() => {
-            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-          }, 100);
+          
         }
       } catch (err) {
         console.error("Failed to fetch chat history:", err);
@@ -278,6 +308,23 @@ export default function InfluencerMessagesClient() {
 
     loadChatHistory();
   }, [selectedRoom, router]);
+
+  useEffect(() => {
+  if (messagesEndRef.current) {
+    messagesEndRef.current.scrollIntoView({ 
+  behavior: "smooth", 
+  block: "end",   
+  inline: "nearest" 
+});
+
+   
+    const timeout = setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    }, 200);
+
+    return () => clearTimeout(timeout);
+  }
+}, [messages]);
 
   // Initialize WebSocket
   useEffect(() => {
@@ -704,13 +751,17 @@ export default function InfluencerMessagesClient() {
                   <MoreHorizontal className="h-5 w-5" />
                 </button>
                 <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold">
-                  {selectedRoom?.name?.[0] ||
-                    selectedRoom?.other_user_id?.[0] ||
-                    "?"}
+                   {avatarSrc ? (
+                                      <Image src={avatarSrc} alt="" width={48} height={48} className="w-[48px] h-[48px] rounded-full"/>
+                                    ) : (
+                                      <span>{otherUserProfile?.brand_profile?.business_name?.[0] || otherUserProfile?.influencer_profile?.display_name?.[0] || "?"}</span>
+                                    )}
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="font-bold text-gray-900 truncate">
-                    {selectedRoom?.name || selectedRoom?.other_user_id}
+                   {otherUserProfile?.brand_profile?.business_name ||
+                    otherUserProfile?.influencer_profile?.display_name ||
+                    "?"}
                   </p>
                   {/* <p className="text-sm text-gray-500">Active now</p> */}
                 </div>

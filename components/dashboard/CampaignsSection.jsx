@@ -14,8 +14,11 @@ export function CampaignsSection({ allCampaigns }) {
           + Create new
         </Link>
       </div>
-
-      <div className="space-y-4">
+      {
+        allCampaigns.length === 0 ? (
+          <p className="text-sm text-slate-600">No campaigns available.</p>
+        ):(
+          <div className="space-y-4">
         {allCampaigns.slice(0, 2).map((campaign, index) => (
           <div
             key={index}
@@ -35,6 +38,9 @@ export function CampaignsSection({ allCampaigns }) {
           </div>
         ))}
       </div>
+        )
+      }
+      
     </div>
   );
 }
