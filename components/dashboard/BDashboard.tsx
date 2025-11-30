@@ -9,7 +9,32 @@ import { useEffect, useState } from "react";
 import { apiClient } from "@/lib/apiClient";
 import { useAuthStore } from "@/stores/useAuthStore";
 
-// --- 1. Define Interface for Transformed Campaigns (Used in CampaignsSection) ---
+// --- 1. Define Interface for Raw API Response (Backend Data) ---
+interface RawCampaignResponse {
+  id: number;
+  campaign_name?: string;
+  campaign_description?: string;
+  budget_range?: string | number;
+  budget_type?: string;
+  campaign_timeline?: string;
+  campaign_objective?: string;
+  content_deliverables?: string;
+  payment_preference?: string;
+  keywords_and_hashtags?: string;
+  target_audience?: string;
+  content_approval_required?: boolean;
+  auto_match_micro_influencers?: boolean;
+  campaign_owner: number;
+  status: string;
+}
+
+export interface AssignedCreator {
+  id: string | number;
+  name: string;
+  avatar?: string;
+}
+
+// --- 2. Define Interface for Transformed Campaigns (Frontend UI) ---
 export interface DashboardCampaign {
   id: number;
   title: string;
@@ -20,7 +45,7 @@ export interface DashboardCampaign {
   timeLeft: string;
   progress: number;
   platforms: string[];
-  assignedCreators: any[];
+  assignedCreators: AssignedCreator[]; 
   objective: string;
   timeline: string;
   deliverables: string[];
@@ -33,22 +58,21 @@ export interface DashboardCampaign {
   campaignStatus: string;
 }
 
-// --- 2. Define Interface for Previous Hirings (Used in RecentCollaborations) ---
+interface BrandProfile {
+  id: number;
+}
+
+// --- 3. Define Interface for Previous Hirings ---
 export interface HiringCampaign {
   id: number;
   hired_influencer_id: number | null;
   rating: number;
-  // Add other fields from API if needed
 }
 
 export default function BDashboard() {
-  const [brandProfile, setBrandProfile] = useState<any>(null); // Use specific type if available, otherwise any
-  
-  // ✅ Fix: Add generic type <DashboardCampaign[]>
-  const [allCampaigns, setAllCampaigns] = useState<DashboardCampaign[]>([]); 
-  
-  // ✅ Fix: Add generic type <HiringCampaign[]>
-  const [previousHirings, setPreviousHirings] = useState<HiringCampaign[]>([]); 
+  const [brandProfile, setBrandProfile] = useState<BrandProfile | null>(null);
+  const [allCampaigns, setAllCampaigns] = useState<DashboardCampaign[]>([]);
+  const [previousHirings, setPreviousHirings] = useState<HiringCampaign[]>([]);
 
   const store = useAuthStore.getState();
 
@@ -69,32 +93,34 @@ export default function BDashboard() {
           auth: true,
         });
 
-        const campaignsArray = Array.isArray(campaignsRes.data)
+        // ✅ FIX: Explicitly type the array using the Raw Interface
+        const campaignsArray: RawCampaignResponse[] = Array.isArray(campaignsRes.data)
           ? [...campaignsRes.data].reverse()
           : [];
 
         // Transform API response
-        const transformedCampaigns: DashboardCampaign[] = campaignsArray.map((campaign: any) => ({
+        // Now 'campaign' is strictly typed as RawCampaignResponse
+        const transformedCampaigns: DashboardCampaign[] = campaignsArray.map((campaign) => ({
           id: campaign.id,
           title: campaign.campaign_name || "Untitled Campaign",
           description: campaign.campaign_description || "",
           budget: campaign.budget_range ? `$${campaign.budget_range}` : "$0",
           budgetType: campaign.budget_type || "total",
-          targetReach: "200K", 
+          targetReach: "200K",
           timeLeft: campaign.campaign_timeline || "N/A",
-          progress: 0, 
-          platforms: [], 
+          progress: 0,
+          platforms: [],
           assignedCreators: [],
           objective: campaign.campaign_objective || "",
           timeline: campaign.campaign_timeline || "",
           deliverables: campaign.content_deliverables
-            ? campaign.content_deliverables.split(",").map((d: string) => d.trim())
+            ? campaign.content_deliverables.split(",").map((d) => d.trim())
             : [],
           paymentPreferences: campaign.payment_preference
-            ? campaign.payment_preference.split(",").map((p: string) => p.trim())
+            ? campaign.payment_preference.split(",").map((p) => p.trim())
             : [],
           keywords: campaign.keywords_and_hashtags
-            ? campaign.keywords_and_hashtags.split(",").map((k: string) => k.trim())
+            ? campaign.keywords_and_hashtags.split(",").map((k) => k.trim())
             : [],
           targetAudience: campaign.target_audience || "",
           approvalRequired: campaign.content_approval_required || false,
@@ -107,12 +133,12 @@ export default function BDashboard() {
 
         // 3. Fetch Previous Hirings
         const hiringsRes = await apiClient("campaign_service/get_my_previous_hirings/", {
-            method: "GET",
-            auth: true,
+          method: "GET",
+          auth: true,
         });
-        
+
         if (hiringsRes.data && Array.isArray(hiringsRes.data)) {
-            setPreviousHirings(hiringsRes.data);
+          setPreviousHirings(hiringsRes.data);
         }
 
       } catch (error) {
@@ -129,7 +155,7 @@ export default function BDashboard() {
         <DashboardHeader />
         <div className="mt-6 space-y-6">
           <AnalyticsCards allCampaigns={allCampaigns} previousHirings={previousHirings} />
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
               <BusinessBio />
