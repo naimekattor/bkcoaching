@@ -1,14 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Search, DollarSign, CircleCheck, X } from "lucide-react";
+import { Search, DollarSign, CircleCheck, X, CheckCircle, XCircle, Paperclip, Calendar, Megaphone } from "lucide-react";
 import { StatCard } from "@/components/cards/stat-card";
-import { Megaphone } from "lucide-react";
 import Image from "next/image";
 import { apiClient } from "@/lib/apiClient";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
-interface Campaign {
+// --- Interfaces ---
+
+interface Attachment {
+  id: number;
+  link: string;
+}
+
+// Interface for "get_all_camaign_of_all_users" (Marketplace)
+interface PublicCampaign {
   id: number;
   campaign_name: string;
   campaign_description: string;
@@ -26,60 +34,82 @@ interface Campaign {
   campaign_owner: number;
   campaign_poster: string | null;
   timestamp: string;
+  attachments: Attachment[];
+}
+
+// Interface for "get_my_previous_where_i_was_hired" (Your specific jobs)
+interface HiredCampaign {
+  id: number;
+  owner_id: number;
+  hired_influencer_id: number;
+  start_date: string;
+  end_date: string;
+  proposal_message: string;
+  campaign_deliverables: string; // JSON string
+  attachments: Attachment[];
+  is_accepted_by_influencer: boolean;
+  is_completed_marked_by_brand: boolean;
+  budget: number;
+  rating: number;
+  
 }
 
 export default function CampaignsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All Status");
   const [platformFilter, setPlatformFilter] = useState("All Platforms");
-  const [allCampaigns, setAllCampaigns] = useState<Campaign[]>([]);
-  const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
+  
+  // State for Marketplace Campaigns
+  const [publicCampaigns, setPublicCampaigns] = useState<PublicCampaign[]>([]);
+  
+  // State for My Jobs (Invitations + Active)
+  const [hiredCampaigns, setHiredCampaigns] = useState<HiredCampaign[]>([]);
+  
+  // Selected Campaign for Modal (Can be either type)
+  const [selectedCampaign, setSelectedCampaign] = useState<PublicCampaign | HiredCampaign | null>(null);
+  const [selectedType, setSelectedType] = useState<"public" | "hired" | null>(null);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loadingPublic, setLoadingPublic] = useState(true);
+  const [loadingHired, setLoadingHired] = useState(true);
+  
+  // Pagination for Public Campaigns
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [nextUrl, setNextUrl] = useState<string | null>(null);
   const [previousUrl, setPreviousUrl] = useState<string | null>(null);
-  const router = useRouter();
 
+  const router = useRouter();
   const ITEMS_PER_PAGE = 9;
 
-  const [invitations] = useState([
-    {
-      title: "Summer Skincare Launch",
-      brand: "BeautyBrand Co.",
-      price: "$1,200",
-    },
-    { title: "Tech Gadget Review", brand: "TechFlow Inc.", price: "$800" },
-  ]);
+  // --- Fetch Hired Campaigns (Invitations & Active) ---
+  useEffect(() => {
+    const fetchHiredCampaigns = async () => {
+      try {
+        const res = await apiClient(
+          "campaign_service/get_my_previous_where_i_was_hired/",
+          {
+            method: "GET",
+            auth: true,
+          }
+        );
+        if (res.data) {
+          setHiredCampaigns(res.data);
+        }
+      } catch (error) {
+        console.error("❌ Hired Campaign Fetch Error:", error);
+      } finally {
+        setLoadingHired(false);
+      }
+    };
+    fetchHiredCampaigns();
+  }, []);
 
-  const [activeCampaigns] = useState([
-    {
-      title: "Fitness Equipment Promo",
-      brand: "FitLife Brand",
-      status: "In Progress",
-      progress: 75,
-      deadline: "3 days",
-      price: "$950",
-      color: "bg-primary",
-      badge: "bg-yellow-100 text-primary",
-    },
-    {
-      title: "Fashion Week Collection",
-      brand: "StyleHub",
-      status: "Review",
-      progress: 90,
-      deadline: "1 day",
-      price: "$1,500",
-      color: "bg-secondary",
-      badge: "bg-orange-100 text-primary",
-    },
-  ]);
-
+  // --- Fetch Public Campaigns ---
   useEffect(() => {
     const fetchAllCampaigns = async () => {
       try {
-        setLoading(true);
+        setLoadingPublic(true);
         const res = await apiClient(
           `campaign_service/get_all_camaign_of_all_users/?page=${currentPage}`,
           {
@@ -89,41 +119,48 @@ export default function CampaignsPage() {
         );
 
         if (res.status === "success" && res.data.results) {
-          console.log("Campaigns fetched:", res.data.results);
-          setAllCampaigns(res.data.results);
+          setPublicCampaigns(res.data.results);
           setTotalCount(res.data.count);
           setNextUrl(res.data.next);
           setPreviousUrl(res.data.previous);
         }
       } catch (error) {
-        console.error("Failed to fetch campaigns:", error);
+        console.error("Failed to fetch public campaigns:", error);
       } finally {
-        setLoading(false);
+        setLoadingPublic(false);
       }
     };
 
     fetchAllCampaigns();
   }, [currentPage]);
 
-  const handleViewDetails = (campaign: Campaign) => {
-    setSelectedCampaign(campaign);
-    setIsModalOpen(true);
+  // --- Calculations & Logic ---
+
+  // 1. Calculate Progress
+  const calculateProgress = (startDateStr: string, endDateStr: string): number => {
+    const start = new Date(startDateStr).getTime();
+    const end = new Date(endDateStr).getTime();
+    const now = new Date().getTime();
+
+    if (now < start) return 0;
+    if (now > end) return 100;
+    if (end === start) return 100; // Avoid division by zero
+
+    const totalDuration = end - start;
+    const elapsed = now - start;
+    
+    return Math.round((elapsed / totalDuration) * 100);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedCampaign(null);
-  };
+  // 2. Filter Hired Campaigns
+  const invitations = hiredCampaigns.filter(c => !c.is_accepted_by_influencer);
+  const activeCampaigns = hiredCampaigns.filter(c => c.is_accepted_by_influencer && !c.is_completed_marked_by_brand);
+  const completedCampaigns = hiredCampaigns.filter(c => c.is_completed_marked_by_brand);
 
-  const handleConnectWithOwner = () => {
-    if (selectedCampaign) {
-      // Redirect to messages with campaign owner
-      router.push(`/influencer-dashboard/messages?id=${selectedCampaign.campaign_owner}&campaign=${selectedCampaign.id}`);
-    }
-  };
+  const totalEarnings = hiredCampaigns.reduce((acc, curr) => acc + curr.budget, 0);
 
-  // Filter campaigns based on search and filters
-  const filteredCampaigns = allCampaigns.filter((campaign) => {
+  // 3. Filter Public Campaigns (Search)
+  const filteredPublicCampaigns = publicCampaigns.filter((campaign) => {
     const matchesSearch =
       campaign.campaign_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       campaign.campaign_description?.toLowerCase().includes(searchQuery.toLowerCase());
@@ -135,15 +172,74 @@ export default function CampaignsPage() {
     return matchesSearch && matchesStatus;
   });
 
+  // --- Handlers ---
+
+  const handleViewDetails = (campaign: PublicCampaign | HiredCampaign, type: "public" | "hired") => {
+    setSelectedCampaign(campaign);
+    setSelectedType(type);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedCampaign(null);
+    setSelectedType(null);
+  };
+
+  const handleConnectWithOwner = () => {
+    if (selectedCampaign) {
+      // Logic depends on which ID is the owner. 
+      // HiredCampaign has `owner_id`, PublicCampaign has `campaign_owner`
+      const ownerId = 'owner_id' in selectedCampaign ? selectedCampaign.owner_id : selectedCampaign.campaign_owner;
+      router.push(`/influencer-dashboard/messages?id=${ownerId}`);
+    }
+  };
+
+  const handleCampaignAction = async (campaignId: number, action: "accept" | "reject") => {
+    if (action === "accept") {
+      try {
+        const res = await apiClient(`campaign_service/accept_offer/${campaignId}/`, {
+          method: "PATCH",
+          auth: true,
+        });
+
+        if (res?.code === 200 || res?.status === "success") {
+          // ✅ Update State Locally to reflect change instantly
+          setHiredCampaigns((prev) => 
+            prev.map((c) => 
+              c.id === campaignId ? { ...c, is_accepted_by_influencer: true } : c
+            )
+          );
+          
+          alert(res.data?.message || "Offer Accepted! 🎉");
+          handleCloseModal();
+        } else {
+          alert("Something went wrong.");
+        }
+      } catch (error) {
+        console.error("Accept Error:", error);
+      }
+    } else {
+      const confirmReject = confirm("Reject this campaign?");
+      if (confirmReject) {
+        setHiredCampaigns((prev) => prev.filter((c) => c.id !== campaignId));
+        handleCloseModal();
+      }
+    }
+  };
+
+  // --- Helpers ---
+  const formatDateRange = (start: string, end: string) => {
+    const s = new Date(start).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+    const e = new Date(end).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+    return `${s} - ${e}`;
+  };
+
   return (
     <div className="">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
-          Campaign Management
-        </h1>
-        <p className="text-gray-600">
-          Create, manage and collaborate with campaigns
-        </p>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">Campaign Management</h1>
+        <p className="text-gray-600">Create, manage and collaborate with campaigns</p>
         <h2 className="text-primary font-bold text-[20px] mt-4">Analytics</h2>
       </div>
 
@@ -151,139 +247,138 @@ export default function CampaignsPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <StatCard
           title="Active Campaigns"
-          value="24"
-          subtitle="Currently active and completed"
+          value={activeCampaigns.length.toString()}
+          subtitle="Currently running"
           icon={<Megaphone className="w-8 h-8 text-primary" />}
         />
         <StatCard
           title="Completed"
-          value="47"
-          subtitle="Campaigns running this month"
+          value={completedCampaigns.length.toString()}
+          subtitle="Total completed jobs"
           icon={<CircleCheck className="w-8 h-8 text-primary" />}
         />
         <StatCard
+          title="Invitations"
+          value={invitations.length.toString()}
+          subtitle="Pending offers"
+          icon={<Paperclip className="w-8 h-8 text-primary" />}
+        />
+        <StatCard
           title="Total Earnings"
-          value="1,500"
+          value={`$${totalEarnings}`}
           icon={<DollarSign className="w-8 h-8 text-purple-600" />}
         />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* Campaign Invitations */}
-        <div className="border rounded-lg p-4">
-          <h2 className="text-lg font-semibold mb-4">Campaign Invitations</h2>
-          <div className="space-y-4">
-            {invitations.map((item, i) => (
-              <div
-                key={i}
-                className="flex justify-between items-center border rounded-lg p-4"
-              >
-                <div>
-                  <h3 className="font-medium">{item.title}</h3>
-                  <p className="text-sm text-gray-500">{item.brand}</p>
-                  <p className="text-secondary font-semibold">{item.price}</p>
+        
+        {/* 1. Campaign Invitations */}
+        <div className="border rounded-lg p-4 h-[400px] flex flex-col">
+          <h2 className="text-lg font-semibold mb-4">Campaign Invitations ({invitations.length})</h2>
+          <div className="space-y-4 overflow-y-auto flex-grow pr-2 custom-scrollbar">
+            {loadingHired ? (
+              <div className="text-center py-10 text-gray-500">Loading...</div>
+            ) : invitations.length === 0 ? (
+              <div className="text-center py-10 text-gray-500">No pending invitations.</div>
+            ) : (
+              invitations.map((campaign) => (
+                <div
+                  key={campaign.id}
+                  onClick={() => handleViewDetails(campaign, "hired")}
+                  className="flex justify-between items-center p-4 border rounded-xl cursor-pointer hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-gray-800">
+                      Campaign #{campaign.id}
+                    </h3>
+                    <p className="text-sm text-gray-500 line-clamp-1">
+                      {campaign.proposal_message || "No description provided"}
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
+                      <Calendar className="w-3 h-3" />
+                      {formatDateRange(campaign.start_date, campaign.end_date)}
+                    </p>
+                  </div>
+                  <div>
+                     <span className="text-xs font-medium text-white bg-secondary rounded px-4 py-2">
+                        View Offer
+                     </span>
+                  </div>
                 </div>
-                <div className="flex space-x-2">
-                  <button className="px-4 py-1 bg-secondary text-white rounded-lg hover:bg-secondary">
-                    Accept
-                  </button>
-                  <button className="px-4 py-1 border rounded-lg hover:bg-gray-100">
-                    Decline
-                  </button>
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
 
-        {/* My Active Campaigns */}
-        <div className="border rounded-lg p-4">
-          <h2 className="text-lg font-semibold mb-4">My Active Campaigns</h2>
-          <div className="space-y-4">
-            {activeCampaigns.map((item, i) => (
-              <div key={i} className="border rounded-lg p-4">
-                <div className="flex justify-between items-center mb-2">
-                  <div>
-                    <h3 className="font-medium">{item.title}</h3>
-                    <p className="text-sm text-gray-500">{item.brand}</p>
-                  </div>
-                  <span
-                    className={`text-xs px-3 py-1 rounded-full ${item.badge}`}
-                  >
-                    {item.status}
-                  </span>
-                </div>
+        {/* 2. My Active Campaigns */}
+        <div className="border rounded-lg p-4 h-[400px] flex flex-col">
+          <h2 className="text-lg font-semibold mb-4">My Active Campaigns ({activeCampaigns.length})</h2>
+          <div className="space-y-4 overflow-y-auto flex-grow pr-2 custom-scrollbar">
+            {activeCampaigns.length === 0 ? (
+               <div className="text-center py-10 text-gray-500">No active campaigns.</div>
+            ) : (
+              activeCampaigns.map((item, i) => {
+                const progress = calculateProgress(item.start_date, item.end_date);
+                return (
+                  <div key={i} className="border rounded-lg p-4 cursor-pointer hover:bg-gray-50" onClick={() => handleViewDetails(item, "hired")}>
+                    <div className="flex justify-between items-center mb-2">
+                      <div>
+                        <h3 className="font-medium">Campaign #{item.id}</h3>
+                        <p className="text-sm text-gray-500">Brand ID: {item.owner_id}</p>
+                      </div>
+                      <span className="text-xs px-3 py-1 rounded-full bg-green-100 text-green-800">
+                        In Progress
+                      </span>
+                    </div>
 
-                {/* Progress Bar */}
-                <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
-                  <div
-                    className={`${item.color} h-2 rounded-full`}
-                    style={{ width: `${item.progress}%` }}
-                  ></div>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <p className="text-gray-500">Deadline: {item.deadline}</p>
-                  <p className="text-secondary font-semibold">{item.price}</p>
-                </div>
-              </div>
-            ))}
+                    {/* Progress Bar */}
+                    <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                      <div
+                        className="bg-primary h-2 rounded-full transition-all duration-500"
+                        style={{ width: `${progress}%` }}
+                      ></div>
+                    </div>
+                    
+                    <div className="flex justify-between text-sm">
+                      <p className="text-gray-500">
+                        Deadline: {new Date(item.end_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </p>
+                      <p className="text-secondary font-semibold">{`$${item.budget}`}</p>
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
       </div>
 
-      {/* Search and Filters */}
+      {/* Search and Filters for Marketplace */}
+      <h2 className="text-xl font-bold text-gray-900 mb-4 mt-8">Explore Marketplace</h2>
       <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
         <div className="flex flex-col lg:flex-row gap-4">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
             <input
               type="text"
-              placeholder="Search campaigns..."
+              placeholder="Search public campaigns..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>
-
-          <div className="flex gap-3">
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-            >
-              <option>All Status</option>
-              <option>Active</option>
-              <option>Completed</option>
-              <option>Draft</option>
-              <option>Published</option>
-            </select>
-
-            <select
-              value={platformFilter}
-              onChange={(e) => setPlatformFilter(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-            >
-              <option>All Platforms</option>
-              <option>Instagram</option>
-              <option>TikTok</option>
-              <option>YouTube</option>
-            </select>
-          </div>
+          {/* Add filters if needed */}
         </div>
       </div>
 
-      {/* Campaign Cards */}
+      {/* Public Campaign Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
-        {loading ? (
-          <div className="col-span-full text-center py-8 text-gray-600">
-            Loading campaigns...
-          </div>
-        ) : filteredCampaigns.length === 0 ? (
-          <div className="col-span-full text-center py-8 text-gray-600">
-            No campaigns found
-          </div>
+        {loadingPublic ? (
+          <div className="col-span-full text-center py-8 text-gray-600">Loading...</div>
+        ) : filteredPublicCampaigns.length === 0 ? (
+          <div className="col-span-full text-center py-8 text-gray-600">No campaigns found</div>
         ) : (
-          filteredCampaigns.map((campaign) => (
+          filteredPublicCampaigns.map((campaign) => (
             <div
               key={campaign.id}
               className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
@@ -303,51 +398,29 @@ export default function CampaignsPage() {
 
               <div className="p-6">
                 <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
-                  {campaign.campaign_name || "Untitled Campaign"}
+                  {campaign.campaign_name}
                 </h3>
                 <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-                  {campaign.campaign_description || "No description"}
+                  {campaign.campaign_description}
                 </p>
-
-                <div className="flex items-center gap-2 mb-4">
-                  {campaign.content_deliverables?.includes("instagram") && (
-                    <div className="w-6 h-6 bg-pink-100 rounded flex items-center justify-center">
-                      <span className="text-xs">📷</span>
-                    </div>
-                  )}
-                  {campaign.content_deliverables?.includes("tiktok") && (
-                    <div className="w-6 h-6 bg-black rounded flex items-center justify-center">
-                      <span className="text-xs text-white">🎵</span>
-                    </div>
-                  )}
-                  {campaign.content_deliverables?.includes("youtube") && (
-                    <div className="w-6 h-6 bg-red-100 rounded flex items-center justify-center">
-                      <span className="text-xs">📺</span>
-                    </div>
-                  )}
-                </div>
 
                 <div className="flex justify-between items-center text-sm text-gray-600 mb-4">
                   <div>
                     <span className="font-medium">Budget</span>
-                    <p className="font-semibold text-gray-900">
-                      {campaign.budget_range}
-                    </p>
+                    <p className="font-semibold text-gray-900">{campaign.budget_range}</p>
                   </div>
                   <div>
                     <span className="font-medium">Timeline</span>
-                    <p className="font-semibold text-gray-900">
-                      {campaign.campaign_timeline}
-                    </p>
+                    <p className="font-semibold text-gray-900">{campaign.campaign_timeline}</p>
                   </div>
                 </div>
 
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-gray-500 truncate max-w-[150px]">
                     {campaign.campaign_objective}
                   </span>
                   <button
-                    onClick={() => handleViewDetails(campaign)}
+                    onClick={() => handleViewDetails(campaign, "public")}
                     className="text-secondary hover:text-yellow-600 text-sm font-medium"
                   >
                     View Details
@@ -359,15 +432,8 @@ export default function CampaignsPage() {
         )}
       </div>
 
-      {/* Load More */}
-      {/* <div className="text-center mb-8">
-        <button className="px-6 py-3 border border-gray-300 rounded-lg text-primary font-semibold hover:bg-[var(--secondaryhover)] bg-secondary transition-colors">
-          Load More Campaigns
-        </button>
-      </div> */}
-
-      {/* Pagination */}
-      <div className="flex justify-center items-center gap-2 mb-8">
+       {/* Pagination */}
+       <div className="flex justify-center items-center gap-2 mb-8">
         <button
           onClick={() => setCurrentPage(1)}
           disabled={!previousUrl}
@@ -406,159 +472,249 @@ export default function CampaignsPage() {
         </button>
       </div>
 
-      {/* Campaign Details Modal */}
+      {/* --- Campaign Detail Modal (Handles both Types) --- */}
       {isModalOpen && selectedCampaign && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            {/* Modal Header */}
-            <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex justify-between items-center">
-              <h2 className="text-xl font-bold text-gray-900">Campaign Details</h2>
-              <button
-                onClick={handleCloseModal}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <X className="w-6 h-6" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl transform transition-all scale-100 flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">
+              <div>
+                <h3 className="text-xl font-bold text-gray-900">Campaign Details</h3>
+                <p className="text-sm text-gray-500">ID: #{selectedCampaign.id}</p>
+              </div>
+              <button onClick={handleCloseModal} className="p-2 hover:bg-gray-200 rounded-full transition-colors text-gray-500">
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Modal Content */}
-            <div className="p-6">
-              {/* Campaign Image */}
-              {selectedCampaign.campaign_poster && (
-                <Image
-                  width={500}
-                  height={300}
-                  src={selectedCampaign.campaign_poster}
-                  alt={selectedCampaign.campaign_name}
-                  className="w-full h-64 object-cover rounded-lg mb-6"
-                />
+            <div className="p-6 overflow-y-auto">
+              
+              {/* --- Conditional Rendering based on Type --- */}
+              {selectedType === "public" ? (
+                // PUBLIC CAMPAIGN DETAILS
+                <>
+    {/* 1. Campaign Poster & Status */}
+    <div className="relative h-56 mb-6 w-full">
+      <Image
+        src={(selectedCampaign as PublicCampaign).campaign_poster || "/placeholder.svg"}
+        alt={(selectedCampaign as PublicCampaign).campaign_name}
+        fill
+        className="object-cover rounded-xl shadow-sm"
+      />
+      <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold capitalize text-primary shadow-sm border border-gray-100">
+        {(selectedCampaign as PublicCampaign).campaign_status}
+      </div>
+    </div>
+
+    {/* 2. Title & Description */}
+    <h2 className="text-2xl font-bold text-gray-900 mb-2">
+      {(selectedCampaign as PublicCampaign).campaign_name}
+    </h2>
+    <p className="text-gray-600 mb-6 leading-relaxed">
+      {(selectedCampaign as PublicCampaign).campaign_description}
+    </p>
+
+    {/* 3. Key Stats Grid */}
+    <div className="grid grid-cols-2 gap-4 mb-6 bg-gray-50 p-4 rounded-xl border border-gray-100">
+      <div>
+        <p className="text-xs text-gray-500 uppercase font-semibold tracking-wide">Budget</p>
+        <p className="font-bold text-gray-900 text-lg">
+          ${(selectedCampaign as PublicCampaign).budget_range}
+          <span className="text-xs text-gray-400 font-normal ml-1 capitalize">
+            / {(selectedCampaign as PublicCampaign).budget_type}
+          </span>
+        </p>
+      </div>
+      <div>
+        <p className="text-xs text-gray-500 uppercase font-semibold tracking-wide">Timeline</p>
+        <p className="font-bold text-gray-900 text-lg capitalize">
+          {(selectedCampaign as PublicCampaign).campaign_timeline}
+        </p>
+      </div>
+      <div className="col-span-2 border-t border-gray-200 pt-3 mt-1">
+        <p className="text-xs text-gray-500 uppercase font-semibold tracking-wide">Objective</p>
+        <p className="font-medium text-gray-900 capitalize">
+          {(selectedCampaign as PublicCampaign).campaign_objective}
+        </p>
+      </div>
+    </div>
+
+    {/* 4. Deliverables (Splitting comma-separated string) */}
+    <div className="mb-6">
+      <h4 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
+        <Megaphone className="w-4 h-4 text-secondary" /> Required Deliverables
+      </h4>
+      <div className="flex flex-wrap gap-2">
+        {(selectedCampaign as PublicCampaign).content_deliverables
+          ? (selectedCampaign as PublicCampaign).content_deliverables.split(',').map((item, i) => (
+              <span
+                key={i}
+                className="bg-blue-50 text-primary px-3 py-1.5 rounded-lg text-sm font-medium border border-blue-100 capitalize"
+              >
+                {item.trim().replace(/-/g, ' ')}
+              </span>
+            ))
+          : <span className="text-gray-500 text-sm">No specific deliverables</span>
+        }
+      </div>
+    </div>
+
+    {/* 5. Payment Preferences */}
+    <div className="mb-6">
+      <h4 className="font-bold text-gray-900 mb-3">Payment Preferences</h4>
+      <div className="flex flex-wrap gap-2">
+        {(selectedCampaign as PublicCampaign).payment_preference
+          ? (selectedCampaign as PublicCampaign).payment_preference.split(',').map((item, i) => (
+              <span
+                key={i}
+                className="bg-green-50 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-100 capitalize"
+              >
+                {item.trim()}
+              </span>
+            ))
+          : <span className="text-gray-500 text-sm">Not specified</span>
+        }
+      </div>
+    </div>
+
+    {/* 6. Audience & Keywords */}
+    <div className="grid grid-cols-1 gap-6 mb-4 p-4 border border-gray-100 rounded-xl">
+      <div>
+        <h4 className="font-bold text-gray-900 mb-1 text-sm">Target Audience</h4>
+        <p className="text-sm text-gray-600 leading-snug">
+          {(selectedCampaign as PublicCampaign).target_audience}
+        </p>
+      </div>
+      <div>
+        <h4 className="font-bold text-gray-900 mb-1 text-sm">Keywords & Hashtags</h4>
+        <p className="text-sm text-secondary font-medium">
+          {(selectedCampaign as PublicCampaign).keywords_and_hashtags}
+        </p>
+      </div>
+    </div>
+    
+    {/* 7. Requirements Flags */}
+    <div className="flex gap-4 text-xs text-gray-500">
+        {(selectedCampaign as PublicCampaign).content_approval_required && (
+            <span className="flex items-center gap-1"><CheckCircle className="w-3 h-3 text-green-500"/> Approval Required</span>
+        )}
+        {(selectedCampaign as PublicCampaign).auto_match_micro_influencers && (
+            <span className="flex items-center gap-1"><CheckCircle className="w-3 h-3 text-green-500"/> Auto-Match Enabled</span>
+        )}
+    </div>
+  </>
+              ) : (
+                // HIRED CAMPAIGN DETAILS
+                <>
+                  <div className="flex items-start gap-3 bg-primary p-4 rounded-xl border border-primary mb-4">
+                    <Calendar className="w-5 h-5 text-primary mt-0.5" />
+                    <div>
+                      <p className="text-sm font-semibold text-primary">Timeline</p>
+                      <p className="text-sm text-primary mt-1">
+                        {formatDateRange((selectedCampaign as HiredCampaign).start_date, (selectedCampaign as HiredCampaign).end_date)}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="font-semibold text-primary text-lg mb-4">
+                    Budget: ${(selectedCampaign as HiredCampaign).budget}
+                  </div>
+
+                  <div className="mb-4">
+                     <h4 className="font-semibold mb-2">Proposal Message</h4>
+                     <p className="text-gray-600 bg-gray-50 p-3 rounded">
+                        {(selectedCampaign as HiredCampaign).proposal_message}
+                     </p>
+                  </div>
+
+                  {/* Render Deliverables from JSON string */}
+                  <div className="mb-4">
+                    <h4 className="font-semibold mb-2">Deliverables</h4>
+                    <div className="flex flex-wrap gap-2">
+                    {(() => {
+                        try {
+                            const raw = (selectedCampaign as HiredCampaign).campaign_deliverables;
+                            const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+                            if(Array.isArray(parsed)) {
+                                return parsed.map((d: string, i: number) => (
+                                    <span key={i} className="bg-gray-100 px-2 py-1 rounded text-xs capitalize">
+                                        {d.replace(/([A-Z])/g, " $1").trim()}
+                                    </span>
+                                ))
+                            }
+                            return null;
+                        } catch(e) { return null; }
+                    })()}
+                    </div>
+                  </div>
+                </>
               )}
-
-              {/* Campaign Name */}
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                {selectedCampaign.campaign_name}
-              </h3>
-
-              {/* Campaign Status */}
-              <div className="mb-6">
-                <span className="inline-block bg-blue-100 text-blue-800 text-sm font-semibold px-4 py-2 rounded-full capitalize">
-                  {selectedCampaign.campaign_status}
-                </span>
-              </div>
-
-              {/* Description */}
-              <div className="mb-6">
-                <h4 className="text-lg font-semibold text-gray-900 mb-2">
-                  Description
-                </h4>
-                <p className="text-gray-600">{selectedCampaign.campaign_description}</p>
-              </div>
-
-              {/* Campaign Details Grid */}
-              <div className="grid grid-cols-2 gap-6 mb-6">
-                <div>
-                  <h4 className="text-sm font-semibold text-gray-600 mb-1">
-                    Objective
-                  </h4>
-                  <p className="text-gray-900 font-medium">
-                    {selectedCampaign.campaign_objective}
-                  </p>
-                </div>
-                <div>
-                  <h4 className="text-sm font-semibold text-gray-600 mb-1">
-                    Budget
-                  </h4>
-                  <p className="text-gray-900 font-medium">
-                    {selectedCampaign.budget_range}
-                  </p>
-                </div>
-                <div>
-                  <h4 className="text-sm font-semibold text-gray-600 mb-1">
-                    Timeline
-                  </h4>
-                  <p className="text-gray-900 font-medium">
-                    {selectedCampaign.campaign_timeline}
-                  </p>
-                </div>
-                <div>
-                  <h4 className="text-sm font-semibold text-gray-600 mb-1">
-                    Budget Type
-                  </h4>
-                  <p className="text-gray-900 font-medium">
-                    {selectedCampaign.budget_type}
-                  </p>
-                </div>
-              </div>
-
-              {/* Content Deliverables */}
-              <div className="mb-6">
-                <h4 className="text-lg font-semibold text-gray-900 mb-2">
-                  Content Deliverables
-                </h4>
-                <p className="text-gray-600">
-                  {selectedCampaign.content_deliverables}
-                </p>
-              </div>
-
-              {/* Payment Preference */}
-              <div className="mb-6">
-                <h4 className="text-lg font-semibold text-gray-900 mb-2">
-                  Payment Preference
-                </h4>
-                <p className="text-gray-600">{selectedCampaign.payment_preference}</p>
-              </div>
-
-              {/* Target Audience */}
-              <div className="mb-6">
-                <h4 className="text-lg font-semibold text-gray-900 mb-2">
-                  Target Audience
-                </h4>
-                <p className="text-gray-600">{selectedCampaign.target_audience}</p>
-              </div>
-
-              {/* Keywords and Hashtags */}
-              <div className="mb-6">
-                <h4 className="text-lg font-semibold text-gray-900 mb-2">
-                  Keywords & Hashtags
-                </h4>
-                <p className="text-gray-600">{selectedCampaign.keywords_and_hashtags}</p>
-              </div>
-
-              {/* Additional Info */}
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <div>
-                  <h4 className="text-sm font-semibold text-gray-600 mb-1">
-                    Content Approval Required
-                  </h4>
-                  <p className="text-gray-900">
-                    {selectedCampaign.content_approval_required ? "Yes" : "No"}
-                  </p>
-                </div>
-                <div>
-                  <h4 className="text-sm font-semibold text-gray-600 mb-1">
-                    Auto-match Micro Influencers
-                  </h4>
-                  <p className="text-gray-900">
-                    {selectedCampaign.auto_match_micro_influencers ? "Yes" : "No"}
-                  </p>
-                </div>
-              </div>
+              {/* Attachments Section */}
+                {selectedCampaign.attachments &&
+                  selectedCampaign.attachments.length > 0 && (
+                    <div>
+                      <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-2 flex items-center gap-2">
+                        <Paperclip className="w-4 h-4" /> Attachments
+                      </h4>
+                      <div className="grid grid-cols-2 gap-3">
+                        {selectedCampaign.attachments.map((att) => (
+                          <Link
+                            href={att.link}
+                            key={att.id}
+                            target="_blank"
+                            className="group relative block overflow-hidden rounded-lg border border-gray-200 hover:border-primary transition-colors"
+                          >
+                            <div className="aspect-video bg-gray-100 relative">
+                              {/* Simple check for image extension for preview, otherwise generic icon */}
+                              {/\.(jpg|jpeg|png|gif|webp)$/i.test(att.link) ? (
+                                <Image
+                                  src={att.link}
+                                  alt="Attachment"
+                                  fill
+                                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                />
+                              ) : (
+                                <div className="flex items-center justify-center h-full text-gray-400">
+                                  <Paperclip className="w-8 h-8" />
+                                </div>
+                              )}
+                            </div>
+                            <div className="p-2 bg-white text-xs text-center text-gray-600 truncate px-2">
+                              View Attachment {att.id}
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
             </div>
 
-            {/* Modal Footer */}
-            <div className="border-t border-gray-200 p-6 bg-gray-50 flex gap-3 justify-end">
-              <button
-                onClick={handleCloseModal}
-                className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-100"
-              >
-                Close
-              </button>
-              <button
-                onClick={handleConnectWithOwner}
-                className="px-6 py-2 bg-secondary text-primary rounded-lg font-medium hover:bg-[var(--secondaryhover)]"
-              >
-                Connect with Owner
-              </button>
+            
+
+            {/* Footer Actions */}
+            <div className="p-6 border-t border-gray-200 bg-gray-50 flex gap-3 justify-end rounded-b-2xl">
+              {selectedType === "hired" && !(selectedCampaign as HiredCampaign).is_accepted_by_influencer ? (
+                 <>
+                    <button
+                        onClick={() => handleCampaignAction(selectedCampaign.id, "reject")}
+                        className="px-4 py-2 border border-red-200 text-red-600 rounded-lg hover:bg-red-50"
+                    >
+                        Reject
+                    </button>
+                    <button
+                        onClick={() => handleCampaignAction(selectedCampaign.id, "accept")}
+                        className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                    >
+                        Accept
+                    </button>
+                 </>
+              ) : (
+                <button
+                    onClick={handleConnectWithOwner}
+                    className="px-6 py-2 bg-secondary text-primary rounded-lg font-medium hover:bg-[var(--secondaryhover)]"
+                >
+                    Message Owner
+                </button>
+              )}
             </div>
           </div>
         </div>

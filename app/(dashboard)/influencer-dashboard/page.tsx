@@ -47,8 +47,6 @@ interface RoomData {
   profile_picture?: string;
 }
 
-
-
 export default function Page() {
   const [influencerProfile, setInfluencerProfile] =
     useState<InfluencerProfileInfo | null>(null);
@@ -108,7 +106,6 @@ export default function Page() {
           }
         );
         if (res.data) {
-          // Initialize data (assuming they are pending unless the API tells us otherwise)
           setCampaigns(res.data);
         }
       } catch (error) {
@@ -192,6 +189,8 @@ export default function Page() {
     }
   };
 
+  const totalEarnings = campaigns.reduce((acc, curr) => acc + curr.budget, 0);
+
   return (
     <div className="relative">
       <div className="flex-1">
@@ -231,10 +230,18 @@ export default function Page() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
             {[
-  { value: campaigns.length, label: "Total Campaigns", color: "#ffc006" },
-  { value: "$2250", label: "Earnings", color: "#dcfce7" },
-  { value: "5", label: "New Messages", color: "#FEFCE8" },
-].map((item, index) => (
+              {
+                value: campaigns.length,
+                label: "Total Campaigns",
+                color: "#ffc006",
+              },
+              {
+                value: `$${totalEarnings}`,
+                label: "Earnings",
+                color: "#dcfce7",
+              },
+              { value: "5", label: "New Messages", color: "#FEFCE8" },
+            ].map((item, index) => (
               <div
                 key={index}
                 className="rounded-lg p-6 text-center"
@@ -443,11 +450,11 @@ export default function Page() {
               <div className="bg-green-100 rounded-xl p-4 w-full flex flex-col items-center justify-center space-y-2 mb-4">
                 <span className="text-sm text-gray-600">Total Earnings</span>
                 <span className="text-3xl font-bold text-green-600">
-                  $2,450
+                  {`$${totalEarnings}`}
                 </span>
-                <span className="text-xs text-green-600 font-medium">
+                {/* <span className="text-xs text-green-600 font-medium">
                   +15% this month
-                </span>
+                </span> */}
               </div>
               <div className="w-full space-y-2">
                 <button className="w-full bg-secondary text-gray-800 font-semibold py-3 rounded-xl shadow-md hover:bg-[var(--secondaryhover)] transition-colors">

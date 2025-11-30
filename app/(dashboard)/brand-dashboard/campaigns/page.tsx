@@ -101,6 +101,10 @@ type CampaignApiResponse = {
   campaign_owner: string;
 };
 
+interface HiringCampaign{
+  id:string;
+}
+
 /* -------------------------------------------------
    Platform icons
 ------------------------------------------------- */
@@ -170,6 +174,7 @@ export default function CampaignDashboard() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [platformFilter, setPlatformFilter] = useState("all");
   const [allCampaigns, setAllCampaigns] = useState<Campaign[]>([]);
+  const [previousHirings,setPreviousHirings]=useState<HiringCampaign[]>([]);
 
   /* ---------- Stats (no type errors) ---------- */
   const stats = [
@@ -189,7 +194,7 @@ export default function CampaignDashboard() {
     },
     {
       title: "Influencers Hired",
-      value: "1,500",
+      value: previousHirings.length,
       subtitle: "Unique influencers in your network",
       icon: <Users className="w-8 h-8 text-primary" />,
       color: "bg-purple-50",
@@ -287,6 +292,28 @@ export default function CampaignDashboard() {
 
     fetchAllCampaigns();
   }, []);
+
+
+  useEffect(()=>
+  {
+    const fetchPreviousHirings=async()=>{
+      try {
+        const hiringsRes = await apiClient("campaign_service/get_my_previous_hirings/", {
+            method: "GET",
+            auth: true,
+        });
+        
+        if (hiringsRes.data && Array.isArray(hiringsRes.data)) {
+            setPreviousHirings(hiringsRes.data);
+        }
+      } catch (error) {
+        
+      }
+    }
+
+    fetchPreviousHirings();
+
+  },[])
 
   /* ---------- Pause / Resume ---------- */
   const handlePauseResume = async (event: Event, campaign: Campaign) => {

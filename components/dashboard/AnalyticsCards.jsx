@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 
 export function AnalyticsCards({ allCampaigns,previousHirings}) {
   const numOfInfluencers=previousHirings.length;
@@ -7,7 +6,11 @@ export function AnalyticsCards({ allCampaigns,previousHirings}) {
     { value: allCampaigns.length, label: "Total Campaigns", color: "#BC8D03" },
     { value: numOfInfluencers, label: "micro-influencers", color: "#BC8D03" },
     { value: "4.8", label: "Avg Rating", color: "#BC8D03" },
-    { value: totalInvested, label: "Total Invested", color: "#BC8D03" },
+    { 
+  value: `$${Number(totalInvested).toLocaleString()}`, 
+  label: "Total Invested", 
+  color: "#BC8D03" 
+},
   ];
 
 

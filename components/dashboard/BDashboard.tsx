@@ -9,12 +9,46 @@ import { useEffect, useState } from "react";
 import { apiClient } from "@/lib/apiClient";
 import { useAuthStore } from "@/stores/useAuthStore";
 
+// --- 1. Define Interface for Transformed Campaigns (Used in CampaignsSection) ---
+export interface DashboardCampaign {
+  id: number;
+  title: string;
+  description: string;
+  budget: string;
+  budgetType: string;
+  targetReach: string;
+  timeLeft: string;
+  progress: number;
+  platforms: string[];
+  assignedCreators: any[];
+  objective: string;
+  timeline: string;
+  deliverables: string[];
+  paymentPreferences: string[];
+  keywords: string[];
+  targetAudience: string;
+  approvalRequired: boolean;
+  autoMatch: boolean;
+  campaignOwner: number;
+  campaignStatus: string;
+}
+
+// --- 2. Define Interface for Previous Hirings (Used in RecentCollaborations) ---
+export interface HiringCampaign {
+  id: number;
+  hired_influencer_id: number | null;
+  rating: number;
+  // Add other fields from API if needed
+}
+
 export default function BDashboard() {
-  const [brandProfile, setBrandProfile] = useState();
-  // State for CampaignsSection & AnalyticsCards
-  const [allCampaigns, setAllCampaigns] = useState([]); 
-  // NEW: State for RecentCollaborations
-  const [previousHirings, setPreviousHirings] = useState([]); 
+  const [brandProfile, setBrandProfile] = useState<any>(null); // Use specific type if available, otherwise any
+  
+  // ✅ Fix: Add generic type <DashboardCampaign[]>
+  const [allCampaigns, setAllCampaigns] = useState<DashboardCampaign[]>([]); 
+  
+  // ✅ Fix: Add generic type <HiringCampaign[]>
+  const [previousHirings, setPreviousHirings] = useState<HiringCampaign[]>([]); 
 
   const store = useAuthStore.getState();
 
@@ -29,18 +63,18 @@ export default function BDashboard() {
         store.setUser(userRes.data);
         setBrandProfile(userRes?.data?.brand_profile);
 
-        // 2. Fetch All Campaigns (For Analytics & Campaigns Section)
+        // 2. Fetch All Campaigns
         const campaignsRes = await apiClient("campaign_service/get_my_all_campaigns/", {
           method: "GET",
           auth: true,
         });
 
-        // ... Your existing transformation logic for allCampaigns ...
         const campaignsArray = Array.isArray(campaignsRes.data)
           ? [...campaignsRes.data].reverse()
           : [];
 
-        const transformedCampaigns = campaignsArray.map((campaign) => ({
+        // Transform API response
+        const transformedCampaigns: DashboardCampaign[] = campaignsArray.map((campaign: any) => ({
           id: campaign.id,
           title: campaign.campaign_name || "Untitled Campaign",
           description: campaign.campaign_description || "",
@@ -54,13 +88,13 @@ export default function BDashboard() {
           objective: campaign.campaign_objective || "",
           timeline: campaign.campaign_timeline || "",
           deliverables: campaign.content_deliverables
-            ? campaign.content_deliverables.split(",").map((d:string) => d.trim())
+            ? campaign.content_deliverables.split(",").map((d: string) => d.trim())
             : [],
           paymentPreferences: campaign.payment_preference
-            ? campaign.payment_preference.split(",").map((p:string) => p.trim())
+            ? campaign.payment_preference.split(",").map((p: string) => p.trim())
             : [],
           keywords: campaign.keywords_and_hashtags
-            ? campaign.keywords_and_hashtags.split(",").map((k:string) => k.trim())
+            ? campaign.keywords_and_hashtags.split(",").map((k: string) => k.trim())
             : [],
           targetAudience: campaign.target_audience || "",
           approvalRequired: campaign.content_approval_required || false,
@@ -71,13 +105,13 @@ export default function BDashboard() {
 
         setAllCampaigns(transformedCampaigns);
 
-        // 3. NEW: Fetch Previous Hirings (For RecentCollaborations)
+        // 3. Fetch Previous Hirings
         const hiringsRes = await apiClient("campaign_service/get_my_previous_hirings/", {
             method: "GET",
             auth: true,
         });
         
-        if (hiringsRes.data) {
+        if (hiringsRes.data && Array.isArray(hiringsRes.data)) {
             setPreviousHirings(hiringsRes.data);
         }
 
@@ -94,17 +128,14 @@ export default function BDashboard() {
       <div className="flex-1">
         <DashboardHeader />
         <div className="mt-6 space-y-6">
-          {/* Passed allCampaigns */}
-          <AnalyticsCards allCampaigns={allCampaigns} previousHirings={previousHirings}/>
+          <AnalyticsCards allCampaigns={allCampaigns} previousHirings={previousHirings} />
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
               <BusinessBio />
-              {/* Passed allCampaigns */}
               <CampaignsSection allCampaigns={allCampaigns} />
             </div>
             <div className="space-y-6">
-              {/* ✅ Passed previousHirings here */}
               <RecentCollaborations rawCampaigns={previousHirings} />
               <BusinessAssets />
             </div>
