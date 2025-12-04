@@ -98,6 +98,7 @@ function LoginPageContent() {
               <p className="text-slate-300">
                 Please log into your account
 
+
               </p>
             </div>
 

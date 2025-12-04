@@ -47,9 +47,9 @@ const faqs = [
   },
   {
     question:
-      "I just want to repost a product to my WhatsApp Status or social feed — is that okay?",
+      "I just want to repost  to my WhatsApp Status or social feed — is that okay?",
     answer:
-      "Yep. Many users start by sharing products on Status or social posts. You decide what to share and when, and brands will compensate you based on what you agree on.",
+      "Yep. Many users start by sharing Status or social posts. You decide what to share and when, and brands will compensate you based on what you agree on.",
   },
 
   // Brands

@@ -223,7 +223,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                       youtube_handle: e.target.value,
                     }))
                   }
-                  placeholder="@yourusername or profile URL"
+                  placeholder="Full channel URL (e.g., youtube.com/@YourChannel)"
                 />
               </div>
 
@@ -253,7 +253,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                       linkedin_handle: e.target.value,
                     }))
                   }
-                  placeholder="@yourusername or profile URL"
+                  placeholder="Full profile or page URL (e.g., linkedin.com/in/yourname)"
                 />
               </div>
 
@@ -268,7 +268,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                       whatsapp_handle: e.target.value,
                     }))
                   }
-                  placeholder="+1 555-123-4567"
+                  placeholder="Phone number with country code (e.g., +1 555 123 4567)"
                 />
               </div>
             </div>
