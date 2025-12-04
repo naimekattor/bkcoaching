@@ -18,6 +18,13 @@ type ProposalForm = {
   campaignId:string;
 };
 
+interface MyCampaigns {
+  id:number;
+  campaign_name:string;
+
+
+}
+
 const deliverableTypes = [
   { id: "repost", label: "Repost", icon: "🔄" },
   { id: "instagramStory", label: "Instagram Story", icon: "📖" },
@@ -46,7 +53,7 @@ export default function ProposalsPage() {
 
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [myCampaigns,setMyCampaigns]=useState([]);
+  const [myCampaigns,setMyCampaigns]=useState<MyCampaigns[]>([]);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const params = useParams<{ id: string }>();
