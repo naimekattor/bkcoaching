@@ -480,7 +480,7 @@ export default function CampaignDashboard() {
                   height={192}
                   src={campaign.image}
                   alt={campaign.title}
-                  className="w-full h-48 object-cover rounded-t-lg"
+                  className="w-full h-48  rounded-t-lg"
                 />
                 <span
                   className={`absolute top-3 left-3 px-2 py-1 rounded-full text-xs font-medium ${
@@ -577,8 +577,8 @@ export default function CampaignDashboard() {
                     <p className="font-semibold">{campaign.budget}</p>
                   </div>
                   <div>
-                    <span className="text-gray-500">Target Reach</span>
-                    <p className="font-semibold">{campaign.targetReach}</p>
+                    <span className="text-gray-500">Campaign Objective</span>
+                    <p className="font-medium">{campaign.objective}</p>
                   </div>
                 </div>
 
@@ -610,14 +610,17 @@ export default function CampaignDashboard() {
       {selectedCampaign && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg max-w-2xl w-full max-h-[100vh] overflow-y-auto">
-            <div className="relative">
-              <Image
+            <div className="relative ">
+              <div className="w-full h-48 bg-gray-100 flex items-center justify-center rounded-t-lg overflow-hidden">
+                <Image
                 width={600}
                 height={192}
                 src={selectedCampaign.image}
                 alt={selectedCampaign.title}
-                className="w-full h-48 object-cover rounded-t-lg"
+                className="w-full h-full object-contain  rounded-t-lg"
               />
+              </div>
+              
               <button
                 className="absolute top-3 right-3 p-2 bg-white/80 hover:bg-white rounded-md transition-colors"
                 onClick={closeCampaignModal}
@@ -639,7 +642,10 @@ export default function CampaignDashboard() {
                     {selectedCampaign.description}
                   </p>
                 </div>
-                <div>
+                <div className="space-x-2">
+                  <button className="bg-secondary text-primary px-8 py-2 font-semibold rounded cursor-pointer">
+                    Mark as Complete
+                  </button>
                   <button className="bg-secondary text-primary px-8 py-2 font-semibold rounded cursor-pointer">
                     Pay Now
                   </button>

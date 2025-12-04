@@ -474,7 +474,7 @@ export default function CampaignsPage() {
 
       {/* --- Campaign Detail Modal (Handles both Types) --- */}
       {isModalOpen && selectedCampaign && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center  backdrop-blur-sm p-4 animate-in fade-in duration-200">
           <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl transform transition-all scale-100 flex flex-col max-h-[90vh]">
             <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">
               <div>
@@ -605,7 +605,7 @@ export default function CampaignsPage() {
               ) : (
                 // HIRED CAMPAIGN DETAILS
                 <>
-                  <div className="flex items-start gap-3 bg-primary p-4 rounded-xl border border-primary mb-4">
+                  <div className="flex items-start gap-3 p-4 rounded-xl border border-primary mb-4">
                     <Calendar className="w-5 h-5 text-primary mt-0.5" />
                     <div>
                       <p className="text-sm font-semibold text-primary">Timeline</p>

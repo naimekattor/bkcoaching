@@ -1,8 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+import { apiClient } from "@/lib/apiClient";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
 
 type ProposalForm = {
   proposalMessage: string;
@@ -12,10 +15,10 @@ type ProposalForm = {
   productPhotos: File | null;
   deliverables: string[];
   budget: string;
+  campaignId:string;
 };
 
 const deliverableTypes = [
-  { id: "socialPost", label: "Social Post", icon: "📱" },
   { id: "repost", label: "Repost", icon: "🔄" },
   { id: "instagramStory", label: "Instagram Story", icon: "📖" },
   { id: "instagramReel", label: "Instagram Reel", icon: "🎬" },
@@ -38,10 +41,12 @@ export default function ProposalsPage() {
     productPhotos: null,
     deliverables: [],
     budget: "",
+    campaignId:"",
   });
 
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [myCampaigns,setMyCampaigns]=useState([]);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const params = useParams<{ id: string }>();
@@ -75,6 +80,8 @@ export default function ProposalsPage() {
       ...prev,
       [field]: file,
     }));
+    console.log(formData.campaignId);
+    
   };
 
   const handleSubmitForm = (e: React.FormEvent<HTMLFormElement>) => {
@@ -92,7 +99,7 @@ export default function ProposalsPage() {
       }
 
       const formPayload = new FormData();
-
+      formPayload.append("campaign_id", formData.campaignId);
       formPayload.append("start_date", formData.startDate || "");
       formPayload.append("end_date", formData.endDate || "");
       formPayload.append("proposal_message", formData.proposalMessage || "");
@@ -139,11 +146,11 @@ export default function ProposalsPage() {
         setShowSuccessModal(true);
       } else {
         console.error("Failed to send proposal:", result.error);
-        alert("Failed to send proposal. Please try again.");
+        toast("Failed to send proposal. Please try again.");
       }
     } catch (error) {
       console.error("Error sending proposal:", error);
-      alert(
+      toast(
         error instanceof Error
           ? error.message
           : "An error occurred while sending the proposal."
@@ -160,19 +167,35 @@ export default function ProposalsPage() {
 
   const handleCloseSuccess = () => {
     setShowSuccessModal(false);
-    setFormData({
-      proposalMessage: "",
-      startDate: "",
-      endDate: "",
-      campaignBrief: null,
-      productPhotos: null,
-      deliverables: [],
-      budget: "",
-    });
+    // setFormData({
+    //   proposalMessage: "",
+    //   startDate: "",
+    //   endDate: "",
+    //   campaignBrief: null,
+    //   productPhotos: null,
+    //   deliverables: [],
+    //   budget: "",
+    // });
   };
 
+
+  useEffect(()=>{
+    const fetchMyCampaigns=async()=>{
+      try {
+        const res=await apiClient('campaign_service/get_my_all_campaigns/',{
+          method:"GET",
+          auth:true,
+        });
+        setMyCampaigns(res.data);
+      } catch (error) {
+        
+      }
+    }
+    fetchMyCampaigns();
+  },[]);
+
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen ">
       <div className="flex-1">
         <div className="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
           <div>
@@ -184,6 +207,29 @@ export default function ProposalsPage() {
               Micro-Influencer
             </p>
           </div>
+        </div>
+
+        <div className="my-6">
+           <label className="block text-sm font-medium text-gray-700 mb-2">
+    Select Campaign *
+  </label>
+          <Select onValueChange={(value)=>handleInputChange("campaignId",value)}>
+      <SelectTrigger className="w-[250px]">
+       <SelectValue placeholder="Select a Campaign" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectLabel>All Campaigns</SelectLabel>
+          {
+            myCampaigns.map((campaign)=>{
+              return <SelectItem key={campaign.id} value={String(campaign.id)}>{campaign.campaign_name}</SelectItem>
+            })
+          }
+          
+          
+        </SelectGroup>
+      </SelectContent>
+    </Select>
         </div>
 
         <div className="">

@@ -74,7 +74,7 @@ const timelineOptions = [
   { value: "flexible", label: "Flexible timing" },
 ];
 
-export default function CreateCampaignModal({ isOpen, onClose,onSuccess }) {
+export default function CreateCampaignModal({ isOpen, onClose, onSuccess }) {
   const router = useRouter();
 
   const [formData, setFormData] = useState({
@@ -338,7 +338,7 @@ export default function CreateCampaignModal({ isOpen, onClose,onSuccess }) {
         campaign_name: formData.campaign_name,
         campaign_objective: formData.campaign_objective,
         campaign_description: formData.campaign_description.substring(0, 50),
-        budget_range: formData.budget_range[0],
+        budget_range: String(formData.budget_range),
         budget_type: formData.budget_type,
         payment_preference: formData.payment_preference.join(","),
         content_deliverables: formData.content_deliverables.join(","),
@@ -360,6 +360,26 @@ export default function CreateCampaignModal({ isOpen, onClose,onSuccess }) {
         onSuccess(newCampaign);
         onClose();
         console.log(res);
+      } else if (res?.status === "failure" && res?.error) {
+        // Loop through the error object (e.g., target_audience, budget_range, etc.)
+        Object.keys(res.error).forEach((field) => {
+          const messages = res.error[field];
+
+          // Ensure messages is an array before mapping
+          if (Array.isArray(messages)) {
+            messages.forEach((msg) => {
+              // Optional: Make the field name readable (e.g., "target_audience" -> "Target Audience")
+              const readableField = field.replace(/_/g, " ").toUpperCase();
+
+              // Show the toast
+              toast(`${readableField}: ${msg}`);
+              console.log(`${readableField}: ${msg}`);
+            });
+          }
+        });
+      } else {
+        // Fallback for unknown errors
+        toast("Something went wrong. Please try again.");
       }
     } catch (error) {
       toast("There is an error!");
@@ -381,7 +401,7 @@ export default function CreateCampaignModal({ isOpen, onClose,onSuccess }) {
       (formData.payment_preference || []).length > 0;
 
     if (!isValid) {
-      alert(
+      toast(
         "Please fill required fields: name, campaign_objective, content_deliverables, campaign_timeline, payment method."
       );
       return;
@@ -392,12 +412,12 @@ export default function CreateCampaignModal({ isOpen, onClose,onSuccess }) {
         campaign_name: formData.campaign_name,
         campaign_objective: formData.campaign_objective,
         campaign_description: formData.campaign_description.substring(0, 50),
-        budget_range: formData.budget_range[0],
+        budget_range: formData.budget_range,
         budget_type: formData.budget_type,
         payment_preference: formData.payment_preference.join(","),
         content_deliverables: formData.content_deliverables.join(","),
         campaign_timeline: formData.campaign_timeline,
-        target_audience: formData.target_audience,
+        target_audience: formData.target_audience.substring(0, 50),
         keywords_and_hashtags: formData.keywords_and_hashtags.join(","),
         content_approval_required: formData.content_approval_required,
         auto_match_micro_influencers: formData.auto_match_micro_influencers,
@@ -834,7 +854,19 @@ export default function CreateCampaignModal({ isOpen, onClose,onSuccess }) {
                   }
                   placeholder="Young professionals, age 25-35, interested in sustainable fashion..."
                   rows={4}
+                  maxLength={50}
                 />
+                <div className="flex justify-end mt-1">
+                  <span
+                    className={`text-xs ${
+                      formData.target_audience.length >= 50
+                        ? "text-red-500"
+                        : "text-gray-400"
+                    }`}
+                  >
+                    {formData.target_audience.length}/50 characters
+                  </span>
+                </div>
               </CardContent>
             </Card>
 
@@ -912,7 +944,7 @@ export default function CreateCampaignModal({ isOpen, onClose,onSuccess }) {
 
             <Button
               onClick={handleCreateCampaign}
-              className="bg-secondary text-primary"
+              className="bg-secondary hover:bg-secondaryhover text-primary"
             >
               {formData.auto_match_micro_influencers
                 ? "Create Campaign & Find micro-influencers"
