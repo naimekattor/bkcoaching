@@ -29,59 +29,65 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
       tooltip: "Gen Z – digital natives, heavy TikTok/IG use.",
     },
     {
-      label: "Women 25–34",
-      tooltip: "Millennials – young professionals / family-forming stage.",
-    },
-    {
-      label: "Women 35–44",
-      tooltip: "Older Millennials / Gen X – career stability & young families.",
-    },
-    {
       label: "Men 18–24",
       tooltip: "Gen Z – early adopters, trend-driven.",
     },
+    {
+      label: "Women 25–34",
+      tooltip: "Millennials – young professionals / family-forming stage.",
+    },
+    
     {
       label: "Men 25–34",
       tooltip: "Millennials – tech-savvy, lifestyle & career focused.",
     },
     {
+      label: "Women 35–44",
+      tooltip: "Older Millennials / Gen X – career stability & young families.",
+    },
+    
+    {
       label: "Men 35–44",
       tooltip: "Older Millennials / Gen X – higher disposable income.",
+    },
+    {
+      label: "Women 45+",
+      tooltip: "Gen X / Boomers – loyalty and financial stability.",
     },
     {
       label: "Men 45+",
       tooltip: "Gen X / Boomers – loyalty and financial stability.",
     },
-    {
-      label: "Teen girls",
-      tooltip: "Gen Alpha / Gen Z – early fashion & fandom adopters.",
-    },
-    {
-      label: "Teen boys",
-      tooltip: "Gen Alpha / Gen Z – gaming, YouTube, and sports-heavy.",
-    },
-    {
-      label: "Young married couples",
-      tooltip: "Millennials – family-oriented, prioritizing lifestyle value.",
-    },
-    {
-      label: "Mothers with young children",
-      tooltip: "Millennials / Gen X – parenting, childcare, home-focused.",
-    },
-    {
-      label: "Fathers with young children",
-      tooltip: "Millennials / Gen X – parenting, career/family balance.",
-    },
-    {
-      label: "Newlyweds",
-      tooltip:
-        "Mostly Millennials – aspirational, home, and lifestyle-focused.",
-    },
-    {
-      label: "Singles in the dating stage",
-      tooltip:
-        "Gen Z / Millennials – lifestyle, social apps, and trend-driven.",
-    },
+    // {
+    //   label: "Teen girls",
+    //   tooltip: "Gen Alpha / Gen Z – early fashion & fandom adopters.",
+    // },
+    // {
+    //   label: "Teen boys",
+    //   tooltip: "Gen Alpha / Gen Z – gaming, YouTube, and sports-heavy.",
+    // },
+    // {
+    //   label: "Young married couples",
+    //   tooltip: "Millennials – family-oriented, prioritizing lifestyle value.",
+    // },
+    // {
+    //   label: "Mothers with young children",
+    //   tooltip: "Millennials / Gen X – parenting, childcare, home-focused.",
+    // },
+    // {
+    //   label: "Fathers with young children",
+    //   tooltip: "Millennials / Gen X – parenting, career/family balance.",
+    // },
+    // {
+    //   label: "Newlyweds",
+    //   tooltip:
+    //     "Mostly Millennials – aspirational, home, and lifestyle-focused.",
+    // },
+    // {
+    //   label: "Singles in the dating stage",
+    //   tooltip:
+    //     "Gen Z / Millennials – lifestyle, social apps, and trend-driven.",
+    // },
   ];
 
   const brandValues = [
@@ -222,7 +228,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
 
           <div className="grid md:grid-cols-2 gap-8">
             {/* Demographics */}
-            <Card>
+            {/* <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Users className="w-5 h-5" />
@@ -251,7 +257,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                   ))}
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
 
             {/* Brand Values */}
             <Card>

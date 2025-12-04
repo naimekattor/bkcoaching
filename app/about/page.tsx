@@ -52,7 +52,7 @@ export default function AboutPage() {
                   </span>{" "}
                   started forming. A space where brands and micro-influencers
                   can easily find each other, collaborate, and grow—organically
-                  and Welcome to{" "}
+                  . Welcome to{" "}
                   <span className="font-semibold text-[16px]">
                     The Social Market.
                   </span>{" "}

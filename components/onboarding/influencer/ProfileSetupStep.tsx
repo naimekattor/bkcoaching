@@ -143,7 +143,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                         display_name: e.target.value,
                       }))
                     }
-                    placeholder="Your micro-influencers name"
+                    placeholder="Your micro-influencer name"
                   />
                 </div>
 

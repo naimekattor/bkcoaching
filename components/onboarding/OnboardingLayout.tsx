@@ -70,7 +70,7 @@ const OnboardingLayout = ({
       </div>
       <div>
         <Link href={`/auth/signup?role=${skipRole}&returnTo=/${skipRole}-onboarding?step=${finalStep}`} className="text-muted-foreground font-semibold underline text-sm mt-6">
-        I want to Complete profile setup Later
+        Complete My Profile Setup Later
         </Link>
       </div>
 

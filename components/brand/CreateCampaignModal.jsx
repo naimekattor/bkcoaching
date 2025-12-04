@@ -81,7 +81,7 @@ export default function CreateCampaignModal({ isOpen, onClose,onSuccess }) {
     campaign_name: "",
     campaign_objective: "",
     campaign_poster: null,
-    budget_range: [1000],
+    budget_range: 500,
     budget_type: "total",
     payment_preference: [],
     campaign_description: "",
@@ -338,7 +338,7 @@ export default function CreateCampaignModal({ isOpen, onClose,onSuccess }) {
         campaign_name: formData.campaign_name,
         campaign_objective: formData.campaign_objective,
         campaign_description: formData.campaign_description.substring(0, 50),
-        budget_range: formData.budget_range[0].toString(),
+        budget_range: formData.budget_range[0],
         budget_type: formData.budget_type,
         payment_preference: formData.payment_preference.join(","),
         content_deliverables: formData.content_deliverables.join(","),
@@ -392,7 +392,7 @@ export default function CreateCampaignModal({ isOpen, onClose,onSuccess }) {
         campaign_name: formData.campaign_name,
         campaign_objective: formData.campaign_objective,
         campaign_description: formData.campaign_description.substring(0, 50),
-        budget_range: formData.budget_range[0].toString(),
+        budget_range: formData.budget_range[0],
         budget_type: formData.budget_type,
         payment_preference: formData.payment_preference.join(","),
         content_deliverables: formData.content_deliverables.join(","),
@@ -612,7 +612,7 @@ export default function CreateCampaignModal({ isOpen, onClose,onSuccess }) {
 
                 <div className="space-y-4">
                   <div className="flex justify-between">
-                    <Label>Budget Amount: ${formData.budget_range[0]}</Label>
+                    <Label>Budget Amount: ${formData.budget_range}</Label>
                     <Badge variant="secondary">
                       {formData.budget_type === "total"
                         ? "Total"
@@ -623,18 +623,18 @@ export default function CreateCampaignModal({ isOpen, onClose,onSuccess }) {
                   </div>
 
                   <Slider
-                    value={formData.budget}
+                    value={[formData.budget_range]}
                     onValueChange={(value) =>
-                      handleInputChange("budget", value)
+                      handleInputChange("budget_range", value[0])
                     }
-                    max={10000}
-                    min={100}
-                    step={100}
+                    max={1000}
+                    min={10}
+                    step={1}
                     className="w-full"
                   />
 
                   <div className="flex justify-between text-sm text-muted-foreground">
-                    <span>$100</span>
+                    <span>$10</span>
                     <span>$10,000+</span>
                   </div>
                 </div>

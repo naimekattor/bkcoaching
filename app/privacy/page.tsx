@@ -207,8 +207,9 @@ export default function PrivacyPage() {
                 If you have any questions or concerns about this Privacy Policy,
                 please contact us at:
                 <br />
-                [your@email.com] <br />
-                [Your Address, City, Country]
+                info@thesocialmarket.ai 
+ <br />
+                {/* [Your Address, City, Country] */}
               </p>
             </section>
           </div>

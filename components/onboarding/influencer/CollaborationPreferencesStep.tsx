@@ -39,7 +39,7 @@ const CollaborationPreferencesStep = ({
     useInfluencerOnboarding();
 
   const contentFormats = [
-    { id: "socialPost", label: "Social Post", icon: Image },
+    { id: "socialPost", label: "Whatsapp Group Post", icon: Image },
     { id: "repost", label: "Repost", icon: Repeat },
     { id: "instagramStory", label: "Instagram Story", icon: Image },
     { id: "instagramReel", label: "Instagram Reel", icon: Video },

@@ -9,7 +9,7 @@ const faqs = [
   {
     question: "What is The Social Market?",
     answer:
-      "The Social Market is a place where micro-influencers and brands connect to grow authentically. You share products you genuinely love and get discovered by brands that value your influence.",
+      "The Social Market is a matchmaking platform that connects brands with micro-influencers for authentic, affordable, and effective collaborations. Brands can easily find creators who are a great fit for their ideal clientele, and smaller and midsize  influencers can discover paid or gifted opportunities that match their style, values, and niche.",
   },
   {
     question: "Who can join as a micro-influencer?",
@@ -33,7 +33,7 @@ const faqs = [
   },
   {
     question: "Can I work with multiple brands at the same time?",
-    answer: "Absolutely! You can manage several campaigns at once.",
+    answer: "Absolutely! You can manage as many campaigns as you would like at the same time.",
   },
   {
     question: "What happens after I sign up?",
@@ -99,7 +99,7 @@ We’ve made it super simple to set up your campaign so that the right micro-inf
   {
     question: "What if I need help?",
     answer:
-      "Support is always available! You can reach out to us anytime at support@thesocialmarket.com for assistance.",
+      "Support is always available! You can reach out to us anytime at info@thesocialmarket.ai for assistance.",
   },
 ];
 

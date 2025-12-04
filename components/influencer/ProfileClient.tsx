@@ -47,7 +47,7 @@ const contentNiches = [
 ];
 
 const contentFormats = [
-  { id: "socialPost", label: "Social Post" },
+  { id: "socialPost", label: "Whatsapp Group Post" },
   { id: "repost", label: "Repost" },
   { id: "instagramStory", label: "Instagram Story" },
   { id: "instagramReel", label: "Instagram Reel" },
