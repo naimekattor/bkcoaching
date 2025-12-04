@@ -175,7 +175,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
           Welcome to <span className="">The Social Market</span>!
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          Your micro-influencers profile is complete and you&apos;re ready to
+          Your micro-influencer profile is complete and you&apos;re ready to
           start earning! Get ready to collaborate with amazing brands and grow
           your influence.
         </p>
@@ -240,7 +240,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
           <div className="flex items-center justify-center gap-2">
             <Gift className="w-5 h-5 text-secondary" />
             <h3 className="font-semibold">
-              Earn $10 for Each micro-influencers Referral
+              Earn $10 for Each micro-influencer Referral
             </h3>
           </div>
           <p className="text-sm text-muted-foreground">

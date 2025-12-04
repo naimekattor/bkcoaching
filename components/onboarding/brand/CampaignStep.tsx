@@ -147,7 +147,7 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
             Create your first campaign
           </h1>
           <p className="text-muted-foreground">
-            Let&apos;s set up a campaign to find the perfect micro-influencerss
+            Let&apos;s set up a campaign to find the perfect micro-influencer
             for your brand
           </p>
         </div>
@@ -333,7 +333,7 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
             <CardHeader>
               <CardTitle>Payment Preferences *</CardTitle>
               <p className="text-sm text-muted-foreground">
-                Select how you plan to compensate micro-influencerss for this
+                Select how you plan to compensate micro-influencers for this
                 campaign
               </p>
             </CardHeader>
