@@ -268,7 +268,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                       whatsapp_handle: e.target.value,
                     }))
                   }
-                  placeholder="Phone number with country code (e.g., +1 555 123 4567)"
+                  placeholder="WhatsApp link (e.g., wa.me/15551234567)"
                 />
               </div>
             </div>

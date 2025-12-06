@@ -278,7 +278,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
 
           {/* Social Share Buttons */}
           <div className="pt-4 flex flex-wrap justify-center gap-3">
-            <Button
+            {/* <Button
               size="sm"
               variant="outline"
               className="bg-primary text-white"
@@ -292,7 +292,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
               }
             >
               Facebook
-            </Button>
+            </Button> */}
 
             <Button
               size="sm"

@@ -25,6 +25,15 @@ type StoredInfluencerProfile = {
 };
 import { useAuthStore } from "@/stores/useAuthStore";
 
+
+const placeholders: Record<string, string> = {
+  instagram: "https://www.instagram.com/username",
+  tiktok: "https://www.tiktok.com/@username",
+  twitter: "https://twitter.com/username",
+  youtube: "Full channel URL (e.g., youtube.com/@YourChannel)",
+  linkedin: "Full profile or page URL (e.g., linkedin.com/in/yourname",
+  whatsapp: "WhatsApp link (e.g., wa.me/15551234567)",
+};
 const contentNiches = [
   "Beauty & Skincare Brands – makeup, skincare, haircare",
   "Fashion & Apparel – clothing lines, modest fashion brands, boutique shops",
@@ -208,7 +217,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen ">
-      <div className="space-y-8">
+      <div className="space-y-4">
         <h1 className="text-3xl font-bold text-center text-primary">Micro-Influencer Profile</h1>
         <p className="text-center text-gray-600">Update your info to attract more brand deals</p>
 
@@ -217,8 +226,8 @@ export default function ProfilePage() {
           <CardHeader><CardTitle>Basic Information</CardTitle></CardHeader>
           <CardContent className="grid lg:grid-cols-2 gap-8">
             <div className="space-y-6">
-              <div><Label>Full Name</Label><Input value={formData.fullName} onChange={e => setFormData({ ...formData, fullName: e.target.value })} placeholder="Your name" /></div>
-              <div><Label>Bio</Label><Textarea value={formData.bio} onChange={e => setFormData({ ...formData, bio: e.target.value })} className="min-h-32" placeholder="Tell brands about you" /></div>
+              <div><Label className="mb-2">Full Name</Label><Input value={formData.fullName} onChange={e => setFormData({ ...formData, fullName: e.target.value })} placeholder="Your name" /></div>
+              <div><Label className="mb-2">Bio</Label><Textarea value={formData.bio} onChange={e => setFormData({ ...formData, bio: e.target.value })} className="min-h-32" placeholder="Tell brands about you" /></div>
             </div>
             <div>
               <Label>Profile Picture</Label>
@@ -247,14 +256,14 @@ export default function ProfilePage() {
           <CardContent className="grid md:grid-cols-2 gap-6">
             {Object.entries(formData.socialLinks).map(([platform, value]) => (
               <div key={platform}>
-                <Label className="capitalize">{platform}</Label>
+                <Label className="capitalize mb-2">{platform}</Label>
                 <Input
                   value={value}
                   onChange={e => setFormData({
                     ...formData,
                     socialLinks: { ...formData.socialLinks, [platform]: e.target.value }
                   })}
-                  placeholder={platform === "whatsapp" ? "+1234567890" : "@username"}
+                  placeholder={placeholders[platform] || "Enter full link "}
                 />
               </div>
             ))}
@@ -332,7 +341,7 @@ export default function ProfilePage() {
                     checked={paymentModels[model]}
                     onCheckedChange={checked => setPaymentModels({ ...paymentModels, [model]: !!checked })}
                   />
-                  <p className="font-semibold">
+                  <p className="cursor-pointer font-medium">
                     {model === "gifted" ? "Gifted Products" :
                      model === "paid" ? "Paid Collaborations" :
                      model === "affiliate" ? "Affiliate Marketing" :
