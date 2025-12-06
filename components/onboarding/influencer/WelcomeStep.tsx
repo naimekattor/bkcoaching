@@ -42,7 +42,7 @@ const WelcomeStep = ({ onNext }: WelcomeStepProps) => {
         <p className="text-[16px] text-muted-foreground max-w-2xl mx-auto">
           You&apos;re about to join thousands of micro-influencers who&apos;ve
           turned their passion into profit. Let&apos;s get your
-          micro-influencers profile set up and start earning!
+          micro-influencer profile set up and start earning!
         </p>
       </div>
 

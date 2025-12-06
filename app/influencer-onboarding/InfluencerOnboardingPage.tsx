@@ -20,10 +20,10 @@ const InfluencerOnboardingPage = () => {
   const navigate = useRouter();
 
   const steps = [
-    { title: "Welcome", description: "Get started as a micro-influencers" },
+    { title: "Welcome", description: "Get started as a micro-influencer" },
     {
       title: "Profile Setup",
-      description: "Create your micro-influencers profile",
+      description: "Create your micro-influencer profile",
     },
     {
       title: "Collaboration Preferences",
