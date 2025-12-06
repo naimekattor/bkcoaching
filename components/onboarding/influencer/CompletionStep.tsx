@@ -114,12 +114,14 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
       title: "Browse Campaigns",
       description: "Find brand campaigns that match your niche and interests",
       action: "Explore Campaigns",
+      href: "/influencer-dashboard/campaigns",
     },
     {
       icon: MessageCircle,
       title: "Complete Your Profile",
       description: "Add more details to attract better brand partnerships",
       action: "Finish Profile",
+      href: "/influencer-dashboard/settings",
     },
   ];
 
@@ -226,7 +228,9 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
                   </p>
                 </div>
                 <Button variant="outline" size="sm">
-                  {step.action}
+                  <Link href={step.href}>
+          {step.action}
+        </Link>
                 </Button>
               </CardContent>
             </Card>
@@ -259,7 +263,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
           </div>
           {/* Social Share Buttons */}
           <div className="pt-4 flex flex-wrap justify-center gap-3">
-            <Button
+            {/* <Button
               size="sm"
               variant="outline"
               className="bg-primary text-white"
@@ -273,7 +277,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
               }
             >
               Facebook
-            </Button>
+            </Button> */}
 
             <Button
               size="sm"
@@ -343,12 +347,12 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
 
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
-        <Button variant="hero" size="lg" onClick={onComplete}>
+        <Button variant="hero" size="lg" onClick={onComplete} className="cursor-pointer">
           Go to Dashboard
         </Button>
-        <Button variant="outline" size="lg">
+        {/* <Button variant="outline" size="lg">
           <Link href={"/influencer-dashboard/campaigns"}>Browse Campaigns</Link>
-        </Button>
+        </Button> */}
       </div>
     </div>
   );

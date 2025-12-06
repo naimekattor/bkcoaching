@@ -193,7 +193,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                       instagram_handle: e.target.value,
                     }))
                   }
-                  placeholder="@yourusername or profile URL"
+                  placeholder="https://www.instagram.com/username"
                 />
               </div>
 
@@ -208,7 +208,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                       tiktok_handle: e.target.value,
                     }))
                   }
-                  placeholder="@yourusername or profile URL"
+                  placeholder="https://www.tiktok.com/@username"
                 />
               </div>
 
@@ -238,7 +238,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                       twitter_handle: e.target.value,
                     }))
                   }
-                  placeholder="@yourusername or profile URL"
+                  placeholder="https://twitter.com/username"
                 />
               </div>
 

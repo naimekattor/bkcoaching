@@ -265,13 +265,13 @@ const CollaborationPreferencesStep = ({
                         <Input
                           type="number"
                           min="0"
-                          placeholder="Enter your rate (e.g. 750)"
+                          placeholder="Enter rate (e.g. $100)"
                           value={isCustom ? currentValue : ""}
                           onChange={(e) => {
                             const val = e.target.value;
                             setOnboardingDataInfluencer((prev) => ({
                               ...prev,
-                              [field]: val || "", // save the number directly
+                              [field]: val || "", 
                             }));
                           }}
                           className="mt-2 transition-all"

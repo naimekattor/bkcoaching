@@ -433,7 +433,7 @@ export default function ProfileClient({
                       {rates[id]?.type === "custom" && (
                         <Input
                           type="number"
-                          placeholder="e.g. 750"
+                          placeholder="e.g. $100 "
                           value={rates[id].custom}
                           onChange={(e) => setRates({ ...rates, [id]: { ...rates[id], custom: e.target.value } })}
                         />

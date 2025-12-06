@@ -71,7 +71,7 @@ export default function PrivacyPage() {
               <ul className="list-disc pl-6 space-y-2 text-gray-700">
                 <li>
                   <strong>Personal Information:</strong> such as your name,
-                  email address, phone number, etc. (only when you submit it
+                  email address etc. (only when you submit it
                   voluntarily, e.g., through contact forms or account
                   registration)
                 </li>

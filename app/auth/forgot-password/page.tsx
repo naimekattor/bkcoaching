@@ -53,7 +53,7 @@ export default function ForgotPasswordPage() {
                 Forgot Password?
               </h1>
               <p className="text-slate-300">
-                Enter Your Email Or Phone Number To Reset Your Password Quickly
+                Enter Your Email  To Reset Your Password Quickly
               </p>
             </div>
 
@@ -61,7 +61,7 @@ export default function ForgotPasswordPage() {
               <div>
                 <input
                   type="email"
-                  placeholder="Enter Your Email Or Phone Number"
+                  placeholder="Enter Your Email "
                   className="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-secondary"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}

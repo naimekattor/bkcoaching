@@ -2,9 +2,9 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Eye, EyeOff } from "lucide-react";
+import { Check, Eye, EyeOff, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -31,6 +31,24 @@ export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  // --- PASSWORD VALIDATION LOGIC START ---
+  const passwordRequirements = useMemo(() => {
+    const pwd = formData.password;
+    return [
+      { id: 1, label: "At least 8 characters", met: pwd.length >= 8 },
+      { id: 2, label: "At least one uppercase letter", met: /[A-Z]/.test(pwd) },
+      { id: 3, label: "At least one lowercase letter", met: /[a-z]/.test(pwd) },
+      { id: 4, label: "At least one number", met: /\d/.test(pwd) },
+      { id: 5, label: "At least one special character (@$!%*?&)", met: /[@$!%*?&#]/.test(pwd) },
+    ];
+  }, [formData.password]);
+
+  const isPasswordValid = passwordRequirements.every((req) => req.met);
+  // --- PASSWORD VALIDATION LOGIC END ---
+
+
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: { [key: string]: string } = {};
@@ -39,6 +57,14 @@ export default function SignupPage() {
     if (!formData.last_name) newErrors.lastName = "Last name is required";
     if (!formData.email) newErrors.email = "Email is required";
     if (!formData.password) newErrors.password = "Password is required";
+
+    // Strict Password Validation on Submit
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (!isPasswordValid) {
+      newErrors.password = "Password does not meet security requirements";
+    }
+
     if (formData.password !== formData.confirmPassword)
       newErrors.confirmPassword = "Passwords do not match";
     if (!formData.agreeToTerms)
@@ -109,8 +135,7 @@ export default function SignupPage() {
                 Create an account
               </h1>
               <p className="text-slate-300">
-                Join today and explore risk-free. Cancel anytime with just one
-                click.
+                Join today and earn money collaborating with top brands!
               </p>
             </div>
 
@@ -201,6 +226,29 @@ export default function SignupPage() {
                   <p className="text-red-400 text-sm mt-1">{errors.password}</p>
                 )}
               </div>
+
+               {/* PASSWORD STRENGTH INDICATOR */}
+              <div className="bg-slate-700/50 p-3 rounded-lg space-y-2">
+                <p className="text-xs text-slate-300 font-medium">Password must contain:</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {passwordRequirements.map((req) => (
+                    <div key={req.id} className="flex items-center space-x-2">
+                      {req.met ? (
+                        <Check className="w-3 h-3 text-green-400" />
+                      ) : (
+                        <X className="w-3 h-3 text-red-400" />
+                      )}
+                      <span className={`text-xs ${req.met ? "text-green-400" : "text-slate-400"}`}>
+                        {req.label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              {errors.password && (
+                <p className="text-red-400 text-sm mt-1">{errors.password}</p>
+              )}
 
               <div className="relative">
                 <input
