@@ -114,7 +114,7 @@ export default function Footer() {
             <span className="text-gray-400 hidden sm:inline">|</span>
 
             <Link
-              href="/influencers"
+              href="/micro-influencers"
               className="hover:text-gray-900 transition-colors"
             >
               For Micro-Influencers
@@ -127,22 +127,22 @@ export default function Footer() {
             >
               About
             </Link>
-            <span className="text-gray-400 hidden sm:inline">|</span>
+            {/* <span className="text-gray-400 hidden sm:inline">|</span> */}
 
-            <Link
+            {/* <Link
               href="/help"
               className="hover:text-gray-900 transition-colors"
             >
               Help
-            </Link>
-            <span className="text-gray-400 hidden sm:inline">|</span>
+            </Link> */}
+            {/* <span className="text-gray-400 hidden sm:inline">|</span> */}
 
-            <Link
+            {/* <Link
               href="/privacy"
               className="hover:text-gray-900 transition-colors"
             >
               Terms
-            </Link>
+            </Link> */}
             <span className="text-gray-400 hidden sm:inline">|</span>
 
             <Link
