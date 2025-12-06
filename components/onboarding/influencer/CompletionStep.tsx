@@ -4,10 +4,10 @@ import { Badge } from "@/components/ui/badge";
 import { CheckCircle, Search, MessageCircle, Gift, Copy } from "lucide-react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { toast } from "@/hooks/use-toast";
 import { apiClient } from "@/lib/apiClient";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useInfluencerOnboarding } from "@/contexts/InfluencerOnboardingContext";
+import { toast } from "react-toastify";
 
 interface CompletionStepProps {
   onComplete: () => void;
@@ -127,10 +127,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
 
   const copyReferralCode = () => {
     navigator.clipboard.writeText(referralCode);
-    toast({
-      title: "Referral code copied!",
-      description: "Share with other micro-influencers to earn rewards",
-    });
+    toast("Referral code copied!");
   };
   const { token } = useAuthStore();
 
@@ -151,14 +148,11 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
           body: JSON.stringify(apiPayload),
         });
 
-        toast({
-          title: "Profile Saved!",
-          description: "Your influencer profile is now live.",
-        });
+        toast( "Profile Saved!");
         localStorage.removeItem("InfluencerOnboardingData");
       } catch (error) {
         console.error("Failed to submit influencer onboarding data:", error);
-        toast({ title: "Error Saving Profile", variant: "destructive" });
+        toast("Error Saving Profile");
       }
     };
 

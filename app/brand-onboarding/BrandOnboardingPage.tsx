@@ -18,7 +18,7 @@ const BrandOnboarding = () => {
   const steps = [
     { title: "Business Info", description: "Tell us about your business" },
     { title: "Profile Setup", description: "Define your brand and audience" },
-    { title: "Payment & Plans", description: "Choose your subscription plan" },
+    // { title: "Payment & Plans", description: "Choose your subscription plan" },
     { title: "First Campaign", description: "Create your first campaign" },
     { title: "Complete", description: "You're ready to start collaborating!" },
   ];
@@ -63,11 +63,11 @@ const BrandOnboarding = () => {
         return <BusinessInfoStep onNext={handleNext} onBack={handleBack} />;
       case 2:
         return <ProfileSetupStep onNext={handleNext} onBack={handleBack} />;
+      // case 3:
+      //   return <PaymentStep onNext={handleNext} onBack={handleBack} />;
       case 3:
-        return <PaymentStep onNext={handleNext} onBack={handleBack} />;
-      case 4:
         return <CampaignStep onNext={handleNext} onBack={handleBack} />;
-      case 5:
+      case 4:
         return <CompletionStep onComplete={handleComplete} />;
       default:
         return <BusinessInfoStep onNext={handleNext} onBack={handleBack} />;
@@ -82,9 +82,9 @@ const BrandOnboarding = () => {
         onBack={currentStep > 1 ? handleBack : undefined}
         stepTitle={steps[currentStep - 1].title}
         stepDescription={steps[currentStep - 1].description}
-        showBack={currentStep > 1 && currentStep < 6}
+        showBack={currentStep > 1 && currentStep < 4}
         skipRole="brand"
-        finalStep ="5"
+        finalStep ="4"
       >
         {renderStep()}
       </OnboardingLayout>

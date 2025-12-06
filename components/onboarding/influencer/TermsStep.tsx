@@ -5,6 +5,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { FileText, Shield, Eye } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useRouter } from "next/navigation";
 
 interface TermsStepProps {
   onNext: () => void;
@@ -17,6 +19,9 @@ const TermsStep = ({ onNext, onBack }: TermsStepProps) => {
     privacyPolicy: false,
     contentPolicy: false,
   });
+    const [showAuthModal, setShowAuthModal] = useState(false);
+  const router = useRouter();
+
 
   const allAgreed = Object.values(agreements).every((agreed) => agreed);
 
@@ -24,7 +29,13 @@ const TermsStep = ({ onNext, onBack }: TermsStepProps) => {
     setAgreements((prev) => ({ ...prev, [field]: checked }));
   };
 
+  const handleContinue = () => {
+    if (!allAgreed) return;
+    setShowAuthModal(true);
+  };
+
   return (
+    <>
     <div className="space-y-8">
       <div className="text-center space-y-4">
         <h1 className="text-3xl font-bold">Terms & Privacy</h1>
@@ -273,11 +284,45 @@ const TermsStep = ({ onNext, onBack }: TermsStepProps) => {
         <Button variant="outline" onClick={onBack}>
           Back
         </Button>
-        <Button variant="primary" onClick={onNext} disabled={!allAgreed}>
+        <Button variant="primary" onClick={handleContinue} disabled={!allAgreed}>
           Accept & Continue
         </Button>
       </div>
     </div>
+
+    {/* Auth Required Modal */}
+      <Dialog open={showAuthModal} onOpenChange={setShowAuthModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Sign up required</DialogTitle>
+            <DialogDescription>
+              Please sign up or log in to continue creating your campaign.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end gap-2 pt-4">
+            <Button
+              variant="outline"
+              onClick={() =>
+                router.push(
+                  "/auth/login?returnTo=/influencer-onboarding?step=7"
+                )
+              }
+            >
+              Log in
+            </Button>
+            <Button
+              onClick={() =>
+                router.push(
+                  "/auth/signup?role=influencer&returnTo=/influencer-onboarding?step=7"
+                )
+              }
+            >
+              Sign up
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 

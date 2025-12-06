@@ -6,6 +6,7 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { ChevronDown, LogOut } from "lucide-react";
+import { signOut } from "next-auth/react";
 
 const DashboardTopHeader = () => {
   const { user, logout } = useAuthStore();
@@ -102,6 +103,7 @@ const DashboardTopHeader = () => {
                     <button
                       onClick={() => {
                         logout();
+                        signOut({ callbackUrl: "/" });
                         router.push("/auth/login");
                       }}
                       className="w-full px-4 py-3 text-left hover:bg-red-50 text-red-600 flex items-center gap-3 transition"

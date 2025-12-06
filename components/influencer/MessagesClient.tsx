@@ -643,7 +643,7 @@ export default function InfluencerMessagesClient() {
           </div>
         </div>
 
-        <div className="p-4 border-b border-gray-200">
+        {/* <div className="p-4 border-b border-gray-200">
           <div
             onClick={() => {
               router.push("/influencer-dashboard/message-request");
@@ -661,7 +661,7 @@ export default function InfluencerMessagesClient() {
             </div>
             <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
           </div>
-        </div>
+        </div> */}
 
         <div className="flex-1 overflow-y-auto">
           {loading ? (

@@ -105,7 +105,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
       description:
         "Check out micro-influencers we've matched with your campaign",
       action: "View Matches",
-      link: "/brand-dashboard/campaigns",
+      link: "/brand-dashboard/microinfluencerspage?review=filter_by_self",
     },
   ];
 
@@ -247,7 +247,9 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
                   </p>
                 </div>
                 <Button variant="outline" size="sm">
+                  <Link href={step.link}>
                   {step.action}
+                  </Link>
                 </Button>
               </CardContent>
             </Card>

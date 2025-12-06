@@ -7,6 +7,7 @@ import { TbMessageCircleFilled } from "react-icons/tb";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { X, Calendar, Paperclip, CheckCircle, XCircle } from "lucide-react";
+import { toast } from "react-toastify";
 
 // --- Interfaces ---
 interface Attachment {
@@ -166,14 +167,14 @@ export default function Page() {
             )
           );
 
-          alert(res.data?.message || "Successfully Accepted the offer! 🎉");
+          toast(res.data?.message || "Successfully Accepted the offer! 🎉");
           setSelectedCampaign(null); // Close modal
         } else {
-          alert("Something went wrong. Please try again.");
+          toast("Something went wrong. Please try again.");
         }
       } catch (error) {
         console.error("Accept Error:", error);
-        alert("Failed to accept the offer. Please try again.");
+        toast("Failed to accept the offer. Please try again.");
       }
     } else {
       // Logic for Reject (Placeholder)
@@ -181,7 +182,7 @@ export default function Page() {
         "Are you sure you want to reject this campaign?"
       );
       if (confirmReject) {
-        alert("Offer rejected locally.");
+        toast("Offer rejected locally.");
         // Ideally call a reject API here
         setCampaigns((prev) => prev.filter((c) => c.id !== campaignId));
         setSelectedCampaign(null);
@@ -240,7 +241,7 @@ export default function Page() {
                 label: "Earnings",
                 color: "#dcfce7",
               },
-              { value: "5", label: "New Messages", color: "#FEFCE8" },
+              { value: "0", label: "New Messages", color: "#FEFCE8" },
             ].map((item, index) => (
               <div
                 key={index}

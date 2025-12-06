@@ -37,7 +37,7 @@ const InfluencerOnboardingPage = () => {
       title: "Communication & Workflow",
       description: "Learn how collaborations work",
     },
-    { title: "Payment Setup", description: "Choose how you get paid" },
+    // { title: "Payment Setup", description: "Choose how you get paid" },
     { title: "Terms & Privacy", description: "Review and accept our policies" },
     { title: "Complete", description: "You're ready to start earning!" },
   ];
@@ -100,11 +100,11 @@ const InfluencerOnboardingPage = () => {
         return <GuidelinesStep onNext={handleNext} onBack={handleBack} />;
       case 5:
         return <WorkflowStep onNext={handleNext} onBack={handleBack} />;
+      // case 6:
+      //   return <PaymentSetupStep onNext={handleNext} onBack={handleBack} />;
       case 6:
-        return <PaymentSetupStep onNext={handleNext} onBack={handleBack} />;
-      case 7:
         return <TermsStep onNext={handleNext} onBack={handleBack} />;
-      case 8:
+      case 7:
         return <CompletionStep onComplete={handleComplete} />;
       default:
         return <WelcomeStep onNext={handleNext} />;

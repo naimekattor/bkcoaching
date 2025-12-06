@@ -226,11 +226,12 @@ const CollaborationPreferencesStep = ({
 
                   return (
                     <div key={formatId} className="space-y-2">
-                      <Label>
+                      <Label className="text-sm">
                         {contentFormats.find((f) => f.id === formatId)?.label}
                       </Label>
 
                       {/* SELECT */}
+                      
                       <Select
                         value={isCustom ? "custom" : currentValue || ""}
                         onValueChange={(value) => {
@@ -240,10 +241,10 @@ const CollaborationPreferencesStep = ({
                               [field]: value,
                             }));
                           } else {
-                            // Clicked "Custom" → show input with empty value
+                            
                             setOnboardingDataInfluencer((prev) => ({
                               ...prev,
-                              [field]: "", // temporarily empty → input will appear
+                              [field]: "", 
                             }));
                           }
                         }}
@@ -262,6 +263,8 @@ const CollaborationPreferencesStep = ({
 
                       {/* CUSTOM INPUT */}
                       {(currentValue === "" || isCustom) && (
+                        <div>
+                        <label htmlFor="" className="text-sm font-medium">Enter rate (e.g. $100)</label>
                         <Input
                           type="number"
                           min="0"
@@ -276,6 +279,7 @@ const CollaborationPreferencesStep = ({
                           }}
                           className="mt-2 transition-all"
                         />
+                        </div>
                       )}
                     </div>
                   );

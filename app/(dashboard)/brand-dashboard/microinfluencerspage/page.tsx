@@ -4,14 +4,13 @@ import { Suspense, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { HelpCircle, Search } from "lucide-react";
+import { HelpCircle, Search, Star } from "lucide-react";
 import { apiClient } from "@/lib/apiClient";
 import { SkeletonCard } from "@/components/SkeletoCard";
 import { industriesNiches } from "@/constants/niches";
 
 const PAGE_SIZE = 10;
 
-// ... [Keep Interfaces exactly the same as before] ...
 interface Influencer {
   id: string;
   name: string;
@@ -64,10 +63,13 @@ function MicroInfluencersPageContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-
+ 
   // URL page sync
   const urlPage = Number(searchParams.get("page") ?? "1");
   const currentPage = urlPage >= 1 ? urlPage : 1;
+  const filter_by_self=searchParams.get("review");
+  console.log(filter_by_self);
+  
 
   const setPage = (page: number) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -76,8 +78,8 @@ function MicroInfluencersPageContent() {
   };
 
   // UI state
-  const [tempSearch, setTempSearch] = useState(""); // 1. Input state (Visual only)
-  const [searchTerm, setSearchTerm] = useState(""); // 2. API state (Triggers fetch)
+  const [tempSearch, setTempSearch] = useState(""); 
+  const [searchTerm, setSearchTerm] = useState(""); 
   
   const [filters, setFilters] = useState({
     contentNiches: "",
@@ -110,13 +112,36 @@ function MicroInfluencersPageContent() {
   // 3. Handle Manual Search Trigger
   const handleSearchTrigger = () => {
     setSearchTerm(tempSearch);
-    setPage(1);
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("review");
+    params.set("page", "1");
+    router.push(`${pathname}?${params.toString()}`);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       handleSearchTrigger();
     }
+  };
+
+  const handleReviewMatches = () => {
+    // Clear other filters visually
+    setTempSearch("");
+    setSearchTerm("");
+    setFilters({
+        contentNiches: "",
+        budgetRange: "",
+        platforms: "",
+        timeZone: "",
+        followers: "",
+        gender: "",
+    });
+
+    // Set URL param ?review=true
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("review", "true");
+    params.set("page", "1");
+    router.push(`${pathname}?${params.toString()}`);
   };
 
   // Fetch influencers based on current page or filters
@@ -127,8 +152,23 @@ function MicroInfluencersPageContent() {
 
         let res;
 
+        // CASE 1: Review Matches (filter_by_self is present)
+        if (filter_by_self) {
+            console.log("Fetching Review Matches...");
+            
+            const filterPayload = {
+                filter_by_self: true, 
+                
+            };
+
+            res = await apiClient("user_service/filter_influencers/", {
+                method: "POST",
+                body: JSON.stringify(filterPayload),
+            });
+        }
+
         // If filters are active, use filter endpoint
-        if (hasActiveFilters) {
+        else if (hasActiveFilters) {
           const filterPayload = {
             search: searchTerm.trim(),
             "Platforms": filters.platforms,
@@ -230,7 +270,7 @@ function MicroInfluencersPageContent() {
     };
 
     fetchInfluencers();
-  }, [currentPage, searchTerm, filters, hasActiveFilters]);
+  }, [currentPage, searchTerm, filters, hasActiveFilters,filter_by_self]);
 
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
@@ -245,7 +285,10 @@ function MicroInfluencersPageContent() {
       followers: "",
       gender: "",
     });
-    setPage(1);
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("review");
+    params.set("page", "1");
+    router.push(`${pathname}?${params.toString()}`);
   };
 
   // 4. Removed the early "if (loading) return" block.
@@ -277,11 +320,24 @@ function MicroInfluencersPageContent() {
               />
             </div>
             <button
-              onClick={handleSearchTrigger} // Trigger search on Click
+              onClick={handleSearchTrigger} 
               className="px-6 md:px-8 py-3 bg-secondary text-white rounded-xl hover:bg-[var(--secondaryhover)] transition-colors font-medium flex items-center gap-2 justify-center shadow-sm"
             >
               <Search className="w-4 h-4" />
               Search
+            </button>
+
+            {/* NEW: Review Matches Button */}
+            <button
+              onClick={handleReviewMatches}
+              className={`px-6 md:px-8 py-3 cursor-pointer rounded-xl transition-colors font-medium flex items-center gap-2 justify-center shadow-sm border ${
+                filter_by_self 
+                  ? " text-secondary border-secondary" 
+                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+              }`}
+            >
+              <Star className={`w-4 h-4 ${filter_by_self ? "fill-secondary" : ""}`} />
+              Review Matches
             </button>
           </div>
 

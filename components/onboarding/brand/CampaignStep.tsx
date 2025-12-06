@@ -125,7 +125,8 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
     onboardingData.objective &&
     onboardingData.deliverables.length > 0 &&
     onboardingData.timeline &&
-    onboardingData.paymentPreferences.length > 0;
+    onboardingData.paymentPreferences.length > 0 &&
+    onboardingData.description.length >0 ;
 
   const handleCreateCampaign = () => {
     if (!isValid) return;
@@ -209,7 +210,7 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="description">Campaign Description</Label>
+                <Label htmlFor="description">Campaign Description *</Label>
                 <Textarea
                   id="description"
                   value={onboardingData.description}
@@ -221,7 +222,19 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
                   }
                   placeholder="Describe your campaign goals, target audience, key messages, and any specific requirements..."
                   rows={4}
+                  maxLength={250}
                 />
+                <div className="flex justify-end mt-1">
+                  <span
+                    className={`text-xs ${
+                      onboardingData.description.length >= 500
+                        ? "text-red-500 font-semibold" // Red if limit reached
+                        : "text-gray-400" // Grey otherwise
+                    }`}
+                  >
+                    {onboardingData.description.length}/250 characters
+                  </span>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -657,7 +670,7 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
             <Button
               variant="outline"
               onClick={() =>
-                router.push("/auth/login?returnTo=/brand-onboarding?step=5")
+                router.push("/auth/login?returnTo=/brand-onboarding?step=4")
               }
             >
               Log in
@@ -665,7 +678,7 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
             <Button
               onClick={() =>
                 router.push(
-                  "/auth/signup?role=brand&returnTo=/brand-onboarding?step=5"
+                  "/auth/signup?role=brand&returnTo=/brand-onboarding?step=4"
                 )
               }
             >

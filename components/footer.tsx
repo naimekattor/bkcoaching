@@ -138,7 +138,7 @@ export default function Footer() {
             <span className="text-gray-400 hidden sm:inline">|</span>
 
             <Link
-              href="/terms"
+              href="/privacy"
               className="hover:text-gray-900 transition-colors"
             >
               Terms

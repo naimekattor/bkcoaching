@@ -297,7 +297,7 @@ export default function SignupPage() {
                   <span className="text-white text-sm">
                     I agree to the{" "}
                     <Link
-                      href="/terms"
+                      href="/privacy"
                       className="text-secondary hover:text-yellow-400"
                     >
                       Terms & conditions

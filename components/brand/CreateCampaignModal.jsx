@@ -517,12 +517,24 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }) {
                 <Textarea
                   id="campaign_description"
                   value={formData.campaign_description}
+                  maxLength={250}
                   onChange={(e) =>
                     handleInputChange("campaign_description", e.target.value)
                   }
                   placeholder="Describe your campaign goals, target audience, key messages, and any specific requirements..."
                   rows={4}
                 />
+                <div className="flex justify-end mt-1">
+                  <span
+                    className={`text-xs ${
+                      formData.campaign_description.length >= 500
+                        ? "text-red-500 font-semibold" // Red if limit reached
+                        : "text-gray-400" // Grey otherwise
+                    }`}
+                  >
+                    {formData.campaign_description.length}/500 characters
+                  </span>
+                </div>
               </div>
 
               <div>

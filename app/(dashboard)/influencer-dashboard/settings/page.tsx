@@ -193,7 +193,7 @@ export default function ProfilePage() {
         toast.error("Update failed");
       }
     } catch (err) {
-      toast.error("Network error");
+      toast.error("Something went wrong ");
     } finally {
       setSaving(false);
     }
