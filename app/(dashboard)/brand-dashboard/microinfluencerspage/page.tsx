@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -67,7 +67,7 @@ function MicroInfluencersPageContent() {
   // URL page sync
   const urlPage = Number(searchParams.get("page") ?? "1");
   const currentPage = urlPage >= 1 ? urlPage : 1;
-  const filter_by_self=searchParams.get("review");
+  const filter_by_self=searchParams.get("review")=== "true";
   console.log(filter_by_self);
   
 
@@ -111,6 +111,7 @@ function MicroInfluencersPageContent() {
 
   // 3. Handle Manual Search Trigger
   const handleSearchTrigger = () => {
+    isSwitchingToReview.current = false;
     setSearchTerm(tempSearch);
     const params = new URLSearchParams(searchParams.toString());
     params.delete("review");
@@ -124,7 +125,12 @@ function MicroInfluencersPageContent() {
     }
   };
 
+    const isSwitchingToReview = useRef(false);
+
+
   const handleReviewMatches = () => {
+        isSwitchingToReview.current = true;
+
     // Clear other filters visually
     setTempSearch("");
     setSearchTerm("");
@@ -140,7 +146,7 @@ function MicroInfluencersPageContent() {
     // Set URL param ?review=true
     const params = new URLSearchParams(searchParams.toString());
     params.set("review", "true");
-    params.set("page", "1");
+    // params.set("page", "1");
     router.push(`${pathname}?${params.toString()}`);
   };
 
@@ -154,6 +160,7 @@ function MicroInfluencersPageContent() {
 
         // CASE 1: Review Matches (filter_by_self is present)
         if (filter_by_self) {
+          isSwitchingToReview.current = false;
             console.log("Fetching Review Matches...");
             
             const filterPayload = {
@@ -163,12 +170,47 @@ function MicroInfluencersPageContent() {
 
             res = await apiClient("user_service/filter_influencers/", {
                 method: "POST",
+                auth:true,
                 body: JSON.stringify(filterPayload),
             });
+            const list: InfluencerRecord[] = Array.isArray(res.data)
+            ? res.data
+            : [];
+
+          const normalized: Influencer[] = list.map((item) => {
+            const inf = item.influencer_profile ?? {};
+            const user = item.user ?? {};
+
+            const platforms: string[] = [];
+            if (inf.instagram_handle) platforms.push("instagram");
+            if (inf.tiktok_handle) platforms.push("tiktok");
+            if (inf.youtube_handle) platforms.push("youtube");
+
+            return {
+              id: String(item.id),
+              name:
+                inf.display_name ||
+                `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
+                "Unknown",
+              profileImage: sanitizeImageSrc(inf.profile_picture),
+              followers: inf.followers_count
+                ? `${(inf.followers_count / 1000).toFixed(1)}K`
+                : "N/A",
+              socialLinks: platforms,
+              niche: inf.content_niches?.[0] || "Unknown",
+              timeZone: inf.timezone || "Unknown",
+            };
+          });
+
+          setInfluencers(normalized);
+          setTotalCount(normalized.length);
+          setHasNextPage(false);
+            
         }
 
         // If filters are active, use filter endpoint
         else if (hasActiveFilters) {
+          isSwitchingToReview.current = false;
           const filterPayload = {
             search: searchTerm.trim(),
             "Platforms": filters.platforms,
@@ -181,6 +223,7 @@ function MicroInfluencersPageContent() {
 
           res = await apiClient("user_service/filter_influencers/", {
             method: "POST",
+            auth:true,
             body: JSON.stringify(filterPayload),
           });
 
@@ -218,6 +261,9 @@ function MicroInfluencersPageContent() {
           setTotalCount(normalized.length);
           setHasNextPage(false);
         } else {
+          if (isSwitchingToReview.current) {
+            return; 
+          }
           // No filters - use pagination endpoint
           const queryParams = new URLSearchParams();
           queryParams.set("page", String(currentPage));
@@ -291,8 +337,7 @@ function MicroInfluencersPageContent() {
     router.push(`${pathname}?${params.toString()}`);
   };
 
-  // 4. Removed the early "if (loading) return" block.
-  // We now handle loading state inside the JSX below.
+ 
 
   return (
     <div className="min-h-screen">
@@ -352,7 +397,7 @@ function MicroInfluencersPageContent() {
               }}
               className="px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition"
             >
-              <option value="">Content Niches</option>
+              <option value="">All Content Niches</option>
               {industriesNiches.map((niche, index) => (
                 <option key={index} value={niche}>
                   {niche}
@@ -369,7 +414,7 @@ function MicroInfluencersPageContent() {
               }}
               className="px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition"
             >
-              <option value="">Budget Range</option>
+              <option value="">All Budget Range</option>
               <option value="0-100">$0–$100</option>
               <option value="100-499">$101–$499</option>
               <option value="500+">$500+</option>
@@ -384,14 +429,17 @@ function MicroInfluencersPageContent() {
               }}
               className="px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition"
             >
-              <option value="">Platforms</option>
+              <option value="">All Platforms</option>
               <option value="instagram">Instagram</option>
               <option value="tiktok">TikTok</option>
               <option value="youtube">YouTube</option>
+              <option value="youtube">LinkedIn</option>
+              <option value="youtube">Facebook</option>
+              <option value="youtube">X(Twitter)</option>
             </select>
 
             {/* Time Zone */}
-            <select
+            {/* <select
               value={filters.timeZone}
               onChange={(e) => {
                 setFilters({ ...filters, timeZone: e.target.value });
@@ -399,14 +447,14 @@ function MicroInfluencersPageContent() {
               }}
               className="px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition"
             >
-              <option value="">Time Zone</option>
+              <option value="">All Time Zones</option>
               {timeZones.map((tz) => (
                 <option key={tz.value} value={tz.value}>
                   {tz.label}
                 </option>
               ))}
               <option value="Others">Others</option>
-            </select>
+            </select> */}
 
             {/* Followers */}
             <div className="relative">
@@ -418,10 +466,12 @@ function MicroInfluencersPageContent() {
                 }}
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none pr-10 transition"
               >
-                <option value="">Audience Reach</option>
+                <option value="">All Audience Sizes</option>
                 <option value="0-1000">0 – 1K</option>
                 <option value="1001-5000">1K – 5K</option>
                 <option value="5001-10000">5K – 10K</option>
+                <option value="10000-50000">10K – 50K</option>
+                <option value="50000+">50K+</option>
               </select>
               <HelpCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
             </div>

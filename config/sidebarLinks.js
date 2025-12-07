@@ -54,7 +54,7 @@ export const influencerLinks = [
     path: "/influencer-dashboard/messages",
   },
   {
-    name: "subscription",
+    name: "Subscription",
     icon: "💳",
     path: "/influencer-dashboard/subscription",
   },

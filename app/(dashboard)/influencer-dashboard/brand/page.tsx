@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Search } from "lucide-react";
+import { ChevronDown, Search, XCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { FaInstagram } from "react-icons/fa";
@@ -31,6 +31,7 @@ export default function MicroinfluencersPage() {
   const [businessType, setBusinessType] = useState("");
   const [timeZone, setTimeZone] = useState("");
   const [loading, setLoading] = useState(true);
+  const [appliedSearch, setAppliedSearch] = useState("");
 
   // ────── Data ──────
   const [allBrands, setAllBrands] = useState<Brand[]>([]);
@@ -65,6 +66,10 @@ export default function MicroinfluencersPage() {
     "Other",
   ];
 
+  const getCleanCategory = (rawString?: string) => {
+    if (!rawString) return "Others";
+    return rawString.split(/[–-]/)[0].split(",")[0].trim();
+  };
   // ────── Fetch + Normalise ──────
   useEffect(() => {
     const fetchBrands = async () => {
@@ -89,7 +94,7 @@ export default function MicroinfluencersPage() {
             name: bp.business_name ?? "Unnamed Brand",
             description: bp.short_bio ?? "",
             logo: bp.logo ?? undefined,
-            businessType: bp.business_type ?? undefined,
+            businessType: getCleanCategory(bp.business_type) ?? undefined,
             website: bp.website ?? undefined,
             socialLinks: {
               instagram: platforms.includes("instagram") ? "#" : undefined,
@@ -115,8 +120,8 @@ export default function MicroinfluencersPage() {
     let list = [...allBrands];
 
     // 1. Search (name)
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
+    if (appliedSearch.trim()) {
+      const q = appliedSearch.toLowerCase();
       list = list.filter((b) => b.name.toLowerCase().includes(q));
     }
 
@@ -135,11 +140,9 @@ export default function MicroinfluencersPage() {
     }
 
     return list;
-  }, [allBrands, searchQuery, businessType, timeZone]);
-
-  // ────── Handlers ──────
-  const applyFilters = () => {
-    // No-op – filtering is already memoised
+  }, [allBrands, businessType, timeZone, appliedSearch]);
+  const handleSearch = () => {
+    setAppliedSearch(searchQuery);
   };
 
   const clearFilters = () => {
@@ -181,7 +184,7 @@ export default function MicroinfluencersPage() {
             />
           </div>
           <button
-            onClick={applyFilters}
+            onClick={handleSearch}
             className="bg-secondary hover:bg-[var(--secondaryhover)] text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2"
           >
             <Search className="w-4 h-4" />
@@ -191,44 +194,99 @@ export default function MicroinfluencersPage() {
 
         {/* Filter row */}
         <div className="flex flex-col sm:flex-row gap-4">
-          <select
-            value={businessType}
-            onChange={(e) => setBusinessType(e.target.value)}
-            className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-          >
-            <option value="">Business Type</option>
-            {businessTypes.map((t) => (
-              <option key={t} value={t}>
-                {t}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={timeZone}
-            onChange={(e) => setTimeZone(e.target.value)}
-            className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent outline-none"
-          >
-            <option value="">Time Zone (US)</option>
-            {timeZones.map((tz) => (
-              <option key={tz.value} value={tz.value}>
-                {tz.label}
-              </option>
-            ))}
-            <option value="Others">Others</option>
-          </select>
-
-          <div className="flex gap-3">
-            <button
-              onClick={applyFilters}
-              className="bg-yellow-500 hover:bg-[var(--secondaryhover)] text-white px-6 py-3 rounded-lg font-medium transition-colors"
+          <div className="relative w-full">
+            <select
+              value={businessType}
+              onChange={(e) => setBusinessType(e.target.value)}
+              className="
+      w-full appearance-none 
+      px-4 py-3 
+      bg-white 
+      border border-gray-300 
+      rounded-lg 
+      text-gray-900 
+      text-base
+      hover:bg-gray-50
+      transition-all
+      focus:outline-none focus:ring-2 focus:ring-primary/40
+    "
             >
-              Apply Filters
-            </button>
+              <option value="" className="text-gray-400">
+                Select business type
+              </option>
+
+              {businessTypes.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </select>
+
+            {/* Custom Chevron Icon */}
+            <ChevronDown
+              size={20}
+              className="absolute right-3 top-1/2 
+      transform -translate-y-1/2 
+      text-gray-500 pointer-events-none"
+            />
+          </div>
+
+          <div className="relative w-full">
+            <select
+              value={timeZone}
+              onChange={(e) => setTimeZone(e.target.value)}
+              className="
+      w-full appearance-none 
+      px-4 py-3 
+      bg-white 
+      border border-gray-300 
+      rounded-lg 
+      text-gray-900 
+      text-base
+      hover:bg-gray-50
+      transition-all
+      focus:outline-none focus:ring-2 focus:ring-primary/40
+    "
+            >
+              <option value="" className="text-gray-400">
+                All Time Zones
+              </option>
+
+              {timeZones.map((tz) => (
+                <option key={tz.value} value={tz.value}>
+                  {tz.label}
+                </option>
+              ))}
+
+              <option value="Others">Others</option>
+            </select>
+
+            {/* Chevron Icon */}
+            <ChevronDown
+              size={20}
+              className="absolute right-3 top-1/2 
+      transform -translate-y-1/2 
+      text-gray-500 pointer-events-none"
+            />
+          </div>
+
+          <div>
             <button
               onClick={clearFilters}
-              className="border border-gray-300 hover:bg-gray-50 text-gray-700 px-6 py-3 rounded-lg font-medium transition-colors"
+              className="
+      border border-gray-300 
+      hover:bg-gray-100 
+      active:bg-gray-200
+      text-gray-700 
+      px-6 py-3 
+      rounded-lg 
+      font-medium 
+      flex items-center gap-2
+      transition duration-200
+      focus:outline-none focus:ring-2 focus:ring-primary/40 text-nowrap
+    "
             >
+              <XCircle size={18} className="text-gray-500" />
               Clear Filters
             </button>
           </div>
@@ -254,17 +312,13 @@ export default function MicroinfluencersPage() {
               >
                 {/* Logo */}
                 <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center overflow-hidden rounded-full bg-gray-100">
-                  {brand.logo ? (
-                    <Image
-                      width={64}
-                      height={64}
-                      src={brand.logo}
-                      alt={brand.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gray-200 rounded-full" />
-                  )}
+                  <Image
+                    width={64}
+                    height={64}
+                    src={brand.logo || "/images/placeholder.jpg"}
+                    alt={brand.name}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
 
                 {/* Name */}
@@ -274,7 +328,7 @@ export default function MicroinfluencersPage() {
 
                 {/* Category */}
                 <p className="text-sm text-[#363635] mb-2">
-                  Category: {brand.businessType ?? "—"}
+                  Category: {brand.businessType ?? "Others"}
                 </p>
 
                 {/* Platform icons */}
@@ -304,7 +358,10 @@ export default function MicroinfluencersPage() {
                   >
                     View Profile
                   </Link>
-                  <Link href={`/influencer-dashboard/messages?id=${brand.id}`} className="bg-secondary hover:bg-[var(--secondaryhover)] text-primary px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                  <Link
+                    href={`/influencer-dashboard/messages?id=${brand.id}`}
+                    className="bg-secondary hover:bg-[var(--secondaryhover)] text-primary px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                  >
                     Message
                   </Link>
                 </div>

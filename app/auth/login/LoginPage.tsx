@@ -45,7 +45,9 @@ function LoginPageContent() {
       setAuthFromResponse(res);
 
       if (res.status !== "success") {
+        setErrors({ general: res.message || "Login failed" });
         throw new Error(res.message ?? "Login failed");
+        
       }
       else if (returnTo) {
         router.push(returnTo)
@@ -167,6 +169,9 @@ function LoginPageContent() {
               >
                 {loading ? "Logging in..." : "Log in"}
               </Button>
+              {errors.general &&(
+                <p className="text-red-400 text-sm mt-1">{errors.general}</p>
+              )}
 
               <div className="text-center">
                 <span className="text-slate-400">or</span>

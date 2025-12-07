@@ -60,13 +60,12 @@ type FormDataState = {
 
 const timeZones = [
   { value: "America/New_York", label: "Eastern (ET)" },
-  { value: "America/Chicago", label: "Central (CT)" },
-  { value: "America/Denver", label: "Mountain (MT)" },
-  { value: "America/Phoenix", label: "Arizona (no DST)" },
-  { value: "America/Los_Angeles", label: "Pacific (PT)" },
-  { value: "America/Anchorage", label: "Alaska (AKST/AKDT)" },
-  { value: "Pacific/Honolulu", label: "Hawaii (HST)" },
-  { value: "Asia/Dhaka", label: "Bangladesh (BDT)" },
+    { value: "America/Chicago", label: "Central (CT)" },
+    { value: "America/Denver", label: "Mountain (MT)" },
+    { value: "America/Phoenix", label: "Arizona (no DST)" },
+    { value: "America/Los_Angeles", label: "Pacific (PT)" },
+    { value: "America/Anchorage", label: "Alaska (AKST/AKDT)" },
+    { value: "Pacific/Honolulu", label: "Hawaii (HST)" },
 ];
 
 const businessTypes = [
@@ -219,14 +218,14 @@ export default function BrandSetupPage() {
 
             {/* Basic Profile Information */}
             <section className="space-y-6">
-              <div className="flex items-center gap-3">
+              {/* <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
                   <Globe className="w-5 h-5 text-primary" />
                 </div>
                 <h2 className="text-2xl font-semibold text-gray-900">
                   Basic Profile Information
                 </h2>
-              </div>
+              </div> */}
 
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">

@@ -646,9 +646,9 @@ export default function CampaignDashboard() {
                   <button className="bg-secondary text-primary px-8 py-2 font-semibold rounded cursor-pointer">
                     Mark as Complete
                   </button>
-                  <button className="bg-secondary text-primary px-8 py-2 font-semibold rounded cursor-pointer">
+                  {/* <button className="bg-secondary text-primary px-8 py-2 font-semibold rounded cursor-pointer">
                     Pay Now
-                  </button>
+                  </button> */}
                 </div>
               </div>
 
@@ -704,7 +704,7 @@ export default function CampaignDashboard() {
                     </div>
                   ))}
                 </div>
-                
+
               </div>
             </div>
           </div>

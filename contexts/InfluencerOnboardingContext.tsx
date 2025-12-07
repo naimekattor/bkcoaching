@@ -15,6 +15,7 @@ interface InfluencerOnboardingData {
   youtube_handle: string;
   twitter_handle: string;
   linkedin_handle: string;
+  facebook_handle:string;
   whatsapp_handle: string;
   content_niches: string[];
   audience_demographics: string[];
@@ -26,6 +27,7 @@ interface InfluencerOnboardingData {
   rate_range_for_social_post: string;
   rate_range_for_youtube_video: string;
   rate_range_for_blog_post: string;
+  rate_range_for_facebook_post: string;
   rate_range_for_youtube_short: string;
   rate_range_for_repost: string;
   rate_range_for_instagram_story: string;
@@ -70,6 +72,7 @@ const initialState: InfluencerOnboardingData = {
   youtube_handle: "",
   twitter_handle: "",
   linkedin_handle: "",
+  facebook_handle:"",
   whatsapp_handle: "",
   content_niches: [],
   audience_demographics: [],
@@ -80,6 +83,7 @@ const initialState: InfluencerOnboardingData = {
   rate_range_for_social_post: "",
   rate_range_for_youtube_video: "",
   rate_range_for_blog_post: "",
+  rate_range_for_facebook_post: "",
   rate_range_for_youtube_short: "",
   rate_range_for_repost: "",
   rate_range_for_instagram_story: "",

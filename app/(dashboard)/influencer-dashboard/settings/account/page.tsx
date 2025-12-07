@@ -7,6 +7,7 @@ import {
   Bell,
   Book,
   Check,
+  CheckCircle,
   ChevronRight,
   Copy,
   Eye,
@@ -190,7 +191,7 @@ export default function SettingsPage() {
       id: "contact",
       title: "Contact Support",
       description: "Get help from our support team",
-      href: "#",
+      href: "mailto:info@thesocialmarket.ai",
       icon: MessageCircle,
     },
   ];
@@ -472,7 +473,7 @@ export default function SettingsPage() {
         </section>
 
         {/* Privacy & Security Section */}
-        <section className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        {/* <section className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
           <div
             className="px-6 py-5 border-b border-gray-200"
             style={{ backgroundColor: "#0d2f4f" }}
@@ -486,7 +487,6 @@ export default function SettingsPage() {
             </p>
           </div>
           <div className="p-6 space-y-6">
-            {/* 2FA Toggle */}
             <div className="flex items-start justify-between p-4 rounded-lg border-2 border-gray-100 hover:border-gray-200 transition-colors">
               <div className="flex items-start gap-4 flex-1">
                 <div
@@ -526,20 +526,18 @@ export default function SettingsPage() {
               </label>
             </div>
 
-            {/* 2FA Setup Flow */}
             {show2FASetup && !twoFactor && (
               <div className="space-y-6 p-6 bg-gra rounded-lg borer border-gray-200">
-                {/* <div className="text-center">
+                <div className="text-center">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">
                     Set Up Two-Factor Authentication
                   </h3>
                   <p className="text-sm text-gray-600">
                     Scan the QR code with your authenticator app
                   </p>
-                </div> */}
+                </div>
 
-                {/* QR Code Placeholder */}
-                {/* <div className="flex justify-center">
+                <div className="flex justify-center">
                   <div className="p-6 bg-white rounded-lg shadow-sm border border-gray-200">
                     {qrGenerated ? (
                       <div className="w-48 h-48 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center">
@@ -565,10 +563,9 @@ export default function SettingsPage() {
                       </div>
                     )}
                   </div>
-                </div> */}
+                </div>
 
-                {/* Manual Code */}
-                {/* {qrGenerated && (
+                {qrGenerated && (
                   <div className="text-center">
                     <p className="text-xs text-gray-600 mb-2">
                       Or enter this code manually:
@@ -577,10 +574,9 @@ export default function SettingsPage() {
                       JBSWY3DPEHPK3PXP
                     </code>
                   </div>
-                )} */}
+                )}
 
-                {/* Verification Code Input */}
-                {/* <div className="space-y-3">
+                <div className="space-y-3">
                   <label className="block text-sm font-medium text-gray-700 text-center">
                     Enter the 6-digit code from your app
                   </label>
@@ -602,9 +598,9 @@ export default function SettingsPage() {
                       />
                     ))}
                   </div>
-                </div> */}
+                </div>
 
-                {/* <button
+                <button
                   onClick={handleVerify2FA}
                   disabled={twoFactorCode.join("").length !== 6}
                   className="w-full px-6 py-3 text-white rounded-lg transition-all font-medium shadow-sm hover:shadow-md disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"
@@ -627,11 +623,10 @@ export default function SettingsPage() {
                 >
                   <CheckCircle className="w-4 h-4" />
                   Verify and Enable 2FA
-                </button> */}
+                </button>
               </div>
             )}
 
-            {/* Backup Codes */}
             {backupCodes.length > 0 && (
               <div className="p-6 bg-gray-50 rounded-lg border border-gray-200">
                 <div className="flex items-start gap-3 mb-4">
@@ -679,7 +674,7 @@ export default function SettingsPage() {
               </div>
             )}
           </div>
-        </section>
+        </section> */}
 
         {/* Support / Help */}
         <section className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -731,7 +726,7 @@ export default function SettingsPage() {
             <p className="text-sm text-gray-600 text-center">
               Still need help?{" "}
               <a
-                href="/contact-support"
+                href="mailto:info@thesocialmarket.ai"
                 className="font-medium text-primary hover:text-primary hover:underline"
               >
                 Contact our support team

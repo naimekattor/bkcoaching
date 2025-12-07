@@ -1,20 +1,41 @@
-
 "use client";
 
 import { useRef, useState } from "react";
-import { Upload, X, DollarSign, Percent, ChevronDown } from "lucide-react";
+import {
+  Upload,
+  X,
+  DollarSign,
+  Percent,
+  ChevronDown,
+  Repeat,
+  Video,
+  FileText,
+  Mic,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuCheckboxItem } from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuCheckboxItem,
+} from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import Image from "next/image";
 import { uploadToCloudinary } from "@/lib/fileUpload";
 import { apiClient } from "@/lib/apiClient";
 import { toast } from "react-toastify";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 type StoredInfluencerProfile = {
   content_niches?: string | null;
@@ -23,49 +44,50 @@ type StoredInfluencerProfile = {
   rate_range_for_affiliate_marketing_percent?: string | null;
   [key: string]: string | null | undefined;
 };
-import { useAuthStore } from "@/stores/useAuthStore";
-
 
 const placeholders: Record<string, string> = {
   instagram: "https://www.instagram.com/username",
+  facebook: "https://www.facebook.com/username",
   tiktok: "https://www.tiktok.com/@username",
   twitter: "https://twitter.com/username",
   youtube: "Full channel URL (e.g., youtube.com/@YourChannel)",
   linkedin: "Full profile or page URL (e.g., linkedin.com/in/yourname",
   whatsapp: "WhatsApp link (e.g., wa.me/15551234567)",
 };
+
 const contentNiches = [
-  "Beauty & Skincare Brands – makeup, skincare, haircare",
-  "Fashion & Apparel – clothing lines, modest fashion brands, boutique shops",
-  "Jewelry & Accessories – watches, handbags, eyewear",
-  "Health & Wellness – supplements, fitness programs, healthy living",
-  "Food & Beverage – restaurants, cafes, packaged foods, specialty drinks",
-  "Hospitality & Travel – hotels, resorts, Airbnb hosts, travel agencies",
-  "Events & Experiences – retreats, workshops, conferences",
-  "E-commerce Stores – online boutiques, curated shops, niche product sellers",
-  "Local Service Providers – gyms, salons, spas, personal trainers",
-  "Tech & Gadgets – phone accessories, smart devices, apps",
-  "Education & Coaching – online courses, coaches, masterminds",
-  "Parenting & Family Brands – baby products, toys, household goods",
-  "Home & Lifestyle – decor, furniture, kitchenware, cleaning products",
-  "Financial & Professional Services – investment apps, insurance, credit repair",
-  "Nonprofits & Causes – charities, community organizations, social impact campaigns",
+  "Beauty & Skincare Brands",
+  "Fashion & Apparel",
+  "Jewelry & Accessories",
+  "Health & Wellness",
+  "Food & Beverage",
+  "Hospitality & Travel",
+  "Events & Experiences",
+  "E-commerce Stores",
+  "Local Service Providers",
+  "Tech & Gadgets",
+  "Education & Coaching",
+  "Parenting & Family Brands",
+  "Home & Lifestyle",
+  "Financial & Professional Services",
+  "Nonprofits & Causes",
   "Other",
 ];
 
 const contentFormats = [
-  { id: "socialPost", label: "Whatsapp Group Post" },
-  { id: "repost", label: "Repost" },
-  { id: "instagramStory", label: "Instagram Story" },
-  { id: "instagramReel", label: "Instagram Reel" },
-  { id: "tiktokVideo", label: "TikTok Video" },
-  { id: "youtubeVideo", label: "YouTube Video" },
-  { id: "youtubeShort", label: "YouTube Short" },
-  { id: "blogPost", label: "Blog Post" },
-  { id: "podcastMention", label: "Podcast Mention" },
-  { id: "liveStream", label: "Live Stream" },
-  { id: "userGeneratedContent", label: "UGC Creation" },
-  { id: "whatsappStatus", label: "WhatsApp Status Post" },
+  { id: "socialPost", label: "Whatsapp Group Post", icon: Image },
+  { id: "repost", label: "Repost", icon: Repeat },
+  { id: "instagramStory", label: "Instagram Story", icon: Image },
+  { id: "instagramReel", label: "Instagram Reel", icon: Video },
+  { id: "tiktokVideo", label: "TikTok Video", icon: Video },
+  { id: "youtubeVideo", label: "YouTube Video", icon: Video },
+  { id: "youtubeShort", label: "YouTube Short", icon: Video },
+  { id: "blogPost", label: "Blog Post", icon: FileText },
+  { id: "facebookPost", label: "Facebook Post", icon: FileText },
+  { id: "podcastMention", label: "Podcast Mention", icon: Mic },
+  { id: "liveStream", label: "Live Stream", icon: Video },
+  { id: "userGeneratedContent", label: "UGC Creation", icon: Video },
+  { id: "whatsappStatus", label: "WhatsApp Status Post", icon: Image },
 ];
 
 const rateRanges = [
@@ -97,34 +119,43 @@ export default function ProfilePage() {
     (user?.influencer_profile as StoredInfluencerProfile | undefined) ?? {};
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Parse from user object
-  const initialNiches = p.content_niches ? p.content_niches.split(",").map((s: string) => s.trim()) : [];
-  const initialFormats = p.content_formats ? p.content_formats.split(",").map((s: string) => s.trim()) : [];
+  const initialNiches = p.content_niches
+    ? p.content_niches.split(",").map((s: string) => s.trim())
+    : [];
+  const initialFormats = p.content_formats
+    ? p.content_formats.split(",").map((s: string) => s.trim())
+    : [];
   const paymentPrefs = p.payment_preferences
-  ? p.payment_preferences.split(",").map((s: string) => s.trim().toLowerCase())
-  : [];
+    ? p.payment_preferences.split(",").map((s: string) => s.trim().toLowerCase())
+    : [];
 
   const [selectedNiches, setSelectedNiches] = useState<string[]>(initialNiches);
   const [selectedFormats, setSelectedFormats] = useState<string[]>(initialFormats);
 
   const [paymentModels, setPaymentModels] = useState({
-  gifted: paymentPrefs.includes("gifted"),
-  paid: paymentPrefs.includes("paid"),
-  affiliate: paymentPrefs.includes("affiliate"),
-  ambassador: paymentPrefs.includes("ambassador"),
-});
+    gifted: paymentPrefs.includes("gifted"),
+    paid: paymentPrefs.includes("paid"),
+    affiliate: paymentPrefs.includes("affiliate"),
+    ambassador: paymentPrefs.includes("ambassador"),
+  });
 
+  const [affiliatePercent, setAffiliatePercent] = useState(
+    p.rate_range_for_affiliate_marketing_percent || ""
+  );
 
-  const [affiliatePercent, setAffiliatePercent] = useState(p.rate_range_for_affiliate_marketing_percent || "");
-
-  // Rates: CORRECTLY loaded from backend fields
-  const [rates, setRates] = useState<Record<string, { type: string; custom: string }>>(
+  const [rates, setRates] = useState<
+    Record<string, { type: string; custom: string }>
+  >(
     Object.fromEntries(
       contentFormats.map((f) => {
         const rawValue = p[fieldMap[f.id]];
         const value = typeof rawValue === "string" ? rawValue : "";
-        const isCustom = value && !["free", "0-100", "101-499", "500+"].includes(value);
-        return [f.id, { type: isCustom ? "custom" : value, custom: isCustom ? value : "" }];
+        const isCustom =
+          value && !["free", "0-100", "101-499", "500+"].includes(value);
+        return [
+          f.id,
+          { type: isCustom ? "custom" : value, custom: isCustom ? value : "" },
+        ];
       })
     )
   );
@@ -134,6 +165,7 @@ export default function ProfilePage() {
     bio: p.short_bio || "",
     socialLinks: {
       instagram: p.instagram_handle || "",
+      facebook: p.facebook_handle || "",
       tiktok: p.tiktok_handle || "",
       youtube: p.youtube_handle || "",
       twitter: p.twitter_handle || "",
@@ -142,14 +174,72 @@ export default function ProfilePage() {
     },
   });
 
-  const [imagePreview, setImagePreview] = useState<string | null>(p.profile_picture || null);
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    p.profile_picture || null
+  );
   const [saving, setSaving] = useState(false);
+// Validation Patterns
+  // const validateSocials = () => {
+  //   const { instagram, tiktok, youtube, twitter, linkedin, whatsapp,facebook } = formData.socialLinks;
+    
+  //   // Helper regex
+  //   const isHandle = (str: string) => /^@[a-zA-Z0-9_.]+$/.test(str);
+  //   const isUrl = (str: string, domain: string) => {
+  //       try {
+  //           const url = new URL(str.startsWith('http') ? str : `https://${str}`);
+  //           return url.hostname.includes(domain);
+  //       } catch {
+  //           return false;
+  //       }
+  //   };
+  //   const isPhone = (str: string) => /^\+?[0-9\s-]{7,15}$/.test(str); // Basic phone validation
+  //   const isWaLink = (str: string) => str.includes('wa.me');
 
+  //   const errors: string[] = [];
+
+  //   // 1. Instagram, TikTok, Twitter: Allow @handle OR full URL
+  //   if (instagram && !isHandle(instagram) && !isUrl(instagram, 'instagram.com')) {
+  //       errors.push("Instagram must be  a valid URL.");
+  //   }
+  //   if (facebook && !isHandle(facebook) && !isUrl(facebook, 'facebook.com')) {
+  //       errors.push("Facebook must be  a valid URL.");
+  //   }
+  //   if (tiktok && !isHandle(tiktok) && !isUrl(tiktok, 'tiktok.com')) {
+  //       errors.push("TikTok must be  a valid URL.");
+  //   }
+  //   if (twitter && !isHandle(twitter) && !isUrl(twitter, 'twitter.com') && !isUrl(twitter, 'x.com')) {
+  //       errors.push("Twitter/X must be  or a valid URL.");
+  //   }
+
+  //   // 2. YouTube, LinkedIn: Require Full URL
+  //   if (youtube && !isUrl(youtube, 'youtube.com')) {
+  //       errors.push("YouTube must be a valid channel URL (youtube.com/...)");
+  //   }
+  //   if (linkedin && !isUrl(linkedin, 'linkedin.com')) {
+  //       errors.push("LinkedIn must be a valid profile URL (linkedin.com/in/...)");
+  //   }
+
+  //   // 3. WhatsApp: Phone number or wa.me link
+  //   if (whatsapp && !isPhone(whatsapp) && !isWaLink(whatsapp)) {
+  //       errors.push("WhatsApp must be a  wa.me link.");
+  //   }
+
+  //   return errors;
+  // };
   const handleSubmit = async () => {
+
+    // const validationErrors = validateSocials();
+    
+    // if (validationErrors.length > 0) {
+    //     // Show the first error via toast
+    //     toast.error(validationErrors[0]); 
+    //     // Or show all (optional): validationErrors.forEach(err => toast.error(err));
+    //     return; // STOP execution
+    // }
     setSaving(true);
 
     const ratePayload: Record<string, string> = {};
-    selectedFormats.forEach(id => {
+    selectedFormats.forEach((id) => {
       const r = rates[id];
       ratePayload[fieldMap[id]] = r.type === "custom" ? r.custom : r.type;
     });
@@ -170,14 +260,19 @@ export default function ProfilePage() {
         payment_preferences: Object.entries(paymentModels)
           .filter(([_, v]) => v)
           .map(([k]) =>
-            k === "gifted" ? "Gifted Products" :
-            k === "paid" ? "Paid Collaborations" :
-            k === "affiliate" ? "Affiliate Marketing" :
-            "Brand Ambassadorship"
+            k === "gifted"
+              ? "Gifted Products"
+              : k === "paid"
+              ? "Paid Collaborations"
+              : k === "affiliate"
+              ? "Affiliate Marketing"
+              : "Brand Ambassadorship"
           )
           .join(", ") || null,
         ...ratePayload,
-        rate_range_for_affiliate_marketing_percent: paymentModels.affiliate ? affiliatePercent : null,
+        rate_range_for_affiliate_marketing_percent: paymentModels.affiliate
+          ? affiliatePercent
+          : null,
       },
     };
 
@@ -187,13 +282,13 @@ export default function ProfilePage() {
         auth: true,
         body: JSON.stringify(payload),
       });
-      if (res.code ==200) {
+      if (res.code == 200) {
         toast.success("Profile updated successfully!");
       } else {
         toast.error("Update failed");
       }
     } catch (err) {
-      toast.error("Something went wrong ");
+      toast.error("Something went wrong");
     } finally {
       setSaving(false);
     }
@@ -217,33 +312,96 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen ">
-      <div className="space-y-4">
-        <h1 className="text-3xl font-bold text-center text-primary">Micro-Influencer Profile</h1>
-        <p className="text-center text-gray-600">Update your info to attract more brand deals</p>
+      <div className=" space-y-8 py-10 ">
+        
+        {/* Header Section */}
+        <div className="text-center space-y-2 mb-10">
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900">
+            Micro-Influencer Profile
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Complete your profile to increase visibility and attract premium brand partnerships.
+          </p>
+        </div>
 
-        {/* Basic Info */}
-        <Card>
-          <CardHeader><CardTitle>Basic Information</CardTitle></CardHeader>
-          <CardContent className="grid lg:grid-cols-2 gap-8">
+        {/* Basic Information */}
+        <Card className="border-none shadow-sm">
+          <CardHeader className="pb-4 border-b border-gray-100">
+            <CardTitle className="text-xl">Basic Information</CardTitle>
+            <CardDescription>Your public profile details seen by brands</CardDescription>
+          </CardHeader>
+          <CardContent className="grid lg:grid-cols-[1fr_300px] gap-8 pt-6">
             <div className="space-y-6">
-              <div><Label className="mb-2">Full Name</Label><Input value={formData.fullName} onChange={e => setFormData({ ...formData, fullName: e.target.value })} placeholder="Your name" /></div>
-              <div><Label className="mb-2">Bio</Label><Textarea value={formData.bio} onChange={e => setFormData({ ...formData, bio: e.target.value })} className="min-h-32" placeholder="Tell brands about you" /></div>
+              <div className="space-y-2">
+                <Label htmlFor="fullName" className="text-sm font-medium">Full Name</Label>
+                <Input
+                  id="fullName"
+                  value={formData.fullName}
+                  onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                  placeholder="e.g. Jane Doe"
+                  className="h-11"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="bio" className="text-sm font-medium">Bio</Label>
+                <Textarea
+                  id="bio"
+                  value={formData.bio}
+                  onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                  className="min-h-[140px] resize-none"
+                  placeholder="Tell brands about your audience, style, and past collaborations..."
+                />
+                <p className="text-xs text-muted-foreground text-right">
+                  {formData.bio.length} characters
+                </p>
+              </div>
             </div>
-            <div>
-              <Label>Profile Picture</Label>
-              <input type="file" ref={fileInputRef} onChange={handleImage} className="hidden" accept="image/*" />
+
+            <div className="flex flex-col gap-3">
+              <Label className="text-sm font-medium">Profile Picture</Label>
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleImage}
+                className="hidden"
+                accept="image/*"
+              />
               {imagePreview ? (
-                <div className="relative mt-4 rounded-lg overflow-hidden">
-                  <Image src={imagePreview} alt="Profile" width={128} height={128} className="object-cover w-32 h-32" />
-                  <Button variant="destructive" size="icon" className="absolute top-4 right-4" onClick={() => setImagePreview(null)}>
-                    <X className="h-5 w-5" />
-                  </Button>
+                <div className="relative group w-full aspect-square rounded-xl overflow-hidden border border-gray-200">
+                  <Image
+                    src={imagePreview}
+                    alt="Profile"
+                    fill
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                    <Button 
+                      variant="secondary" 
+                      size="sm" 
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      Change
+                    </Button>
+                    <Button 
+                      variant="destructive" 
+                      size="icon" 
+                      className="h-8 w-8"
+                      onClick={() => setImagePreview(null)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               ) : (
-                <div className="mt-4 border-2 border-dashed rounded-xl p-16 text-center cursor-pointer hover:bg-gray-50 transition" onClick={() => fileInputRef.current?.click()}>
-                  <Upload className="mx-auto h-16 w-16 text-gray-400 mb-4" />
-                  <p className="text-lg font-medium">Click to upload photo</p>
-                  <p className="text-sm text-gray-500 mt-2">JPG, PNG, GIF up to 10MB</p>
+                <div
+                  className="flex flex-col items-center justify-center w-full aspect-square border-2 border-dashed border-gray-300 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <div className="p-4 bg-white rounded-full shadow-sm mb-3">
+                    <Upload className="h-6 w-6 text-gray-500" />
+                  </div>
+                  <p className="text-sm font-medium text-gray-900">Upload Photo</p>
+                  <p className="text-xs text-gray-500 mt-1">JPG, PNG up to 10MB</p>
                 </div>
               )}
             </div>
@@ -251,171 +409,291 @@ export default function ProfilePage() {
         </Card>
 
         {/* Social Links */}
-        <Card>
-          <CardHeader><CardTitle>Social Media Handles</CardTitle></CardHeader>
-          <CardContent className="grid md:grid-cols-2 gap-6">
+        <Card className="border-none shadow-sm">
+          <CardHeader className="pb-4 border-b border-gray-100">
+            <CardTitle className="text-xl">Social Media Handles</CardTitle>
+            <CardDescription>Connect your active platforms</CardDescription>
+          </CardHeader>
+          <CardContent className="grid md:grid-cols-2 gap-6 pt-6">
             {Object.entries(formData.socialLinks).map(([platform, value]) => (
-              <div key={platform}>
-                <Label className="capitalize mb-2">{platform}</Label>
-                <Input
-                  value={value}
-                  onChange={e => setFormData({
-                    ...formData,
-                    socialLinks: { ...formData.socialLinks, [platform]: e.target.value }
-                  })}
-                  placeholder={placeholders[platform] || "Enter full link "}
-                />
+              <div key={platform} className="space-y-2">
+                <Label className="capitalize text-sm font-medium">{platform}</Label>
+                <div className="relative">
+                  <Input
+                    value={value}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        socialLinks: {
+                          ...formData.socialLinks,
+                          [platform]: e.target.value,
+                        },
+                      })
+                    }
+                    placeholder={placeholders[platform] || "Enter link"}
+                    className="h-11"
+                  />
+                </div>
               </div>
             ))}
           </CardContent>
         </Card>
 
         {/* Content Niches */}
-        <Card>
-          <CardHeader><CardTitle>Content Niches</CardTitle></CardHeader>
-          <CardContent>
+        <Card className="border-none shadow-sm">
+          <CardHeader className="pb-4 border-b border-gray-100">
+            <CardTitle className="text-xl">Content Niches</CardTitle>
+            <CardDescription>Select the categories that best describe your content</CardDescription>
+          </CardHeader>
+          <CardContent className="pt-6 space-y-4">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="w-full justify-between">
-                  {selectedNiches.length ? `${selectedNiches.length} selected` : "Select your niches"} <ChevronDown className="h-4 w-4" />
+                <Button
+                  variant="outline"
+                  className="w-full justify-between h-12 text-left font-normal border-gray-300 hover:bg-white focus:ring-2 focus:ring-primary/20"
+                >
+                  <span className={selectedNiches.length ? "text-gray-900" : "text-muted-foreground"}>
+                    {selectedNiches.length
+                      ? `${selectedNiches.length} niches selected`
+                      : "Select your niches..."}
+                  </span>
+                  <ChevronDown className="h-4 w-4 text-gray-500 opacity-50" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-full max-h-64 overflow-y-auto">
-                {contentNiches.map(niche => (
+              <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)] max-h-[300px] overflow-y-auto p-1">
+                {contentNiches.map((niche) => (
                   <DropdownMenuCheckboxItem
                     key={niche}
                     checked={selectedNiches.includes(niche)}
-                    onCheckedChange={checked => {
+                    onCheckedChange={(checked) => {
                       if (checked) setSelectedNiches([...selectedNiches, niche]);
-                      else setSelectedNiches(selectedNiches.filter(n => n !== niche));
+                      else setSelectedNiches(selectedNiches.filter((n) => n !== niche));
                     }}
+                    className="cursor-pointer py-2.5 px-3"
                   >
                     {niche}
                   </DropdownMenuCheckboxItem>
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-            <div className="flex flex-wrap gap-2 mt-4">
-              {selectedNiches.map(n => (
-                <span key={n} className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary/10 rounded-full text-sm font-medium">
-                  {n}
-                  <button onClick={() => setSelectedNiches(selectedNiches.filter(x => x !== n))}>
-                    <X className="h-3.5 w-3.5" />
-                  </button>
-                </span>
-              ))}
-            </div>
+
+            {selectedNiches.length > 0 && (
+              <div className="flex flex-wrap gap-2 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                {selectedNiches.map((n) => (
+                  <span
+                    key={n}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-full text-sm font-medium text-gray-700 shadow-sm"
+                  >
+                    {n}
+                    <button
+                      onClick={() => setSelectedNiches(selectedNiches.filter((x) => x !== n))}
+                      className="hover:bg-gray-100 p-0.5 rounded-full text-gray-400 hover:text-red-500 transition-colors"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
 
         {/* Content Formats */}
-        <Card>
-          <CardHeader><CardTitle>Content Formats You Create</CardTitle></CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-3 gap-4">
-              {contentFormats.map(format => (
-                <div key={format.id} className="flex items-center gap-3 p-4 border rounded-lg hover:bg-muted/50 transition">
-                  <Checkbox
-                    checked={selectedFormats.includes(format.id)}
-                    onCheckedChange={checked => {
-                      if (checked) setSelectedFormats([...selectedFormats, format.id]);
-                      else setSelectedFormats(selectedFormats.filter(id => id !== format.id));
+        <Card className="border-none shadow-sm">
+          <CardHeader className="pb-4 border-b border-gray-100">
+            <CardTitle className="text-xl">Content Formats</CardTitle>
+            <CardDescription>What type of content do you create?</CardDescription>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {contentFormats.map((format) => {
+                const isSelected = selectedFormats.includes(format.id);
+                return (
+                  <div
+                    key={format.id}
+                    onClick={() => {
+                        if (isSelected) setSelectedFormats(selectedFormats.filter((id) => id !== format.id));
+                        else setSelectedFormats([...selectedFormats, format.id]);
                     }}
-                  />
-                  <Label className="cursor-pointer font-medium">{format.label}</Label>
-                </div>
-              ))}
+                    className={`
+                      flex items-center gap-3 p-3.5 rounded-lg border cursor-pointer transition-all duration-200
+                      ${isSelected 
+                        ? "border-primary bg-primary/5 shadow-sm" 
+                        : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"}
+                    `}
+                  >
+                    <Checkbox
+                      checked={isSelected}
+                      className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                    />
+                    <Label className="cursor-pointer font-medium text-sm text-gray-700 flex-1">
+                      {format.label}
+                    </Label>
+                  </div>
+                );
+              })}
             </div>
           </CardContent>
         </Card>
 
-        <div className="flex w-full md:flex-row flex-col gap-8">
-           {/* Payment Models */}
-       <Card className="flex-1">
-          <CardHeader><CardTitle>Payment Models You Accept</CardTitle></CardHeader>
-          <CardContent className="space-y-5">
-            {(["gifted", "paid", "affiliate", "ambassador"] as const).map(model => (
-              <div key={model} className="flex items-center justify-between p-4 border rounded-lg">
-                <div className="flex items-center gap-4">
-                  <Checkbox
-                    checked={paymentModels[model]}
-                    onCheckedChange={checked => setPaymentModels({ ...paymentModels, [model]: !!checked })}
-                  />
-                  <p className="cursor-pointer font-medium">
-                    {model === "gifted" ? "Gifted Products" :
-                     model === "paid" ? "Paid Collaborations" :
-                     model === "affiliate" ? "Affiliate Marketing" :
-                     "Brand Ambassadorship"}
-                  </p>
-                </div>
-                {model === "affiliate" && paymentModels.affiliate && (
-                  <div className="flex items-center gap-2">
-                    <Percent className="w-5 h-5 text-gray-500" />
-                    <Input value={affiliatePercent} onChange={e => setAffiliatePercent(e.target.value)} className="w-24" placeholder="10" />
-                    <span className="text-sm text-gray-500">%</span>
-                  </div>
-                )}
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-        {/* Rate Ranges */}
-        {paymentModels.paid && selectedFormats.length > 0 && (
-          <Card className="flex-1">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <DollarSign className="w-6 h-6" />
-                Your Rate Ranges
-              </CardTitle>
+        <div className="grid lg:grid-cols-2 gap-8">
+          {/* Payment Models */}
+          <Card className="border-none shadow-sm h-full">
+            <CardHeader className="pb-4 border-b border-gray-100">
+              <CardTitle className="text-xl">Payment Preferences</CardTitle>
+              <CardDescription>How do you want to be compensated?</CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-2 gap-8">
-                {selectedFormats.map(id => {
-                  const label = contentFormats.find(f => f.id === id)?.label || "";
-                  return (
-                    <div key={id} className="space-y-3 p-5 border rounded-xl bg-gray-50">
-                      <Label className="text-base font-semibold">{label}</Label>
-                      <Select
-                        value={rates[id]?.type || ""}
-                        onValueChange={v => setRates({ ...rates, [id]: { type: v, custom: rates[id]?.custom || "" } })}
-                      >
-                        <SelectTrigger><SelectValue placeholder="Select range" /></SelectTrigger>
-                        <SelectContent>
-                          {rateRanges.map(r => (
-                            <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      {rates[id]?.type === "custom" && (
-                        <Input
-                          type="number"
-                          placeholder="e.g. $100 "
-                          value={rates[id].custom}
-                          onChange={e => setRates({ ...rates, [id]: { ...rates[id], custom: e.target.value } })}
-                        />
-                      )}
+            <CardContent className="pt-6 space-y-3">
+              {(["gifted", "paid", "affiliate", "ambassador"] as const).map(
+                (model) => (
+                  <div
+                    key={model}
+                    className={`
+                      flex items-center justify-between p-4 rounded-xl border transition-all duration-200
+                      ${paymentModels[model] ? "border-primary bg-primary/5" : "border-gray-200"}
+                    `}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Checkbox
+                        checked={paymentModels[model]}
+                        onCheckedChange={(checked) =>
+                          setPaymentModels({
+                            ...paymentModels,
+                            [model]: !!checked,
+                          })
+                        }
+                      />
+                      <Label className="font-medium text-gray-900 cursor-pointer">
+                        {model === "gifted"
+                          ? "Gifted Products"
+                          : model === "paid"
+                          ? "Paid Collaborations"
+                          : model === "affiliate"
+                          ? "Affiliate Marketing"
+                          : "Brand Ambassadorship"}
+                      </Label>
                     </div>
-                  );
-                })}
-              </div>
+                    {model === "affiliate" && paymentModels.affiliate && (
+                      <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-md border border-gray-200 shadow-sm">
+                        <Input
+                          value={affiliatePercent}
+                          onChange={(e) => setAffiliatePercent(e.target.value)}
+                          className="w-14 h-8 text-center border-none p-0 focus-visible:ring-0"
+                          placeholder="10"
+                        />
+                        <span className="text-sm font-medium text-gray-500">%</span>
+                      </div>
+                    )}
+                  </div>
+                )
+              )}
             </CardContent>
           </Card>
-        )}
+
+          {/* Rate Ranges */}
+          <Card className={`border-none shadow-sm h-full ${!paymentModels.paid ? 'opacity-60 grayscale pointer-events-none' : ''}`}>
+            <CardHeader className="pb-4 border-b border-gray-100">
+              <CardTitle className="text-xl">Standard Rates</CardTitle>
+              <CardDescription>
+                {selectedFormats.length > 0 
+                  ? "Set your base rates for selected formats" 
+                  : "Select content formats above to set rates"}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-6">
+              {selectedFormats.length > 0 ? (
+                <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                  {selectedFormats.map((id) => {
+                    const label = contentFormats.find((f) => f.id === id)?.label || "";
+                    const currentRate = rates[id];
+                    
+                    return (
+                      <div key={id} className="grid sm:grid-cols-[1fr_140px_100px] gap-3 items-center p-3 bg-gray-50 rounded-lg border border-gray-100">
+                        <span className="text-sm font-medium text-gray-700 truncate" title={label}>
+                          {label}
+                        </span>
+                        
+                        <Select
+                          value={currentRate?.type || ""}
+                          onValueChange={(v) =>
+                            setRates({
+                              ...rates,
+                              [id]: { type: v, custom: currentRate?.custom || "" },
+                            })
+                          }
+                        >
+                          <SelectTrigger className="h-9 text-xs">
+                            <SelectValue placeholder="Select" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {rateRanges.map((r) => (
+                              <SelectItem key={r.value} value={r.value} className="text-xs">
+                                {r.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+
+                        {currentRate?.type === "custom" && (
+                          <div className="relative">
+                            <DollarSign className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-400" />
+                            <Input
+                              type="number"
+                              placeholder="0"
+                              value={currentRate.custom}
+                              onChange={(e) =>
+                                setRates({
+                                  ...rates,
+                                  [id]: { ...rates[id], custom: e.target.value },
+                                })
+                              }
+                              className="h-9 pl-6 text-xs"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-48 text-center text-muted-foreground p-4 border-2 border-dashed border-gray-200 rounded-xl">
+                  <DollarSign className="w-8 h-8 mb-2 opacity-20" />
+                  <p className="text-sm">No content formats selected.</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
 
-       
-
+        {/* Footer Actions */}
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200 z-10 md:static md:bg-transparent md:border-none md:p-0">
+          <div className="max-w-5xl mx-auto flex items-center justify-end gap-3">
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => window.location.reload()}
+              className="h-11 px-8 text-base font-medium"
+            >
+              Discard Changes
+            </Button>
+            <Button
+              onClick={handleSubmit}
+              disabled={saving}
+              size="lg"
+              className="h-11 px-8 text-base font-medium min-w-[160px] bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20"
+            >
+              {saving ? (
+                <span className="flex items-center gap-2">
+                  <span className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin"/>
+                  Saving...
+                </span>
+              ) : (
+                "Save Profile"
+              )}
+            </Button>
+          </div>
+        </div>
         
-
-        {/* Submit */}
-        <div className="flex justify-end gap-4 pt-10 pb-10">
-          <Button variant="outline" size="lg" onClick={() => window.location.reload()}>
-            Cancel
-          </Button>
-          <Button onClick={handleSubmit} disabled={saving} size="lg" className="px-12">
-            {saving ? "Saving..." : "Update Profile"}
-          </Button>
-        </div>
       </div>
     </div>
   );

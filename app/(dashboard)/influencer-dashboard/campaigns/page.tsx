@@ -387,7 +387,7 @@ export default function CampaignsPage() {
                 <Image
                   width={500}
                   height={192}
-                  src={campaign.campaign_poster || "/placeholder.svg"}
+                  src={campaign.campaign_poster || "/images/placeholder.jpg"}
                   alt={campaign.campaign_name || "Campaign"}
                   className="w-full h-48 object-cover"
                 />
@@ -495,7 +495,7 @@ export default function CampaignsPage() {
     {/* 1. Campaign Poster & Status */}
     <div className="relative h-56 mb-6 w-full">
       <Image
-        src={(selectedCampaign as PublicCampaign).campaign_poster || "/placeholder.svg"}
+        src={(selectedCampaign as PublicCampaign).campaign_poster || "/images/placeholder.jpg"}
         alt={(selectedCampaign as PublicCampaign).campaign_name}
         fill
         className="object-cover rounded-xl shadow-sm"

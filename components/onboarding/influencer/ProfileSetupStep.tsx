@@ -98,7 +98,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
           <CardContent className="space-y-6">
             <div className="flex flex-col md:flex-row gap-6">
               {/* Profile Photo Upload */}
-              <div className="space-y-2 md:w-1/3">
+              <div className="space-y-2 ">
                 <Label>Profile Photo *</Label>
                 <label
                   htmlFor="profilePhoto"
@@ -132,7 +132,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
 
               {/* Basic Info */}
               <div className="space-y-4 flex-1">
-                <div className="space-y-2">
+                <div className="space-y-2 w-1/3">
                   <Label htmlFor="displayName">Display Name *</Label>
                   <Input
                     id="displayName"
@@ -256,6 +256,20 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                   placeholder="Full profile or page URL (e.g., linkedin.com/in/yourname)"
                 />
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="facebook_handle">Facebook</Label>
+                <Input
+                  id="facebook_handle"
+                  value={onboardingDataInfluencer.facebook_handle}
+                  onChange={(e) =>
+                    setOnboardingDataInfluencer((prev) => ({
+                      ...prev,
+                      facebook_handle: e.target.value,
+                    }))
+                  }
+                  placeholder="https://facebook.com/username"
+                />
+              </div>
 
               <div className="space-y-2">
                 <Label htmlFor="whatsapp_handle">WhatsApp</Label>
@@ -360,7 +374,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
         {/* Keywords */}
         <Card>
           <CardHeader>
-            <CardTitle>Keywords & Tags</CardTitle>
+            <CardTitle>Keywords & Hashtags</CardTitle>
             <p className="text-sm text-muted-foreground">
               Add keywords that describe your content style and expertise
             </p>
@@ -374,7 +388,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                   keyword_and_tags: e.target.value,
                 }))
               }
-              placeholder="minimalist style, authentic reviews, storytelling, humor, educational content..."
+              placeholder="#sustainablefashion #ecoFriendly #consciousliving"
               rows={3}
             />
           </CardContent>

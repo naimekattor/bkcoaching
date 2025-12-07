@@ -23,6 +23,7 @@ import {
   Video,
   Mic,
   FileText,
+  Repeat,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
@@ -33,6 +34,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useBrandOnBoarding } from "@/contexts/BrandOnboardingContext";
+import { demographics } from "@/constants/demographics";
 
 interface CampaignStepProps {
   onNext: () => void;
@@ -79,23 +81,19 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
   ];
 
   const deliverableTypes = [
-    { id: "instagram-post", label: "Instagram Post", icon: Image },
-    { id: "instagram-story", label: "Instagram Story", icon: Image },
-    { id: "instagram-reel", label: "Instagram Reel", icon: Video },
-    { id: "tiktok-video", label: "TikTok Video", icon: Video },
-    { id: "youtube-video", label: "YouTube Video", icon: Video },
-    { id: "youtube-short", label: "YouTube Short", icon: Video },
-    { id: "blog-post", label: "Blog Post", icon: FileText },
-    { id: "podcast", label: "Podcast Mention", icon: Mic },
-    { id: "twitter-thread", label: "Twitter Thread", icon: FileText },
-    { id: "linkedin-post", label: "LinkedIn Post", icon: FileText },
-    { id: "whatsapp-status", label: "WhatsApp Status", icon: FileText },
-    { id: "email-campaign", label: "Email Campaign", icon: FileText },
-    {
-      id: "Repost Only",
-      label: "Repost Only",
-      icon: FileText,
-    },
+    { id: "socialPost", label: "Whatsapp Group Post", icon: Image },
+    { id: "repost", label: "Repost", icon: Repeat },
+    { id: "instagramStory", label: "Instagram Story", icon: Image },
+    { id: "instagramReel", label: "Instagram Reel", icon: Video },
+    { id: "tiktokVideo", label: "TikTok Video", icon: Video },
+    { id: "youtubeVideo", label: "YouTube Video", icon: Video },
+    { id: "youtubeShort", label: "YouTube Short", icon: Video },
+    { id: "blogPost", label: "Blog Post", icon: FileText },
+    { id: "facebookPost", label: "Facebook Post", icon: FileText },
+    { id: "podcastMention", label: "Podcast Mention", icon: Mic },
+    { id: "liveStream", label: "Live Stream", icon: Video },
+    { id: "userGeneratedContent", label: "UGC Creation", icon: Video },
+    { id: "whatsappStatus", label: "WhatsApp Status Post", icon: Image },
   ];
 
   const timelineOptions = [
@@ -138,6 +136,24 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
     // Redirect to signup with "returnTo" param
     // router.push(`/auth/signup?role=brand&returnTo=/brand-onboarding?step=6`);
     return;
+  };
+
+  const handleArrayChange = (
+    field: "targetAudience" ,
+    value: string,
+    checked: boolean
+  ) => {
+    if (checked) {
+      setOnboardingData((prev) => ({
+        ...prev,
+        [field]: [...prev[field], value],
+      }));
+    } else {
+      setOnboardingData((prev) => ({
+        ...prev,
+        [field]: prev[field].filter((item) => item !== value),
+      }));
+    }
   };
 
   return (
@@ -606,6 +622,30 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
                 <CardTitle>Target Audience</CardTitle>
               </CardHeader>
               <CardContent>
+                          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                            {demographics.map((demo) => (
+                              <div key={demo} className="flex items-center space-x-2">
+                                <Checkbox
+                                  id={demo}
+                                  checked={onboardingData.targetAudience.includes(
+                                    demo
+                                  )}
+                                  onCheckedChange={(checked) =>
+                                    handleArrayChange(
+                                      "targetAudience",
+                                      demo,
+                                      checked as boolean
+                                    )
+                                  }
+                                />
+                                <Label htmlFor={demo} className="text-sm font-normal">
+                                  {demo}
+                                </Label>
+                              </div>
+                            ))}
+                          </div>
+                        </CardContent>
+              {/* <CardContent>
                 <Textarea
                   value={onboardingData.targetAudience}
                   onChange={(e) =>
@@ -617,7 +657,7 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
                   placeholder="Young professionals, age 25-35, interested in sustainable fashion..."
                   rows={4}
                 />
-              </CardContent>
+              </CardContent> */}
             </Card>
 
             <Card>

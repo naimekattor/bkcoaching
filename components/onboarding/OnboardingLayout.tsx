@@ -43,7 +43,7 @@ const OnboardingLayout = ({
             )}
           </div>
           <div className="md:text-2xl text-xl text-center font-bold text-primary">
-            The social Market
+            The Social Market
           </div>
           <div className="text-sm text-muted-foreground">
             Step {currentStep} of {totalSteps}

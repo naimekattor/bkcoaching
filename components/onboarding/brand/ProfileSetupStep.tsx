@@ -206,7 +206,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                     <HelpCircle className="w-4 h-4 text-muted-foreground" />
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Keywords that represent your brand (comma-separated)</p>
+                    <p>Keywords that represent your brand (with hash)</p>
                   </TooltipContent>
                 </Tooltip>
               </CardTitle>
@@ -220,7 +220,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                     keywords: e.target.value,
                   }))
                 }
-                placeholder="sustainable fashion, eco-friendly, organic, wellness, lifestyle..."
+                placeholder="#sustainablefashion #ecoFriendly #consciousliving"
                 rows={3}
               />
             </CardContent>
