@@ -12,6 +12,7 @@ import {
   ChartArea,
   Users,
   Rocket,
+  ChevronDown,
 } from "lucide-react";
 import {
   Select,
@@ -40,47 +41,23 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { HiSpeakerphone } from "react-icons/hi";
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
+import { Campaign } from "@/types/campaign";
 
 /* -------------------------------------------------
    Types
 ------------------------------------------------- */
+
+
 interface PlatformConfig {
   match: string;
   icon: React.ReactNode;
   className: string;
 }
 
-interface Campaign {
-  id: string;
-  title: string;
-  description: string;
-  image: string;
-  status: "active" | "paused" | "completed";
-  budget: string;
-  budgetType: string;
-  targetReach: string;
-  timeLeft: string;
-  progress: number;
-  platforms: string[];
-  assignedCreators: Creator[];
-  objective: string;
-  timeline: string;
-  deliverables: string[];
-  paymentPreferences: string[];
-  keywords: string[];
-  targetAudience: string;
-  approvalRequired: boolean;
-  autoMatch: boolean;
-  campaignOwner: string;
-}
 
-interface Creator {
-  id: string;
-  name: string;
-  avatar?: string;
-  followers?: string;
-}
+
+
 
 type CampaignApiResponse = {
   id: string;
@@ -101,8 +78,8 @@ type CampaignApiResponse = {
   campaign_owner: string;
 };
 
-interface HiringCampaign{
-  id:string;
+interface HiringCampaign {
+  id: string;
 }
 
 /* -------------------------------------------------
@@ -174,7 +151,7 @@ export default function CampaignDashboard() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [platformFilter, setPlatformFilter] = useState("all");
   const [allCampaigns, setAllCampaigns] = useState<Campaign[]>([]);
-  const [previousHirings,setPreviousHirings]=useState<HiringCampaign[]>([]);
+  const [previousHirings, setPreviousHirings] = useState<HiringCampaign[]>([]);
 
   /* ---------- Stats (no type errors) ---------- */
   const stats = [
@@ -243,45 +220,47 @@ export default function CampaignDashboard() {
           ? [...res.data].reverse()
           : [];
 
-        const transformed: Campaign[] = campaignsArray.map((c: CampaignApiResponse) => ({
-          id: c.id,
-          title: c.campaign_name || "Untitled Campaign",
-          description: c.campaign_description || "",
-          image: c.campaign_poster || "/images/placeholder-image.png",
-          status: (c.campaign_status || "active") as
-            | "active"
-            | "paused"
-            | "completed",
+        const transformed: Campaign[] = campaignsArray.map(
+          (c: CampaignApiResponse) => ({
+            id: c.id,
+            title: c.campaign_name || "Untitled Campaign",
+            description: c.campaign_description || "",
+            image: c.campaign_poster || "/images/placeholder-image.png",
+            status: (c.campaign_status || "active") as
+              | "active"
+              | "paused"
+              | "completed",
 
-          budget: c.budget_range ? `$${c.budget_range}` : "$0",
-          budgetType: c.budget_type || "total",
-          targetReach: "200K",
-          timeLeft: c.campaign_timeline || "N/A",
-          progress: 0,
+            budget: c.budget_range ? `$${c.budget_range}` : "$0",
+            budgetType: c.budget_type || "total",
+            targetReach: "200K",
+            timeLeft: c.campaign_timeline || "N/A",
+            progress: 0,
 
-          platforms: [], 
-          assignedCreators: [],
+            platforms: [],
+            assignedCreators: [],
 
-          objective: c.campaign_objective || "",
-          timeline: c.campaign_timeline || "",
+            objective: c.campaign_objective || "",
+            timeline: c.campaign_timeline || "",
 
-          deliverables: c.content_deliverables
-            ? c.content_deliverables.split(",").map((d: string) => d.trim())
-            : [],
+            deliverables: c.content_deliverables
+              ? c.content_deliverables.split(",").map((d: string) => d.trim())
+              : [],
 
-          paymentPreferences: c.payment_preference
-            ? c.payment_preference.split(",").map((p: string) => p.trim())
-            : [],
+            paymentPreferences: c.payment_preference
+              ? c.payment_preference.split(",").map((p: string) => p.trim())
+              : [],
 
-          keywords: c.keywords_and_hashtags
-            ? c.keywords_and_hashtags.split(",").map((k: string) => k.trim())
-            : [],
+            keywords: c.keywords_and_hashtags
+              ? c.keywords_and_hashtags.split(",").map((k: string) => k.trim())
+              : [],
 
-          targetAudience: c.target_audience || "",
-          approvalRequired: !!c.content_approval_required,
-          autoMatch: !!c.auto_match_micro_influencers,
-          campaignOwner: c.campaign_owner,
-        }));
+            targetAudience: c.target_audience || "",
+            approvalRequired: !!c.content_approval_required,
+            autoMatch: !!c.auto_match_micro_influencers,
+            campaignOwner: c.campaign_owner,
+          })
+        );
 
         setAllCampaigns(transformed);
       } catch (error) {
@@ -293,27 +272,25 @@ export default function CampaignDashboard() {
     fetchAllCampaigns();
   }, []);
 
-
-  useEffect(()=>
-  {
-    const fetchPreviousHirings=async()=>{
+  useEffect(() => {
+    const fetchPreviousHirings = async () => {
       try {
-        const hiringsRes = await apiClient("campaign_service/get_my_previous_hirings/", {
+        const hiringsRes = await apiClient(
+          "campaign_service/get_my_previous_hirings/",
+          {
             method: "GET",
             auth: true,
-        });
-        
+          }
+        );
+
         if (hiringsRes.data && Array.isArray(hiringsRes.data)) {
-            setPreviousHirings(hiringsRes.data);
+          setPreviousHirings(hiringsRes.data);
         }
-      } catch (error) {
-        
-      }
-    }
+      } catch (error) {}
+    };
 
     fetchPreviousHirings();
-
-  },[])
+  }, []);
 
   /* ---------- Pause / Resume ---------- */
   const handlePauseResume = async (event: Event, campaign: Campaign) => {
@@ -359,9 +336,9 @@ export default function CampaignDashboard() {
   };
 
   const handleCampaignCreated = (newCampaign: Campaign) => {
-  setAllCampaigns((prev) => [newCampaign, ...prev]); 
-  setShowModal(false);
-};
+    setAllCampaigns((prev) => [newCampaign, ...prev]);
+    setShowModal(false);
+  };
 
   /* -------------------------------------------------
      Render
@@ -406,18 +383,22 @@ export default function CampaignDashboard() {
                   <div className="text-2xl">{stat.icon}</div>
                 </div>
                 {stat.isAction && (
-  <motion.button
-    whileHover={{
-      y: -2,               // lift upward (rocket motion)
-      scale: 1.01,         // slightly enlarge
-      transition: { type: "spring", stiffness: 400, damping: 10 },
-    }}
-    className="w-full mt-4 bg-secondary cursor-pointer hover:bg-[var(--secondaryhover)] text-primary px-4 py-2 rounded-md font-semibold shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2"
-    onClick={() => setShowModal(true)}
-  >
-    🚀 Launch Campaign
-  </motion.button>
-)}
+                  <motion.button
+                    whileHover={{
+                      y: -2,
+                      scale: 1.01,
+                      transition: {
+                        type: "spring",
+                        stiffness: 400,
+                        damping: 10,
+                      },
+                    }}
+                    className="w-full mt-4 bg-secondary cursor-pointer hover:bg-[var(--secondaryhover)] text-primary px-4 py-2 rounded-md font-semibold shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2"
+                    onClick={() => setShowModal(true)}
+                  >
+                    🚀 Launch Campaign
+                  </motion.button>
+                )}
               </div>
             </div>
           ))}
@@ -438,22 +419,51 @@ export default function CampaignDashboard() {
               placeholder="Search campaigns..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md text-gray-700 
+      focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-transparent outline-none"
             />
           </div>
 
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[160px]">
-              <SelectValue placeholder="All Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
-            </SelectContent>
-          </Select>
+  <SelectTrigger
+    className="
+      w-[160px] 
+      bg-white 
+      border border-gray-300 
+      rounded-lg 
+      px-4 py-3 
+      text-sm text-gray-700 
+      focus:outline-none focus:ring-2 focus:ring-primary/30
+    "
+  >
+    <SelectValue placeholder="All Status" />
+  </SelectTrigger>
 
-          <Select value={platformFilter} onValueChange={setPlatformFilter}>
+  <SelectContent
+    className="
+      bg-white 
+      rounded-lg 
+      shadow-lg 
+      border border-gray-200 
+      mt-1 
+      w-[160px]
+    "
+  >
+    <SelectItem className="px-4 py-2 hover:bg-gray-50 rounded-md" value="all">
+      All Status
+    </SelectItem>
+    <SelectItem className="px-4 py-2 hover:bg-gray-50 rounded-md" value="active">
+      Active
+    </SelectItem>
+    <SelectItem className="px-4 py-2 hover:bg-gray-50 rounded-md" value="paused">
+      Paused
+    </SelectItem>
+  </SelectContent>
+</Select>
+
+
+
+          {/* <Select value={platformFilter} onValueChange={setPlatformFilter}>
             <SelectTrigger className="w-[160px]">
               <SelectValue placeholder="All Platforms" />
             </SelectTrigger>
@@ -464,7 +474,7 @@ export default function CampaignDashboard() {
               <SelectItem value="youtube">YouTube</SelectItem>
               <SelectItem value="facebook">Facebook</SelectItem>
             </SelectContent>
-          </Select>
+          </Select> */}
         </div>
 
         {/* Campaign Grid */}
@@ -587,7 +597,7 @@ export default function CampaignDashboard() {
                     {campaign.timeLeft}
                   </span>
                   <button
-                    className="text-secondary hover:text-yellow-600 text-sm font-medium"
+                    className="text-secondary hover:text-yellow-600 text-sm font-medium cursor-pointer"
                     onClick={() => openCampaignModal(campaign)}
                   >
                     View Details
@@ -613,14 +623,14 @@ export default function CampaignDashboard() {
             <div className="relative ">
               <div className="w-full h-48 bg-gray-100 flex items-center justify-center rounded-t-lg overflow-hidden">
                 <Image
-                width={600}
-                height={192}
-                src={selectedCampaign.image}
-                alt={selectedCampaign.title}
-                className="w-full h-full object-contain  rounded-t-lg"
-              />
+                  width={600}
+                  height={192}
+                  src={selectedCampaign.image}
+                  alt={selectedCampaign.title}
+                  className="w-full h-full object-contain  rounded-t-lg"
+                />
               </div>
-              
+
               <button
                 className="absolute top-3 right-3 p-2 bg-white/80 hover:bg-white rounded-md transition-colors"
                 onClick={closeCampaignModal}
@@ -704,7 +714,6 @@ export default function CampaignDashboard() {
                     </div>
                   ))}
                 </div>
-
               </div>
             </div>
           </div>

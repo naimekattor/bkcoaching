@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { ChangeEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Target,
@@ -10,8 +10,9 @@ import {
   FileText,
   Upload,
   X,
+  Repeat,
+  Image,
 } from "lucide-react";
-import { FaTiktok } from "react-icons/fa";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,41 +30,82 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  Dialogcampaign_description,
-} from "@/components/ui/dialog";
 import { apiClient } from "@/lib/apiClient";
 import { uploadToCloudinary } from "@/lib/fileUpload";
 import { toast } from "react-toastify";
+import { demographics } from "@/constants/demographics";
+import { DragEvent } from "react";
+import { Campaign } from "@/types/campaign";
 
-const US_TIME_ZONES = [
-  { value: "America/New_York", label: "Eastern (ET)" },
-  { value: "America/Chicago", label: "Central (CT)" },
-  { value: "America/Denver", label: "Mountain (MT)" },
-  { value: "America/Phoenix", label: "Arizona (no DST)" },
-  { value: "America/Los_Angeles", label: "Pacific (PT)" },
-  { value: "America/Anchorage", label: "Alaska (AKST/AKDT)" },
-  { value: "Pacific/Honolulu", label: "Hawaii (HST)" },
-];
+// --- Interfaces ---
 
-const deliverableTypes = [
-  { id: "instagram-post", label: "Instagram Post", icon: ImageIcon },
-  { id: "instagram-story", label: "Instagram Story", icon: ImageIcon },
-  { id: "instagram-reel", label: "Instagram Reel", icon: Video },
-  { id: "tiktok-video", label: "TikTok Video", icon: Video },
-  { id: "youtube-video", label: "YouTube Video", icon: Video },
-  { id: "youtube-short", label: "YouTube Short", icon: Video },
-  { id: "blog-post", label: "Blog Post", icon: FileText },
-  { id: "podcast", label: "Podcast Mention", icon: Mic },
-  { id: "twitter-thread", label: "Twitter Thread", icon: FileText },
-  { id: "linkedin-post", label: "LinkedIn Post", icon: FileText },
-  { id: "whatsapp-status", label: "WhatsApp Status", icon: FileText },
-  { id: "email-campaign", label: "Email Campaign", icon: FileText },
-  { id: "Repost Only", label: "Repost Only", icon: FileText },
+interface CreateCampaignModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess: (campaign: Campaign) => void;
+}
+
+interface CampaignFormData {
+  campaign_name: string;
+  campaign_objective: string;
+  campaign_poster: string | null;
+  budget_range: number;
+  budget_type: string;
+  payment_preference: string[];
+  campaign_description: string;
+  content_deliverables: string[];
+  campaign_timeline: string;
+  target_audience: string[]; 
+  keywords: string;
+  content_approval_required: boolean;
+  auto_match_micro_influencers: boolean;
+  campaign_status: string;
+  platforms: {
+    instagram: boolean;
+    tiktok: boolean;
+    youtube: boolean;
+    facebook: boolean;
+  };
+  targetReach: string;
+  endDate: string;
+  creativeType: string;
+  creatorsNeeded: string;
+  keywords_and_hashtags: string[];
+  ageRange: number[];
+  location: string;
+  timeZone: string;
+  gender: string;
+  campaignGoals: {
+    awareness: boolean;
+    engagement: boolean;
+    conversions: boolean;
+    growth: boolean;
+  };
+  paymentMethod: string;
+  posterFile: File | null;
+  posterPreview: string | null;
+}
+
+interface DeliverableType {
+  id: string;
+  label: string;
+  icon: React.ElementType;
+}
+
+const deliverableTypes:DeliverableType[] = [
+  { id: "instagramStory", label: "Instagram Story", icon: Image },
+  { id: "instagramReel", label: "Instagram Reel", icon: Video },
+  { id: "tiktokVideo", label: "TikTok Video", icon: Video },
+  { id: "youtubeVideo", label: "YouTube Video", icon: Video },
+  { id: "youtubeShort", label: "YouTube Short", icon: Video },
+  { id: "blogPost", label: "Blog Post", icon: FileText },
+  { id: "facebookPost", label: "Facebook Post", icon: FileText },
+  { id: "podcastMention", label: "Podcast Mention", icon: Mic },
+  { id: "liveStream", label: "Live Stream", icon: Video },
+  { id: "userGeneratedContent", label: "UGC Creation", icon: Video },
+  { id: "whatsappStatus", label: "WhatsApp Status Post", icon: Image },
+  { id: "socialPost", label: "Whatsapp Group Post", icon: Image },
+  { id: "repost", label: "Repost", icon: Repeat },
 ];
 
 const timelineOptions = [
@@ -74,10 +116,9 @@ const timelineOptions = [
   { value: "flexible", label: "Flexible timing" },
 ];
 
-export default function CreateCampaignModal({ isOpen, onClose, onSuccess }) {
-  const router = useRouter();
+export default function CreateCampaignModal({ isOpen, onClose, onSuccess }:CreateCampaignModalProps) {
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<CampaignFormData>({
     campaign_name: "",
     campaign_objective: "",
     campaign_poster: null,
@@ -87,7 +128,7 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }) {
     campaign_description: "",
     content_deliverables: [],
     campaign_timeline: "",
-    target_audience: "",
+    target_audience: [],
     keywords: "",
     content_approval_required: true,
     auto_match_micro_influencers: false,
@@ -118,29 +159,18 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }) {
     posterPreview: null,
   });
 
-  const [newHashtag, setNewHashtag] = useState("");
   const [dragActive, setDragActive] = useState(false);
-  const [showAuthModal, setShowAuthModal] = useState(false);
   const [uploadError, setUploadError] = useState("");
 
   // Generic field updater for top-level fields
-  const handleInputChange = (field, value) => {
+  const handleInputChange = (field:keyof CampaignFormData, value: unknown) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  // Platforms toggling (nested)
-  const handlePlatformChange = (platform) => {
-    setFormData((prev) => ({
-      ...prev,
-      platforms: {
-        ...prev.platforms,
-        [platform]: !prev.platforms[platform],
-      },
-    }));
-  };
+  
 
   // PaymentPreferences toggle (array)
-  const togglePaymentPreference = (pref) => {
+  const togglePaymentPreference = (pref:string) => {
     setFormData((prev) => {
       const current = prev.payment_preference || [];
       return current.includes(pref)
@@ -149,7 +179,7 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }) {
     });
   };
 
-  const handleDeliverableChange = (id, checked) => {
+  const handleDeliverableChange = (id:string, checked:boolean) => {
     if (id === "Repost Only" && checked) {
       setFormData((prev) => ({
         ...prev,
@@ -186,48 +216,14 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }) {
     }
   };
 
-  // Gender single-select (radio-style)
-  const handleGenderChange = (value) => {
-    setFormData((prev) => ({
-      ...prev,
-      gender: prev.gender === value ? "" : value,
-    }));
-  };
+  
 
-  // Goals toggle
-  const handleGoalChange = (goal) => {
-    setFormData((prev) => ({
-      ...prev,
-      campaignGoals: {
-        ...prev.campaignGoals,
-        [goal]: !prev.campaignGoals[goal],
-      },
-    }));
-  };
+ 
 
-  // Hashtags
-  const addHashtag = () => {
-    const tag = newHashtag.trim();
-    if (!tag) return;
-    if (!formData.keywords_and_hashtags.includes(tag)) {
-      setFormData((prev) => ({
-        ...prev,
-        keywords_and_hashtags: [...prev.keywords_and_hashtags, tag],
-      }));
-    }
-    setNewHashtag("");
-  };
-
-  const removeHashtag = (tag) =>
-    setFormData((prev) => ({
-      ...prev,
-      keywords_and_hashtags: prev.keywords_and_hashtags.filter(
-        (h) => h !== tag
-      ),
-    }));
+ 
 
   // Poster upload validation
-  const validateFile = (file) => {
+  const validateFile = (file:File) => {
     const maxSize = 5 * 1024 * 1024; // 5MB
     const validTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 
@@ -246,47 +242,36 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }) {
   };
 
   // Handle poster upload
-  const handleImageChange = async (e) => {
+  const handleImageChange = async (e:ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const res = await uploadToCloudinary(file);
-    console.log(res);
-
-    setFormData((prev) => ({
-      ...prev,
-      campaign_poster: res.url,
-    }));
-
-    if (!validateFile(file)) {
-      return;
+    try {
+      const res = await uploadToCloudinary(file);
+      // Assuming uploadToCloudinary returns { url: string }
+      if (res?.url) {
+        setFormData((prev) => ({
+          ...prev,
+          campaign_poster: res.url?? null,
+          posterFile: file,
+          posterPreview: URL.createObjectURL(file), // Local preview for speed
+        }));
+      }
+    } catch (err) {
+      console.error("Upload failed", err);
+      setUploadError("Upload failed");
     }
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      setFormData((prev) => ({
-        ...prev,
-        posterFile: file,
-        posterPreview: event.target.result,
-        campaign_poster: res.url,
-      }));
-    };
-    reader.onerror = () => {
-      setUploadError("Failed to read file");
-    };
-
-    reader.readAsDataURL(file);
   };
 
   // Drag & drop (assets)
-  const handleDrag = (e) => {
+  const handleDrag = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
     if (e.type === "dragenter" || e.type === "dragover") setDragActive(true);
     if (e.type === "dragleave") setDragActive(false);
   };
 
-  const handleDrop = (e) => {
+  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
@@ -297,11 +282,14 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }) {
       if (validateFile(file)) {
         const reader = new FileReader();
         reader.onload = (event) => {
-          setFormData((prev) => ({
-            ...prev,
-            posterFile: file,
-            posterPreview: event.target.result,
-          }));
+          const result = event.target?.result;
+          if (typeof result === "string") {
+    setFormData((prev) => ({
+      ...prev,
+      posterFile: file,
+      posterPreview: result,
+    }));
+  }
         };
         reader.readAsDataURL(file);
       }
@@ -357,7 +345,7 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }) {
       });
       if (res) {
         toast("Saved campaign  successfully");
-        onSuccess(newCampaign);
+        onSuccess(res.data);
         onClose();
         console.log(res);
       } else if (res?.status === "failure" && res?.error) {
@@ -387,11 +375,9 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }) {
     }
 
     console.log("Creating campaign:", formData);
-    setShowAuthModal(true);
   };
 
-  const handleCreateCampaign = async (e) => {
-    console.log(e.target.value);
+  const handleCreateCampaign = async () => {
 
     const isValid =
       formData.campaign_name &&
@@ -417,7 +403,7 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }) {
         payment_preference: formData.payment_preference.join(","),
         content_deliverables: formData.content_deliverables.join(","),
         campaign_timeline: formData.campaign_timeline,
-        target_audience: formData.target_audience.substring(0, 50),
+        target_audience: formData.target_audience.join(","),
         keywords_and_hashtags: formData.keywords_and_hashtags.join(","),
         content_approval_required: formData.content_approval_required,
         auto_match_micro_influencers: formData.auto_match_micro_influencers,
@@ -440,10 +426,27 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }) {
     }
 
     console.log("Creating campaign:", formData);
-    setShowAuthModal(true);
   };
 
   if (!isOpen) return null;
+
+  const handleArrayChange = (
+    field: "target_audience",
+    value: string,
+    checked: boolean
+  ) => {
+    if (checked) {
+      setFormData((prev) => ({
+        ...prev,
+        [field]: [...prev[field], value],
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [field]: prev[field].filter((item) => item !== value),
+      }));
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40">
@@ -584,7 +587,7 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }) {
                     />
                     <button
                       onClick={handleRemovePoster}
-                      className="absolute top-2 right-2 p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition"
+                      className="absolute top-2 right-2 p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition cursor-pointer"
                     >
                       <X className="h-4 w-4" />
                     </button>
@@ -767,7 +770,7 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }) {
                       id={d.id}
                       checked={formData.content_deliverables.includes(d.id)}
                       onCheckedChange={(checked) =>
-                        handleDeliverableChange(d.id, checked)
+                        handleDeliverableChange(d.id, checked==true)
                       }
                     />
                     <d.icon className="w-4 h-4 text-muted-foreground" />
@@ -858,26 +861,23 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }) {
               <CardHeader>
                 <CardTitle>Target Audience</CardTitle>
               </CardHeader>
+
               <CardContent>
-                <Textarea
-                  value={formData.target_audience}
-                  onChange={(e) =>
-                    handleInputChange("target_audience", e.target.value)
-                  }
-                  placeholder="Young professionals, age 25-35, interested in sustainable fashion..."
-                  rows={4}
-                  maxLength={50}
-                />
-                <div className="flex justify-end mt-1">
-                  <span
-                    className={`text-xs ${
-                      formData.target_audience.length >= 50
-                        ? "text-red-500"
-                        : "text-gray-400"
-                    }`}
-                  >
-                    {formData.target_audience.length}/50 characters
-                  </span>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {demographics.map((demo) => (
+                    <div key={demo} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={demo}
+                        checked={(formData.target_audience || []).includes(demo)}
+                        onCheckedChange={(checked) =>
+                          handleArrayChange("target_audience", demo, !!checked)
+                        }
+                      />
+                      <Label htmlFor={demo} className="text-sm font-normal">
+                        {demo}
+                      </Label>
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>
@@ -887,49 +887,17 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }) {
                 <CardTitle>Keywords & Hashtags</CardTitle>
               </CardHeader>
               <CardContent>
-                {/* <Textarea
+                <Textarea
                   value={formData.keywords}
                   onChange={(e) =>
-                    handleInputChange("keywords", e.target.value)
+                    setFormData((prev) => ({
+                      ...prev,
+                      keywords: e.target.value,
+                    }))
                   }
                   placeholder="#sustainablefashion #ecoFriendly #consciousliving"
-                  rows={3}
-                /> */}
-
-                <div className="mt-4">
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {formData.keywords_and_hashtags.map((tag, i) => (
-                      <span
-                        key={i}
-                        className="inline-flex items-center gap-1 px-3 py-1 bg-primary text-white text-sm rounded-full"
-                      >
-                        {tag}
-                        <button
-                          type="button"
-                          onClick={() => removeHashtag(tag)}
-                          className="ml-1"
-                        >
-                          ×
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-
-                  <div className="flex gap-2">
-                    <Input
-                      value={newHashtag}
-                      onChange={(e) => setNewHashtag(e.target.value)}
-                      placeholder="Add hashtag..."
-                      onKeyPress={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
-                          addHashtag();
-                        }
-                      }}
-                    />
-                    <Button onClick={addHashtag}>Add</Button>
-                  </div>
-                </div>
+                  rows={4}
+                />
               </CardContent>
             </Card>
           </div>
@@ -937,13 +905,6 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }) {
 
         {/* Footer */}
         <div className="flex md:flex-row flex-col items-center justify-center p-6 border-t bg-gray-50 rounded-b-lg">
-          {/* <button
-            onClick={handleSaveDraft}
-            className="px-6 py-2 text-gray-600 hover:text-gray-800 font-medium"
-          >
-            Save as Draft
-          </button> */}
-
           <div className="flex items-center gap-3">
             <Button
               variant="outline"
@@ -965,38 +926,6 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }) {
           </div>
         </div>
       </div>
-
-      {/* Sign-up / Auth prompt if user is not logged in */}
-      {/* <Dialog open={showAuthModal} onOpenChange={setShowAuthModal}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Sign up required</DialogTitle>
-            <Dialogcampaign_description>
-              Please sign up or log in to continue creating your campaign.
-            </Dialogcampaign_description>
-          </DialogHeader>
-
-          <div className="flex justify-end gap-2 pt-4">
-            <Button
-              variant="outline"
-              onClick={() =>
-                router.push("/auth/login?returnTo=/brand-onboarding?step=5")
-              }
-            >
-              Log in
-            </Button>
-            <Button
-              onClick={() =>
-                router.push(
-                  "/auth/signup?role=brand&returnTo=/brand-onboarding?step=5"
-                )
-              }
-            >
-              Sign up
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog> */}
     </div>
   );
 }

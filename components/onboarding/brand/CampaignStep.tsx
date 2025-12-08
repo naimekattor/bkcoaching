@@ -81,8 +81,8 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
   ];
 
   const deliverableTypes = [
-    { id: "socialPost", label: "Whatsapp Group Post", icon: Image },
-    { id: "repost", label: "Repost", icon: Repeat },
+    
+    
     { id: "instagramStory", label: "Instagram Story", icon: Image },
     { id: "instagramReel", label: "Instagram Reel", icon: Video },
     { id: "tiktokVideo", label: "TikTok Video", icon: Video },
@@ -94,6 +94,8 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
     { id: "liveStream", label: "Live Stream", icon: Video },
     { id: "userGeneratedContent", label: "UGC Creation", icon: Video },
     { id: "whatsappStatus", label: "WhatsApp Status Post", icon: Image },
+    { id: "socialPost", label: "Whatsapp Group Post", icon: Image },
+    { id: "repost", label: "Repost", icon: Repeat },
   ];
 
   const timelineOptions = [
@@ -645,19 +647,7 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
                             ))}
                           </div>
                         </CardContent>
-              {/* <CardContent>
-                <Textarea
-                  value={onboardingData.targetAudience}
-                  onChange={(e) =>
-                    setOnboardingData((prev) => ({
-                      ...prev,
-                      targetAudienceCampaign: e.target.value,
-                    }))
-                  }
-                  placeholder="Young professionals, age 25-35, interested in sustainable fashion..."
-                  rows={4}
-                />
-              </CardContent> */}
+              
             </Card>
 
             <Card>

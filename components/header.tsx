@@ -124,7 +124,7 @@ const Header = () => {
             variant="default"
             size="sm"
             className={cn(
-              "bg-primary text-secondary border-secondary border hover:bg-background px-6 py-4",
+              "bg-primary cursor-pointer text-secondary border-secondary border hover:bg-background px-6 py-4",
               "transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
             )}
           >

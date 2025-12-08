@@ -39,8 +39,8 @@ const CollaborationPreferencesStep = ({
     useInfluencerOnboarding();
 
   const contentFormats = [
-    { id: "socialPost", label: "Whatsapp Group Post", icon: Image },
-    { id: "repost", label: "Repost", icon: Repeat },
+    
+    
     { id: "instagramStory", label: "Instagram Story", icon: Image },
     { id: "instagramReel", label: "Instagram Reel", icon: Video },
     { id: "tiktokVideo", label: "TikTok Video", icon: Video },
@@ -52,6 +52,8 @@ const CollaborationPreferencesStep = ({
     { id: "liveStream", label: "Live Stream", icon: Video },
     { id: "userGeneratedContent", label: "UGC Creation", icon: Video },
     { id: "whatsappStatus", label: "WhatsApp Status Post", icon: Image },
+    { id: "socialPost", label: "Whatsapp Group Post", icon: Image },
+    { id: "repost", label: "Repost", icon: Repeat },
   ];
 
   const paymentTypes = [

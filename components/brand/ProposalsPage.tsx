@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { apiClient } from "@/lib/apiClient";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
+import { FileText, Mic, Repeat, Video } from "lucide-react";
 
 type ProposalForm = {
   proposalMessage: string;
@@ -26,17 +27,19 @@ interface MyCampaigns {
 }
 
 const deliverableTypes = [
-  { id: "repost", label: "Repost", icon: "🔄" },
-  { id: "instagramStory", label: "Instagram Story", icon: "📖" },
-  { id: "instagramReel", label: "Instagram Reel", icon: "🎬" },
-  { id: "tiktokVideo", label: "TikTok Video", icon: "🎵" },
-  { id: "youtubeVideo", label: "YouTube Video", icon: "📹" },
-  { id: "youtubeShort", label: "YouTube Short", icon: "⏱️" },
-  { id: "blogPost", label: "Blog Post", icon: "📝" },
-  { id: "podcastMention", label: "Podcast Mention", icon: "🎙️" },
-  { id: "liveStream", label: "Live Stream", icon: "🔴" },
-  { id: "userGeneratedContent", label: "UGC Creation", icon: "👥" },
-  { id: "whatsappStatus", label: "WhatsApp Status", icon: "💬" },
+  { id: "instagramStory", label: "Instagram Story", icon: Image },
+    { id: "instagramReel", label: "Instagram Reel", icon: Video },
+    { id: "tiktokVideo", label: "TikTok Video", icon: Video },
+    { id: "youtubeVideo", label: "YouTube Video", icon: Video },
+    { id: "youtubeShort", label: "YouTube Short", icon: Video },
+    { id: "blogPost", label: "Blog Post", icon: FileText },
+    { id: "facebookPost", label: "Facebook Post", icon: FileText },
+    { id: "podcastMention", label: "Podcast Mention", icon: Mic },
+    { id: "liveStream", label: "Live Stream", icon: Video },
+    { id: "userGeneratedContent", label: "UGC Creation", icon: Video },
+    { id: "whatsappStatus", label: "WhatsApp Status Post", icon: Image },
+    { id: "socialPost", label: "Whatsapp Group Post", icon: Image },
+    { id: "repost", label: "Repost", icon: Repeat },
 ];
 
 export default function ProposalsPage() {

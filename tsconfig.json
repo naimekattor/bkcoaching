@@ -33,7 +33,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "components/brand/CreateCampaignModal.jsx",
+    "components/brand/CreateCampaignModal.tsx",
     "components/dashboard/Sidebar.jsx",
     ".next/dev/types/**/*.ts"
   ],
