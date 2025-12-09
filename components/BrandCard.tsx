@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { FaStar } from "react-icons/fa";
 
 type Brand = {
@@ -24,6 +25,7 @@ export default function BrandCard({
   description,
   image,
   logo,
+  id
 }: Brand) {
   return (
     <div
@@ -57,15 +59,15 @@ export default function BrandCard({
               </div>
               <div className="flex items-center text-gray-600">
                 <span className="mr-2">🗓</span>
-                <span>{service}</span>
+                <span>{category}</span>
               </div>
             </div>
           </div>
 
           <div className="flex items-center mb-6 justify-center lg:justify-start">
             <div className="text-center sm:text-left">
-              <p className="text-gray-600 text-sm">{category}</p>
-              <div className="flex items-center justify-center lg:justify-start space-x-1">
+              {/* <p className="text-gray-600 text-sm">{category}</p> */}
+              {/* <div className="flex items-center justify-center lg:justify-start space-x-1">
                 <p className="text-lg font-bold text-gray-900">{rating}</p>
                 <span className="text-gray-500 text-sm">
                   ({reviews.toLocaleString()} Reviews)
@@ -80,7 +82,7 @@ export default function BrandCard({
                     }
                   />
                 ))}
-              </div>
+              </div> */}
             </div>
             <Image
               width={83}
@@ -96,8 +98,8 @@ export default function BrandCard({
         <p className="text-gray-600 mb-6">{description}</p>
 
         <div className="text-left lg:text-left mt-4">
-          <button className="bg-primary text-white font-semibold py-3 px-8 inline-block rounded-lg shadow-md hover:shadow-lg hover:border-2 hover:border-[#001F3F] hover:bg-white hover:text-[#001F3F] transition-all duration-300 cursor-pointer">
-            Explore Brand
+          <button  className="bg-primary text-white font-semibold py-3 px-8 inline-block rounded-lg shadow-md hover:shadow-lg hover:border-2 hover:border-[#001F3F] hover:bg-white hover:text-[#001F3F] transition-all duration-300 cursor-pointer">
+           <Link href={`/brands/${id}`}> Explore Brand</Link>
           </button>
         </div>
       </div>

@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { X, Calendar, Paperclip, CheckCircle, XCircle } from "lucide-react";
 import { toast } from "react-toastify";
+import { usePathname } from "next/navigation";
 
 // --- Interfaces ---
 interface Attachment {
@@ -60,24 +61,28 @@ export default function Page() {
     null
   );
 
-  const store = useAuthStore.getState();
+  const user= useAuthStore((state) => state.user);
+  console.log(user);
+  
+
+  // const store = useAuthStore.getState();
 
   // 1. Fetch User Info
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await apiClient("user_service/get_user_info/", {
-          method: "GET",
-          auth: true,
-        });
-        store.setUser(res.data);
-        setInfluencerProfile(res.data.influencer_profile);
-      } catch (error) {
-        console.error("❌ API Error:", error);
-      }
-    };
-    fetchUser();
-  }, []);
+  // useEffect(() => {
+  //   const fetchUser = async () => {
+  //     try {
+  //       const res = await apiClient("user_service/get_user_info/", {
+  //         method: "GET",
+  //         auth: true,
+  //       });
+  //       // store.setUser(res.data);
+  //       setInfluencerProfile(res.data.influencer_profile);
+  //     } catch (error) {
+  //       console.error("❌ API Error:", error);
+  //     }
+  //   };
+  //   fetchUser();
+  // }, []);
 
   // 2. Fetch Rooms (Messages)
   useEffect(() => {
@@ -191,6 +196,17 @@ export default function Page() {
   };
 
   const totalEarnings = campaigns.reduce((acc, curr) => acc + curr.budget, 0);
+const profileSrc: string =
+  typeof user?.influencer_profile?.profile_picture === "string" &&
+  user.influencer_profile.profile_picture !== ""
+    ? user.influencer_profile.profile_picture
+    : "/images/person.jpg";
+
+const profileName: string =
+  typeof user?.influencer_profile?.display_name === "string" &&
+  user.influencer_profile.display_name !== ""
+    ? user.influencer_profile.display_name
+    : "User Avatar";
 
   return (
     <div className="relative">
@@ -200,15 +216,19 @@ export default function Page() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="w-16 h-16 rounded-md flex items-center justify-center overflow-hidden">
-                <Image
-                  width={64}
-                  height={64}
-                  src={
-                    influencerProfile?.profile_picture || "/images/person.jpg"
-                  }
-                  className="w-full h-full object-cover"
-                  alt={influencerProfile?.display_name || "User avatar"}
-                />
+                
+                  
+
+                  <Image
+                    src={profileSrc}
+                    width={44}
+                    height={44}
+                    alt={profileName}
+                    className="w-11 h-11 rounded-full object-cover ring-2 ring-gray-200"
+                  />
+                
+                  
+                
               </div>
               <div>
                 <h2 className="text-xl font-bold text-slate-800">

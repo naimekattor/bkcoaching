@@ -26,9 +26,9 @@ export function CampaignsSection({ allCampaigns }) {
           >
             <div>
               <h4 className="font-medium text-slate-800">{campaign?.title}</h4>
-              <p className="text-sm text-slate-600">
+              {/* <p className="text-sm text-slate-600">
                 {campaign?.creators || 0} Creators onboarded
-              </p>
+              </p> */}
             </div>
             <span
               className={`px-3 py-1 rounded-full text-sm font-medium ${campaign?.statusColor}`}

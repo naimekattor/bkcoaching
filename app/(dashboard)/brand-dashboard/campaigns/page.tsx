@@ -13,6 +13,7 @@ import {
   Users,
   Rocket,
   ChevronDown,
+  Star,
 } from "lucide-react";
 import {
   Select,
@@ -43,6 +44,7 @@ import {
 import { HiSpeakerphone } from "react-icons/hi";
 import { motion } from "framer-motion";
 import { Campaign } from "@/types/campaign";
+import { toast } from "react-toastify";
 
 /* -------------------------------------------------
    Types
@@ -55,7 +57,11 @@ interface PlatformConfig {
   className: string;
 }
 
-
+interface InfluencerProfile {
+  display_name: string;
+  profile_picture: string | null;
+  // Add other fields you need
+}
 
 
 
@@ -79,7 +85,14 @@ type CampaignApiResponse = {
 };
 
 interface HiringCampaign {
-  id: string;
+  id: number;
+  campaign_id:number;
+  hired_influencer_id: number;
+  is_completed_marked_by_brand: boolean;
+  rating: number;
+  status?: string;
+  // We will attach the fetched profile here for display
+  influencer_details?: InfluencerProfile;
 }
 
 /* -------------------------------------------------
@@ -152,6 +165,10 @@ export default function CampaignDashboard() {
   const [platformFilter, setPlatformFilter] = useState("all");
   const [allCampaigns, setAllCampaigns] = useState<Campaign[]>([]);
   const [previousHirings, setPreviousHirings] = useState<HiringCampaign[]>([]);
+// State for rating input
+  const [hoverRating, setHoverRating] = useState<number>(0);
+  const [ratingValue, setRatingValue] = useState<number>(0);
+    const [modalHirings, setModalHirings] = useState<HiringCampaign[]>([]);
 
   /* ---------- Stats (no type errors) ---------- */
   const stats = [
@@ -285,12 +302,56 @@ export default function CampaignDashboard() {
 
         if (hiringsRes.data && Array.isArray(hiringsRes.data)) {
           setPreviousHirings(hiringsRes.data);
+          console.log(hiringsRes.data);
+          
         }
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+        
+      }
     };
 
     fetchPreviousHirings();
   }, []);
+
+  useEffect(() => {
+    const fetchInfluencerDetails = async () => {
+      if (!selectedCampaign) return;
+
+      // 1. Filter hirings for this specific campaign
+      // Note: Ensure IDs are compared as same type (numbers)
+      const relevantHirings = previousHirings.filter(
+        (h) => Number(h.campaign_id) === Number(selectedCampaign.id)
+      );
+
+      // 2. Fetch user info for each hiring
+      const hiringsWithProfiles = await Promise.all(
+        relevantHirings.map(async (hiring) => {
+          try {
+            // Using user_service to get influencer details
+            const res = await apiClient(
+              `user_service/get_a_influencer/${hiring.hired_influencer_id}/`, 
+              { method: "GET" }
+            );
+            
+            return {
+              ...hiring,
+              influencer_details: res.data?.influencer_profile || null,
+            };
+          } catch (error) {
+            console.error("Error fetching influencer:", error);
+            return hiring;
+          }
+        })
+      );
+
+      setModalHirings(hiringsWithProfiles);
+    };
+
+    if (selectedCampaign && previousHirings.length > 0) {
+      fetchInfluencerDetails();
+    }
+  }, [selectedCampaign, previousHirings]);
 
   /* ---------- Pause / Resume ---------- */
   const handlePauseResume = async (event: Event, campaign: Campaign) => {
@@ -339,6 +400,73 @@ export default function CampaignDashboard() {
     setAllCampaigns((prev) => [newCampaign, ...prev]);
     setShowModal(false);
   };
+
+const getCompleteStatus = (selectedCampaignId: number) => {
+  if (!selectedCampaignId) return null;
+
+  // First, try to match by campaign_id
+  let status = previousHirings.find((c) => c.campaign_id === selectedCampaignId);
+
+  // If no match, fallback: try to match by id or another unique property
+  if (!status) {
+    status = previousHirings.find((c) => c.id === selectedCampaignId);
+  }
+
+  return status || null;
+};
+
+
+
+  const handleComplete = async (hiringId: number) => {
+    try {
+      const res = await apiClient(`campaign_service/complete_offer/${hiringId}/`, {
+        method: "PATCH",
+        auth: true,
+      });
+
+      if (res?.code === 200 || res?.status === "success") {
+        toast.success("Campaign marked as completed!");
+
+        // 1. Update the Main Hirings State (Global)
+        const updatedHirings = previousHirings.map((h) =>
+          h.id === hiringId ? { ...h, is_completed_marked_by_brand: true } : h
+        );
+        setPreviousHirings(updatedHirings);
+
+        // 2. Update the Modal State (Local) so UI changes instantly
+        setModalHirings((prev) =>
+          prev.map((h) =>
+            h.id === hiringId ? { ...h, is_completed_marked_by_brand: true } : h
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Error marking complete:", error);
+      toast.error("Failed to mark as complete.");
+    }
+  };
+
+  const handleSubmitRating = async (hiringId: number, rating: number) => {
+    try {
+      const res = await apiClient(`campaign_service/give_rating/${hiringId}/`, {
+        method: "POST", 
+        auth: true,
+        body: JSON.stringify({ rating: rating }),
+      });
+
+      if (res?.code === 200 || res?.status === "success") {
+        toast.success("Rating submitted!");
+        
+        // Update local states to show stars are locked in
+        setPreviousHirings((prev) =>
+          prev.map((h) => (h.id === hiringId ? { ...h, rating: rating } : h))
+        );
+      }
+    } catch (error) {
+      toast.error("Failed to submit rating.");
+    }
+  };
+
 
   /* -------------------------------------------------
      Render
@@ -619,102 +747,122 @@ export default function CampaignDashboard() {
       {/* Detail Modal */}
       {selectedCampaign && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[100vh] overflow-y-auto">
-            <div className="relative ">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            
+            {/* Modal Header Image */}
+            <div className="relative">
               <div className="w-full h-48 bg-gray-100 flex items-center justify-center rounded-t-lg overflow-hidden">
                 <Image
                   width={600}
                   height={192}
                   src={selectedCampaign.image}
                   alt={selectedCampaign.title}
-                  className="w-full h-full object-contain  rounded-t-lg"
+                  className="w-full h-full object-contain"
                 />
               </div>
-
               <button
                 className="absolute top-3 right-3 p-2 bg-white/80 hover:bg-white rounded-md transition-colors"
                 onClick={closeCampaignModal}
               >
                 <X className="h-4 w-4" />
               </button>
-              <span className="absolute top-3 left-3 px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                {selectedCampaign.status}
-              </span>
             </div>
 
             <div className="p-6">
-              <div className="flex justify-between items-center gap-4">
-                <div className="flex-1">
-                  <h2 className="text-xl font-semibold mb-2">
-                    {selectedCampaign.title}
-                  </h2>
-                  <p className="text-gray-600 mb-6">
-                    {selectedCampaign.description}
-                  </p>
-                </div>
-                <div className="space-x-2">
-                  <button className="bg-secondary text-primary px-8 py-2 font-semibold rounded cursor-pointer">
-                    Mark as Complete
-                  </button>
-                  {/* <button className="bg-secondary text-primary px-8 py-2 font-semibold rounded cursor-pointer">
-                    Pay Now
-                  </button> */}
+              <div className="flex justify-between items-center gap-4 mb-6">
+                <div>
+                  <h2 className="text-xl font-semibold mb-2">{selectedCampaign.title}</h2>
+                  <p className="text-gray-600">{selectedCampaign.description}</p>
                 </div>
               </div>
 
+              {/* --- ASSIGNED INFLUENCERS LIST --- */}
               <div className="mb-6">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm font-medium">Campaign progress</span>
-                  <span className="text-sm font-semibold">
-                    {selectedCampaign.progress}%
-                  </span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className="bg-secondary h-2 rounded-full transition-all duration-300"
-                    style={{ width: `${selectedCampaign.progress}%` }}
-                  />
-                </div>
-              </div>
+                <h3 className="font-semibold text-gray-900 mb-4">Assigned Influencers</h3>
+                
+                <div className="space-y-6">
+                  {modalHirings.length === 0 ? (
+                    <p className="text-sm text-gray-500 italic">No influencers hired yet.</p>
+                  ) : (
+                    modalHirings.map((hiring) => (
+                      <div key={hiring.id} className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                        
+                        {/* Influencer Info */}
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200">
+                              <Image
+                                width={40}
+                                height={40}
+                                src={hiring.influencer_details?.profile_picture || "/images/placeholder-user.jpg"}
+                                alt="avatar"
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                            <div>
+                              <p className="font-medium text-sm">
+                                {hiring.influencer_details?.display_name || `User ${hiring.hired_influencer_id}`}
+                              </p>
+                              <p className="text-xs text-gray-500">ID: {hiring.hired_influencer_id}</p>
+                            </div>
+                          </div>
 
-              <div className="mb-6">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="font-semibold">Assigned Influencers</h3>
-                  <button className="text-secondary hover:text-primary text-sm font-medium">
-                    View All
-                  </button>
-                </div>
+                          {/* ACTION BUTTON: Mark Complete */}
+                          <button
+                            onClick={() => handleComplete(hiring.id)}
+                            disabled={hiring.is_completed_marked_by_brand}
+                            className={`px-4 py-2 text-sm font-semibold rounded-md transition-colors ${
+                              hiring.is_completed_marked_by_brand
+                                ? "bg-green-100 text-green-700 cursor-default"
+                                : "bg-secondary text-primary hover:bg-[var(--secondaryhover)] cursor-pointer"
+                            }`}
+                          >
+                            {hiring.is_completed_marked_by_brand ? "✓ Completed" : "Mark as Complete"}
+                          </button>
+                        </div>
 
-                <div className="space-y-3">
-                  {selectedCampaign.assignedCreators.map((creator) => (
-                    <div
-                      key={creator.id}
-                      className="flex items-center justify-between"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-300">
-                          <Image
-                            width={600}
-                            height={600}
-                            src={creator.avatar || "/placeholder.svg"}
-                            alt={creator.name}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div>
-                          <p className="font-medium text-sm">{creator.name}</p>
-                          <p className="text-xs text-gray-500">
-                            {creator.followers}
-                          </p>
-                        </div>
+                        {/* --- REVIEW SECTION (Only if Completed) --- */}
+                        {hiring.is_completed_marked_by_brand && (
+                          <div className="border-t border-gray-200 pt-3 mt-2">
+                            <p className="text-xs text-gray-500 mb-2 font-medium">Rate Experience</p>
+                            <div className="flex items-center gap-1">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <button
+                                  key={star}
+                                  type="button"
+                                  disabled={hiring.rating > 0} // Disable if already rated
+                                  onClick={() => {
+                                    setRatingValue(star);
+                                    handleSubmitRating(hiring.id, star);
+                                  }}
+                                  onMouseEnter={() => setHoverRating(star)}
+                                  onMouseLeave={() => setHoverRating(0)}
+                                  className="focus:outline-none transition-transform hover:scale-110 disabled:cursor-default"
+                                >
+                                  <Star
+                                    className={`w-6 h-6 ${
+                                      star <= (hiring.rating || hoverRating)
+                                        ? "fill-yellow-400 text-yellow-400"
+                                        : "fill-gray-100 text-gray-300"
+                                    }`}
+                                  />
+                                </button>
+                              ))}
+                              {hiring.rating > 0 && (
+                                <span className="ml-2 text-xs text-green-600 font-medium">
+                                  Thanks for rating!
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        )}
+
                       </div>
-                      <button className="px-3 py-1 bg-secondary hover:bg-[var(--secondaryhover)] text-white text-sm rounded-md font-medium transition-colors">
-                        View Profile
-                      </button>
-                    </div>
-                  ))}
+                    ))
+                  )}
                 </div>
               </div>
+
             </div>
           </div>
         </div>

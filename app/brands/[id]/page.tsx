@@ -101,7 +101,7 @@ export default function BrandProfilePage() {
             twitter: raw?.x_handle,
           },
           mission: raw.mission ?? "",
-          businessType: raw.business_type?.split( ' – ' )[0] ?? "",
+          businessType: raw.business_type ?? "",
           contactPerson: {
             name: raw.business_name ?? "",
             title: raw.contact_person_title ?? "",
@@ -172,18 +172,10 @@ export default function BrandProfilePage() {
   // 4. Render the full profile
   // -------------------------------------------------
   return (
-    <div className="min-h-screen ">
+    <div className="min-h-screen container mx-auto mt-6">
       <div className="">
         {/* Header */}
-        <div className="flex items-center gap-4 mb-6">
-          <Link
-            href="/influencer-dashboard/brand"
-            className="text-gray-400 hover:text-gray-600"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </Link>
-          <span className="text-gray-600">Back</span>
-        </div>
+        
 
         {/* Brand Header Card */}
         <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
@@ -238,18 +230,7 @@ export default function BrandProfilePage() {
               </div>
             </div>
 
-            <div className="flex gap-3">
-              <Link href={`/influencer-dashboard/messages?id=${id}`}>
-              <button className="bg-yellow-500 hover:bg-[var(--secondaryhover)] text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2">
-                <MessageCircle className="w-4 h-4" />
-                Message
-              </button>
-              </Link>
-              {/* <button className="border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2">
-                <Bookmark className="w-4 h-4" />
-                Save
-              </button> */}
-            </div>
+            
           </div>
         </div>
 
@@ -358,7 +339,7 @@ export default function BrandProfilePage() {
             </div>
 
             {/* Reviews */}
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
+            {/* <div className="bg-white rounded-lg border border-gray-200 p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 Reviews & Testimonials
               </h2>
@@ -403,122 +384,10 @@ export default function BrandProfilePage() {
               ) : (
                 <p className="text-gray-500">No reviews yet.</p>
               )}
-            </div>
+            </div> */}
           </div>
 
-          {/* RIGHT COLUMN */}
-          <div className="space-y-6">
-            {/* Contact */}
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                Contact Information
-              </h2>
-              <div className="space-y-4">
-                <div>
-                  <div className="font-medium text-gray-900 mb-1">
-                    {brand.contactPerson?.name ?? ""}
-                  </div>
-                  <div className="text-sm text-gray-600">
-                    {brand.contactPerson?.title}
-                  </div>
-                </div>
-                {brand.email && (
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Mail className="w-4 h-4" />
-                    {brand.email}
-                  </div>
-                )}
-                {/* {brand.phone && (
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Phone className="w-4 h-4" />
-                    {brand.phone}
-                  </div>
-                )} */}
-                <div className="flex gap-2">
-                  {brand.socialLinks?.linkedin && (
-                    <a
-                      href={brand.socialLinks.linkedin}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 bg-primary rounded flex items-center justify-center"
-                    >
-                      <Linkedin className="w-4 h-4 text-white" />
-                    </a>
-                  )}
-                  {brand.socialLinks?.twitter && (
-                    <a
-                      href={brand.socialLinks.twitter}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 bg-primary rounded flex items-center justify-center"
-                    >
-                      <Twitter className="w-4 h-4 text-white" />
-                    </a>
-                  )}
-                  {brand.socialLinks?.instagram && (
-                    <a
-                      href={brand.socialLinks.instagram}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 bg-primary rounded flex items-center justify-center"
-                    >
-                      <Instagram className="w-4 h-4 text-white" />
-                    </a>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Resources */}
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                Business Resources
-              </h2>
-              {brand.resources?.length ? (
-                <div className="space-y-3">
-                  {brand.resources.map((res, idx) => (
-                    <a
-                      key={idx}
-                      href={res.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50"
-                    >
-                      <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
-                        {res.type.includes("Video") ? (
-                          <Video className="w-4 h-4 text-white" />
-                        ) : res.type.includes("Media") ? (
-                          <ImageIcon className="w-4 h-4 text-white" />
-                        ) : (
-                          <FileText className="w-4 h-4 text-white" />
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <div className="font-medium text-gray-900 text-sm">
-                          {res.type}
-                        </div>
-                        <div className="text-xs text-gray-600">{res.title}</div>
-                      </div>
-                    </a>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-gray-500">No resources available.</p>
-              )}
-            </div>
-
-            {/* Share */}
-            <div className="bg-primary rounded p-6 text-white">
-              <h2 className="text-lg font-semibold mb-4">Share Profile</h2>
-              <button
-                onClick={handleCopyLink}
-                className="w-full bg-white/20 hover:bg-white/30 text-white py-3 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors"
-              >
-                <Copy className="w-4 h-4" />
-                {copied ? "Copied!" : "Copy Link"}
-              </button>
-            </div>
-          </div>
+          
         </div>
       </div>
     </div>

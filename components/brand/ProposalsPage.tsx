@@ -5,7 +5,15 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { apiClient } from "@/lib/apiClient";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 import { FileText, Mic, Repeat, Video } from "lucide-react";
 
 type ProposalForm = {
@@ -16,30 +24,29 @@ type ProposalForm = {
   productPhotos: File | null;
   deliverables: string[];
   budget: string;
-  campaignId:string;
+  campaignId: number | null;
+  campaignName: string;
 };
 
 interface MyCampaigns {
-  id:number;
-  campaign_name:string;
-
-
+  id: number;
+  campaign_name: string;
 }
 
 const deliverableTypes = [
   { id: "instagramStory", label: "Instagram Story", icon: Image },
-    { id: "instagramReel", label: "Instagram Reel", icon: Video },
-    { id: "tiktokVideo", label: "TikTok Video", icon: Video },
-    { id: "youtubeVideo", label: "YouTube Video", icon: Video },
-    { id: "youtubeShort", label: "YouTube Short", icon: Video },
-    { id: "blogPost", label: "Blog Post", icon: FileText },
-    { id: "facebookPost", label: "Facebook Post", icon: FileText },
-    { id: "podcastMention", label: "Podcast Mention", icon: Mic },
-    { id: "liveStream", label: "Live Stream", icon: Video },
-    { id: "userGeneratedContent", label: "UGC Creation", icon: Video },
-    { id: "whatsappStatus", label: "WhatsApp Status Post", icon: Image },
-    { id: "socialPost", label: "Whatsapp Group Post", icon: Image },
-    { id: "repost", label: "Repost", icon: Repeat },
+  { id: "instagramReel", label: "Instagram Reel", icon: Video },
+  { id: "tiktokVideo", label: "TikTok Video", icon: Video },
+  { id: "youtubeVideo", label: "YouTube Video", icon: Video },
+  { id: "youtubeShort", label: "YouTube Short", icon: Video },
+  { id: "blogPost", label: "Blog Post", icon: FileText },
+  { id: "facebookPost", label: "Facebook Post", icon: FileText },
+  { id: "podcastMention", label: "Podcast Mention", icon: Mic },
+  { id: "liveStream", label: "Live Stream", icon: Video },
+  { id: "userGeneratedContent", label: "UGC Creation", icon: Video },
+  { id: "whatsappStatus", label: "WhatsApp Status Post", icon: Image },
+  { id: "socialPost", label: "Whatsapp Group Post", icon: Image },
+  { id: "repost", label: "Repost", icon: Repeat },
 ];
 
 export default function ProposalsPage() {
@@ -51,19 +58,17 @@ export default function ProposalsPage() {
     productPhotos: null,
     deliverables: [],
     budget: "",
-    campaignId:"",
+    campaignId: null,
+    campaignName: "",
   });
 
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [myCampaigns,setMyCampaigns]=useState<MyCampaigns[]>([]);
+  const [myCampaigns, setMyCampaigns] = useState<MyCampaigns[]>([]);
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
   const params = useParams<{ id: string }>();
-  const profileId = params.id; 
+  const profileId = params.id;
   console.log(profileId);
-  
-    
 
   const handleInputChange = (field: keyof ProposalForm, value: string) => {
     setFormData((prev) => ({
@@ -91,7 +96,6 @@ export default function ProposalsPage() {
       [field]: file,
     }));
     console.log(formData.campaignId);
-    
   };
 
   const handleSubmitForm = (e: React.FormEvent<HTMLFormElement>) => {
@@ -99,63 +103,63 @@ export default function ProposalsPage() {
     setShowReviewModal(true);
   };
 
+  const isValid =
+    formData.campaignId &&
+    formData.budget &&
+    formData.startDate &&
+    formData.endDate &&
+    formData.deliverables.length > 0;
+
   const handleSendProposal = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("access_token");
-      if (!token) {
-        router.push("/auth/login");
+      if (!isValid) {
+        toast("Please fill all required fields before sending the proposal.");
         return;
       }
 
       const formPayload = new FormData();
-      formPayload.append("campaign_id", formData.campaignId);
+      formPayload.append("campaign_id", String(formData.campaignId));
       formPayload.append("start_date", formData.startDate || "");
       formPayload.append("end_date", formData.endDate || "");
       formPayload.append("proposal_message", formData.proposalMessage || "");
-      formPayload.append("campaign_deliverables", JSON.stringify(formData.deliverables));
-      const cleanBudget = formData.budget.replace(/[^0-9.]/g, ''); 
-      formPayload.append("budget", cleanBudget); 
+      formPayload.append(
+        "campaign_deliverables",
+        JSON.stringify(formData.deliverables)
+      );
+      const cleanBudget = formData.budget.replace(/[^0-9.]/g, "");
+      formPayload.append("budget", cleanBudget);
       formPayload.append("influencer_id", profileId);
-       if (formData.campaignBrief) {
+      if (formData.campaignBrief) {
         formPayload.append("attachments", formData.campaignBrief);
       }
 
       if (formData.productPhotos) {
         formPayload.append("attachments", formData.productPhotos);
       }
-     
-      
 
       console.log("Sending proposal with FormData");
 
-      
-
-
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}campaign_service/hire_influencer/`,
-        {
-          method: "POST",
-          headers: {
-           
-            Authorization: `Bearer ${token}`,
-          },
-          body: formPayload,
-        }
-      );
+  `${process.env.NEXT_PUBLIC_API_BASE_URL}campaign_service/hire_influencer/`,
+  {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${localStorage.getItem("access_token") || ""}`,
+    },
+    body: formPayload,
+  }
+);
+console.log(response);
+const data=await response.json();
+console.log(data);
 
-      if (!response.ok) {
-        throw new Error(`API request failed: ${response.statusText}`);
-      }
-
-      const result = await response.json();
-
-      if (result.status === "success") {
-        console.log("Proposal sent successfully:", result.data);
+      if (data.code == 201) {
+        console.log("Proposal sent successfully:", data.data);
         setShowReviewModal(false);
         setShowSuccessModal(true);
       } else {
-        console.error("Failed to send proposal:", result.error);
+        console.error("Failed to send proposal:", data.error);
         toast("Failed to send proposal. Please try again.");
       }
     } catch (error) {
@@ -188,26 +192,23 @@ export default function ProposalsPage() {
     // });
   };
 
-
-  useEffect(()=>{
-    const fetchMyCampaigns=async()=>{
+  useEffect(() => {
+    const fetchMyCampaigns = async () => {
       try {
-        const res=await apiClient('campaign_service/get_my_all_campaigns/',{
-          method:"GET",
-          auth:true,
+        const res = await apiClient("campaign_service/get_my_all_campaigns/", {
+          method: "GET",
+          auth: true,
         });
         setMyCampaigns(res.data);
-      } catch (error) {
-        
-      }
-    }
+      } catch (error) {}
+    };
     fetchMyCampaigns();
-  },[]);
+  }, []);
 
   return (
     <div className="flex min-h-screen ">
       <div className="flex-1">
-        <div className="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+        <div className=" border-b border-gray-200  py-4 flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">
               Micro-Influencer Hiring Proposal
@@ -220,42 +221,51 @@ export default function ProposalsPage() {
         </div>
 
         <div className="my-6">
-           <label className="block text-sm font-medium text-gray-700 mb-2">
-    Select Campaign *
-  </label>
-          <Select onValueChange={(value)=>handleInputChange("campaignId",value)}>
-      <SelectTrigger className="w-[250px]">
-       <SelectValue placeholder="Select a Campaign" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectGroup>
-          <SelectLabel>All Campaigns</SelectLabel>
-          {
-            myCampaigns.map((campaign)=>{
-              return <SelectItem key={campaign.id} value={String(campaign.id)}>{campaign.campaign_name}</SelectItem>
-            })
-          }
-          
-          
-        </SelectGroup>
-      </SelectContent>
-    </Select>
+          <label className="block text-[16px] font-semibold text-gray-900 mb-2">
+            Select Campaign *
+          </label>
+          <Select
+            onValueChange={(value) =>{
+              const selectedCampaign = myCampaigns.find(
+      (c) => c.id === Number(value)
+    );
+    if (!selectedCampaign) return;
+
+    // Use the generic handleInputChange
+    handleInputChange("campaignId", String(selectedCampaign.id));
+    handleInputChange("campaignName", selectedCampaign.campaign_name);
+            }}
+          >
+            <SelectTrigger className="w-[250px]">
+              <SelectValue placeholder="Select a Campaign" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>All Campaigns</SelectLabel>
+                {myCampaigns.map((campaign) => {
+                  return (
+                    <SelectItem key={campaign.id} value={String(campaign.id)}>
+                      {campaign.campaign_name}
+                    </SelectItem>
+                  );
+                })}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="">
           <form onSubmit={handleSubmitForm} className="mx-auto">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-              
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
                 <div className="px-3">
-                  <h4 className="font-medium text-gray-900 mb-4">
-                    Project Timeline
+                  <h4 className="text-[16px] font-semibold text-gray-900 mb-4">
+                    Project Timeline *
                   </h4>
 
                   <div className="flex items-center space-x-4">
                     <div className="flex flex-col">
-                      <label className="text-sm text-gray-600 mb-1">
+                      <label className="text-sm text-gray-900 font-medium mb-1">
                         Start Date
                       </label>
                       <input
@@ -269,7 +279,7 @@ export default function ProposalsPage() {
                     </div>
 
                     <div className="flex flex-col">
-                      <label className="text-sm text-gray-600 mb-1">
+                      <label className="text-sm text-gray-900 font-medium mb-1">
                         End Date
                       </label>
                       <input
@@ -285,8 +295,8 @@ export default function ProposalsPage() {
                 </div>
                 {/* Budget */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Budget
+                  <label className="block text-sm text-gray-900 font-medium mb-2">
+                    Budget *
                   </label>
                   <input
                     type="text"
@@ -302,7 +312,7 @@ export default function ProposalsPage() {
             </div>
 
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-[16px] font-semibold text-gray-900 mb-2">
                 Proposal Message
               </label>
               <textarea
@@ -317,12 +327,11 @@ export default function ProposalsPage() {
             </div>
 
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              <h3 className="text-[16px] font-semibold text-gray-900 mb-2">
                 Content Deliverables *
               </h3>
               <p className="text-sm text-gray-600 mb-4">
-                Select the type of content you want micro-influencers to
-                produce
+                Select the type of content you want micro-influencers to produce
               </p>
 
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -356,7 +365,7 @@ export default function ProposalsPage() {
             </div>
 
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              <h3 className="text-[16px] font-semibold text-gray-900 mb-4">
                 Attachment
               </h3>
 
@@ -390,7 +399,6 @@ export default function ProposalsPage() {
                   <input
                     type="file"
                     accept="image/*"
-                    
                     onChange={(e) => handleFileChange(e, "productPhotos")}
                     className="mt-2 text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-secondary file:text-primary "
                   />
@@ -435,29 +443,29 @@ export default function ProposalsPage() {
             <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="border-2 border-gray-200 rounded-xl p-4">
                 <div className="flex items-center gap-3 mb-4">
-                  <Image
+                  {/* <Image
                     width={60}
                     height={60}
                     src="/placeholder.svg"
                     alt="Influencer"
                     className="w-15 h-15 rounded-full"
-                  />
+                  /> */}
                   <div>
                     <h3 className="font-semibold text-gray-900">
-                      Influencer Name
+                      Campaign Name
                     </h3>
                     <p className="text-sm text-gray-600">
-                      Micro-influencer profile
+                      {formData.campaignName}
                     </p>
                   </div>
                 </div>
 
-                <div className="mb-4 border-b-2 border-gray-200 pb-3">
+                {/* <div className="mb-4 border-b-2 border-gray-200 pb-3">
                   <h4 className="font-medium text-gray-900 mb-2">Campaign</h4>
                   <p className="text-sm text-gray-600">
                     Campaign details and objectives
                   </p>
-                </div>
+                </div> */}
 
                 <div className="mb-4">
                   <h4 className="font-medium text-gray-900 mb-2">
@@ -515,7 +523,9 @@ export default function ProposalsPage() {
                         return (
                           <div key={delId} className="flex items-center gap-2">
                             <span className="text-green-500">✓</span>
-                            <span className="text-sm">{deliverable?.label}</span>
+                            <span className="text-sm">
+                              {deliverable?.label}
+                            </span>
                           </div>
                         );
                       })
@@ -539,9 +549,8 @@ export default function ProposalsPage() {
                       <span>📷</span>
                       <span className="truncate">
                         {formData.productPhotos
-      ? formData.productPhotos.name
-      : "Product photos (optional)"}
-
+                          ? formData.productPhotos.name
+                          : "Product photos (optional)"}
                       </span>
                     </div>
                   </div>
@@ -555,13 +564,7 @@ export default function ProposalsPage() {
                   >
                     {loading ? "Sending..." : "Send Proposal"}
                   </button>
-                  {/* <button
-                    onClick={handleSaveAsDraft}
-                    disabled={loading}
-                    className="flex-1 border border-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-50 disabled:opacity-50 transition-colors"
-                  >
-                    Save as Draft
-                  </button> */}
+                  
                 </div>
               </div>
             </div>
@@ -591,12 +594,7 @@ export default function ProposalsPage() {
                 >
                   Continue
                 </button>
-                {/* <button
-                  onClick={handleCloseSuccess}
-                  className="flex-1 border border-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-50 transition-colors"
-                >
-                  View Profile
-                </button> */}
+                
               </div>
             </div>
           </div>

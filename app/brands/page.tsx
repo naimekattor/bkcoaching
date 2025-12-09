@@ -1,62 +1,60 @@
 import BrandCard from "@/components/BrandCard";
-// Removed unused Hero import
+import { apiClient } from "@/lib/apiClient";
 import Image from "next/image";
+export interface BrandProfile {
+  id: number;
+  business_name: string | null;
+  display_name: string | null;
+  business_type: string | null;
+  logo: string | null;
+  short_bio: string | null;
+  keyword_hashtags: string | null;
+  audience_demographic: string | null;
+  brand_tone: string | null;
+  choosen_plan: string | null;
+  designation: string | null;
+  instagram_handle: string | null;
+  linkedin_profile: string | null;
+  tiktok_handle: string | null;
+  x_handle: string | null;
+  whatsapp_business: string | null;
+  website: string | null;
+  timezone: string | null;
+  targeted_audience: string | null;
+  mission: string | null;
+}
+interface BrandApiResponse {
+  brand_profile: BrandProfile;
+}
+export default async function BrandsPage() {
+  async function fetchBrands() {
+    const res = await apiClient("user_service/get_all_brands/", {
+      method: "GET",
+    });
 
-export default function BrandsPage() {
-  const brands = [
-    {
-      id: 1,
-      name: "GlowSkin Care",
-      location: "Los Angeles, California, USA",
-      service: "Year-Round Service",
-      rating: 4.8,
-      reviews: 1250,
-      category: "Beauty & Wellness",
-      description:
-        "GlowSkin Care offers organic, dermatologist-approved skincare solutions designed to bring out your natural glow. With cruelty-free products and a focus on sustainability, we make beauty simple and effective.",
-      image: "/images/brand-img4.jpg",
-      logo: "/images/brand/brand-logo1.png",
-    },
-    {
-      id: 2,
-      name: "Zen Spa",
-      location: "New York, USA",
-      service: "Seasonal Packages",
-      rating: 4.6,
-      reviews: 890,
-      category: "Wellness & Relaxation",
-      description:
-        "Zen Spa is a sanctuary for relaxation and rejuvenation. Our therapists combine traditional and modern techniques to deliver a holistic healing experience.",
-      image: "/images/brand-img3.jpg",
-      logo: "/images/brand/brand-logo2.png",
-    },
-    {
-      id: 3,
-      name: "Zen Spa",
-      location: "New York, USA",
-      service: "Seasonal Packages",
-      rating: 4.6,
-      reviews: 890,
-      category: "Wellness & Relaxation",
-      description:
-        "Zen Spa is a sanctuary for relaxation and rejuvenation. Our therapists combine traditional and modern techniques to deliver a holistic healing experience.",
-      image: "/images/brand-img2.jpg",
-      logo: "/images/brand/brand-logo3.png",
-    },
-    {
-      id: 4,
-      name: "Zen Spa",
-      location: "New York, USA",
-      service: "Seasonal Packages",
-      rating: 4.6,
-      reviews: 890,
-      category: "Wellness & Relaxation",
-      description:
-        "Zen Spa is a sanctuary for relaxation and rejuvenation. Our therapists combine traditional and modern techniques to deliver a holistic healing experience.",
-      image: "/images/brand-img1.jpg",
-      logo: "/images/brand/brand-logo4.png",
-    },
-  ];
+    const items: BrandApiResponse[] = res?.data ?? [];
+    console.log(items);
+
+    return items.map((brand: any) => ({
+      id: brand?.brand_profile?.id,
+      name:
+        brand?.brand_profile?.display_name ||
+        brand?.brand_profile?.business_name ||
+        "Unnamed",
+      location: brand?.brand_profile?.timezone || "Not provided",
+      service: brand?.brand_profile?.service || "Not specified",
+      rating: brand?.brand_profile?.rating || 0,
+      reviews: brand?.brand_profile?.reviews || 0,
+      category: brand?.brand_profile?.business_type
+        ? brand.brand_profile.business_type.split("–")[0].trim()
+        : "General",
+      description: brand?.brand_profile?.short_bio || "",
+      image: brand?.brand_profile?.logo || "/images/placeholder.jpg",
+      logo: brand?.brand_profile?.logo || "/images/placeholder.jpg",
+    }));
+  }
+
+  const brands = await fetchBrands();
 
   return (
     <section>
@@ -92,7 +90,7 @@ export default function BrandsPage() {
         </main>
       </section>
       <div className="space-y-12 py-16 lg:py-[100px]">
-        {brands.map((brand) => (
+        {brands.slice(0, 15).map((brand) => (
           <BrandCard key={brand.id} {...brand} />
         ))}
       </div>

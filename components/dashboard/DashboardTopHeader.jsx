@@ -9,7 +9,9 @@ import { ChevronDown, LogOut } from "lucide-react";
 import { signOut } from "next-auth/react";
 
 const DashboardTopHeader = () => {
-  const { user, logout } = useAuthStore();
+  // const { user, logout } = useAuthStore();
+  const user = useAuthStore((state) => state.user);
+  const logout = useAuthStore((state) => state.logout);
   const router = useRouter();
   const pathname = usePathname();
   const [showDropdown, setShowDropdown] = useState(false);
@@ -26,6 +28,7 @@ const DashboardTopHeader = () => {
     }
     setShowDropdown(false);
   };
+  console.log(user?.influencer_profile?.profile_picture);
 
   return (
     <div className="bg-white px-4 sm:px-8 py-5 border-b border-gray-100">
@@ -45,17 +48,18 @@ const DashboardTopHeader = () => {
               onClick={() => setShowDropdown(!showDropdown)}
               className="flex items-center gap-2 hover:bg-gray-50 rounded-full p-1 pr-3 transition"
             >
-              <Image
-                src={
-                  user?.influencer_profile?.profile_picture ||
-                  user?.brand_profile?.logo ||
-                  "/images/person.jpg"
-                }
-                width={44}
-                height={44}
-                alt="Profile"
-                className="w-11 h-11 rounded-full object-cover ring-2 ring-gray-200"
-              />
+              {user && (
+                <Image
+                  src={
+                     user?.brand_profile?.logo || "/images/person.jpg"
+                  }
+                  width={44}
+                  height={44}
+                  alt="Profile"
+                  className="w-11 h-11 rounded-full object-cover ring-2 ring-gray-200"
+                />
+              )}
+
               <ChevronDown
                 size={18}
                 className={`text-gray-600 transition-transform ${
@@ -90,7 +94,9 @@ const DashboardTopHeader = () => {
                         onClick={switchDashboard}
                         className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3 transition"
                       >
-                        <span className="font-semibold text-primary">Switch</span>
+                        <span className="font-semibold text-primary">
+                          Switch
+                        </span>
                         <span className="text-sm text-gray-500">
                           →{" "}
                           {isBrandDashboard
@@ -108,7 +114,9 @@ const DashboardTopHeader = () => {
                       }}
                       className="w-full px-4 py-3 text-left hover:bg-red-50 text-red-600 flex items-center gap-3 transition"
                     >
-                      <span className=""><LogOut size={16}/></span>
+                      <span className="">
+                        <LogOut size={16} />
+                      </span>
                       <span className="text-[16px]">Log Out</span>
                     </button>
                   </div>
