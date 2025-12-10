@@ -593,7 +593,7 @@ export default function ProfilePage() {
           {/* Rate Ranges */}
           <Card className={`border-none shadow-sm h-full ${!paymentModels.paid ? 'opacity-60 grayscale pointer-events-none' : ''}`}>
             <CardHeader className="pb-4 border-b border-gray-100">
-              <CardTitle className="text-xl">Standard Rates</CardTitle>
+              <CardTitle className="text-xl">$ Your Rate Ranges</CardTitle>
               <CardDescription>
                 {selectedFormats.length > 0 
                   ? "Set your base rates for selected formats" 

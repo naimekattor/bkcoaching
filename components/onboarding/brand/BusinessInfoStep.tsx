@@ -5,10 +5,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Upload, Building, Globe, MapPin } from "lucide-react";
+import { Upload, Building, Globe, MapPin, X } from "lucide-react";
 import PageHeaderWithSwitcher from "@/components/PageHeaderWithSwitcher";
 import { useBrandOnBoarding } from "@/contexts/BrandOnboardingContext";
 import { uploadToCloudinary } from "@/lib/fileUpload";
+import Image from "next/image";
 
 interface BusinessInfoStepProps {
   onNext: () => void;
@@ -16,18 +17,14 @@ interface BusinessInfoStepProps {
 }
 
 const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
-  // const [formData, setFormData] = useState({
-  //   businessName: "",
-  //   website: "",
-  //   bio: "",
-  //   timeZone: "America/New_York",
-  //   businessTypes: [] as string[],
-  // });
   const { onboardingData, setOnboardingData } = useBrandOnBoarding();
-
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   const [timeZone, setTimeZone] = useState("Time Zone");
+  const [previewLogo,setPreviewLogo]=useState<string | null>(
+    onboardingData.logoUrl || null
+  );
+  const [uploading, setUploading] = useState(false);
 
   const businessTypes = [
     "Beauty & Skincare Brands – makeup, skincare, haircare",
@@ -82,17 +79,34 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const res = await uploadToCloudinary(file);
-      const imgUrl = res.url;
+      const objectUrl = URL.createObjectURL(file);
+      setPreviewLogo(objectUrl);
+      setUploading(true);
 
-      setOnboardingData((prev) => ({
-        ...prev,
-        logoUrl: imgUrl,
-      }));
-      setFileName(file.name);
+      try {
+        const res = await uploadToCloudinary(file);
+        const imgUrl = res.url;
 
-      console.log("Selected file:", imgUrl);
+        setOnboardingData((prev) => ({
+          ...prev,
+          logoUrl: imgUrl,
+        }));
+        // Update to remote URL after upload
+        setPreviewLogo(imgUrl);
+      } catch (error) {
+        console.error("Upload failed", error);
+        // Revert on failure
+        setPreviewLogo(null);
+      } finally {
+        setUploading(false);
+      }
     }
+  };
+  const removeLogo = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent triggering file input
+    setPreviewLogo(null);
+    setOnboardingData((prev) => ({ ...prev, logoUrl: "" }));
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   return (
@@ -189,22 +203,63 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
             {/* Logo Upload */}
             <div className="space-y-2">
               <Label>Logo (Optional)</Label>
+              
               <div
                 onClick={handleClick}
-                className="border-2 border-dashed border-border rounded-lg p-6 text-center cursor-pointer hover:bg-muted/50 transition-colors"
+                className={`
+                  relative group cursor-pointer 
+                  border-2 border-dashed rounded-xl 
+                  transition-all duration-200 ease-in-out
+                  ${previewLogo 
+                    ? "border-primary/50 bg-gray-50 h-48" 
+                    : "border-gray-300 hover:border-primary hover:bg-gray-50 h-32"
+                  }
+                  flex flex-col items-center justify-center
+                `}
               >
-                <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-                {fileName ? (
-                  <p className="text-sm font-medium">{fileName}</p>
-                ) : (
+                {previewLogo ? (
                   <>
-                    <p className="text-sm text-muted-foreground">
-                      Click to upload or drag and drop
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      PNG, JPG up to 2MB
-                    </p>
+                    <div className="relative w-full h-full p-4">
+                      <Image 
+                        src={previewLogo} 
+                        alt="Logo Preview" 
+                        fill
+                        className={`object-contain transition-opacity duration-300 ${uploading ? "opacity-50" : "opacity-100"}`}
+                      />
+                      {/* Loading Spinner Overlay */}
+                      {uploading && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Hover Actions Overlay */}
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-xl">
+                      <p className="text-white font-medium text-sm">Change Logo</p>
+                    </div>
+
+                    {/* Remove Button */}
+                    <button
+                      onClick={removeLogo}
+                      className="absolute top-2 right-2 p-1.5 bg-white rounded-full shadow-sm hover:bg-red-50 text-gray-500 hover:text-red-500 transition-colors z-10"
+                      title="Remove logo"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
                   </>
+                ) : (
+                  <div className="text-center p-4">
+                    <div className="bg-gray-100 p-3 rounded-full inline-block mb-3 group-hover:scale-110 transition-transform">
+                        <Upload className="w-6 h-6 text-gray-500" />
+                    </div>
+                    <p className="text-sm font-medium text-gray-700">
+                      Click to upload logo
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      SVG, PNG, JPG (max 2MB)
+                    </p>
+                  </div>
                 )}
               </div>
 
@@ -213,7 +268,7 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
                 type="file"
                 ref={fileInputRef}
                 onChange={handleFileChange}
-                accept="image/png,image/jpeg"
+                accept="image/png, image/jpeg, image/svg+xml"
                 className="hidden"
               />
             </div>

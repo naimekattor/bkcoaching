@@ -12,7 +12,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { demographics } from "@/constants/demographics";
 import { useBrandOnBoarding } from "@/contexts/BrandOnboardingContext";
 
 interface ProfileSetupStepProps {
@@ -58,36 +57,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
       label: "Men 45+",
       tooltip: "Gen X / Boomers – loyalty and financial stability.",
     },
-    // {
-    //   label: "Teen girls",
-    //   tooltip: "Gen Alpha / Gen Z – early fashion & fandom adopters.",
-    // },
-    // {
-    //   label: "Teen boys",
-    //   tooltip: "Gen Alpha / Gen Z – gaming, YouTube, and sports-heavy.",
-    // },
-    // {
-    //   label: "Young married couples",
-    //   tooltip: "Millennials – family-oriented, prioritizing lifestyle value.",
-    // },
-    // {
-    //   label: "Mothers with young children",
-    //   tooltip: "Millennials / Gen X – parenting, childcare, home-focused.",
-    // },
-    // {
-    //   label: "Fathers with young children",
-    //   tooltip: "Millennials / Gen X – parenting, career/family balance.",
-    // },
-    // {
-    //   label: "Newlyweds",
-    //   tooltip:
-    //     "Mostly Millennials – aspirational, home, and lifestyle-focused.",
-    // },
-    // {
-    //   label: "Singles in the dating stage",
-    //   tooltip:
-    //     "Gen Z / Millennials – lifestyle, social apps, and trend-driven.",
-    // },
+    
   ];
 
   const brandValues = [
@@ -122,7 +92,6 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
   };
 
   const isValid =
-    // formData.industriesNiches.length > 0 &&
     onboardingData.targetAudience.length > 0;
 
   return (
@@ -227,37 +196,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
           </Card>
 
           <div className="grid md:grid-cols-2 gap-8">
-            {/* Demographics */}
-            {/* <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Users className="w-5 h-5" />
-                  Audience Demographics
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 gap-3 max-h-64 overflow-y-auto">
-                  {demographics.map((demo) => (
-                    <div key={demo} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={demo}
-                        checked={onboardingData.demographics.includes(demo)}
-                        onCheckedChange={(checked) =>
-                          handleArrayChange(
-                            "demographics",
-                            demo,
-                            checked as boolean
-                          )
-                        }
-                      />
-                      <Label htmlFor={demo} className="text-sm font-normal">
-                        {demo}
-                      </Label>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card> */}
+            
 
             {/* Brand Values */}
             <Card>

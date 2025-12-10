@@ -8,6 +8,7 @@ import { FaInstagram } from "react-icons/fa";
 import { MdInsertEmoticon } from "react-icons/md";
 import { apiClient } from "@/lib/apiClient";
 import type { Brand } from "@/types/brand";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface BrandProfileResponse {
   business_name?: string;
@@ -23,16 +24,16 @@ interface BrandApiResponse {
   brand_profile?: BrandProfileResponse | null;
 }
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 12;
 
-export default function MicroinfluencersPage() {
+export default function BrandPage() {
   // ────── UI state ──────
   const [searchQuery, setSearchQuery] = useState("");
   const [businessType, setBusinessType] = useState("");
   const [timeZone, setTimeZone] = useState("");
   const [loading, setLoading] = useState(true);
   const [appliedSearch, setAppliedSearch] = useState("");
-
+ const [currentPage, setCurrentPage] = useState(1);
   // ────── Data ──────
   const [allBrands, setAllBrands] = useState<Brand[]>([]);
 
@@ -145,6 +146,21 @@ export default function MicroinfluencersPage() {
     setAppliedSearch(searchQuery);
   };
 
+   // ────── Pagination Logic ──────
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [businessType, timeZone, appliedSearch]);
+
+  const totalPages = Math.ceil(filteredBrands.length / PAGE_SIZE);
+  const paginatedBrands = filteredBrands.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
+  );
+
+  
+
+
   const clearFilters = () => {
     setSearchQuery("");
     setBusinessType("");
@@ -193,98 +209,66 @@ export default function MicroinfluencersPage() {
         </div>
 
         {/* Filter row */}
-        <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+          
+          {/* Business Type Select */}
           <div className="relative w-full">
-            <select
-              value={businessType}
-              onChange={(e) => setBusinessType(e.target.value)}
-              className="
-      w-full appearance-none 
-      px-4 py-3 
-      bg-white 
-      border border-gray-300 
-      rounded-lg 
-      text-gray-900 
-      text-base
-      hover:bg-gray-50
-      transition-all
-      focus:outline-none focus:ring-2 focus:ring-primary/40
-    "
+            <Select 
+              value={businessType} 
+              onValueChange={setBusinessType}
             >
-              <option value="" className="text-gray-400">
-                Select business type
-              </option>
-
-              {businessTypes.map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
-              ))}
-            </select>
-
-            {/* Custom Chevron Icon */}
-            <ChevronDown
-              size={20}
-              className="absolute right-3 top-1/2 
-      transform -translate-y-1/2 
-      text-gray-500 pointer-events-none"
-            />
+              <SelectTrigger className="w-full h-[50px] bg-white border border-gray-300 rounded-lg px-4 text-base focus:ring-2 focus:ring-primary/40 transition-all hover:bg-gray-50 hover:border-gray-400">
+                <SelectValue placeholder="Select business type" />
+              </SelectTrigger>
+              <SelectContent className="max-h-[300px]">
+                {businessTypes.map((t) => (
+                  <SelectItem key={t} value={t} className="cursor-pointer py-2.5">
+                    {t}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
+          {/* Time Zone Select */}
           <div className="relative w-full">
-            <select
-              value={timeZone}
-              onChange={(e) => setTimeZone(e.target.value)}
-              className="
-      w-full appearance-none 
-      px-4 py-3 
-      bg-white 
-      border border-gray-300 
-      rounded-lg 
-      text-gray-900 
-      text-base
-      hover:bg-gray-50
-      transition-all
-      focus:outline-none focus:ring-2 focus:ring-primary/40
-    "
+            <Select 
+              value={timeZone} 
+              onValueChange={setTimeZone}
             >
-              <option value="" className="text-gray-400">
-                All Time Zones
-              </option>
-
-              {timeZones.map((tz) => (
-                <option key={tz.value} value={tz.value}>
-                  {tz.label}
-                </option>
-              ))}
-
-              <option value="Others">Others</option>
-            </select>
-
-            {/* Chevron Icon */}
-            <ChevronDown
-              size={20}
-              className="absolute right-3 top-1/2 
-      transform -translate-y-1/2 
-      text-gray-500 pointer-events-none"
-            />
+              <SelectTrigger className="w-full h-[50px] bg-white border border-gray-300 rounded-lg px-4 text-base focus:ring-2 focus:ring-primary/40 transition-all hover:bg-gray-50 hover:border-gray-400">
+                <SelectValue placeholder="All Time Zones" />
+              </SelectTrigger>
+              <SelectContent className="max-h-[300px]">
+                {timeZones.map((tz) => (
+                  <SelectItem key={tz.value} value={tz.value} className="cursor-pointer py-2.5">
+                    {tz.label}
+                  </SelectItem>
+                ))}
+                <SelectItem value="Others" className="cursor-pointer py-2.5">Others</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
-          <div>
+          {/* Clear Filters Button */}
+          <div className="w-full sm:w-auto">
             <button
               onClick={clearFilters}
               className="
-      border border-gray-300 
-      hover:bg-gray-100 
-      active:bg-gray-200
-      text-gray-700 
-      px-6 py-3 
-      rounded-lg 
-      font-medium 
-      flex items-center gap-2
-      transition duration-200
-      focus:outline-none focus:ring-2 focus:ring-primary/40 text-nowrap
-    "
+                py-1
+                w-full sm:w-auto
+                border border-gray-300 
+                hover:bg-gray-100 
+                active:bg-gray-200
+                text-gray-700 
+                px-6 
+                rounded-lg 
+                font-medium 
+                flex items-center justify-center gap-2
+                transition duration-200
+                focus:outline-none focus:ring-2 focus:ring-primary/40 
+                whitespace-nowrap
+              "
             >
               <XCircle size={18} className="text-gray-500" />
               Clear Filters
@@ -299,13 +283,13 @@ export default function MicroinfluencersPage() {
           Featured brands
         </h2>
 
-        {filteredBrands.length === 0 ? (
+        {paginatedBrands.length === 0 ? (
           <p className="text-center text-gray-500">
             No brands match the current filters.
           </p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {filteredBrands.map((brand) => (
+            {paginatedBrands.map((brand) => (
               <div
                 key={brand.id}
                 className="bg-white rounded-lg border border-gray-200 p-6 text-center"
@@ -370,6 +354,61 @@ export default function MicroinfluencersPage() {
           </div>
         )}
       </div>
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-2 mt-12 mb-10">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-2 rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 border border-gray-200"
+          >
+            ←
+          </button>
+
+          {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+            // Logic to show a sliding window of pages could be added here
+            // For simple cases, just showing first 5 or using current page context
+            const page = i + 1;
+            return (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`px-3 py-2 rounded-md text-sm font-medium ${
+                  page === currentPage
+                    ? "bg-primary text-white"
+                    : "hover:bg-gray-100"
+                }`}
+              >
+                {page}
+              </button>
+            );
+          })}
+
+          {totalPages > 5 && (
+            <>
+              <span className="px-2">...</span>
+              <button
+                onClick={() => setCurrentPage(totalPages)}
+                className={`px-3 py-2 rounded-md text-sm font-medium ${
+                  totalPages === currentPage
+                    ? "bg-primary text-white"
+                    : "hover:bg-gray-100"
+                }`}
+              >
+                {totalPages}
+              </button>
+            </>
+          )}
+
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            className="px-3 py-2 rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 border border-gray-200"
+          >
+            →
+          </button>
+        </div>
+      )}
     </div>
   );
 }

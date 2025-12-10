@@ -4,7 +4,7 @@ import { useInfluencerOnboarding } from "@/contexts/InfluencerOnboardingContext"
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   Select,
@@ -155,7 +155,7 @@ const CollaborationPreferencesStep = ({
         </Card>
         <div className="flex md:flex-row flex-col gap-4">
           {/* Payment Preferences */}
-        <Card>
+        <Card className="w-full">
           <CardHeader><CardTitle>Payment Preferences *</CardTitle></CardHeader>
           <CardContent>
             <div className="grid md:grid-cols-2 gap-4">
@@ -212,86 +212,113 @@ const CollaborationPreferencesStep = ({
         </Card>
         {/* RATE RANGES – FIXED & WORKING */}
         {onboardingDataInfluencer.payment_preferences.includes("paid") && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <DollarSign className="w-5 h-5" />
-                Your Rate Ranges
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-2 gap-6">
-                {onboardingDataInfluencer.content_formats.map((formatId) => {
-                  const field = fieldMap[formatId];
-                  if (!field) return null;
+  <Card className="w-full border-none shadow-sm">
+    <CardHeader className="pb-4 border-b border-gray-100">
+      <CardTitle className="text-xl flex items-center gap-2">
+        <DollarSign className="w-5 h-5 text-primary" />
+        Your Rate Ranges
+      </CardTitle>
+      <CardDescription>
+        {onboardingDataInfluencer.content_formats.length > 0
+          ? "Set your base rates for the content formats selected above."
+          : "Select content formats above to set rates."}
+      </CardDescription>
+    </CardHeader>
+    
+    <CardContent className="pt-6">
+      {onboardingDataInfluencer.content_formats.length > 0 ? (
+        <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+          {onboardingDataInfluencer.content_formats.map((formatId) => {
+            const field = fieldMap[formatId];
+            // Safety check: if field mapping doesn't exist, skip
+            if (!field) return null;
 
-                  const currentValue = onboardingDataInfluencer[field] as string;
-                  const isCustom = !predefinedValues.includes(currentValue) && currentValue !== "";
+            const label = contentFormats.find((f) => f.id === formatId)?.label || formatId;
+            const currentValue = (onboardingDataInfluencer[field] as string) || "";
+            
+            // Determine if the current value is a custom number or a preset range
+            const isCustom = !predefinedValues.includes(currentValue) && currentValue !== "";
+            const selectValue = isCustom ? "custom" : currentValue;
 
-                  return (
-                    <div key={formatId} className="space-y-2">
-                      <Label className="text-sm">
-                        {contentFormats.find((f) => f.id === formatId)?.label}
-                      </Label>
+            return (
+              <div
+                key={formatId}
+                className="grid sm:grid-cols-[1fr_140px_100px] gap-3 items-center p-3 bg-gray-50 rounded-lg border border-gray-100 transition-all hover:border-gray-200"
+              >
+                {/* Label */}
+                <span 
+                  className="text-sm font-medium text-gray-700 truncate" 
+                  title={label}
+                >
+                  {label}
+                </span>
 
-                      {/* SELECT */}
-                      
-                      <Select
-                        value={isCustom ? "custom" : currentValue || ""}
-                        onValueChange={(value) => {
-                          if (value !== "custom") {
-                            setOnboardingDataInfluencer((prev) => ({
-                              ...prev,
-                              [field]: value,
-                            }));
-                          } else {
-                            
-                            setOnboardingDataInfluencer((prev) => ({
-                              ...prev,
-                              [field]: "", 
-                            }));
-                          }
+                {/* Dropdown */}
+                <Select
+                  value={selectValue}
+                  onValueChange={(value) => {
+                    if (value === "custom") {
+                      // If custom selected, clear value to allow typing
+                      setOnboardingDataInfluencer((prev) => ({
+                        ...prev,
+                        [field]: "",
+                      }));
+                    } else {
+                      // If range selected, save the range string
+                      setOnboardingDataInfluencer((prev) => ({
+                        ...prev,
+                        [field]: value,
+                      }));
+                    }
+                  }}
+                >
+                  <SelectTrigger className="h-9 text-xs bg-white">
+                    <SelectValue placeholder="Select rate" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {rateRanges.map((range) => (
+                      <SelectItem key={range.value} value={range.value} className="text-xs">
+                        {range.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                {/* Custom Input (Only appears if 'Custom' is selected or value is numeric) */}
+                <div className="relative">
+                  {(selectValue === "custom" || selectValue === "") && (
+                    <>
+                      <DollarSign className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-400" />
+                      <Input
+                        type="number"
+                        min="0"
+                        placeholder="0"
+                        value={isCustom ? currentValue : ""}
+                        onChange={(e) => {
+                          setOnboardingDataInfluencer((prev) => ({
+                            ...prev,
+                            [field]: e.target.value,
+                          }));
                         }}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select rate range" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {rateRanges.map((range) => (
-                            <SelectItem key={range.value} value={range.value}>
-                              {range.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-
-                      {/* CUSTOM INPUT */}
-                      {(currentValue === "" || isCustom) && (
-                        <div>
-                        <label htmlFor="" className="text-sm font-medium">Enter rate (e.g. $100)</label>
-                        <Input
-                          type="number"
-                          min="0"
-                          placeholder="Enter rate (e.g. $100)"
-                          value={isCustom ? currentValue : ""}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            setOnboardingDataInfluencer((prev) => ({
-                              ...prev,
-                              [field]: val || "", 
-                            }));
-                          }}
-                          className="mt-2 transition-all"
-                        />
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
+                        className="h-9 pl-6 text-xs bg-white"
+                      />
+                    </>
+                  )}
+                </div>
               </div>
-            </CardContent>
-          </Card>
-        )}
+            );
+          })}
+        </div>
+      ) : (
+        // Empty State
+        <div className="flex flex-col items-center justify-center h-48 text-center text-muted-foreground p-4 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50/50">
+          <DollarSign className="w-8 h-8 mb-2 opacity-20" />
+          <p className="text-sm">No content formats selected.</p>
+        </div>
+      )}
+    </CardContent>
+  </Card>
+)}
         </div>
         
 

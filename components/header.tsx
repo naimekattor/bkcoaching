@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { X, LogOut, LayoutDashboard, Loader2 } from "lucide-react";
-import { apiClient } from "@/lib/apiClient"; // Make sure this path is correct
+import { apiClient } from "@/lib/apiClient"; 
 
 const navigationLinks = [
   { name: "Home", href: "/" },

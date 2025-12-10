@@ -8,6 +8,7 @@ import { HelpCircle, Search, Star } from "lucide-react";
 import { apiClient } from "@/lib/apiClient";
 import { SkeletonCard } from "@/components/SkeletoCard";
 import { industriesNiches } from "@/constants/niches";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const PAGE_SIZE = 10;
 
@@ -337,7 +338,11 @@ function MicroInfluencersPageContent() {
     router.push(`${pathname}?${params.toString()}`);
   };
 
- 
+ const handleFilterChange = (key: string, value: string) => {
+    const newValue = value === "all" ? "" : value;
+    setFilters(prev => ({ ...prev, [key]: newValue }));
+    setPage(1);
+  };
 
   return (
     <div className="min-h-screen">
@@ -387,56 +392,56 @@ function MicroInfluencersPageContent() {
           </div>
 
           {/* Filters */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {/* Content Niches */}
-            <select
-              value={filters.contentNiches}
-              onChange={(e) => {
-                setFilters({ ...filters, contentNiches: e.target.value });
-                setPage(1);
-              }}
-              className="px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition"
+            <Select 
+              value={filters.contentNiches || "all"} 
+              onValueChange={(val) => handleFilterChange("contentNiches", val)}
             >
-              <option value="">All Content Niches</option>
-              {industriesNiches.map((niche, index) => (
-                <option key={index} value={niche}>
-                  {niche}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger className="w-full h-12 bg-white border-gray-200 rounded-lg px-4 text-base focus:ring-2 focus:ring-secondary/20 transition-all hover:border-gray-300">
+                <SelectValue placeholder="Content Niches" />
+              </SelectTrigger>
+              <SelectContent className="max-h-[300px]">
+                <SelectItem value="all">All Content Niches</SelectItem>
+                {industriesNiches.map((niche) => (
+                  <SelectItem key={niche} value={niche} className="cursor-pointer">
+                    {niche}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
             {/* Budget */}
-            <select
-              value={filters.budgetRange}
-              onChange={(e) => {
-                setFilters({ ...filters, budgetRange: e.target.value });
-                setPage(1);
-              }}
-              className="px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition"
+            <Select 
+              value={filters.budgetRange || "all"} 
+              onValueChange={(val) => handleFilterChange("budgetRange", val)}
             >
-              <option value="">All Budget Range</option>
-              <option value="0-100">$0–$100</option>
-              <option value="100-499">$101–$499</option>
-              <option value="500+">$500+</option>
-            </select>
+              <SelectTrigger className="w-full h-12 bg-white border-gray-200 rounded-lg px-4 text-base focus:ring-2 focus:ring-secondary/20 transition-all hover:border-gray-300">
+                <SelectValue placeholder="Budget Range" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Budget Ranges</SelectItem>
+                <SelectItem value="0-100">$0 – $100</SelectItem>
+                <SelectItem value="100-499">$101 – $499</SelectItem>
+                <SelectItem value="500+">$500+</SelectItem>
+              </SelectContent>
+            </Select>
 
             {/* Platforms */}
-            <select
-              value={filters.platforms}
-              onChange={(e) => {
-                setFilters({ ...filters, platforms: e.target.value });
-                setPage(1);
-              }}
-              className="px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition"
+            <Select 
+              value={filters.platforms || "all"} 
+              onValueChange={(val) => handleFilterChange("platforms", val)}
             >
-              <option value="">All Platforms</option>
-              <option value="instagram">Instagram</option>
-              <option value="tiktok">TikTok</option>
-              <option value="youtube">YouTube</option>
-              <option value="youtube">LinkedIn</option>
-              <option value="youtube">Facebook</option>
-              <option value="youtube">X(Twitter)</option>
-            </select>
+              <SelectTrigger className="w-full h-12 bg-white border-gray-200 rounded-lg px-4 text-base focus:ring-2 focus:ring-secondary/20 transition-all hover:border-gray-300">
+                <SelectValue placeholder="Platforms" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Platforms</SelectItem>
+                <SelectItem value="instagram">Instagram</SelectItem>
+                <SelectItem value="tiktok">TikTok</SelectItem>
+                <SelectItem value="youtube">YouTube</SelectItem>
+              </SelectContent>
+            </Select>
 
             {/* Time Zone */}
             {/* <select
@@ -458,38 +463,41 @@ function MicroInfluencersPageContent() {
 
             {/* Followers */}
             <div className="relative">
-              <select
-                value={filters.followers}
-                onChange={(e) => {
-                  setFilters({ ...filters, followers: e.target.value });
-                  setPage(1);
-                }}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none pr-10 transition"
-              >
-                <option value="">All Audience Sizes</option>
-                <option value="0-1000">0 – 1K</option>
-                <option value="1001-5000">1K – 5K</option>
-                <option value="5001-10000">5K – 10K</option>
-                <option value="10000-50000">10K – 50K</option>
-                <option value="50000+">50K+</option>
-              </select>
-              <HelpCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                <Select 
+                  value={filters.followers || "all"} 
+                  onValueChange={(val) => handleFilterChange("followers", val)}
+                >
+                  <SelectTrigger className="w-full h-12 bg-white border-gray-200 rounded-lg px-4 text-base focus:ring-2 focus:ring-secondary/20 transition-all hover:border-gray-300">
+                    <SelectValue placeholder="Audience Reach" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Audience Sizes</SelectItem>
+                    <SelectItem value="0-1000">0 – 1K</SelectItem>
+                    <SelectItem value="1001-5000">1K – 5K</SelectItem>
+                    <SelectItem value="5001-10000">5K – 10K</SelectItem>
+                  </SelectContent>
+                </Select>
+                {/* Micro-interaction Helper Icon */}
+                <div className="absolute -top-2 -right-2 z-10 pointer-events-none">
+                   {/* Optional: Add a small badge or icon if filter is active */}
+                </div>
             </div>
 
             {/* Gender */}
-            <select
-              value={filters.gender}
-              onChange={(e) => {
-                setFilters({ ...filters, gender: e.target.value });
-                setPage(1);
-              }}
-              className="px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition"
+            <Select 
+              value={filters.gender || "all"} 
+              onValueChange={(val) => handleFilterChange("gender", val)}
             >
-              <option value="">Gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="non-binary">No preference</option>
-            </select>
+              <SelectTrigger className="w-full h-12 bg-white border-gray-200 rounded-lg px-4 text-base focus:ring-2 focus:ring-secondary/20 transition-all hover:border-gray-300">
+                <SelectValue placeholder="Gender" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Any Gender</SelectItem>
+                <SelectItem value="male">Male</SelectItem>
+                <SelectItem value="female">Female</SelectItem>
+                <SelectItem value="non-binary">No preference</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Clear Filters */}
