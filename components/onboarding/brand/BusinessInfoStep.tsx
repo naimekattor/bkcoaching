@@ -89,10 +89,10 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
 
         setOnboardingData((prev) => ({
           ...prev,
-          logoUrl: imgUrl,
+          logoUrl: imgUrl || "",
         }));
         // Update to remote URL after upload
-        setPreviewLogo(imgUrl);
+        setPreviewLogo(imgUrl || "");
       } catch (error) {
         console.error("Upload failed", error);
         // Revert on failure
