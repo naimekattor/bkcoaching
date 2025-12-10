@@ -538,23 +538,28 @@ export default function MessagesClient() {
   };
 
   return (
-    <div className="h-[calc(100vh-48px)] bg-gray-50 flex relative">
+    <div className="h-[calc(100vh-64px)] bg-gray-50 flex relative">
       {/* Mobile Overlay */}
       {showSidebar && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-10 md:hidden animate-in fade-in duration-200"
+          className="fixed inset-0 bg-wgite bg-opacity-50 z-10 md:hidden animate-in fade-in duration-200"
           onClick={() => setShowSidebar(false)}
         />
       )}
 
       {/* Left Sidebar - Rooms */}
-      <div
-        className={`w-full sm:w-72 bg-white border-r border-gray-200 flex flex-col absolute md:relative z-20 md:z-auto h-full transform transition-all duration-300 ease-in-out ${
-          showSidebar
-            ? "translate-x-0"
-            : "-translate-x-[1000px] md:translate-x-0"
-        }`}
-      >
+      {/* Left Sidebar - Rooms */}
+<div
+  className={`
+    fixed md:relative inset-y-0 left-0 z-30 w-full md:w-80 
+    bg-white border-r border-gray-200 flex flex-col 
+    transform transition-transform duration-300 ease-in-out
+    ${showSidebar || !selectedRoom ? "translate-x-0" : "-translate-x-full"}
+    md:translate-x-0 md:block
+    ${selectedRoom ? "md:block" : "block"} 
+    h-full
+  `}
+>
         <div className="p-4 border-b border-gray-200 bg-white">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
@@ -648,7 +653,7 @@ export default function MessagesClient() {
           )}
         </div>
       </div>
-      {!selectedRoom ? (
+      {!selectedRoom  ? (
         <div className="flex-1 flex flex-col items-center justify-center bg-gray-50 text-gray-500">
           <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mb-4">
             <Search className="h-8 w-8 text-gray-400" />
@@ -661,7 +666,7 @@ export default function MessagesClient() {
           </p>
         </div>
       ) : (
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col h-full">
           {/* Chat Header */}
           <div className="bg-white border-b border-gray-200 p-4 shadow-sm sticky top-0 z-10">
             <div className="flex items-center justify-between">

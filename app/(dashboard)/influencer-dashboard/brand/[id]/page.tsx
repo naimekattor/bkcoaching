@@ -508,7 +508,7 @@ export default function BrandProfilePage() {
             </div>
 
             {/* Share */}
-            <div className="bg-primary rounded p-6 text-white">
+            {/* <div className="bg-primary rounded p-6 text-white">
               <h2 className="text-lg font-semibold mb-4">Share Profile</h2>
               <button
                 onClick={handleCopyLink}
@@ -517,7 +517,7 @@ export default function BrandProfilePage() {
                 <Copy className="w-4 h-4" />
                 {copied ? "Copied!" : "Copy Link"}
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

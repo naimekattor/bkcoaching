@@ -587,7 +587,7 @@ export default function InfluencerProfile() {
               </div>
 
               {/* Share Profile */}
-              <div className="bg-slate-800 text-white rounded-lg p-6">
+              {/* <div className="bg-slate-800 text-white rounded-lg p-6">
                 <h2 className="text-lg font-semibold mb-4">Share Profile</h2>
                 <button
                   onClick={handleCopyLink}
@@ -603,7 +603,7 @@ export default function InfluencerProfile() {
                   </svg>
                   Copy Link
                 </button>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

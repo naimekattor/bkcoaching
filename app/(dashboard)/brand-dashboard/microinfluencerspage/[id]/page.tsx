@@ -387,12 +387,12 @@ export default function BrandProfilePage() {
                   </div>
                   <div className="text-sm text-gray-600">Total Campaigns</div>
                 </div>
-                <div className="text-center">
+                {/* <div className="text-center">
                   <div className="text-2xl font-bold text-green-600 mb-1">
                     {influencer.campaigns?.creators ?? 0}
                   </div>
                   <div className="text-sm text-gray-600">Engagement Rate</div>
-                </div>
+                </div> */}
                 <div className="text-center">
                   <div className="text-2xl font-bold text-secondary mb-1">
                     {influencer.campaigns?.avgRating ?? 0}
@@ -525,18 +525,7 @@ export default function BrandProfilePage() {
                     {influencer.contactPerson?.title ?? "—"}
                   </div>
                 </div>
-                {/* {influencer.email && (
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Mail className="w-4 h-4" />
-                    {influencer.email}
-                  </div>
-                )} */}
-                {/* {influencer.phone && (
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Phone className="w-4 h-4" />
-                    {influencer.phone}
-                  </div>
-                )} */}
+               
                 <div className="flex gap-2">
                   {influencer.socialLinks?.linkedin && (
                     <a
@@ -632,7 +621,7 @@ export default function BrandProfilePage() {
             </div>
 
             {/* Share */}
-            <div className="bg-primary rounded p-6 text-white">
+            {/* <div className="bg-primary rounded p-6 text-white">
               <h2 className="text-lg font-semibold mb-4">Share Profile</h2>
               <button
                 onClick={handleCopyLink}
@@ -641,7 +630,7 @@ export default function BrandProfilePage() {
                 <Copy className="w-4 h-4" />
                 {copied ? "Copied!" : "Copy Link"}
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

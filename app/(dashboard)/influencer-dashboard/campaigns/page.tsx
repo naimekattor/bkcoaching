@@ -327,7 +327,7 @@ export default function CampaignsPage() {
                         <p className="text-sm text-gray-500">Brand ID: {item.owner_id}</p>
                       </div>
                       <span className="text-xs px-3 py-1 rounded-full bg-green-100 text-green-800">
-                        In Progress
+                       {progress === 100?"Completed":"In Progress"} 
                       </span>
                     </div>
 
