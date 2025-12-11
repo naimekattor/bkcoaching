@@ -232,7 +232,7 @@ const profileName: string =
               </div>
               <div>
                 <h2 className="text-xl font-bold text-slate-800">
-                  Welcome back, {influencerProfile?.display_name}! 👋
+                  Welcome back, {(user?.influencer_profile?.display_name as string) || "User"}! 👋
                 </h2>
                 <p className="text-slate-600">
                   Ready to grow your influence today?
