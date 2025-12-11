@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
+import  {shallow}  from "zustand/shallow";
 import {
   AlertCircle,
   Bell,
@@ -22,6 +22,7 @@ import {
 import { useAuthStore } from "@/stores/useAuthStore";
 import { apiClient } from "@/lib/apiClient";
 import { toast } from "react-toastify";
+import { Toast } from "@/components/ui/toast";
 type NotificationKeys = "email" | "push" | "sms" | "marketing";
 
 interface NotificationItem {
@@ -40,8 +41,6 @@ export default function SettingsPage() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
-  const { user } = useAuthStore();
-  console.log("user account",user);
 
   const [notifications, setNotifications] = useState<
     Record<NotificationKeys, boolean>
@@ -58,6 +57,7 @@ export default function SettingsPage() {
   const [qrGenerated, setQrGenerated] = useState(false);
   const [backupCodes, setBackupCodes] = useState<string[]>([]);
   const [copiedCode, setCopiedCode] = useState(false);
+  const[userData,setUserData]=useState("");
 
   // Password strength calculator
   const calculatePasswordStrength = (password: string) => {
@@ -184,7 +184,7 @@ export default function SettingsPage() {
       id: "guides",
       title: "Guides & Documentation",
       description: "Step-by-step tutorials and resources",
-      href: "#",
+      href: "https://www.youtube.com/watch?",
       icon: Book,
     },
     {
@@ -207,21 +207,26 @@ export default function SettingsPage() {
       label: "Push Notifications",
       description: "Browser push notifications",
     },
-    {
-      key: "sms",
-      label: "SMS Alerts",
-      description: "Important alerts via text message",
-    },
-    {
-      key: "marketing",
-      label: "Marketing Communications",
-      description: "News and promotional content",
-    },
+    // {
+    //   key: "sms",
+    //   label: "SMS Alerts",
+    //   description: "Important alerts via text message",
+    // },
+    // {
+    //   key: "marketing",
+    //   label: "Marketing Communications",
+    //   description: "News and promotional content",
+    // },
   ];
 
   const handleSave = () => {
-    alert("Settings saved ✅");
+    Toast({title:"Settings saved ✅"});
   };
+
+  const user=useAuthStore((state)=>state.user);
+  console.log(user);
+  
+
 
   return (
     <div className=" p-0 mx-auto">
@@ -251,9 +256,9 @@ export default function SettingsPage() {
                   style={
                     { "--tw-ring-color": "#0d2f4f" } as React.CSSProperties
                   }
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="your.email@example.com"
+                  value={user?.user?.email}
+                  readOnly
+                  placeholder={user?.user?.email || "your.email@example.com"}
                 />
                 <Mail className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               </div>
@@ -265,7 +270,7 @@ export default function SettingsPage() {
         </section>
 
         {/* Password Change Section */}
-        <section className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        {/* <section className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
           <div
             className="px-6 py-5 border-b border-gray-200"
             style={{ backgroundColor: "#0d2f4f" }}
@@ -279,7 +284,7 @@ export default function SettingsPage() {
             </p>
           </div>
           <div className="p-6 space-y-4">
-            {/* Current Password */}
+            
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">
                 Current Password
@@ -309,7 +314,7 @@ export default function SettingsPage() {
               </div>
             </div>
 
-            {/* New Password */}
+            
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">
                 New Password
@@ -363,7 +368,7 @@ export default function SettingsPage() {
               )}
             </div>
 
-            {/* Confirm Password */}
+          
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">
                 Confirm New Password
@@ -414,7 +419,7 @@ export default function SettingsPage() {
               Update Password
             </button>
           </div>
-        </section>
+        </section> */}
 
         {/* Notifications Section */}
         <section className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
@@ -697,6 +702,7 @@ export default function SettingsPage() {
                 <a
                   key={item.id}
                   href={item.href}
+                  target="_blank"
                   className="group flex items-center gap-4 px-6 py-4 transition-all duration-200 hover:bg-gray-50 active:bg-gray-100"
                 >
                   {/* Icon */}

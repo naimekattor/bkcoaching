@@ -8,7 +8,7 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
 
   const tabs = [
     { name: "Profile Setup", href: "/influencer-dashboard/settings" },
-    { name: "Invoice", href: "/influencer-dashboard/settings/invoice" },
+    // { name: "Invoice", href: "/influencer-dashboard/settings/invoice" },
     { name: "Account Details", href: "/influencer-dashboard/settings/account" },
   ];
 

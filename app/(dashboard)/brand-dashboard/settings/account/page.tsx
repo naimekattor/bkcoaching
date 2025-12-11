@@ -167,7 +167,7 @@ export default function SettingsPage() {
       id: "guides",
       title: "Guides & Documentation",
       description: "Step-by-step tutorials and resources",
-      href: "#",
+      href: "https://www.youtube.com/watch?",
       icon: Book,
     },
     {
@@ -190,16 +190,16 @@ export default function SettingsPage() {
       label: "Push Notifications",
       description: "Browser push notifications",
     },
-    {
-      key: "sms",
-      label: "SMS Alerts",
-      description: "Important alerts via text message",
-    },
-    {
-      key: "marketing",
-      label: "Marketing Communications",
-      description: "News and promotional content",
-    },
+    // {
+    //   key: "sms",
+    //   label: "SMS Alerts",
+    //   description: "Important alerts via text message",
+    // },
+    // {
+    //   key: "marketing",
+    //   label: "Marketing Communications",
+    //   description: "News and promotional content",
+    // },
   ];
 
   const handleSave = () => {
@@ -248,7 +248,7 @@ export default function SettingsPage() {
         </section>
 
         {/* Password Change Section */}
-        <section className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        {/* <section className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
           <div
             className="px-6 py-5 border-b border-gray-200"
             style={{ backgroundColor: "#0d2f4f" }}
@@ -262,7 +262,7 @@ export default function SettingsPage() {
             </p>
           </div>
           <div className="p-6 space-y-4">
-            {/* Current Password */}
+           
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">
                 Current Password
@@ -292,7 +292,7 @@ export default function SettingsPage() {
               </div>
             </div>
 
-            {/* New Password */}
+            
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">
                 New Password
@@ -346,7 +346,7 @@ export default function SettingsPage() {
               )}
             </div>
 
-            {/* Confirm Password */}
+            
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">
                 Confirm New Password
@@ -397,7 +397,7 @@ export default function SettingsPage() {
               Update Password
             </button>
           </div>
-        </section>
+        </section> */}
 
         {/* Notifications Section */}
         <section className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">

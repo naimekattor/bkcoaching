@@ -126,17 +126,17 @@ export default function AboutPage() {
                 <div className="border-white border-6 bg-white shadow-2xl rounded-full overflow-hidden h-full">
                   <Image
                     width={500}
-                    height={800}
-                    src="/images/about-img3.jpg"
+                    height={1000}
+                    src="/images/about-img3.png"
                     alt="Professional working"
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover object-center"
                   />
                 </div>
               </div>
               <div className="relative -ml-15 space-y-4 pt-8 z-20">
                 <div className="border-white border-6 bg-white shadow-2xl rounded-full overflow-hidden w-fit">
                   <Image
-                    src="/images/about-img2.jpg"
+                    src="/images/about-img2.png"
                     alt="Content creation"
                     width={162}
                     height={262}
@@ -146,7 +146,7 @@ export default function AboutPage() {
                 </div>
                 <div className="border-white border-6 bg-white shadow-2xl rounded-full relative -mt-20 z-10 overflow-hidden w-fit">
                   <Image
-                    src="/images/about-img1.jpg"
+                    src="/images/about-img1.png"
                     alt="Content creation"
                     width={162}
                     height={262}

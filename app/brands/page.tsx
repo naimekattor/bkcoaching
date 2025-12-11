@@ -58,7 +58,7 @@ export default async function BrandsPage() {
 
   return (
     <section>
-      <section className="bg-gradient-to-b from-[#ffffff] to-[#E9F4FF]">
+      <section className="bg-gradient-to-b ">
         <main className="container mx-auto px-4 pt-8 lg:pt-16">
           <div className="grid lg:grid-cols-2 gap-2 items-center">
             {/* Left Content */}
