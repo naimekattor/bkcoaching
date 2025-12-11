@@ -5,11 +5,12 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Upload, Building, Globe, MapPin, X } from "lucide-react";
+import { Upload, Building, Globe, MapPin, X, ChevronDown } from "lucide-react";
 import PageHeaderWithSwitcher from "@/components/PageHeaderWithSwitcher";
 import { useBrandOnBoarding } from "@/contexts/BrandOnboardingContext";
 import { uploadToCloudinary } from "@/lib/fileUpload";
 import Image from "next/image";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface BusinessInfoStepProps {
   onNext: () => void;
@@ -20,7 +21,7 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
   const { onboardingData, setOnboardingData } = useBrandOnBoarding();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState<string | null>(null);
-  const [timeZone, setTimeZone] = useState("Time Zone");
+  const [timeZone, setTimeZone] = useState("");
   const [previewLogo,setPreviewLogo]=useState<string | null>(
     onboardingData.logoUrl || null
   );
@@ -166,23 +167,38 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
             </div>
 
             <div className="space-y-2">
-              <div>
-                <label className="block text-sm mb-2">Time Zone</label>
-                <select
-                  value={timeZone}
-                  onChange={(e) => setTimeZone(e.target.value)}
-                  className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent outline-none"
-                >
-                  <option value="">Time Zone (US)</option>
-                  {timeZones.map((tz) => (
-                    <option key={tz.value} value={tz.value}>
-                      {tz.label}
-                    </option>
-                  ))}
-                  <option value="Others">Others</option>
-                </select>
-              </div>
-            </div>
+  
+  
+  <div className="space-y-2">
+  <Label htmlFor="timezone">Time Zone</Label>
+  <Select value={timeZone} onValueChange={setTimeZone}>
+    <SelectTrigger 
+      id="timezone"
+      className="
+        w-full h-[50px]
+        bg-white 
+        rounded-lg 
+        border-gray-200 
+        text-base text-gray-900
+        focus:ring-2 focus:ring-secondary focus:ring-offset-0
+        hover:border-gray-400 
+        transition-colors
+      "
+    >
+      <SelectValue placeholder="Select Time Zone (US)" />
+    </SelectTrigger>
+    
+    <SelectContent>
+      {timeZones.map((tz) => (
+        <SelectItem key={tz.value} value={tz.value}>
+          {tz.label}
+        </SelectItem>
+      ))}
+      <SelectItem value="Others">Others</SelectItem>
+    </SelectContent>
+  </Select>
+</div>
+</div>
 
             <div className="space-y-2">
               <Label htmlFor="bio">Short Bio</Label>
