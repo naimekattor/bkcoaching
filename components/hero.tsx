@@ -32,7 +32,7 @@ const Hero = () => {
               </p>
 
               {/* Headline */}
-              <h1 className="text-4xl md:text-5xl font-bold text-primary leading-tight">
+              <h1 className="text-4xl md:h-auto h-[100px] md:text-5xl font-bold text-primary leading-tight">
                 <Typewriter
                   words={["Micro-influencers", "Brands"]}
                   speed={80}

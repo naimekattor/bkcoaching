@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { apiClient } from "@/lib/apiClient";
+import { toast } from "react-toastify";
 
 export default function VerifyEmailPage() {
   const router = useRouter();
@@ -114,9 +115,9 @@ export default function VerifyEmailPage() {
 
       console.log("✅ Verification code resent to:", userEmail);
       setError(""); // Clear any previous errors
-      alert("Verification code resent to your email!");
+      toast("Verification code resent to your email!");
     } catch (error) {
-      console.error("❌ Resend Error:", error);
+      toast("❌ Resend Error:");
       setError("Failed to resend code. Please try again.");
     }
   };
@@ -171,7 +172,7 @@ export default function VerifyEmailPage() {
                 <Button
                   type="button"
                   onClick={handleResendCode}
-                  className="bg-secondary hover:bg-[var(--secondaryhover)] text-slate-800 font-semibold px-4 py-2 rounded-lg text-sm"
+                  className="bg-secondary cursor-pointer hover:bg-[var(--secondaryhover)] text-slate-800 font-semibold px-4 py-2 rounded-lg text-sm"
                 >
                   Resend
                 </Button>

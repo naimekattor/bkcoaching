@@ -411,7 +411,7 @@ export default function BrandSetupPage() {
                     id="instagram"
                     value={formData.instagramHandle}
                     onChange={(e) => handleInputChange("instagramHandle", e.target.value)}
-                    placeholder="@yourbusiness"
+                    placeholder="http://instagram.com/username"
                     className="h-11"
                   />
                 </div>
@@ -422,7 +422,7 @@ export default function BrandSetupPage() {
                     id="tiktok"
                     value={formData.tiktokHandle}
                     onChange={(e) => handleInputChange("tiktokHandle", e.target.value)}
-                    placeholder="@yourbusiness"
+                    placeholder="http://tiktok.com/username"
                     className="h-11"
                   />
                 </div>
@@ -433,7 +433,7 @@ export default function BrandSetupPage() {
                     id="x"
                     value={formData.xHandle}
                     onChange={(e) => handleInputChange("xHandle", e.target.value)}
-                    placeholder="@yourbusiness"
+                    placeholder="http://twitter.com/username"
                     className="h-11"
                   />
                 </div>
@@ -444,7 +444,7 @@ export default function BrandSetupPage() {
                     id="linkedin"
                     value={formData.linkedinProfile}
                     onChange={(e) => handleInputChange("linkedinProfile", e.target.value)}
-                    placeholder="linkedin.com/company/yourcompany"
+                    placeholder="http://linkedin.com/in/username"
                     className="h-11"
                   />
                 </div>
@@ -455,7 +455,7 @@ export default function BrandSetupPage() {
                     id="whatsapp"
                     value={formData.whatsappBusiness}
                     onChange={(e) => handleInputChange("whatsappBusiness", e.target.value)}
-                    placeholder="+880 1XXX-XXXXXX"
+                    placeholder="https://wa.me/6221551321"
                     className="h-11"
                   />
                 </div>

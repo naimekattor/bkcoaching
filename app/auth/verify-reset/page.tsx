@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { apiClient } from "@/lib/apiClient";
 import { useSearchParams } from "next/navigation";
+import { toast } from "react-toastify";
 
 function VerifyResetContent() {
   const [code, setCode] = useState(["", "", "", ""]);
@@ -57,10 +58,22 @@ function VerifyResetContent() {
     }
   };
 
-  const handleResendCode = () => {
-    // Handle resend code logic
-    console.log("Resending verification code...");
-  };
+  const handleResendCode = async () => {
+      try {
+        setError("");
+        await apiClient("user_service/send_otp/", {
+          method: "POST",
+          body: JSON.stringify({ email: userEmail }),
+        });
+  
+        console.log("✅ Verification code resent to:", userEmail);
+        setError(""); // Clear any previous errors
+        toast("Verification code resent to your email!");
+      } catch (error) {
+        toast("❌ Resend Error:");
+        setError("Failed to resend code. Please try again.");
+      }
+    };
 
   return (
     <div className="min-h-screen bg-slate-50 flex">

@@ -23,6 +23,7 @@ interface InfluencerOnboardingData {
   twitter_handle?: string;
   linkedin_handle?: string;
   whatsapp_handle?: string;
+  facebook_handle?: string;
   content_niches?: string[];
   audience_demographics?: string[];
   keyword_and_tags?: string;
@@ -40,6 +41,7 @@ interface InfluencerOnboardingData {
   rate_range_for_live_stream?: string;
   rate_range_for_ugc_creation?: string;
   rate_range_for_whatsapp_status_post?: string;
+  rate_range_for_facebook_post?: string;
   rate_range_for_affiliate_marketing_percent?: string;
   response_time?: string;
   payment_method?: string;
@@ -63,6 +65,7 @@ const transformInfluencerDataForAPI = (data: InfluencerOnboardingData) => {
       twitter_handle: data.twitter_handle,
       linkedin_handle: data.linkedin_handle,
       whatsapp_handle: data.whatsapp_handle,
+      facebook_handle: data.facebook_handle,
 
       content_niches: Array.isArray(data.content_niches)
         ? data.content_niches.join(", ")

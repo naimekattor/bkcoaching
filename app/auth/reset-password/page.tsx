@@ -2,9 +2,9 @@
 
 import type React from "react";
 
-import { Suspense, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 import Link from "next/link";
-import { Eye, EyeOff } from "lucide-react";
+import { Check, Eye, EyeOff, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { apiClient } from "@/lib/apiClient";
@@ -32,8 +32,12 @@ function ResetPasswordContent() {
       newErrors.confirmPassword = "Please confirm your password";
     if (formData.password !== formData.confirmPassword)
       newErrors.confirmPassword = "Passwords do not match";
+    if(!isPasswordValid)
+      newErrors.password="Password does not meet security requirements"
 
     setErrors(newErrors);
+    const isvalid = formData.password && formData.confirmPassword;
+    if (!isvalid) return;
     const res = await apiClient("user_service/reset_password/", {
       method: "POST",
       body: JSON.stringify({
@@ -45,6 +49,24 @@ function ResetPasswordContent() {
       window.location.href = "/auth/password-changed";
     }
   };
+
+  // --- PASSWORD VALIDATION LOGIC START ---
+  const passwordRequirements = useMemo(() => {
+    const pwd = formData.password;
+    return [
+      { id: 1, label: "At least 8 characters", met: pwd.length >= 8 },
+      { id: 2, label: "At least one uppercase letter", met: /[A-Z]/.test(pwd) },
+      { id: 3, label: "At least one lowercase letter", met: /[a-z]/.test(pwd) },
+      { id: 4, label: "At least one number", met: /\d/.test(pwd) },
+      {
+        id: 5,
+        label: "At least one special character (@$!%*?&)",
+        met: /[@$!%*?&#]/.test(pwd),
+      },
+    ];
+  }, [formData.password]);
+
+  const isPasswordValid = passwordRequirements.every((req) => req.met);
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
@@ -128,6 +150,35 @@ function ResetPasswordContent() {
                   </p>
                 )}
               </div>
+
+              {/* PASSWORD STRENGTH INDICATOR */}
+              <div className="bg-slate-700/50 p-3 rounded-lg space-y-2">
+                <p className="text-xs text-slate-300 font-medium">
+                  Password must contain:
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {passwordRequirements.map((req) => (
+                    <div key={req.id} className="flex items-center space-x-2">
+                      {req.met ? (
+                        <Check className="w-3 h-3 text-green-400" />
+                      ) : (
+                        <X className="w-3 h-3 text-red-400" />
+                      )}
+                      <span
+                        className={`text-xs ${
+                          req.met ? "text-green-400" : "text-slate-400"
+                        }`}
+                      >
+                        {req.label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {errors.password && (
+                <p className="text-red-400 text-sm mt-1">{errors.password}</p>
+              )}
 
               <Button
                 type="submit"

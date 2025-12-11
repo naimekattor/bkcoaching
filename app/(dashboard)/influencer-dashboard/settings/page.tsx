@@ -111,6 +111,7 @@ const fieldMap: Record<string, string> = {
   liveStream: "rate_range_for_live_stream",
   userGeneratedContent: "rate_range_for_ugc_creation",
   whatsappStatus: "rate_range_for_whatsapp_status_post",
+  facebookPost: "rate_range_for_facebook_post",
 };
 
 export default function ProfilePage() {
@@ -255,6 +256,7 @@ export default function ProfilePage() {
         twitter_handle: formData.socialLinks.twitter || null,
         linkedin_handle: formData.socialLinks.linkedin || null,
         whatsapp_handle: formData.socialLinks.whatsapp || null,
+        facebook_handle: formData.socialLinks.facebook || null,
         content_niches: selectedNiches.length ? selectedNiches.join(", ") : null,
         content_formats: selectedFormats.length ? selectedFormats.join(", ") : null,
         payment_preferences: Object.entries(paymentModels)

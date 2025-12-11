@@ -606,11 +606,15 @@ export default function InfluencerMessagesClient() {
 
       {/* Left Sidebar - Rooms */}
       <div
-        className={`w-full sm:w-72 bg-white border-r border-gray-200 flex flex-col absolute md:relative z-20 md:z-auto h-full transform transition-all duration-300 ease-in-out ${
-          showSidebar
-            ? "translate-x-0"
-            : "-translate-x-[1000px] md:translate-x-0"
-        }`}
+        className={`
+    fixed md:relative inset-y-0 left-0 z-30 w-full md:w-80 
+    bg-white border-r border-gray-200 flex flex-col 
+    transform transition-transform duration-300 ease-in-out
+    ${showSidebar || !selectedRoom ? "translate-x-0" : "-translate-x-full"}
+    md:translate-x-0 md:block
+    ${selectedRoom ? "md:block" : "block"} 
+    h-full
+  `}
       >
         <div className="p-4 border-b border-gray-200 bg-white">
           <div className="flex items-center justify-between mb-4">

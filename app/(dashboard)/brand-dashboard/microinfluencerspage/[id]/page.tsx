@@ -461,7 +461,7 @@ export default function BrandProfilePage() {
             </div>
 
             {/* Reviews */}
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
+            {/* <div className="bg-white rounded-lg border border-gray-200 p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 Reviews & Testimonials
               </h2>
@@ -506,7 +506,7 @@ export default function BrandProfilePage() {
               ) : (
                 <p className="text-gray-500">No reviews yet.</p>
               )}
-            </div>
+            </div> */}
           </div>
 
           {/* RIGHT COLUMN */}
