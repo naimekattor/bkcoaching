@@ -258,7 +258,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
       </div>
 
       {/* Referral Program */}
-      <Card>
+      {/* <Card>
         <CardContent className="p-6 space-y-4">
           <div className="flex items-center justify-center gap-2">
             <Gift className="w-5 h-5 text-primary" />
@@ -278,9 +278,9 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
             </Button>
           </div>
 
-          {/* Social Share Buttons */}
+          
           <div className="pt-4 flex flex-wrap justify-center gap-3">
-            {/* <Button
+            <Button
               size="sm"
               variant="outline"
               className="bg-primary text-white"
@@ -294,7 +294,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
               }
             >
               Facebook
-            </Button> */}
+            </Button>
 
             <Button
               size="sm"
@@ -335,7 +335,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
             </Button>
           </div>
         </CardContent>
-      </Card>
+      </Card> */}
 
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">

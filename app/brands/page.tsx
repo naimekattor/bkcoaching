@@ -35,22 +35,22 @@ export default async function BrandsPage() {
     const items: BrandApiResponse[] = res?.data ?? [];
     console.log(items);
 
-    return items.map((brand: any) => ({
+    return items.map((brand: BrandApiResponse) => ({
       id: brand?.brand_profile?.id,
       name:
         brand?.brand_profile?.display_name ||
         brand?.brand_profile?.business_name ||
         "Unnamed",
       location: brand?.brand_profile?.timezone || "Not provided",
-      service: brand?.brand_profile?.service || "Not specified",
-      rating: brand?.brand_profile?.rating || 0,
-      reviews: brand?.brand_profile?.reviews || 0,
       category: brand?.brand_profile?.business_type
         ? brand.brand_profile.business_type.split("–")[0].trim()
         : "General",
       description: brand?.brand_profile?.short_bio || "",
       image: brand?.brand_profile?.logo || "/images/placeholder.jpg",
       logo: brand?.brand_profile?.logo || "/images/placeholder.jpg",
+      service: "Brand Campaign",
+      rating: 4.5,
+      reviews: 0,
     }));
   }
 

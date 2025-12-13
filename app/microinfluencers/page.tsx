@@ -159,7 +159,7 @@ export default function InfluencersPage() {
                   {/* Buttons */}
                   <div className="bg-sky-950 rounded-md inline-flex justify-center items-center gap-2.5 mt-4 cursor-pointer">
                     <Link
-                      href={"/brand-dashboard/influencers/1"}
+                      href={"#"}
                       className="bg-primary text-white font-semibold py-3 px-8 inline-block rounded-lg shadow-md hover:shadow-lg hover:border-2 hover:border-[#001F3F] hover:bg-white hover:text-[#001F3F] transition-all duration-300"
                     >
                       View Profile

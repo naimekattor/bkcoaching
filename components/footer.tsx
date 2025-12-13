@@ -114,7 +114,7 @@ export default function Footer() {
             <span className="text-gray-400 hidden sm:inline">|</span>
 
             <Link
-              href="/micro-influencers"
+              href="/microinfluencers"
               className="hover:text-gray-900 transition-colors"
             >
               For Micro-Influencers
