@@ -62,27 +62,28 @@ export default function Page() {
   );
 
   const user= useAuthStore((state) => state.user);
+  const setUser= useAuthStore((state) => state.setUser);
   console.log(user);
   
 
   // const store = useAuthStore.getState();
 
   // 1. Fetch User Info
-  // useEffect(() => {
-  //   const fetchUser = async () => {
-  //     try {
-  //       const res = await apiClient("user_service/get_user_info/", {
-  //         method: "GET",
-  //         auth: true,
-  //       });
-  //       // store.setUser(res.data);
-  //       setInfluencerProfile(res.data.influencer_profile);
-  //     } catch (error) {
-  //       console.error("❌ API Error:", error);
-  //     }
-  //   };
-  //   fetchUser();
-  // }, []);
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await apiClient("user_service/get_user_info/", {
+          method: "GET",
+          auth: true,
+        });
+        // store.setUser(res.data);
+        setUser(res.data);
+      } catch (error) {
+        console.error("❌ API Error:", error);
+      }
+    };
+    fetchUser();
+  }, []);
 
   // 2. Fetch Rooms (Messages)
   useEffect(() => {
