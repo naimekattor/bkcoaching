@@ -10,10 +10,9 @@ const GlobalSection = () => {
             Start now. Grow anywhere
           </h2>
           <p className="text-lg md:text-[24px] text-primary leading-relaxed mb-16 max-w-2xl mx-auto">
-            You built something incredible. Now it&apos;s about the people -
-            people seeing your product. People using it. people sharing it
-            because they actually love it. That&apos;s why we built The Social
-            Market: to make growth simple, authentic and effective.
+            You built something incredible.Now it&apos;s about the people.People seeing your product.People using it.People sharing it
+            because they actually love it.That&apos;s why we built The Social
+            Market : to make growth simple, authentic and effective.
           </p>
 
           {/* World Map */}
@@ -24,7 +23,7 @@ const GlobalSection = () => {
       height={600}
       src="/images/globe.png"
       alt="World map showing global reach with location pins"
-      className="w-full h-auto translate-x-4 md:translate-x-8" // Shift slightly right
+      className="w-full h-auto translate-x-4 md:translate-x-8" 
     />
   </div>
 </div>

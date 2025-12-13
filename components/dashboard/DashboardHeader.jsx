@@ -6,7 +6,7 @@ import { useAuthStore } from "@/stores/useAuthStore";
 export function DashboardHeader() {
   const { user, logout } = useAuthStore();
   console.log("brand_header",user);
-
+const businessType=user?.brand_profile?.business_type.split("–")[0];
   return (
     <>
       <div className="bg-white rounded-lg shadow p-6">
@@ -31,7 +31,7 @@ export function DashboardHeader() {
               <h2 className="text-xl font-bold text-slate-800">
                 {user?.brand_profile?.business_name}
               </h2>
-              <p className="text-slate-600">Skincare & Wellness | Remote</p>
+              <p className="text-slate-600">{businessType}</p>
             </div>
           </div>
           <div className="flex items-center space-x-4">

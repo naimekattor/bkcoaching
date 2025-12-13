@@ -78,6 +78,8 @@ export default function BrandProfilePage() {
         // ---- Normalise API → Brand ----
         const raw =
           (res.data as BrandResponse | undefined)?.brand_profile ?? {};
+          console.log(res);
+          
 
         const platforms: string[] = Array.isArray(raw.platforms)
           ? raw.platforms
@@ -259,7 +261,7 @@ export default function BrandProfilePage() {
             </div>
 
             {/* Campaign Stats */}
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
+            {/* <div className="bg-white rounded-lg border border-gray-200 p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 Campaign
               </h2>
@@ -290,10 +292,10 @@ export default function BrandProfilePage() {
                   <div className="text-sm text-gray-600">Total Invested</div>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Active Campaigns */}
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
+            {/* <div className="bg-white rounded-lg border border-gray-200 p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 Active Campaigns
               </h2>
@@ -336,7 +338,7 @@ export default function BrandProfilePage() {
                   No active campaigns at the moment.
                 </p>
               )}
-            </div>
+            </div> */}
 
             {/* Reviews */}
             {/* <div className="bg-white rounded-lg border border-gray-200 p-6">

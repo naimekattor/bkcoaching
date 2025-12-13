@@ -2,6 +2,7 @@
 import { apiClient } from "@/lib/apiClient";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
+import Cookies from "js-cookie";
 
 type NestedUser = {
   email?: string;
@@ -50,8 +51,10 @@ export const useAuthStore = create<AuthState>()(
     setToken: (token) => {
       if (token) {
         localStorage.setItem("access_token", token);
+        Cookies.set("access_token", token, { path: "/", expires: 1 / 24 });
       } else {
         localStorage.removeItem("access_token");
+        Cookies.remove("access_token");
       }
       set({ token });
     },
@@ -59,8 +62,10 @@ export const useAuthStore = create<AuthState>()(
     setRefreshToken: (refreshToken) => {
       if (refreshToken) {
         localStorage.setItem("refresh_token", refreshToken);
+        Cookies.set("refresh_token", refreshToken, { path: "/", expires: 7 });
       } else {
         localStorage.removeItem("refresh_token");
+         Cookies.remove("refresh_token");
       }
       set({ refreshToken });
     },
@@ -78,6 +83,8 @@ export const useAuthStore = create<AuthState>()(
       localStorage.removeItem("access_token");
       localStorage.removeItem("refresh_token");
       localStorage.removeItem("user");
+      Cookies.remove("access_token");
+  Cookies.remove("refresh_token");
       set({ token: null, refreshToken: null, user: null });
 
     },

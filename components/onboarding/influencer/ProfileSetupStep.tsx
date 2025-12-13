@@ -104,11 +104,11 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                   htmlFor="profilePhoto"
                   className="aspect-square w-32 mx-auto md:mx-0 border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors overflow-hidden"
                 >
-                  {!uploading && preview ? (
+                  {!uploading && (preview || onboardingDataInfluencer.profile_picture) ? (
                     <Image
                       width={500}
                       height={500}
-                      src={preview}
+                      src={preview || onboardingDataInfluencer.profile_picture}
                       alt="Profile preview"
                       className="object-cover w-full h-full"
                     />

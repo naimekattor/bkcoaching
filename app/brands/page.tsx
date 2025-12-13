@@ -23,8 +23,13 @@ export interface BrandProfile {
   targeted_audience: string | null;
   mission: string | null;
 }
+interface Brand{
+  id:Number;
+}
 interface BrandApiResponse {
+  id: any;
   brand_profile: BrandProfile;
+  brand:Brand;
 }
 export default async function BrandsPage() {
   async function fetchBrands() {
@@ -36,7 +41,7 @@ export default async function BrandsPage() {
     console.log(items);
 
     return items.map((brand: BrandApiResponse) => ({
-      id: brand?.brand_profile?.id,
+      id: brand?.id,
       name:
         brand?.brand_profile?.display_name ||
         brand?.brand_profile?.business_name ||

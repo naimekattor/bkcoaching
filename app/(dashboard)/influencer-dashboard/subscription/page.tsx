@@ -47,6 +47,8 @@ export default function SubscriptionPage() {
 
         if (subRes.status === "success") {
           setPlanData(subRes.data);
+          console.log(subRes);
+          
         }
 
         // Get Stripe portal URL
@@ -58,13 +60,6 @@ export default function SubscriptionPage() {
         if (portalRes.status === "success") {
           setPortalData(portalRes.data.portal_url);
         }
-
-        
-
-        
-       
-
-
       } catch (error) {
         console.error("Failed loading subscription page:", error);
       } finally {

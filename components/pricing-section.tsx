@@ -3,7 +3,9 @@
 import { apiClient } from "@/lib/apiClient";
 import { useEffect, useState } from "react";
 import { SkeletonCard } from "./SkeletoCard";
+import { usePathname } from "next/navigation";
 
+// --- Interfaces based on your API Response ---
 interface Price {
   price_id: string;
   amount: number;
@@ -13,7 +15,7 @@ interface Price {
 
 interface Plan {
   product_id: string;
-  name: string;
+  name: string; // "Micro-Influencer" | "Businesses" | "Both"
   description: string;
   prices: Price[];
 }
@@ -33,18 +35,51 @@ export function PricingSection({
   initialData?: PricingApiResponse;
   planName: string;
 }) {
+  const pathname = usePathname();
   const [isYearly, setIsYearly] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [plans, setPlans] = useState<Plan[]>(initialData?.data || []);
-  console.log(initialData);
-  
+
+  // --- Logic to determine Dashboard Context ---
+  // Using includes() handles sub-paths like /influencer-dashboard/subscription
+  const isInfluencerDashboard = pathname?.includes("/influencer-dashboard");
+  const isBrandDashboard = pathname?.includes("/brand-dashboard");
+
   useEffect(() => {
     if (initialData?.data && initialData.data.length > 0) {
       setPlans(initialData.data);
       setLoading(false);
+    } else {
+      // Fallback if data isn't passed immediately
+      setLoading(false);
     }
   }, [initialData]);
+
+  // --- Filtering & Sorting Logic ---
+  const filteredPlans = plans
+    .filter((plan) => {
+      // 1. Influencer Dashboard: Show "Micro-Influencer" + "Both"
+      if (isInfluencerDashboard) {
+        return plan.name === "Micro-Influencer" || plan.name === "Both";
+      }
+
+      // 2. Brand Dashboard: Show "Businesses" + "Both"
+      if (isBrandDashboard) {
+        return plan.name === "Businesses" || plan.name === "Both";
+      }
+
+      // 3. Fallback: Show all 3 if path doesn't match (e.g. public pricing page)
+      return true;
+    })
+    .sort((a, b) => {
+      // Optional: Sort so "Both" always appears last (on the right)
+      if (a.name === "Both") return 1;
+      if (b.name === "Both") return -1;
+      return 0;
+    });
+
+  // --- Helper Functions ---
   const getPriceForInterval = (prices: Price[]) => {
     return (
       prices.find((p) => p.interval === (isYearly ? "year" : "month")) ||
@@ -52,7 +87,6 @@ export function PricingSection({
     );
   };
 
-  // Helper to calculate savings
   const calculateSavings = (prices: Price[]) => {
     const monthly = prices.find((p) => p.interval === "month");
     const yearly = prices.find((p) => p.interval === "year");
@@ -63,32 +97,6 @@ export function PricingSection({
     return savings > 0 ? `Save ${savings.toFixed(0)}%` : null;
   };
 
-  if (loading) {
-    return (
-      <section className="px-4 py-16 lg:py-[100px] container mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <SkeletonCard key={i} />
-          ))}
-        </div>
-      </section>
-    );
-  }
-
-  if (error || plans.length === 0) {
-    return (
-      <section className="px-4 py-16 lg:py-[100px]">
-        <div className="mx-auto text-center">
-          <p className="text-lg text-red-600">
-            {error || "No plans available at the moment."}
-          </p>
-        </div>
-      </section>
-    );
-  }
-
-  console.log(plans);
-
   const handleCheckout = async (priceId: string) => {
     try {
       const res = await apiClient(
@@ -96,16 +104,14 @@ export function PricingSection({
         {
           auth: true,
           method: "POST",
-          body: JSON.stringify({
-            price_id: priceId,
-          }),
+          body: JSON.stringify({ price_id: priceId }),
         }
       );
-      console.log("Checkout response:", res);
 
-      // TODO: Redirect to Stripe Checkout
-      if (res.data) {
+      if (res.data && res.data.checkout_url) {
         window.location.href = res.data.checkout_url;
+      } else {
+        alert("Unexpected response from server.");
       }
     } catch (error) {
       console.error("Checkout error:", error);
@@ -113,8 +119,34 @@ export function PricingSection({
     }
   };
 
+  // --- Loading State ---
+  if (loading) {
+    return (
+      <section className="px-4 py-16 container mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          {Array.from({ length: 2 }).map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  // --- Empty/Error State ---
+  if (error || filteredPlans.length === 0) {
+    return (
+      <section className="px-4 py-16">
+        <div className="mx-auto text-center">
+          <p className="text-lg text-red-600">
+            {error || "No applicable plans found for your account type."}
+          </p>
+        </div>
+      </section>
+    );
+  }
+
   return (
-    <section className="px-4 py-16 lg:py-[100px]">
+    <section className="px-4 py-8">
       <div className="mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
@@ -125,40 +157,40 @@ export function PricingSection({
             Pick the plan that works best for you. Cancel anytime.
           </p>
 
-          {/* Toggle */}
+          {/* Toggle Button */}
           <div className="inline-flex bg-gray-100 rounded-full shadow-sm p-1 transition-all duration-300">
             <button
               onClick={() => setIsYearly(false)}
               className={`px-8 py-3 rounded-full font-semibold text-lg transition-all duration-200
-      ${
-        !isYearly
-          ? "bg-primary text-white shadow-md scale-105"
-          : "text-gray-600 hover:text-gray-800"
-      }`}
+                ${
+                  !isYearly
+                    ? "bg-primary text-white shadow-md scale-105"
+                    : "text-gray-600 hover:text-gray-800"
+                }`}
             >
               Monthly
             </button>
             <button
               onClick={() => setIsYearly(true)}
               className={`px-8 py-3 rounded-full font-semibold text-lg transition-all duration-200
-      ${
-        isYearly
-          ? "bg-primary text-white shadow-md scale-105"
-          : "text-gray-600 hover:text-gray-800"
-      }`}
+                ${
+                  isYearly
+                    ? "bg-primary text-white shadow-md scale-105"
+                    : "text-gray-600 hover:text-gray-800"
+                }`}
             >
               Yearly
             </button>
           </div>
         </div>
 
-        {/* Pricing Cards */}
-        <div className="grid lg:grid-cols-3 md:grid-cols-1 grid-cols-1 gap-6 max-w-5xl mx-auto">
-          {plans.map((plan) => {
+        {/* Pricing Cards Grid */}
+        <div className="grid md:grid-cols-2 grid-cols-1 gap-8 max-w-5xl mx-auto">
+          {filteredPlans.map((plan) => {
             const price = getPriceForInterval(plan.prices);
             const savings = isYearly ? calculateSavings(plan.prices) : null;
 
-            // Map API name to display title
+            // UI Title Mapping
             const titleMap: Record<string, string> = {
               "Micro-Influencer": "I'm a Micro-Influencer",
               Businesses: "I'm a Brand",
@@ -169,32 +201,33 @@ export function PricingSection({
               <div
                 key={plan.product_id}
                 className="bg-[#f6f8fa] rounded-2xl shadow-lg border border-gray-200 overflow-hidden 
-hover:border-primary hover:shadow-[0_10px_30px_rgba(0,0,0,0.15)] hover:-translate-y-2 
-transition-all duration-300 flex flex-col"
+                hover:border-primary hover:shadow-[0_10px_30px_rgba(0,0,0,0.15)] hover:-translate-y-2 
+                transition-all duration-300 flex flex-col"
               >
                 <div className="p-8 text-center flex flex-col flex-grow">
-                  {/* Title */}
+                  {/* Plan Name */}
                   <h3 className="md:text-[26px] text-[22px] font-semibold text-primary mb-8 min-h-[70px] flex items-center justify-center">
                     {titleMap[plan.name] || plan.name}
                   </h3>
 
-                  {/* Price */}
+                  {/* Price Display */}
                   <div className="mb-6 min-h-[90px] flex items-end justify-center">
                     <span className="md:text-[64px] text-3xl font-semibold text-primary leading-none">
-                      ${price.amount.toFixed(0)}
+                      ${price?.amount?.toFixed(0) || 0}
                     </span>
                     <span className="text-[28px] text-primary font-semibold ml-1 leading-none">
                       /{isYearly ? "Year" : "month"}
                     </span>
                   </div>
 
-                  {/* Savings */}
+                  {/* Savings Badge */}
                   <div className="mb-4 min-h-[24px]">
                     {savings && (
                       <span className="text-red-500 font-semibold text-xl">
                         {savings}
                       </span>
                     )}
+                    {/* Hardcoded extra discount logic for 'Both' plan if needed */}
                     {!isYearly && plan.name === "Both" && (
                       <span className="text-red-500 font-semibold text-xl">
                         Save 15%
@@ -203,17 +236,21 @@ transition-all duration-300 flex flex-col"
                   </div>
 
                   {/* Description */}
-                  <p className="text-primary text-[18px] mb-8 leading-relaxed flex-grow">
-                    {plan.description?.charAt(0).toUpperCase() +
-                      plan.description?.slice(1).toLowerCase()}
+                  <p className="text-primary text-[18px] mb-8 leading-relaxed flex-grow px-4">
+                    {plan.description}
                   </p>
 
-                  {/* CTA Button */}
+                  {/* Checkout Button */}
                   <button
-                    className="w-full bg-primary cursor-pointer text-white font-semibold py-4 rounded-lg transition-colors duration-200 hover:bg-primary/90"
+                    className={`w-full cursor-pointer text-white font-semibold py-4 rounded-lg transition-colors duration-200
+                      ${
+                        plan.name === planName
+                          ? "bg-primary/90 ring-4 ring-primary/20"
+                          : "bg-primary hover:bg-primary/90"
+                      }`}
                     onClick={() => handleCheckout(price.price_id)}
                   >
-                    {plan.name === planName ? "Selected" : "Select"}
+                    {plan.name === planName ? "Current Plan" : "Select Plan"}
                   </button>
                 </div>
               </div>

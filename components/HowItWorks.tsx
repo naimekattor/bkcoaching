@@ -8,8 +8,7 @@ const HowItWorks = () => {
       <div className="relative z-10 py-16 lg:py-[100px] px-4 container mx-auto">
         <div className="container mx-auto text-center mb-12">
           <h2 className="text-3xl md:text-[40px] font-bold text-primary">
-            Where brands and micro- 
-            influencers<br /> grow together
+            Where brands and micro-influencers<br /> grow together
           </h2>
         </div>
 
@@ -59,7 +58,7 @@ const HowItWorks = () => {
                     alt="icon"
                   /> */}
                   <h3 className="text-xl font-bold text-[#ffffff] mb-2">
-                    Micro- Influencers
+                    Micro-Influencers
                   </h3>
                 </div>
                 <div className="px-6 pb-6">
