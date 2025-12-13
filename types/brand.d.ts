@@ -8,6 +8,7 @@ export interface Brand {
   website?: string;
   email?: string;
   phone?: string;
+  timeZone?:string;
   socialLinks?: {
     linkedin?: string;
     twitter?: string;

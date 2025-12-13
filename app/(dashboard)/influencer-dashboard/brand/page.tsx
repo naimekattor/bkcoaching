@@ -9,6 +9,7 @@ import { MdInsertEmoticon } from "react-icons/md";
 import { apiClient } from "@/lib/apiClient";
 import type { Brand } from "@/types/brand";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 interface BrandProfileResponse {
   business_name?: string;
@@ -17,6 +18,7 @@ interface BrandProfileResponse {
   business_type?: string;
   website?: string;
   platforms?: string[];
+  timezone?: string;
 }
 
 interface BrandApiResponse {
@@ -64,7 +66,7 @@ export default function BrandPage() {
     "Home & Lifestyle – decor, furniture, kitchenware, cleaning products",
     "Financial & Professional Services – investment apps, insurance, credit repair",
     "Nonprofits & Causes – charities, community organizations, social impact campaigns",
-    "Other",
+    "Others",
   ];
 
   const getCleanCategory = (rawString?: string) => {
@@ -94,6 +96,7 @@ export default function BrandPage() {
             id: String(raw.id ?? ""),
             name: bp.business_name ?? "Unnamed Brand",
             description: bp.short_bio ?? "",
+            timeZone:bp.timezone??"Others",
             logo: bp.logo ?? undefined,
             businessType: getCleanCategory(bp.business_type) ?? undefined,
             website: bp.website ?? undefined,
@@ -106,6 +109,8 @@ export default function BrandPage() {
         });
 
         setAllBrands(normalised);
+        console.log(normalised);
+        
       } catch (err) {
         console.error("Failed to load brands", err);
       } finally {
@@ -128,16 +133,16 @@ export default function BrandPage() {
 
     // 2. Business type
     if (businessType) {
-      list = list.filter((b) => b.businessType === businessType);
+      list = list.filter((b) => b.businessType === getCleanCategory(businessType));
     }
 
     // 3. Time-zone
     if (timeZone) {
-      list = list.filter((b) => {
-        // In the current payload time-zone lives in brand_profile.timezone
-        // We'll store it on the Brand object when we have it – for now skip.
-        return true;
-      });
+      console.log(timeZone);
+      
+      list = list.filter((b) => b.timeZone === timeZone);
+      console.log(list);
+      
     }
 
     return list;
@@ -162,6 +167,7 @@ export default function BrandPage() {
 
 
   const clearFilters = () => {
+    setAppliedSearch(searchQuery);
     setSearchQuery("");
     setBusinessType("");
     setTimeZone("");
@@ -210,6 +216,9 @@ export default function BrandPage() {
 
         {/* Filter row */}
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+          <button onClick={clearFilters} className="border-1 px-2 py-1 rounded-md cursor-pointer">
+            All
+          </button>
           
           {/* Business Type Select */}
           <div className="relative w-full">

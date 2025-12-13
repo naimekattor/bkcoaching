@@ -322,7 +322,7 @@ export default function MessagesClient() {
         }
 
         // Build WebSocket URL using existing room
-        const wsUrl = `wss://reach-css-opponent-falls.trycloudflare.com/chat_handshake/ws/chat/${
+        const wsUrl = `wss://exhaust-minute-picked-reservations.trycloudflare.com/chat_handshake/ws/chat/${
           selectedRoom.room_id
         }/?token=${encodeURIComponent(token)}`;
 
