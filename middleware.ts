@@ -1,4 +1,3 @@
-// middleware.ts
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
@@ -21,46 +20,54 @@ export async function middleware(request: NextRequest) {
       },
     });
 
-    if (!res.ok) throw new Error("Subscription fetch failed");
+    if (!res.ok) {
+      console.error(`Subscription API failed with status: ${res.status}`);
+      return NextResponse.next();
+    }
 
     const subRes = await res.json();
 
     const planName = subRes?.data?.plan_name;
     const isActive = subRes?.data?.status === "active";
 
+    console.log(`Subscription check - Plan: ${planName}, Active: ${isActive}`);
+
     /* ---------------- BRAND DASHBOARD ---------------- */
     if (pathname.startsWith("/brand-dashboard")) {
       const isSubscriptionPage = pathname === "/brand-dashboard/subscription";
+      const hasValidBrandPlan = isActive && (planName === "Businesses" || planName === "Both");
 
-      if (
-        !isSubscriptionPage &&
-        (!isActive || (planName !== "Businesses" && planName !== "Both"))
-      ) {
+      // If no valid plan and NOT on subscription page → redirect to subscription
+      if (!hasValidBrandPlan && !isSubscriptionPage) {
         url.pathname = "/brand-dashboard/subscription";
         return NextResponse.redirect(url);
       }
+
+      // If has valid plan but trying to access subscription page → allow it (they can view it)
+      // If no valid plan and on subscription page → allow it
+      return NextResponse.next();
     }
 
     /* ------------- INFLUENCER DASHBOARD -------------- */
     if (pathname.startsWith("/influencer-dashboard")) {
-      const isSubscriptionPage =
-        pathname === "/influencer-dashboard/subscription";
+      const isSubscriptionPage = pathname === "/influencer-dashboard/subscription";
+      const hasValidInfluencerPlan = isActive && (planName === "Micro-Influencer" || planName === "Both");
 
-      if (
-        !isSubscriptionPage &&
-        (!isActive ||
-          (planName !== "Micro-Influencer" && planName !== "Both"))
-      ) {
+      // If no valid plan and NOT on subscription page → redirect to subscription
+      if (!hasValidInfluencerPlan && !isSubscriptionPage) {
         url.pathname = "/influencer-dashboard/subscription";
         return NextResponse.redirect(url);
       }
+
+      // If has valid plan but trying to access subscription page → allow it (they can view it)
+      // If no valid plan and on subscription page → allow it
+      return NextResponse.next();
     }
 
     return NextResponse.next();
   } catch (error) {
     console.error("Middleware error:", error);
-    url.pathname = "/auth/login";
-    return NextResponse.redirect(url);
+    return NextResponse.next();
   }
 }
 
