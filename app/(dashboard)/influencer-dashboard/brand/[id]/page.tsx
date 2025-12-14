@@ -24,7 +24,10 @@ import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
 import { apiClient } from "@/lib/apiClient";
 import type { Brand } from "@/types/brand";
-
+interface OtherUserData{
+  hires_data:number;
+  campaigns:number;
+}
 interface BrandProfileResponse {
   id?: string | number;
   business_name?: string;
@@ -63,6 +66,7 @@ export default function BrandProfilePage() {
   const [brand, setBrand] = useState<Brand | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const[userOtherData,setUserOtherData]=useState<OtherUserData>({ hires_data: 0, campaigns: 0 });
 
   // -------------------------------------------------
   // 1. FETCH brand by id
@@ -74,10 +78,13 @@ export default function BrandProfilePage() {
         const res = await apiClient(`user_service/get_a_brand/${id}/`, {
           method: "GET",
         });
+        setUserOtherData(res?.data?.res);
+        console.log(userOtherData);
+        
 
         // ---- Normalise API → Brand ----
         const raw =
-          (res.data as BrandResponse | undefined)?.brand_profile ?? {};
+          (res.data.data as BrandResponse | undefined)?.brand_profile ?? {};
 
         const platforms: string[] = Array.isArray(raw.platforms)
           ? raw.platforms
@@ -285,22 +292,22 @@ export default function BrandProfilePage() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-primary mb-1">
-                    {brand.campaigns?.total ?? 0}
+                    {userOtherData.campaigns ?? 0}
                   </div>
                   <div className="text-sm text-gray-600">Total Campaigns</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-green-600 mb-1">
-                    {brand.campaigns?.creators ?? 0}
+                    {userOtherData.hires_data ?? 0}
                   </div>
                   <div className="text-sm text-gray-600">micro-influencers</div>
                 </div>
-                <div className="text-center">
+                {/* <div className="text-center">
                   <div className="text-2xl font-bold text-secondary mb-1">
                     {brand.campaigns?.avgRating ?? 0}
                   </div>
                   <div className="text-sm text-gray-600">Avg Rating</div>
-                </div>
+                </div> */}
                 <div className="text-center">
                   <div className="text-2xl font-bold text-purple-600 mb-1">
                     ${((brand.campaigns?.totalInvested ?? 0) / 1000).toFixed(0)}
@@ -358,7 +365,7 @@ export default function BrandProfilePage() {
             </div>
 
             {/* Reviews */}
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
+            {/* <div className="bg-white rounded-lg border border-gray-200 p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 Reviews & Testimonials
               </h2>
@@ -403,7 +410,7 @@ export default function BrandProfilePage() {
               ) : (
                 <p className="text-gray-500">No reviews yet.</p>
               )}
-            </div>
+            </div> */}
           </div>
 
           {/* RIGHT COLUMN */}

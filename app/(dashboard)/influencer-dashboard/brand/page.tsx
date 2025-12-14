@@ -304,7 +304,7 @@ export default function BrandPage() {
             No brands match the current filters.
           </p>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {paginatedBrands.map((brand) => (
               <div
                 key={brand.id}
