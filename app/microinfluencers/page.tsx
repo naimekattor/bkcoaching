@@ -1,9 +1,13 @@
-// Removed unused Hero import
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import { FaStar } from "react-icons/fa";
+import { useState } from "react";
+import { FaStar, FaSearch } from "react-icons/fa";
 
 export default function InfluencersPage() {
+  const [searchTerm, setSearchTerm] = useState("");
+
   const influencers = [
     {
       name: "John Doe",
@@ -39,7 +43,7 @@ export default function InfluencersPage() {
       image: "/images/influencer/influencer3.jpg",
     },
     {
-      name: "Robert Smith",
+      name: "Mike Tech",
       followers: "520k Followers",
       category: "TECH",
       categoryColor: "bg-primary",
@@ -51,16 +55,26 @@ export default function InfluencersPage() {
     },
   ];
 
+  // Filter Logic based on Search Term
+  const filteredInfluencers = influencers.filter((inf) => {
+    const term = searchTerm.toLowerCase();
+    return (
+      inf.name.toLowerCase().includes(term) ||
+      inf.category.toLowerCase().includes(term) ||
+      inf.bio.toLowerCase().includes(term)
+    );
+  });
+
   return (
-    <div className="min-h-screen ">
-      {/* for hero */}
+    <div className="min-h-screen">
+      {/* Hero Section */}
       <section className="bg-gradient-to-b from-[#ffffff] to-[#E9F4FF]">
         <main className="container mx-auto px-4 pt-16 lg:pt-24">
           <div className="grid lg:grid-cols-12 items-center">
             {/* Left Content */}
             <div className="lg:col-span-6 space-y-8 flex-1 pb-10">
               <div className="space-y-4">
-                <h1 className="text-4xl md:text-5xl  font-bold text-primary leading-tight">
+                <h1 className="text-4xl md:text-5xl font-bold text-primary leading-tight">
                   Your Brand + Their Audience = A Great Match
                 </h1>
               </div>
@@ -72,7 +86,7 @@ export default function InfluencersPage() {
               </p>
             </div>
 
-            {/* Right Image (1/3) */}
+            {/* Right Image */}
             <div className="relative lg:col-span-6">
               <Image
                 width={833}
@@ -85,54 +99,75 @@ export default function InfluencersPage() {
           </div>
         </main>
       </section>
-      <main className="container mx-auto  py-16 lg:py-[100px]">
-        <div>
-          {/* <h1 className="text-4xl md:text-5xl font-bold text-center mb-16">
-            Browse Influencers
-          </h1> */}
 
+      <main className="container mx-auto py-16 lg:py-[100px] px-4">
+        
+        {/* --- Search Bar Section --- */}
+        <div className="mb-12 flex justify-center">
+          <div className="relative w-full max-w-xl">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <FaSearch className="text-gray-400" />
+            </div>
+            <input
+              type="text"
+              placeholder="Search influencers by name, category, or bio..."
+              className="w-full pl-10 pr-4 py-4 rounded-xl border border-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-lg transition-all"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
+
+        {/* Results Grid */}
+        {filteredInfluencers.length > 0 ? (
           <div className="grid md:grid-cols-2 gap-8">
-            {influencers.map((influencer, index) => (
+            {filteredInfluencers.map((influencer, index) => (
               <div
                 key={index}
-                className=" bg-white rounded-xl shadow-lg overflow-hidden border"
+                className="bg-white rounded-xl shadow-lg overflow-hidden border"
               >
                 {/* Top Section */}
                 <div className="flex items-center justify-between">
                   <div className="px-4">
-                    {/* Name + Followers */}
+                    {/* Dynamic Name + Followers */}
                     <h2 className="text-xl font-bold text-gray-900">
-                      John Doe
+                      {influencer.name}
                     </h2>
-                    <p className="text-primary font-semibold">520k Followers</p>
+                    <p className="text-primary font-semibold">
+                      {influencer.followers}
+                    </p>
 
                     {/* Stars */}
                     <div className="flex text-secondary mt-1">
-                      <FaStar />
-                      <FaStar />
-                      <FaStar />
-                      <FaStar />
-                      <FaStar />
+                      {[...Array(5)].map((_, i) => (
+                        <FaStar
+                          key={i}
+                          className={
+                            i < influencer.rating
+                              ? "text-yellow-400"
+                              : "text-gray-300"
+                          }
+                        />
+                      ))}
                     </div>
                   </div>
-                  <div className="relative w-40 h-40 md:w-48 md:h-48 rounded-lg  overflow-hidden border-4 border-white shadow-md bg-gray-100 flex-shrink-0 mx-4 my-4">
-  <Image
-    src={influencer.image}
-    alt={`${influencer.name} profile`}
-    width={192}
-    height={192}
-    className="object-cover w-full h-full"
-  />
-  <div className="absolute bottom-2 right-2 flex items-center bg-white px-2 py-1 rounded-full shadow">
-    <span className="text-pink-500 text-sm mr-1">❤️</span>
-    <span
-      className={`text-gray-800 text-xs font-semibold `}
-    >
-      {influencer.category}
-    </span>
-  </div>
-</div>
-
+                  
+                  {/* Image Section */}
+                  <div className="relative w-40 h-40 md:w-48 md:h-48 rounded-lg overflow-hidden border-4 border-white shadow-md bg-gray-100 flex-shrink-0 mx-4 my-4">
+                    <Image
+                      src={influencer.image}
+                      alt={`${influencer.name} profile`}
+                      width={192}
+                      height={192}
+                      className="object-cover w-full h-full"
+                    />
+                    <div className="absolute bottom-2 right-2 flex items-center bg-white px-2 py-1 rounded-full shadow">
+                      <span className="text-pink-500 text-sm mr-1">❤️</span>
+                      <span className={`text-gray-800 text-xs font-semibold`}>
+                        {influencer.category}
+                      </span>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Content */}
@@ -141,23 +176,22 @@ export default function InfluencersPage() {
                   <div className="mt-4">
                     <h3 className="text-gray-900 font-bold mb-1">Bio</h3>
                     <p className="text-gray-700 text-sm leading-relaxed">
-                      John Doe is a trend-savvy fashion Creator known for
-                      blending streetwear with high-end style.
+                      {influencer.bio}
                     </p>
                     <p className="text-gray-700 mt-2 text-sm">
                       <span className="font-semibold">
                         How much they charge:
                       </span>{" "}
-                      $150
+                      {influencer.price}
                     </p>
                     <p className="text-gray-700 text-sm">
-                      <span className="font-semibold">Collaborations:</span> 12
-                      Businesses Worked With
+                      <span className="font-semibold">Collaborations:</span>{" "}
+                      {influencer.collaborations}
                     </p>
                   </div>
 
                   {/* Buttons */}
-                  <div className="bg-sky-950 rounded-md inline-flex justify-center items-center gap-2.5 mt-4 cursor-pointer">
+                  <div className="mt-4">
                     <Link
                       href={"#"}
                       className="bg-primary text-white font-semibold py-3 px-8 inline-block rounded-lg shadow-md hover:shadow-lg hover:border-2 hover:border-[#001F3F] hover:bg-white hover:text-[#001F3F] transition-all duration-300"
@@ -169,7 +203,20 @@ export default function InfluencersPage() {
               </div>
             ))}
           </div>
-        </div>
+        ) : (
+          // No Results State
+          <div className="text-center py-20">
+            <p className="text-xl text-gray-500">
+              No influencers found matching "{searchTerm}"
+            </p>
+            <button
+              onClick={() => setSearchTerm("")}
+              className="mt-4 text-primary font-semibold hover:underline"
+            >
+              Clear search
+            </button>
+          </div>
+        )}
       </main>
     </div>
   );
