@@ -6,6 +6,7 @@ import { HiMenu, HiX } from "react-icons/hi";
 import { influencerLinks } from "../../../config/sidebarLinks";
 import { usePathname } from "next/navigation";
 import DashboardTopHeader from "../../../components/dashboard/DashboardTopHeader";
+import { PanelRightClose } from "lucide-react";
 
 export default function BrandDashboardLayout({ children }) {
   const [showSideBar, setShowSideBar] = useState(false);
@@ -70,7 +71,7 @@ export default function BrandDashboardLayout({ children }) {
           <HiX size={20} />
         </button>
       
-        <Sidebar links={brandLinks} setShowSideBar={setShowSideBar} />
+        <Sidebar links={influencerLinks} setShowSideBar={setShowSideBar} />
       </div>
 
       {/* Main content */}

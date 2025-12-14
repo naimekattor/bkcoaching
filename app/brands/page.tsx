@@ -94,7 +94,7 @@ export default async function BrandsPage() {
           </div>
         </main>
       </section>
-      <div className="space-y-12 py-16 lg:py-[100px]">
+      <div className="container mx-auto px-4 space-y-12 py-16 lg:py-[100px]">
         {brands.slice(0, 15).map((brand) => (
           <BrandCard key={brand.id} {...brand} />
         ))}
