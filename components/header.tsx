@@ -119,7 +119,7 @@ const Header = () => {
 
     if (!token || !userData) {
       return (
-        <Link href="/auth/login">
+        <Link href="/auth">
           <Button
             variant="default"
             size="sm"
