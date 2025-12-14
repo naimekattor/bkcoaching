@@ -1,6 +1,8 @@
-import BrandCard from "@/components/BrandCard";
+// app/brands/page.tsx (or wherever your main file is)
 import { apiClient } from "@/lib/apiClient";
 import Image from "next/image";
+import BrandListWithSearch from "@/components/BrandListWithSearch"; 
+
 export interface BrandProfile {
   id: number;
   business_name: string | null;
@@ -23,40 +25,46 @@ export interface BrandProfile {
   targeted_audience: string | null;
   mission: string | null;
 }
-interface Brand{
-  id:Number;
+interface Brand {
+  id: number;
 }
 interface BrandApiResponse {
-  id: any;
+  id: number;
   brand_profile: BrandProfile;
-  brand:Brand;
+  brand: Brand;
 }
+
 export default async function BrandsPage() {
   async function fetchBrands() {
-    const res = await apiClient("user_service/get_all_brands/", {
-      method: "GET",
-    });
+    // Add try/catch for safety
+    try {
+      const res = await apiClient("user_service/get_all_brands/", {
+        method: "GET",
+      });
 
-    const items: BrandApiResponse[] = res?.data ?? [];
-    console.log(items);
+      const items: BrandApiResponse[] = res?.data ?? [];
 
-    return items.map((brand: BrandApiResponse) => ({
-      id: brand?.id,
-      name:
-        brand?.brand_profile?.display_name ||
-        brand?.brand_profile?.business_name ||
-        "Unnamed",
-      location: brand?.brand_profile?.timezone || "Not provided",
-      category: brand?.brand_profile?.business_type
-        ? brand.brand_profile.business_type.split("–")[0].trim()
-        : "General",
-      description: brand?.brand_profile?.short_bio || "",
-      image: brand?.brand_profile?.logo || "/images/placeholder.jpg",
-      logo: brand?.brand_profile?.logo || "/images/placeholder.jpg",
-      service: "Brand Campaign",
-      rating: 4.5,
-      reviews: 0,
-    }));
+      return items.map((brand: BrandApiResponse) => ({
+        id: brand?.id,
+        name:
+          brand?.brand_profile?.display_name ||
+          brand?.brand_profile?.business_name ||
+          "Unnamed",
+        location: brand?.brand_profile?.timezone || "Not provided",
+        category: brand?.brand_profile?.business_type
+          ? brand.brand_profile.business_type.split("–")[0].trim()
+          : "General",
+        description: brand?.brand_profile?.short_bio || "",
+        image: brand?.brand_profile?.logo || "/images/placeholder.jpg",
+        logo: brand?.brand_profile?.logo || "/images/placeholder.jpg",
+        service: "Brand Campaign",
+        rating: 4.5,
+        reviews: 0,
+      }));
+    } catch (error) {
+      console.error("Failed to fetch brands", error);
+      return [];
+    }
   }
 
   const brands = await fetchBrands();
@@ -69,7 +77,7 @@ export default async function BrandsPage() {
             {/* Left Content */}
             <div className="lg:col-span-1 space-y-8 flex-1 ">
               <div className="space-y-4">
-                <h1 className="text-4xl md:text-5xl  font-bold text-primary leading-tight">
+                <h1 className="text-4xl md:text-5xl font-bold text-primary leading-tight">
                   Discover Brands You’ll Love Sharing
                 </h1>
               </div>
@@ -81,7 +89,7 @@ export default async function BrandsPage() {
               </p>
             </div>
 
-            {/* Right Image (1/3) */}
+            {/* Right Image */}
             <div className="relative">
               <Image
                 width={833}
@@ -94,11 +102,10 @@ export default async function BrandsPage() {
           </div>
         </main>
       </section>
-      <div className="container mx-auto px-4 space-y-12 py-16 lg:py-[100px]">
-        {brands.slice(0, 15).map((brand) => (
-          <BrandCard key={brand.id} {...brand} />
-        ))}
-      </div>
+
+      {/* Replaced the direct map with the Search Component */}
+      <BrandListWithSearch brands={brands} />
+      
     </section>
   );
 }

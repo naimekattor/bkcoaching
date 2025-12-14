@@ -65,25 +65,7 @@ export default function BrandCard({
           </div>
 
           <div className="flex items-center mb-6 justify-center lg:justify-start">
-            <div className="text-center sm:text-left">
-              {/* <p className="text-gray-600 text-sm">{category}</p> */}
-              {/* <div className="flex items-center justify-center lg:justify-start space-x-1">
-                <p className="text-lg font-bold text-gray-900">{rating}</p>
-                <span className="text-gray-500 text-sm">
-                  ({reviews.toLocaleString()} Reviews)
-                </span>
-              </div>
-              <div className="flex text-secondary">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <FaStar
-                    key={i}
-                    className={
-                      i < Math.floor(rating) ? "fill-current" : "opacity-30"
-                    }
-                  />
-                ))}
-              </div> */}
-            </div>
+            
             <Image
               width={83}
               height={83}
