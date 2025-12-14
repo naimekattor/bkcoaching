@@ -37,21 +37,40 @@ export default function BrandDashboardLayout({ children }) {
       </aside>
 
       {/* Mobile toggle button */}
-      <button
-        onClick={() => setShowSideBar(!showSideBar)}
-        className="absolute top-4 left-4 z-30 p-2 bg-primary text-white rounded-lg shadow-lg md:hidden"
-      >
-        {showSideBar ? <HiX size={24} /> : <HiMenu size={24} />}
-      </button>
+      {!showSideBar && (
+  <button
+    onClick={() => setShowSideBar(true)}
+    className="fixed top-10 -left-4 z-30 p-2  text-secondary rounded-lg md:hidden"
+    aria-label="Open sidebar"
+  >
+    <PanelRightClose size={34} />
+  </button>
+)}
 
       {/* Sidebar collapsible (mobile) */}
       <div
         ref={sideBarRef}
-        className={`fixed top-0 left-0 h-screen w-64 shadow z-20 transform transition-transform duration-300 md:hidden ${
+        className={`fixed top-0 left-0 h-screen w-64 bg-white shadow z-20 transform transition-transform duration-300 md:hidden ${
           showSideBar ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <Sidebar links={influencerLinks} />
+        {/* RIGHT-SIDE CLOSE BUTTON */}
+        <button
+          onClick={() => setShowSideBar(false)}
+          className="
+            absolute top-4 -right-0
+            bg-secondary text-primary
+            w-10 h-10 rounded-full
+            flex items-center justify-center
+            shadow-lg
+            md:hidden
+          "
+          aria-label="Close sidebar"
+        >
+          <HiX size={20} />
+        </button>
+      
+        <Sidebar links={brandLinks} setShowSideBar={setShowSideBar} />
       </div>
 
       {/* Main content */}
