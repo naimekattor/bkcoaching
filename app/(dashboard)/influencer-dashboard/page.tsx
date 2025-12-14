@@ -48,6 +48,26 @@ interface RoomData {
   is_online?: boolean;
   profile_picture?: string;
 }
+const getSafeImageSrc = (src?: string) => {
+  if (
+    !src ||
+    src === "profile_picture" ||
+    src === "null" ||
+    src === "undefined"
+  ) {
+    return "/images/person.jpg";
+  }
+
+  if (src.startsWith("http://") || src.startsWith("https://")) {
+    return src;
+  }
+
+  if (src.startsWith("/")) {
+    return src;
+  }
+
+  return `/${src}`;
+};
 
 export default function Page() {
   const [influencerProfile, setInfluencerProfile] =
@@ -369,8 +389,15 @@ export default function Page() {
                     No messages found
                   </div>
                 ) : (
-                  roomData.slice(0, 2).map((room, index) => (
-                    <div
+                  roomData.slice(0, 2).map((room, index) => {
+                    const profile_picture=getSafeImageSrc(room.profile_picture ||
+                          room.brand_logo ||
+                          "/images/person.jpg")
+                          const name=room.name || "Avatar"
+                          
+
+                          return (
+                            <div
                       key={room.room_id || index}
                       className="flex items-start space-x-4 py-4 border-b border-gray-100 last:border-0"
                     >
@@ -378,12 +405,8 @@ export default function Page() {
                         width={40}
                         height={40}
                         className="h-10 w-10 rounded-full object-cover flex-shrink-0"
-                        src={
-                          room.profile_picture ||
-                          room.brand_logo ||
-                          "/images/person.jpg"
-                        }
-                        alt={`${room.name || "User"} avatar`}
+                        src={profile_picture}
+                        alt={name}
                       />
                       <div className="flex-grow min-w-0">
                         <div className="flex justify-between items-center mb-1">
@@ -399,7 +422,9 @@ export default function Page() {
                         </p>
                       </div>
                     </div>
-                  ))
+                          )
+                    }
+                  )
                 )}
               </div>
             </div>
@@ -663,7 +688,7 @@ export default function Page() {
                 </div>
               ) : (
                 <>
-                  <button
+                  {/* <button
                     onClick={() =>
                       handleCampaignAction(selectedCampaign.id, "reject")
                     }
@@ -671,12 +696,12 @@ export default function Page() {
                   >
                     <XCircle className="w-5 h-5" />
                     Reject
-                  </button>
+                  </button> */}
                   <button
                     onClick={() =>
                       handleCampaignAction(selectedCampaign.id, "accept")
                     }
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold shadow-md transition-colors"
+                    className="flex-1 flex items-center cursor-pointer justify-center gap-2 px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold shadow-md transition-colors"
                   >
                     <CheckCircle className="w-5 h-5" />
                     Accept Campaign

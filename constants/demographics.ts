@@ -7,6 +7,8 @@ export const demographics = [
   "Men 35–44",
   "Women 45+",
   "Men 45+",
+  "Teens",
+  "Kids",
   // "High-Income / Affluent",
   // "Budget-Conscious Shoppers",
   // "Health & Wellness Focused",

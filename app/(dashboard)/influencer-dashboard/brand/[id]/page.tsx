@@ -240,7 +240,7 @@ export default function BrandProfilePage() {
 
             <div className="flex gap-3">
               <Link href={`/influencer-dashboard/messages?id=${id}`}>
-              <button className="bg-yellow-500 hover:bg-[var(--secondaryhover)] text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2">
+              <button className="bg-yellow-500 cursor-pointer hover:bg-[var(--secondaryhover)] text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2">
                 <MessageCircle className="w-4 h-4" />
                 Message
               </button>
@@ -266,13 +266,13 @@ export default function BrandProfilePage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <h3 className="font-medium text-gray-900 mb-2">Mission</h3>
-                  <p className="text-gray-600 text-sm">{brand.mission}</p>
+                  <p className="text-gray-600 text-sm">{brand.mission || "Not added"}</p>
                 </div>
                 <div>
                   <h3 className="font-medium text-gray-900 mb-2">
                     Business Type
                   </h3>
-                  <p className="text-gray-600 text-sm">{brand.businessType}</p>
+                  <p className="text-gray-600 text-sm">{brand.businessType || "Not added"}</p>
                 </div>
               </div>
             </div>
@@ -470,7 +470,7 @@ export default function BrandProfilePage() {
             </div>
 
             {/* Resources */}
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
+            {/* <div className="bg-white rounded-lg border border-gray-200 p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 Business Resources
               </h2>
@@ -505,7 +505,7 @@ export default function BrandProfilePage() {
               ) : (
                 <p className="text-gray-500">No resources available.</p>
               )}
-            </div>
+            </div> */}
 
             {/* Share */}
             {/* <div className="bg-primary rounded p-6 text-white">

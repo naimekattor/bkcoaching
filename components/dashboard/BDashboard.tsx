@@ -163,7 +163,7 @@ export default function BDashboard() {
             </div>
             <div className="space-y-6">
               <RecentCollaborations rawCampaigns={previousHirings} />
-              <BusinessAssets />
+              {/* <BusinessAssets /> */}
             </div>
           </div>
         </div>

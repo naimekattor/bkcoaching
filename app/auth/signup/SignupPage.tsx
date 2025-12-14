@@ -402,10 +402,10 @@ export default function SignupPage() {
             alt="Signup illustration"
             className="w-full h-auto mb-6"
           />
-          <p className="text-slate-600 text-lg">
+          {/* <p className="text-slate-600 text-lg">
             <span className="underline font-semibold">Sign up</span> and get{" "}
             <span className="font-semibold">14 days free trial</span>
-          </p>
+          </p> */}
         </div>
       </div>
     </div>

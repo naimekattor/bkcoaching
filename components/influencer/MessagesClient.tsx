@@ -26,16 +26,16 @@ interface Room {
   profile_picture?: string;
 }
 interface OtherUserProfile {
-  id:string;
-  first_name:string;
-  brand_profile:{
-    business_name:string;
-    logo:string;
-  }
-  influencer_profile:{
-    display_name:string;
-    profile_picture:string;
-  }
+  id: string;
+  first_name: string;
+  brand_profile: {
+    business_name: string;
+    logo: string;
+  };
+  influencer_profile: {
+    display_name: string;
+    profile_picture: string;
+  };
 }
 interface HistoryMessage {
   id: number;
@@ -102,6 +102,28 @@ const inferFileMetaFromUrl = (url: string) => {
   return { fileType: undefined as string | undefined, fileName };
 };
 
+const getSafeImageSrc = (src?: string) => {
+  if (
+    !src ||
+    src === "profile_picture" ||
+    src === "null" ||
+    src === "undefined"
+  ) {
+    return "/images/person.jpg";
+  }
+
+  if (src.startsWith("http://") || src.startsWith("https://")) {
+    return src;
+  }
+
+  if (src.startsWith("/")) {
+    return src;
+  }
+
+  return `/${src}`;
+};
+
+
 export default function InfluencerMessagesClient() {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
@@ -113,7 +135,8 @@ export default function InfluencerMessagesClient() {
   const [loadingHistory, setLoadingHistory] = useState<boolean>(false);
   const [attachedFile, setAttachedFile] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
-  const [otherUserProfile,setOtherUserProfile]=useState<OtherUserProfile | null>(null);
+  const [otherUserProfile, setOtherUserProfile] =
+    useState<OtherUserProfile | null>(null);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -183,26 +206,28 @@ export default function InfluencerMessagesClient() {
     createRoom();
   }, [otherUserId]);
 
-  useEffect(()=>{
-        const fetchOtherUserProfile=async()=>{
-          const targetId = selectedRoom?.other_user_id || otherUserId;
-    if (!targetId) return;
-    try {
-      const response=await apiClient(`user_service/get_a_brand/${targetId}/`,{
-        method:"GET"
-      });
-      setOtherUserProfile(response?.data);
-      
-    } catch (error) {
-      console.log("error",error);
-      
-    }
-        }
-        fetchOtherUserProfile();
-  },[otherUserId,selectedRoom])
+  useEffect(() => {
+    const fetchOtherUserProfile = async () => {
+      const targetId = selectedRoom?.other_user_id || otherUserId;
+      if (!targetId) return;
+      try {
+        const response = await apiClient(
+          `user_service/get_a_brand/${targetId}/`,
+          {
+            method: "GET",
+          }
+        );
+        setOtherUserProfile(response?.data);
+      } catch (error) {
+        console.log("error", error);
+      }
+    };
+    fetchOtherUserProfile();
+  }, [otherUserId, selectedRoom]);
 
-  const avatarSrc = otherUserProfile?.brand_profile?.logo || otherUserProfile?.influencer_profile?.profile_picture;
-
+  const avatarSrc =
+    otherUserProfile?.brand_profile?.logo ||
+    otherUserProfile?.influencer_profile?.profile_picture;
 
   // Fetch rooms for sidebar
   useEffect(() => {
@@ -295,8 +320,6 @@ export default function InfluencerMessagesClient() {
 
           console.log("Sorted Messages:", cleanedMessages);
           setMessages(cleanedMessages);
-
-          
         }
       } catch (err) {
         console.error("Failed to fetch chat history:", err);
@@ -310,21 +333,23 @@ export default function InfluencerMessagesClient() {
   }, [selectedRoom, router]);
 
   useEffect(() => {
-  if (messagesEndRef.current) {
-    messagesEndRef.current.scrollIntoView({ 
-  behavior: "smooth", 
-  block: "end",   
-  inline: "nearest" 
-});
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+        inline: "nearest",
+      });
 
-   
-    const timeout = setTimeout(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-    }, 200);
+      const timeout = setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "end",
+        });
+      }, 200);
 
-    return () => clearTimeout(timeout);
-  }
-}, [messages]);
+      return () => clearTimeout(timeout);
+    }
+  }, [messages]);
 
   // Initialize WebSocket
   useEffect(() => {
@@ -682,6 +707,7 @@ export default function InfluencerMessagesClient() {
                 room.last_message,
                 room.timestamp
               );
+              const profilePicture = getSafeImageSrc(room?.profile_picture)
 
               return (
                 <div
@@ -695,9 +721,9 @@ export default function InfluencerMessagesClient() {
                 >
                   <div className="flex items-center gap-3">
                     <div className="relative flex-shrink-0">
-                      {room?.profile_picture ? (
+                      {profilePicture ? (
                         <Image
-                          src={room?.profile_picture}
+                          src={profilePicture}
                           alt="name"
                           width={48}
                           height={48}
@@ -755,17 +781,28 @@ export default function InfluencerMessagesClient() {
                   <MoreHorizontal className="h-5 w-5" />
                 </button>
                 <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold">
-                   {avatarSrc ? (
-                                      <Image src={avatarSrc} alt="" width={48} height={48} className="w-[48px] h-[48px] rounded-full"/>
-                                    ) : (
-                                      <span>{otherUserProfile?.brand_profile?.business_name?.[0] || otherUserProfile?.influencer_profile?.display_name?.[0] || "?"}</span>
-                                    )}
+                  {avatarSrc ? (
+                    <Image
+                      src={avatarSrc}
+                      alt=""
+                      width={48}
+                      height={48}
+                      className="w-[48px] h-[48px] rounded-full"
+                    />
+                  ) : (
+                    <span>
+                      {otherUserProfile?.brand_profile?.business_name?.[0] ||
+                        otherUserProfile?.influencer_profile
+                          ?.display_name?.[0] ||
+                        "?"}
+                    </span>
+                  )}
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="font-bold text-gray-900 truncate">
-                   {otherUserProfile?.brand_profile?.business_name ||
-                    otherUserProfile?.influencer_profile?.display_name ||
-                    "?"}
+                    {otherUserProfile?.brand_profile?.business_name ||
+                      otherUserProfile?.influencer_profile?.display_name ||
+                      "?"}
                   </p>
                   {/* <p className="text-sm text-gray-500">Active now</p> */}
                 </div>

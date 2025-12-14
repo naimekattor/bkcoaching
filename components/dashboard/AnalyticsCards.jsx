@@ -5,7 +5,7 @@ export function AnalyticsCards({ allCampaigns,previousHirings}) {
   const analyticsData = [
     { value: allCampaigns.length, label: "Total Campaigns", color: "#BC8D03" },
     { value: numOfInfluencers, label: "micro-influencers", color: "#BC8D03" },
-    { value: "4.8", label: "Avg Rating", color: "#BC8D03" },
+    // { value: "4.8", label: "Avg Rating", color: "#BC8D03" },
     { 
   value: `$${Number(totalInvested).toLocaleString()}`, 
   label: "Total Invested", 
@@ -21,8 +21,8 @@ export function AnalyticsCards({ allCampaigns,previousHirings}) {
         {analyticsData.map((item, index) => (
           <div key={index} className="bg-slate-200 rounded-lg p-6 text-center">
             <div
-              className="text-3xl font-bold mb-2"
-              style={{ color: item.color }}
+              className="text-3xl text-secondary font-bold mb-2"
+              
             >
               {item.value}
             </div>

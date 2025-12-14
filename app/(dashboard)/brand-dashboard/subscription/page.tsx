@@ -92,7 +92,7 @@ export default function SubscriptionPage() {
         <div className="text-center mt-6">
           <button
             onClick={() => router.push(portalData)}
-            className="px-5 py-2 bg-secondary text-primary font-semibold rounded-lg hover:bg-[var(--secondaryhover)]"
+            className="px-5 py-2 cursor-pointer bg-secondary text-primary font-semibold rounded-lg hover:bg-[var(--secondaryhover)]"
           >
             Manage Billing in Stripe
           </button>

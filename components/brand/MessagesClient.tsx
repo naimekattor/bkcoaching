@@ -605,6 +605,7 @@ export default function MessagesClient() {
                 room.last_message,
                 room.timestamp
               );
+              const profilePicture=room?.profile_picture;
 
               return (
                 <div
@@ -618,9 +619,9 @@ export default function MessagesClient() {
                 >
                   <div className="flex items-center gap-3">
                     <div className="relative flex-shrink-0">
-                      {room?.profile_picture ? (
+                      {profilePicture ? (
                         <Image
-                          src={room?.profile_picture}
+                          src={profilePicture}
                           alt="name"
                           width={48}
                           height={48}

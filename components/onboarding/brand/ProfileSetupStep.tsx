@@ -57,6 +57,14 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
       label: "Men 45+",
       tooltip: "Gen X / Boomers – loyalty and financial stability.",
     },
+    {
+      label: "Teens",
+      tooltip: "Ages 13–17 – highly influenced by social media trends, peers, and short-form video content.",
+    },
+    {
+      label: "Kids",
+      tooltip: "Ages 6–12 – purchasing decisions influenced by parents, education, entertainment, and brand familiarity.",
+    },
     
   ];
 

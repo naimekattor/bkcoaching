@@ -68,6 +68,8 @@ export function Sidebar({ links = [], setShowSideBar }) {
           Logout
         </button>
       </div>
+
+      
     </div>
   );
 }

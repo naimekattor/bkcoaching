@@ -1,5 +1,5 @@
 "use client";
-
+import Swal from 'sweetalert2';
 import { useEffect, useState } from "react";
 import {
   Search,
@@ -381,20 +381,55 @@ export default function CampaignDashboard() {
   };
 
   /* ---------- Delete ---------- */
-  const handleDelete = async (event: Event, campaign: Campaign) => {
+const handleDelete = async (
+  event: Event,
+  campaign: Campaign
+) => {
+  if (event instanceof MouseEvent) {
     event.preventDefault();
     event.stopPropagation();
-    try {
-      await apiClient(`campaign_service/delete_a_campaign/${campaign.id}/`, {
+  }
+
+  const result = await Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#0d2f4f",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!",
+  });
+
+  if (!result.isConfirmed) return;
+
+  try {
+    await apiClient(
+      `campaign_service/delete_a_campaign/${campaign.id}/`,
+      {
         method: "DELETE",
         auth: true,
-      });
+      }
+    );
 
-      setAllCampaigns((prev) => prev.filter((c) => c.id !== campaign.id));
-    } catch (err) {
-      console.error("Delete failed", err);
-    }
-  };
+    setAllCampaigns((prev) =>
+      prev.filter((c) => c.id !== campaign.id)
+    );
+
+    Swal.fire({
+      title: "Deleted!",
+      text: "Your campaign has been deleted.",
+      icon: "success",
+    });
+  } catch (err) {
+    console.error("Delete failed", err);
+    Swal.fire({
+      title: "Error!",
+      text: "Failed to delete campaign.",
+      icon: "error",
+    });
+  }
+};
+
 
   const handleCampaignCreated = (newCampaign: Campaign) => {
     setAllCampaigns((prev) => [newCampaign, ...prev]);

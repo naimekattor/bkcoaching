@@ -18,6 +18,7 @@ import {
   Shield,
   Smartphone,
 } from "lucide-react";
+import { useAuthStore } from "@/stores/useAuthStore";
 type NotificationKeys = "email" | "push" | "sms" | "marketing";
 
 interface NotificationItem {
@@ -52,6 +53,8 @@ export default function SettingsPage() {
   const [qrGenerated, setQrGenerated] = useState(false);
   const [backupCodes, setBackupCodes] = useState<string[]>([]);
   const [copiedCode, setCopiedCode] = useState(false);
+
+  const user=useAuthStore((state)=>state.user);
 
   // Password strength calculator
   const calculatePasswordStrength = (password: string) => {
@@ -234,9 +237,9 @@ export default function SettingsPage() {
                   style={
                     { "--tw-ring-color": "#0d2f4f" } as React.CSSProperties
                   }
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="your.email@example.com"
+                  value={user?.user?.email}
+                  readOnly
+                  placeholder={user?.user?.email || "your.email@example.com"}
                 />
                 <Mail className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               </div>

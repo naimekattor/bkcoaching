@@ -393,6 +393,19 @@ function MicroInfluencersPageContent() {
 
           {/* Filters */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            <button
+    onClick={clearFilters}
+    className="
+      w-full py-1 cursor-pointer
+      bg-white border border-gray-200 rounded-lg
+      px-4 text-base 
+      hover:border-gray-300 hover:bg-gray-50
+      focus:ring-2 focus:ring-secondary/20
+      transition-all
+    "
+  >
+    All
+  </button>
             {/* Content Niches */}
             <Select 
               value={filters.contentNiches || "all"} 
@@ -440,6 +453,9 @@ function MicroInfluencersPageContent() {
                 <SelectItem value="instagram">Instagram</SelectItem>
                 <SelectItem value="tiktok">TikTok</SelectItem>
                 <SelectItem value="youtube">YouTube</SelectItem>
+                <SelectItem value="youtube">Facebook</SelectItem>
+                <SelectItem value="youtube">LinkedIn</SelectItem>
+                <SelectItem value="youtube">Blog</SelectItem>
               </SelectContent>
             </Select>
 
@@ -475,6 +491,8 @@ function MicroInfluencersPageContent() {
                     <SelectItem value="0-1000">0 – 1K</SelectItem>
                     <SelectItem value="1001-5000">1K – 5K</SelectItem>
                     <SelectItem value="5001-10000">5K – 10K</SelectItem>
+                    <SelectItem value="10001-50000">10K – 50K</SelectItem>
+                    <SelectItem value="50000+">50K+</SelectItem>
                   </SelectContent>
                 </Select>
                 {/* Micro-interaction Helper Icon */}

@@ -4,6 +4,7 @@ import { apiClient } from "@/lib/apiClient";
 import { useEffect, useState } from "react";
 import { SkeletonCard } from "./SkeletoCard";
 import { usePathname } from "next/navigation";
+import { toast } from "react-toastify";
 
 // --- Interfaces based on your API Response ---
 interface Price {
@@ -104,18 +105,18 @@ export function PricingSection({
         {
           auth: true,
           method: "POST",
-          body: JSON.stringify({ price_id: priceId }),
+          body: JSON.stringify({ price_id: priceId,success_url:"http://localhost:3000/home_dashboard?success",cancel_url:"http://localhost:3000/home_dashboard?cancel" }),
         }
       );
 
       if (res.data && res.data.checkout_url) {
         window.location.href = res.data.checkout_url;
       } else {
-        alert("Unexpected response from server.");
+        toast("Unexpected response from server.");
       }
     } catch (error) {
       console.error("Checkout error:", error);
-      alert("Failed to create checkout session");
+      toast("Failed to create checkout session");
     }
   };
 
@@ -185,7 +186,7 @@ export function PricingSection({
         </div>
 
         {/* Pricing Cards Grid */}
-        <div className="grid md:grid-cols-2 grid-cols-1 gap-8 max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-3 grid-cols-1 gap-8 max-w-5xl mx-auto">
           {filteredPlans.map((plan) => {
             const price = getPriceForInterval(plan.prices);
             const savings = isYearly ? calculateSavings(plan.prices) : null;
@@ -245,7 +246,7 @@ export function PricingSection({
                     className={`w-full cursor-pointer text-white font-semibold py-4 rounded-lg transition-colors duration-200
                       ${
                         plan.name === planName
-                          ? "bg-primary/90 ring-4 ring-primary/20"
+                          ? "bg-secondary text-primary"
                           : "bg-primary hover:bg-primary/90"
                       }`}
                     onClick={() => handleCheckout(price.price_id)}

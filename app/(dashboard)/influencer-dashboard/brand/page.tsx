@@ -133,12 +133,17 @@ export default function BrandPage() {
 
     // 2. Business type
     if (businessType) {
+      if (businessType==="All") {
+        return list;
+      }
       list = list.filter((b) => b.businessType === getCleanCategory(businessType));
     }
 
     // 3. Time-zone
     if (timeZone) {
-      console.log(timeZone);
+      if (timeZone==="All") {
+        return list;
+      }
       
       list = list.filter((b) => b.timeZone === timeZone);
       console.log(list);
@@ -230,6 +235,7 @@ export default function BrandPage() {
                 <SelectValue placeholder="All Business Type" />
               </SelectTrigger>
               <SelectContent className="max-h-[300px]">
+                <SelectItem value="All">All Business Type</SelectItem>
                 {businessTypes.map((t) => (
                   <SelectItem key={t} value={t} className="cursor-pointer py-2.5">
                     {t}
@@ -249,6 +255,7 @@ export default function BrandPage() {
                 <SelectValue placeholder="All Time Zones" />
               </SelectTrigger>
               <SelectContent className="max-h-[300px]">
+                <SelectItem value="All">All Time Zones</SelectItem>
                 {timeZones.map((tz) => (
                   <SelectItem key={tz.value} value={tz.value} className="cursor-pointer py-2.5">
                     {tz.label}

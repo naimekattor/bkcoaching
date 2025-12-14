@@ -222,7 +222,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
           <Badge variant="secondary" className="text-primary bg-primary/10">
             Free Trial Active
           </Badge>
-          <h3 className="font-semibold text-lg">14 Days of Full Access</h3>
+          {/* <h3 className="font-semibold text-lg">14 Days of Full Access</h3> */}
           <p className="text-sm text-muted-foreground">
             Your Growth plan trial includes unlimited campaigns, AI matching,
             and priority support. No payment required until your trial ends.
