@@ -132,7 +132,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
 
               {/* Basic Info */}
               <div className="space-y-4 flex-1">
-                <div className="space-y-2 w-1/3">
+                <div className="space-y-2 ">
                   <Label htmlFor="displayName">Display Name *</Label>
                   <Input
                     id="displayName"

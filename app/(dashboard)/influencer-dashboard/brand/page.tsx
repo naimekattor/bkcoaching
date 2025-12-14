@@ -227,7 +227,7 @@ export default function BrandPage() {
               onValueChange={setBusinessType}
             >
               <SelectTrigger className="w-full h-[50px] bg-white border border-gray-300 rounded-lg px-4 text-base focus:ring-2 focus:ring-primary/40 transition-all hover:bg-gray-50 hover:border-gray-400">
-                <SelectValue placeholder="Select business type" />
+                <SelectValue placeholder="All Business Type" />
               </SelectTrigger>
               <SelectContent className="max-h-[300px]">
                 {businessTypes.map((t) => (

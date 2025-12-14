@@ -2,7 +2,7 @@
 import { apiClient } from "@/lib/apiClient";
 import Image from "next/image";
 import Link from "next/link";
-import { FaEdit } from "react-icons/fa";
+import { FaEdit, FaPlus } from 'react-icons/fa';
 import { TbMessageCircleFilled } from "react-icons/tb";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/stores/useAuthStore";
@@ -61,10 +61,9 @@ export default function Page() {
     null
   );
 
-  const user= useAuthStore((state) => state.user);
-  const setUser= useAuthStore((state) => state.setUser);
+  const user = useAuthStore((state) => state.user);
+  const setUser = useAuthStore((state) => state.setUser);
   console.log(user);
-  
 
   // const store = useAuthStore.getState();
 
@@ -197,17 +196,17 @@ export default function Page() {
   };
 
   const totalEarnings = campaigns.reduce((acc, curr) => acc + curr.budget, 0);
-const profileSrc: string =
-  typeof user?.influencer_profile?.profile_picture === "string" &&
-  user.influencer_profile.profile_picture !== ""
-    ? user.influencer_profile.profile_picture
-    : "/images/person.jpg";
+  const profileSrc: string =
+    typeof user?.influencer_profile?.profile_picture === "string" &&
+    user.influencer_profile.profile_picture !== ""
+      ? user.influencer_profile.profile_picture
+      : "/images/person.jpg";
 
-const profileName: string =
-  typeof user?.influencer_profile?.display_name === "string" &&
-  user.influencer_profile.display_name !== ""
-    ? user.influencer_profile.display_name
-    : "User Avatar";
+  const profileName: string =
+    typeof user?.influencer_profile?.display_name === "string" &&
+    user.influencer_profile.display_name !== ""
+      ? user.influencer_profile.display_name
+      : "User Avatar";
 
   return (
     <div className="relative">
@@ -217,23 +216,19 @@ const profileName: string =
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="w-16 h-16 rounded-md flex items-center justify-center overflow-hidden">
-                
-                  
-
-                  <Image
-                    src={profileSrc}
-                    width={44}
-                    height={44}
-                    alt={profileName}
-                    className="w-11 h-11 rounded-full object-cover ring-2 ring-gray-200"
-                  />
-                
-                  
-                
+                <Image
+                  src={profileSrc}
+                  width={44}
+                  height={44}
+                  alt={profileName}
+                  className="w-11 h-11 rounded-full object-cover ring-2 ring-gray-200"
+                />
               </div>
               <div>
                 <h2 className="text-xl font-bold text-slate-800">
-                  Welcome back, {(user?.influencer_profile?.display_name as string) || "User"}! 👋
+                  Welcome back,{" "}
+                  {(user?.influencer_profile?.display_name as string) || "User"}
+                  ! 👋
                 </h2>
                 <p className="text-slate-600">
                   Ready to grow your influence today?
@@ -281,9 +276,9 @@ const profileName: string =
         </div>
 
         <div className="pt-4">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
             {/* --- My Campaigns Section --- */}
-            <div className="col-span-1 lg:col-span-2 border-[#E5E7EB] shadow border-[1px] rounded p-6 h-[420px] flex flex-col">
+            <div className=" border-[#E5E7EB] shadow border-[1px] rounded p-6 h-[420px] flex flex-col">
               <div className="flex items-center space-x-2 mb-4 flex-shrink-0">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -362,49 +357,8 @@ const profileName: string =
               </div>
             </div>
 
-            {/* Media Kit */}
-            <div className="border-[#E5E7EB] shadow border-[1px] rounded p-6 flex flex-col items-center text-center h-[420px]">
-              <div className="flex items-center space-x-2 mb-4 self-start">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 text-gray-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8 7v4a2 2 0 002 2h4a2 2 0 002-2V7m-4 10h4m-4 0v-4m0 4h.01M12 14v4m0 0h.01M12 14h.01M12 14v.01"
-                  />
-                </svg>
-                <h2 className="text-xl font-bold text-gray-900">Media Kit</h2>
-              </div>
-              <div className="flex-grow flex flex-col items-center justify-center p-4 border-2 border-dashed bg-[#f9fafb] rounded-xl w-full mb-4">
-                <Image
-                  width={48}
-                  height={48}
-                  src="https://placehold.co/60x80/e5e7eb/6b7280?text=PDF"
-                  alt="PDF icon"
-                  className="w-12 h-16 mb-2"
-                />
-                <p className="text-gray-500 text-sm">Your media kit preview</p>
-              </div>
-              <div className="w-full space-y-2">
-                <button className="w-full bg-secondary text-gray-800 font-semibold py-3 rounded shadow hover:bg-[var(--secondaryhover)] transition-colors">
-                  View Media Kit
-                </button>
-                <button className="w-full bg-[#f3f4f6] text-gray-800 font-semibold py-3 rounded shadow transition-colors">
-                  Edit Media Kit
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* Messages */}
-            <div className="border-[#E5E7EB] shadow border-[1px] rounded p-6 lg:col-span-3">
+            <div className="border-[#E5E7EB] shadow border-[1px] rounded p-6 ">
               <div className="flex items-center space-x-2 mb-4">
                 <TbMessageCircleFilled className="text-secondary text-[24px]" />
                 <h2 className="text-xl font-bold text-gray-900">Messages</h2>
@@ -450,8 +404,51 @@ const profileName: string =
               </div>
             </div>
 
+            {/* Media Kit */}
+            {/* <div className="border-[#E5E7EB] shadow border-[1px] rounded p-6 flex flex-col items-center text-center h-[420px]">
+              <div className="flex items-center space-x-2 mb-4 self-start">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6 text-gray-500"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 7v4a2 2 0 002 2h4a2 2 0 002-2V7m-4 10h4m-4 0v-4m0 4h.01M12 14v4m0 0h.01M12 14h.01M12 14v.01"
+                  />
+                </svg>
+                <h2 className="text-xl font-bold text-gray-900">Media Kit</h2>
+              </div>
+              <div className="flex-grow flex flex-col items-center justify-center p-4 border-2 border-dashed bg-[#f9fafb] rounded-xl w-full mb-4">
+                <Image
+                  width={48}
+                  height={48}
+                  src="https://placehold.co/60x80/e5e7eb/6b7280?text=PDF"
+                  alt="PDF icon"
+                  className="w-12 h-16 mb-2"
+                />
+                <p className="text-gray-500 text-sm">Your media kit preview</p>
+              </div>
+              <div className="w-full space-y-2">
+                <button className="w-full bg-secondary text-gray-800 font-semibold py-3 rounded shadow hover:bg-[var(--secondaryhover)] transition-colors">
+                  View Media Kit
+                </button>
+                <button className="w-full bg-[#f3f4f6] text-gray-800 font-semibold py-3 rounded shadow transition-colors">
+                  Edit Media Kit
+                </button>
+              </div>
+            </div> */}
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            
+
             {/* Earnings */}
-            <div className="border-[#E5E7EB] shadow border-[1px] rounded p-6 flex flex-col items-center text-center lg:col-span-1">
+            {/* <div className="border-[#E5E7EB] shadow border-[1px] rounded p-6 flex flex-col items-center text-center lg:col-span-1">
               <div className="flex items-center space-x-2 mb-4 self-start">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -474,9 +471,9 @@ const profileName: string =
                 <span className="text-3xl font-bold text-green-600">
                   {`$${totalEarnings}`}
                 </span>
-                {/* <span className="text-xs text-green-600 font-medium">
+                <span className="text-xs text-green-600 font-medium">
                   +15% this month
-                </span> */}
+                </span>
               </div>
               <div className="w-full space-y-2">
                 <button className="w-full bg-secondary text-gray-800 font-semibold py-3 rounded-xl shadow-md hover:bg-[var(--secondaryhover)] transition-colors">
@@ -486,40 +483,33 @@ const profileName: string =
                   Payment Methods
                 </button>
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Content Niche */}
           <div className="w-full">
-            <div className="border-[#E5E7EB] shadow border-[1px] mt-4 rounded p-6 w-3/4">
+            <div className="border-[#E5E7EB] shadow border-[1px] mt-4 rounded p-6 ">
               <div className="flex items-center space-x-2 mb-4">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 text-primary"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                  />
-                </svg>
+                <span className="text-secondary"><FaPlus/></span>
                 <h2 className="text-xl font-bold text-gray-900">
                   Content Niche
                 </h2>
               </div>
               <div className="flex flex-wrap gap-2">
-                {influencerProfile?.content_niches?.split(",").map((tag) => (
-                  <span
-                    key={tag}
-                    className="bg-secondary text-primary rounded-full px-4 py-2 text-sm font-medium"
-                  >
-                    {tag}
+                {influencerProfile?.content_niches ? (
+                  influencerProfile.content_niches.split(",").map((tag) => (
+                    <span
+                      key={tag.trim()}
+                      className="bg-secondary text-primary rounded-full px-4 py-2 text-sm font-medium"
+                    >
+                      {tag.trim()}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-center text-gray-500">
+                    No Niches Added
                   </span>
-                ))}
+                )}
               </div>
             </div>
           </div>
