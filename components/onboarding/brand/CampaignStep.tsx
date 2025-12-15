@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, ChangeEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,6 +24,8 @@ import {
   Mic,
   FileText,
   Repeat,
+  Upload,
+  X,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
@@ -35,15 +37,20 @@ import {
 } from "@/components/ui/dialog";
 import { useBrandOnBoarding } from "@/contexts/BrandOnboardingContext";
 import { demographics } from "@/constants/demographics";
+import { uploadToCloudinary } from "@/lib/fileUpload";
 
 interface CampaignStepProps {
   onNext: () => void;
   onBack: () => void;
 }
 
-const CampaignStep = ({ onBack }: CampaignStepProps) => {
+const CampaignStep = ({ onBack,onNext }: CampaignStepProps) => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const router = useRouter();
+    const token =localStorage.getItem("access_token");
+    const [dragActive, setDragActive] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+
 
   const { onboardingData, setOnboardingData } = useBrandOnBoarding();
 
@@ -133,7 +140,12 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
 
     // Save draft campaign to localStorage (optional, so they don’t lose data)
     localStorage.setItem("draftCampaign", JSON.stringify(onboardingData));
-    setShowAuthModal(true);
+    if (token) {
+      onNext();
+    }else{
+         setShowAuthModal(true);
+    }
+    
 
     // Redirect to signup with "returnTo" param
     // router.push(`/auth/signup?role=brand&returnTo=/brand-onboarding?step=6`);
@@ -157,6 +169,96 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
       }));
     }
   };
+
+
+  // Poster upload validation
+    const validateFile = (file:File) => {
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      const validTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+  
+      if (!validTypes.includes(file.type)) {
+        setUploadError("Please upload a valid image (JPG, PNG, WebP, or GIF)");
+        return false;
+      }
+  
+      if (file.size > maxSize) {
+        setUploadError("Image size must be less than 5MB");
+        return false;
+      }
+  
+      setUploadError("");
+      return true;
+    };
+  
+    // Handle poster upload
+     const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      if (!validateFile(file)) return;
+
+      try {
+        const res = await uploadToCloudinary(file);
+        // Only update state if upload was successful and has a URL
+        if (res?.url) {
+          setOnboardingData((prev) => ({
+            ...prev,
+            campaign_poster: res.url, 
+            posterFile: file,
+            posterPreview: URL.createObjectURL(file),
+          }));
+        } else {
+          setUploadError("Upload failed - no URL returned");
+        }
+      } catch (err) {
+        console.error("Upload failed", err);
+        setUploadError("Upload failed");
+      }
+    };
+  
+    // Drag & drop (assets)
+    const handleDrag = (e: React.DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.type === "dragenter" || e.type === "dragover") setDragActive(true);
+      if (e.type === "dragleave") setDragActive(false);
+    };
+  
+    const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setDragActive(false);
+
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        const file = files[0];
+        if (validateFile(file)) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            const result = event.target?.result;
+            if (typeof result === "string") {
+              setOnboardingData((prev) => ({
+                ...prev,
+                posterFile: file,
+                posterPreview: result,
+              }));
+            }
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+    };
+  
+    // Remove poster
+    const handleRemovePoster = () => {
+      setOnboardingData((prev) => ({
+        ...prev,
+        posterFile: null,
+        posterPreview: "",
+      }));
+      setUploadError("");
+    };
+
 
   return (
     <>
@@ -240,7 +342,7 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
                   }
                   placeholder="Describe your campaign goals, target audience, key messages, and any specific requirements..."
                   rows={4}
-                  maxLength={250}
+                  maxLength={500}
                 />
                 <div className="flex justify-end mt-1">
                   <span
@@ -250,9 +352,67 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
                         : "text-gray-400" // Grey otherwise
                     }`}
                   >
-                    {onboardingData.description.length}/250 characters
+                    {onboardingData.description.length}/500 characters
                   </span>
                 </div>
+              </div>
+
+              <div>
+                <Label htmlFor="campaignposter" className="mb-2">
+                  Campaign Poster
+                </Label>
+                {!onboardingData.posterPreview ? (
+                  <div
+                    onDragEnter={handleDrag}
+                    onDragLeave={handleDrag}
+                    onDragOver={handleDrag}
+                    onDrop={handleDrop}
+                    className={`border-2 border-dashed rounded-lg p-6 text-center transition ${
+                      dragActive
+                        ? "border-primary bg-primary/5"
+                        : "border-gray-300 hover:border-gray-400"
+                    }`}
+                  >
+                    <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                    <p className="text-sm text-gray-600 mb-2">
+                      Drag and drop your poster or click to browse
+                    </p>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="hidden"
+                      id="poster-input"
+                    />
+                    <label htmlFor="poster-input">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        asChild
+                        className="cursor-pointer"
+                      >
+                        <span>Choose File</span>
+                      </Button>
+                    </label>
+                  </div>
+                ) : (
+                  <div className="relative rounded-lg overflow-hidden border border-gray-200">
+                    <img
+                      src={onboardingData.campaign_poster}
+                      alt="Poster preview"
+                      className="w-full h-80 object-cover"
+                    />
+                    <button
+                      onClick={handleRemovePoster}
+                      className="absolute top-2 right-2 p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition cursor-pointer"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                )}
+                {uploadError && (
+                  <p className="text-sm text-red-500 mt-2">{uploadError}</p>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -400,7 +560,7 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
                     )}
                     id="gifted"
                   />
-                  <Label htmlFor="gifted">Gifted Products</Label>
+                  <Label htmlFor="gifted">Gifted Products or Services</Label>
                 </div>
 
                 {/* Paid Collaborations */}
@@ -683,7 +843,7 @@ const CampaignStep = ({ onBack }: CampaignStepProps) => {
           >
             {onboardingData.autoMatch
               ? "Create Campaign & Find micro-influencers"
-              : "Create Campaign"}
+              : "Create Campaign & next"}
           </Button>
         </div>
       </div>

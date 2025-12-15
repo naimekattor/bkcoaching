@@ -232,10 +232,10 @@ export default function BrandPage() {
               onValueChange={setBusinessType}
             >
               <SelectTrigger className="w-full h-[50px] bg-white border border-gray-300 rounded-lg px-4 text-base focus:ring-2 focus:ring-primary/40 transition-all hover:bg-gray-50 hover:border-gray-400">
-                <SelectValue placeholder="All Business Type" />
+                <SelectValue placeholder="All Business Types" />
               </SelectTrigger>
               <SelectContent className="max-h-[300px]">
-                <SelectItem value="All">All Business Type</SelectItem>
+                <SelectItem value="All">All Business Types</SelectItem>
                 {businessTypes.map((t) => (
                   <SelectItem key={t} value={t} className="cursor-pointer py-2.5">
                     {t}

@@ -27,6 +27,7 @@ interface BrandOnboardingData {
 
   // From CampaignStep
   campaignName: string;
+  posterPreview?:string;
   objective: string;
   budget: number[];
   budgetType: string;
@@ -37,6 +38,7 @@ interface BrandOnboardingData {
   approvalRequired: boolean;
   autoMatch: boolean;
   targetAudienceCampaign: string;
+  campaign_poster?:string;
 }
 
 interface BrandOnboardingContextType {
@@ -61,6 +63,7 @@ const initialState: BrandOnboardingData = {
   selectedPlan: "",
   billingCycle: "monthly",
   campaignName: "",
+  posterPreview:"",
   objective: "",
   budget: [1000],
   budgetType: "total",
@@ -72,6 +75,7 @@ const initialState: BrandOnboardingData = {
   autoMatch: false,
   timeZone: "",
   targetAudienceCampaign: "",
+  campaign_poster: "",
 };
 const BrandOnboardingProvider = ({ children }: { children: ReactNode }) => {
   const [onboardingData, setOnboardingData] = useState<BrandOnboardingData>(

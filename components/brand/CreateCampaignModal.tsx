@@ -700,7 +700,7 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }:Creat
                     checked={formData.payment_preference.includes("gifted")}
                     id="gifted"
                   />
-                  <Label htmlFor="gifted">Gifted Products</Label>
+                  <Label htmlFor="gifted">Gifted Products or Services</Label>
                 </div>
 
                 <div

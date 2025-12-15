@@ -22,6 +22,7 @@ const TermsStep = ({ onNext, onBack }: TermsStepProps) => {
     const [showAuthModal, setShowAuthModal] = useState(false);
   const router = useRouter();
 
+const token=localStorage.getItem("access_token");
 
   const allAgreed = Object.values(agreements).every((agreed) => agreed);
 
@@ -31,7 +32,13 @@ const TermsStep = ({ onNext, onBack }: TermsStepProps) => {
 
   const handleContinue = () => {
     if (!allAgreed) return;
+     if (token) {
+      onNext();
+     }else{
     setShowAuthModal(true);
+
+     }
+
   };
 
   return (

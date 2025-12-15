@@ -222,7 +222,7 @@ export default function ProfileClient({
         payment_preferences: Object.entries(paymentModels)
           .filter(([_, v]) => v)
           .map(([k]) => {
-            if (k === "gifted") return "Gifted Products";
+            if (k === "gifted") return "Gifted Products or Services";
             if (k === "paid") return "Paid Collaborations";
             if (k === "affiliate") return "Affiliate Marketing";
             return "Brand Ambassadorship";
@@ -388,7 +388,7 @@ export default function ProfileClient({
                     onCheckedChange={(c) => setPaymentModels({ ...paymentModels, [m]: c })}
                   />
                   <span className="capitalize">
-                    {m === "gifted" ? "Gifted Products" : m === "paid" ? "Paid Collaborations" : m === "affiliate" ? "Affiliate Marketing" : "Brand Ambassadorship"}
+                    {m === "gifted" ? "Gifted Products or Services" : m === "paid" ? "Paid Collaborations" : m === "affiliate" ? "Affiliate Marketing" : "Brand Ambassadorship"}
                   </span>
                   {m === "affiliate" && paymentModels.affiliate && (
                     <div className="flex items-center gap-2 ml-auto">

@@ -260,7 +260,7 @@ export default function Page() {
                 href={"/influencer-dashboard/settings"}
                 className="bg-secondary hover:bg-[var(--secondaryhover)] text-slate-800 font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-1"
               >
-                <FaEdit /> Edit
+                <FaEdit /> Edit Profile
               </Link>
             </div>
           </div>
@@ -394,9 +394,11 @@ export default function Page() {
                           room.brand_logo ||
                           "/images/person.jpg")
                           const name=room.name || "Avatar"
+                          const otherUserId=room?.other_user_id;
                           
 
                           return (
+                            <Link href={`/influencer-dashboard/messages?id=${otherUserId}`}>
                             <div
                       key={room.room_id || index}
                       className="flex items-start space-x-4 py-4 border-b border-gray-100 last:border-0"
@@ -422,6 +424,7 @@ export default function Page() {
                         </p>
                       </div>
                     </div>
+                    </Link>
                           )
                     }
                   )

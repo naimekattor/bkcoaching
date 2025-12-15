@@ -57,7 +57,7 @@ const CollaborationPreferencesStep = ({
   ];
 
   const paymentTypes = [
-    { id: "gifted", label: "Gifted Products", icon: Gift, description: "Receive free products in exchange for content" },
+    { id: "gifted", label: "Gifted Products or Services", icon: Gift, description: "Receive free products in exchange for content" },
     { id: "paid", label: "Paid Collaborations", icon: DollarSign, description: "Get paid for your content creation" },
     { id: "affiliate", label: "Affiliate Marketing", icon: Percent, description: "Earn commission on sales you generate" },
     { id: "ambassador", label: "Brand Ambassador", icon: Crown, description: "Long-term partnerships with ongoing benefits" },

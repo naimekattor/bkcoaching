@@ -102,6 +102,27 @@ const inferFileMetaFromUrl = (url: string) => {
   return { fileType: undefined as string | undefined, fileName };
 };
 
+const getSafeImageSrc = (src?: string) => {
+  if (
+    !src ||
+    src === "profile_picture" ||
+    src === "null" ||
+    src === "undefined"
+  ) {
+    return "/images/person.jpg";
+  }
+
+  if (src.startsWith("http://") || src.startsWith("https://")) {
+    return src;
+  }
+
+  if (src.startsWith("/")) {
+    return src;
+  }
+
+  return `/${src}`;
+};
+
 export default function MessagesClient() {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
@@ -299,6 +320,39 @@ export default function MessagesClient() {
     return () => clearTimeout(timeout);
   }
 }, [messages]);
+
+// Websocket Notification
+useEffect(() => {
+    const token = localStorage.getItem("access_token");
+
+    if (!token) return;
+
+    const ws = new WebSocket(
+      `wss://exhaust-minute-picked-reservations.trycloudflare.com/chat_handshake/ws/notification/?token=${token}`
+    );
+
+    ws.onopen = () => {
+      console.log("✅ WebSocket connected");
+    };
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      console.log("🔔 Notification:", data);
+    };
+
+    ws.onerror = (err) => {
+      console.error("❌ WS error", err);
+    };
+
+    ws.onclose = () => {
+      console.log("🔌 WebSocket closed");
+    };
+
+    // cleanup (VERY IMPORTANT)
+    return () => {
+      ws.close();
+    };
+  }, []);
 
   // Initialize WebSocket
   useEffect(() => {
@@ -605,7 +659,7 @@ export default function MessagesClient() {
                 room.last_message,
                 room.timestamp
               );
-              const profilePicture=room?.profile_picture;
+              const profilePicture=getSafeImageSrc(room?.profile_picture);
 
               return (
                 <div

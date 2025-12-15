@@ -68,11 +68,16 @@ const OnboardingLayout = ({
           </div>
         </div>
       </div>
-      <div>
+      {
+        currentStep !== Number(finalStep) &&(
+          <div>
         <Link href={`/auth/signup?role=${skipRole}&returnTo=/${skipRole}-onboarding?step=${finalStep}`} className="text-muted-foreground font-semibold underline text-sm mt-6">
         Complete My Profile Setup Later
         </Link>
       </div>
+        )
+      }
+      
 
       {/* Content */}
       <main className=" py-8">

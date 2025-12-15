@@ -64,7 +64,7 @@ const PaymentSetupStep = ({ onNext, onBack }: PaymentSetupStepProps) => {
     },
   ] as const;
   type PaymentMethodId = (typeof paymentMethods)[number]["id"];
-
+const token=localStorage.getItem("access_token");
   const isValid =
     onboardingDataInfluencer.payment_method &&
     ((onboardingDataInfluencer.payment_method === "paypal" &&
@@ -93,7 +93,15 @@ const PaymentSetupStep = ({ onNext, onBack }: PaymentSetupStepProps) => {
         stripeConnected: onboardingDataInfluencer.stripeConnected,
       })
     );
-    setShowAuthModal(true);
+
+    if (token) {
+      console.log(token);
+      
+      onNext();
+    }else{
+setShowAuthModal(true);
+    }
+    
   };
 
   return (

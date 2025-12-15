@@ -39,7 +39,7 @@ const businessType=user?.brand_profile?.business_type.split("–")[0];
               href={"/brand-dashboard/settings"}
               className="bg-secondary hover:bg-[var(--secondaryhover)] text-slate-800 font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-1 "
             >
-              <FaEdit /> Edit
+              <FaEdit /> Edit Profile
             </Link>
           </div>
         </div>

@@ -263,7 +263,7 @@ export default function ProfilePage() {
           .filter(([_, v]) => v)
           .map(([k]) =>
             k === "gifted"
-              ? "Gifted Products"
+              ? "Gifted Products or Services"
               : k === "paid"
               ? "Paid Collaborations"
               : k === "affiliate"
@@ -567,7 +567,7 @@ export default function ProfilePage() {
                       />
                       <Label className="font-medium text-gray-900 cursor-pointer">
                         {model === "gifted"
-                          ? "Gifted Products"
+                          ? "Gifted Products or Services"
                           : model === "paid"
                           ? "Paid Collaborations"
                           : model === "affiliate"

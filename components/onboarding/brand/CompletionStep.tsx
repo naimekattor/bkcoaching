@@ -26,6 +26,8 @@ interface OnboardingData {
   selectedPlan?: string;
   billingCycle?: string;
   campaignName?: string;
+  posterPreview?:string;
+  campaign_poster?:string;
   objective?: string;
   budget?: Array<number | string>;
   budgetType?: string;
@@ -83,6 +85,7 @@ const transformCampaignDataForAPI = (data: OnboardingData) => {
     content_approval_required: data.approvalRequired,
     auto_match_micro_influencers: data.autoMatch,
     target_audience: data.targetAudienceCampaign,
+    campaign_poster:data.campaign_poster,
   };
   return campaignPayload;
 };
@@ -97,7 +100,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
       description:
         "Explore our marketplace to find perfect collaboration partners",
       action: "Browse Now",
-      link: "/brand-dashboard/campaigns",
+      link: "/brand-dashboard/microinfluencerspage",
     },
     {
       icon: Target,
@@ -167,7 +170,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
           title: "Profile Saved!",
           description: "Your brand profile and campaign are now live.",
         });
-        localStorage.removeItem("onboardingData");
+        
         console.log("Onboarding data removed from localStorage");
       } catch (error) {
         console.error("Failed to submit onboarding data:", error);
@@ -217,18 +220,18 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
       </div>
 
       {/* Trial Status */}
-      <Card className="bg-primary/5 border-primary/20">
+      {/* <Card className="bg-primary/5 border-primary/20">
         <CardContent className="p-6 text-center space-y-4">
           <Badge variant="secondary" className="text-primary bg-primary/10">
             Free Trial Active
           </Badge>
-          {/* <h3 className="font-semibold text-lg">14 Days of Full Access</h3> */}
+          <h3 className="font-semibold text-lg">14 Days of Full Access</h3>
           <p className="text-sm text-muted-foreground">
             Your Growth plan trial includes unlimited campaigns, AI matching,
             and priority support. No payment required until your trial ends.
           </p>
         </CardContent>
-      </Card>
+      </Card> */}
 
       {/* Next Steps */}
       <div className="space-y-6">
