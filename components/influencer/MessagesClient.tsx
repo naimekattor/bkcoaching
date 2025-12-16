@@ -225,9 +225,7 @@ export default function InfluencerMessagesClient() {
     fetchOtherUserProfile();
   }, [otherUserId, selectedRoom]);
 
-  const avatarSrc =
-    otherUserProfile?.brand_profile?.logo ||
-    otherUserProfile?.influencer_profile?.profile_picture;
+
 
   // Fetch rooms for sidebar
   useEffect(() => {
