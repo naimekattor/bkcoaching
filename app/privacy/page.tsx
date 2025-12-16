@@ -9,7 +9,7 @@ export default function PrivacyPage() {
           <div className="grid lg:grid-cols-2 items-center pt-16 md:pt-24 gap-8">
             {/* Left Content */}
             <div className="space-y-8 flex-1">
-              {/* ✅ Added short intro paragraph */}
+              {/*  short intro paragraph */}
               <p className="text-primary text-lg md:text-xl mb-4">
                 At The Social Market, we believe privacy and transparency are
                 the foundation of lasting relationships. We’re committed to
@@ -25,15 +25,18 @@ export default function PrivacyPage() {
               </div>
             </div>
 
-            {/* ✅ Right Image with extra spacing */}
-            <div className="relative pt-12 md:pt-16">
+            {/* Right Image  */}
+            <div className="relative pt-12 md:pt-16 lg:pt-0 flex justify-center lg:justify-end">
+              <div className="relative w-full max-w-lg lg:max-w-2xl">
               <Image
-                width={833}
-                height={519}
+                width={1200}
+                height={800}
                 src={"/images/privacy-hero.png"}
                 alt="Two stylish women representing micro-influencers"
-                className="w-full h-[476px] max-w-md mx-auto lg:max-w-full"
+                className="w-full h-auto object-cover rounded-2xl shadow-2xl"
+                priority
               />
+              </div>
             </div>
           </div>
         </main>
