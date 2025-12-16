@@ -108,7 +108,7 @@ function LoginPageContent() {
               <div>
                 <input
                   type="email"
-                  placeholder="Enter your Email"
+                  placeholder="Enter your email"
                   className="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-secondary"
                   value={formData.email}
                   onChange={(e) =>
