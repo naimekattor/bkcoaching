@@ -125,7 +125,7 @@ export default function AboutPage() {
           <div className="relative ">
             <div className="grid grid-cols-2">
               <div className="space-y-4">
-                <div className="border-white border-6 bg-white shadow-2xl rounded-full overflow-hidden h-full">
+                <div className="border-white border-6  rounded-full overflow-hidden h-full">
                   <Image
                     width={500}
                     height={1000}
