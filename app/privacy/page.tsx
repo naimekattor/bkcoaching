@@ -33,7 +33,7 @@ export default function PrivacyPage() {
                 height={800}
                 src={"/images/privacy-hero.png"}
                 alt="Two stylish women representing micro-influencers"
-                className="w-full h-auto object-cover rounded-2xl shadow-2xl"
+                className="w-full h-auto object-cover "
                 priority
               />
               </div>
