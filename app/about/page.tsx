@@ -135,7 +135,7 @@ export default function AboutPage() {
                 </div>
               </div>
               <div className="relative -ml-15 space-y-4 pt-8 z-20">
-                <div className="border-white border-6 bg-white shadow-2xl rounded-full overflow-hidden w-fit">
+                <div className="border-white border-6 rounded-full overflow-hidden w-fit">
                   <Image
                     src="/images/about-img2.png"
                     alt="Content creation"
@@ -145,7 +145,7 @@ export default function AboutPage() {
                     className="object-cover rounded-full"
                   />
                 </div>
-                <div className="border-white border-6 bg-white shadow-2xl rounded-full relative -mt-20 z-10 overflow-hidden w-fit">
+                <div className="border-white border-6 rounded-full relative -mt-20 z-10 overflow-hidden w-fit">
                   <Image
                     src="/images/about-img1.png"
                     alt="Content creation"
