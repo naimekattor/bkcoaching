@@ -109,6 +109,7 @@ export default function InfluencersPage() {
                 src={"/images/inf-hero.png"}
                 alt="Two stylish women representing micro-influencers"
                 className="w-full h-auto max-w-md mx-auto lg:max-w-full"
+                priority
               />
             </div>
           </div>

@@ -79,7 +79,7 @@ export default function BrandListWithSearch({ brands }: { brands: BrandData[] })
                 src={"/images/brand-hero1.png"}
                 alt="Two stylish women representing micro-influencers"
                 className="w-full h-auto max-w-md mx-auto lg:max-w-full "
-                priority // Good for hero images
+                priority 
               />
             </div>
           </div>

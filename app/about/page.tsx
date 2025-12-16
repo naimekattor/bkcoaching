@@ -89,6 +89,7 @@ export default function AboutPage() {
                 src={"/images/about-hero1.png"}
                 alt="Two stylish women representing micro-influencers"
                 className="w-full h-[619px] max-w-md mx-auto lg:max-w-full"
+                priority
               />
             </div>
           </div>
