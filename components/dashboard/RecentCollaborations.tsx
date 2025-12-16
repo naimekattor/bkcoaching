@@ -29,9 +29,28 @@ interface CollabData {
   avatar: string;
   rating: number;
   followers: string;
+  insta_follower:string;
+  facebook_follower:string;
+  tiktok_follower:string;
+  linkedin_follower:string;
+  youtube_follower:string;
+  blog_follower:string;
 }
 
-// ✅ Accept props here
+/// --- Helper to calculate total followers ---
+const calculateFollowers = (inf: CollabData | undefined | null) => {
+  if (!inf) return 0;
+  
+  const total = 
+    Number(inf.insta_follower || 0) +
+    Number(inf.facebook_follower || 0) +
+    Number(inf.tiktok_follower || 0) +
+    Number(inf.linkedin_follower || 0) +
+    Number(inf.youtube_follower || 0) +
+    Number(inf.blog_follower || 0);
+    
+  return total;
+};
 export function RecentCollaborations({ rawCampaigns }: { rawCampaigns: Campaign[] }) {
   const [collaborations, setCollaborations] = useState<CollabData[]>([]);
   const [loading, setLoading] = useState(false);
@@ -63,6 +82,7 @@ export function RecentCollaborations({ rawCampaigns }: { rawCampaigns: Campaign[
               );
 
               const profile = userRes.data?.influencer_profile;
+              const total = calculateFollowers(userRes.data?.influencer_profile);
 
               return {
                 campaignId: campaign.id,
@@ -70,7 +90,7 @@ export function RecentCollaborations({ rawCampaigns }: { rawCampaigns: Campaign[
                 username: profile?.display_name || `User ${campaign.hired_influencer_id}`,
                 avatar: profile?.profile_picture || "/images/person.jpg",
                 rating: campaign.rating > 0 ? campaign.rating : 5.0,
-                followers: "15k followers",
+                followers: total > 0 ? `${(total / 1000).toFixed(1)}K` : "N/A",
               };
             } catch (err) {
               console.error(`Failed to fetch user ${campaign.hired_influencer_id}`, err);
