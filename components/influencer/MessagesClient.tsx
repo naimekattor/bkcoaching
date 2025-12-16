@@ -781,17 +781,17 @@ export default function InfluencerMessagesClient() {
                   <MoreHorizontal className="h-5 w-5" />
                 </button>
                 <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold">
-                  {avatarSrc ? (
+                  {selectedRoom.profile_picture ? (
                     <Image
-                      src={avatarSrc}
-                      alt=""
+                      src={selectedRoom.profile_picture}
+                      alt={selectedRoom.name || "name"}
                       width={48}
                       height={48}
                       className="w-[48px] h-[48px] rounded-full"
                     />
                   ) : (
                     <span>
-                      {otherUserProfile?.brand_profile?.business_name?.[0] ||
+                      {selectedRoom.name || otherUserProfile?.brand_profile?.business_name?.[0] ||
                         otherUserProfile?.influencer_profile
                           ?.display_name?.[0] ||
                         "?"}
@@ -800,7 +800,7 @@ export default function InfluencerMessagesClient() {
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="font-bold text-gray-900 truncate">
-                    {otherUserProfile?.brand_profile?.business_name ||
+                    {selectedRoom.name || otherUserProfile?.brand_profile?.business_name ||
                       otherUserProfile?.influencer_profile?.display_name ||
                       "?"}
                   </p>
