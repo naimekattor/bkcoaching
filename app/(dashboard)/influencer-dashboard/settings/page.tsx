@@ -173,6 +173,14 @@ export default function ProfilePage() {
       linkedin: p.linkedin_handle || "",
       whatsapp: p.whatsapp_handle || "",
     },
+    followers: {
+    instagram: p.insta_follower || "",
+    tiktok: p.tiktok_follower || "",
+    youtube: p.youtube_follower || "",
+    facebook: p.facebook_follower || "",
+    linkedin: p.linkedin_follower || "",
+    blog: p.blog_follower || "", 
+  }
   });
 
   const [imagePreview, setImagePreview] = useState<string | null>(
@@ -275,7 +283,14 @@ export default function ProfilePage() {
         rate_range_for_affiliate_marketing_percent: paymentModels.affiliate
           ? affiliatePercent
           : null,
-      },
+      insta_follower: formData.followers.instagram || null,
+    tiktok_follower: formData.followers.tiktok || null,
+    youtube_follower: formData.followers.youtube || null,
+    facebook_follower: formData.followers.facebook || null,
+    linkedin_follower: formData.followers.linkedin || null,
+    blog_follower: formData.followers.blog || null,
+      
+        },
     };
 
     try {
@@ -438,6 +453,49 @@ export default function ProfilePage() {
                 </div>
               </div>
             ))}
+          </CardContent>
+        </Card>
+
+        {/* Audience Size */}
+        <Card className="border-none shadow-sm">
+          <CardHeader className="pb-4 border-b border-gray-100">
+            <CardTitle className="text-xl">Audience Size</CardTitle>
+            <CardDescription>Enter your total followers or subscribers</CardDescription>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[
+                { key: "instagram", label: "Instagram Followers" },
+                { key: "tiktok", label: "TikTok Followers" },
+                { key: "youtube", label: "YouTube Subscribers" },
+                { key: "facebook", label: "Facebook Followers" },
+                { key: "linkedin", label: "LinkedIn Connections" },
+                { key: "blog", label: "Monthly Blog Visitors" },
+              ].map(({ key, label }) => (
+                <div key={key} className="space-y-2">
+                  <Label htmlFor={`${key}_followers`} className="text-sm font-medium">
+                    {label}
+                  </Label>
+                  <Input
+                    id={`${key}_followers`}
+                    type="number"
+                    min="0"
+                    placeholder="e.g. 5000"
+                    value={formData.followers[key as keyof typeof formData.followers]}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        followers: {
+                          ...formData.followers,
+                          [key]: e.target.value,
+                        },
+                      })
+                    }
+                    className="h-11"
+                  />
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
 

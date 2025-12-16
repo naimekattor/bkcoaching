@@ -619,6 +619,31 @@ export default function BrandProfilePage() {
                 <p className="text-gray-500">No niches available.</p>
               )}
             </div>
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+  <h2 className="text-lg font-semibold text-gray-900 mb-4">
+    Average Response Time
+  </h2>
+  
+  {influencer.response_time ? (
+    <div className="flex items-center">
+      <span className="text-2xl font-bold text-gray-900">
+        {influencer.response_time}
+      </span>
+      <span className="ml-2 text-sm text-gray-500">
+        hours
+      </span>
+    </div>
+  ) : (
+    <div className="text-center py-4">
+      <p className="text-gray-500 italic">
+        Response time not specified
+      </p>
+      <p className="text-sm text-gray-400 mt-1">
+        Contact influencer for details
+      </p>
+    </div>
+  )}
+</div>
 
             {/* Share */}
             {/* <div className="bg-primary rounded p-6 text-white">

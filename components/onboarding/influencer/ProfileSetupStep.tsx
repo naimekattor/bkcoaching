@@ -171,6 +171,8 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
           </CardContent>
         </Card>
 
+        
+
         {/* Social Media Links */}
         <Card>
           <CardHeader>
@@ -283,6 +285,129 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                     }))
                   }
                   placeholder="WhatsApp link (e.g., wa.me/15551234567)"
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Social media audience size */}
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Audience Size</CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Enter your total followers or subscribers for each platform
+            </p>
+          </CardHeader>
+          
+          <CardContent className="space-y-4">
+            <div className="grid md:grid-cols-2 gap-4">
+              {/* Instagram */}
+              <div className="space-y-2">
+                <Label htmlFor="instagram_followers">Instagram Followers</Label>
+                <Input
+                  id="instagram_followers"
+                  type="number"
+                  min="0"
+                  value={onboardingDataInfluencer.insta_follower}
+                  onChange={(e) =>
+                    setOnboardingDataInfluencer((prev) => ({
+                      ...prev,
+                      insta_follower: e.target.value,
+                    }))
+                  }
+                  placeholder="e.g. 5000"
+                />
+              </div>
+
+              {/* TikTok */}
+              <div className="space-y-2">
+                <Label htmlFor="tiktok_followers">TikTok Followers</Label>
+                <Input
+                  id="tiktok_followers"
+                  type="number"
+                  min="0"
+                  value={onboardingDataInfluencer.tiktok_follower}
+                  onChange={(e) =>
+                    setOnboardingDataInfluencer((prev) => ({
+                      ...prev,
+                      tiktok_follower: e.target.value,
+                    }))
+                  }
+                  placeholder="e.g. 10000"
+                />
+              </div>
+
+              {/* YouTube */}
+              <div className="space-y-2">
+                <Label htmlFor="youtube_subscribers">YouTube Subscribers</Label>
+                <Input
+                  id="youtube_subscribers"
+                  type="number"
+                  min="0"
+                  value={onboardingDataInfluencer.youtube_follower}
+                  onChange={(e) =>
+                    setOnboardingDataInfluencer((prev) => ({
+                      ...prev,
+                      youtube_follower: e.target.value,
+                    }))
+                  }
+                  placeholder="e.g. 1000"
+                />
+              </div>
+
+              {/* Facebook */}
+              <div className="space-y-2">
+                <Label htmlFor="facebook_followers">Facebook Followers</Label>
+                <Input
+                  id="facebook_followers"
+                  type="number"
+                  min="0"
+                  value={onboardingDataInfluencer.facebook_follower}
+                  onChange={(e) =>
+                    setOnboardingDataInfluencer((prev) => ({
+                      ...prev,
+                      facebook_follower: e.target.value,
+                    }))
+                  }
+                  placeholder="e.g. 2500"
+                />
+              </div>
+
+              {/* LinkedIn */}
+              <div className="space-y-2">
+                <Label htmlFor="linkedin_connections">LinkedIn Connections</Label>
+                <Input
+                  id="linkedin_connections"
+                  type="number"
+                  min="0"
+                  value={onboardingDataInfluencer.linkedin_follower}
+                  onChange={(e) =>
+                    setOnboardingDataInfluencer((prev) => ({
+                      ...prev,
+                      linkedin_follower: e.target.value,
+                    }))
+                  }
+                  placeholder="e.g. 500"
+                />
+              </div>
+
+              {/* Blog */}
+              <div className="space-y-2">
+                <Label htmlFor="blog_visitors">Monthly Blog Visitors</Label>
+                <Input
+                  id="blog_visitors"
+                  type="number"
+                  min="0"
+                  value={onboardingDataInfluencer.blog_follower}
+                  onChange={(e) =>
+                    setOnboardingDataInfluencer((prev) => ({
+                      ...prev,
+                      blog_follower: e.target.value,
+                    }))
+                  }
+                  placeholder="e.g. 1500"
                 />
               </div>
             </div>

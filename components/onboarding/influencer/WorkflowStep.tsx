@@ -158,8 +158,9 @@ const WorkflowStep = ({ onNext, onBack }: WorkflowStepProps) => {
               How quickly do you typically respond to messages?
             </p>
           </CardHeader>
-          <CardContent>
+          <CardContent >
             <Select
+            
               value={onboardingDataInfluencer.response_time}
               onValueChange={(value) =>
                 setOnboardingDataInfluencer((prev) => ({
@@ -169,7 +170,7 @@ const WorkflowStep = ({ onNext, onBack }: WorkflowStepProps) => {
               }
             >
               <SelectTrigger>
-                <SelectValue />
+                <SelectValue placeholder="Select Response Time" />
               </SelectTrigger>
               <SelectContent>
                 {responseTimeOptions.map((option) => (

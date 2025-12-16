@@ -51,7 +51,7 @@ export const useAuthStore = create<AuthState>()(
     setToken: (token) => {
       if (token) {
         localStorage.setItem("access_token", token);
-        Cookies.set("access_token", token, { path: "/", expires: 1 / 24 });
+        Cookies.set("access_token", token, { path: "/", expires: 1  });
       } else {
         localStorage.removeItem("access_token");
         Cookies.remove("access_token");

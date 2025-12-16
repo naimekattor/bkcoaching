@@ -152,7 +152,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
         });
 
         toast( "Profile Saved!");
-        localStorage.removeItem("InfluencerOnboardingData");
+        
       } catch (error) {
         console.error("Failed to submit influencer onboarding data:", error);
         toast("Error Saving Profile");

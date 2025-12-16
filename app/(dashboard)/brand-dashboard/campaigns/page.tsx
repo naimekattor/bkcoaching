@@ -1,5 +1,5 @@
 "use client";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
 import {
   Search,
@@ -14,6 +14,10 @@ import {
   Rocket,
   ChevronDown,
   Star,
+  DollarSign,
+  Clock,
+  Target,
+  ArrowRight,
 } from "lucide-react";
 import {
   Select,
@@ -50,7 +54,6 @@ import { toast } from "react-toastify";
    Types
 ------------------------------------------------- */
 
-
 interface PlatformConfig {
   match: string;
   icon: React.ReactNode;
@@ -62,8 +65,6 @@ interface InfluencerProfile {
   profile_picture: string | null;
   // Add other fields you need
 }
-
-
 
 type CampaignApiResponse = {
   id: string;
@@ -86,7 +87,7 @@ type CampaignApiResponse = {
 
 interface HiringCampaign {
   id: number;
-  campaign_id:number;
+  campaign_id: number;
   hired_influencer_id: number;
   is_completed_marked_by_brand: boolean;
   rating: number;
@@ -165,10 +166,10 @@ export default function CampaignDashboard() {
   const [platformFilter, setPlatformFilter] = useState("all");
   const [allCampaigns, setAllCampaigns] = useState<Campaign[]>([]);
   const [previousHirings, setPreviousHirings] = useState<HiringCampaign[]>([]);
-// State for rating input
+  // State for rating input
   const [hoverRating, setHoverRating] = useState<number>(0);
   const [ratingValue, setRatingValue] = useState<number>(0);
-    const [modalHirings, setModalHirings] = useState<HiringCampaign[]>([]);
+  const [modalHirings, setModalHirings] = useState<HiringCampaign[]>([]);
 
   /* ---------- Stats (no type errors) ---------- */
   const stats = [
@@ -303,11 +304,9 @@ export default function CampaignDashboard() {
         if (hiringsRes.data && Array.isArray(hiringsRes.data)) {
           setPreviousHirings(hiringsRes.data);
           console.log(hiringsRes.data);
-          
         }
       } catch (error) {
         console.log(error);
-        
       }
     };
 
@@ -330,10 +329,10 @@ export default function CampaignDashboard() {
           try {
             // Using user_service to get influencer details
             const res = await apiClient(
-              `user_service/get_a_influencer/${hiring.hired_influencer_id}/`, 
+              `user_service/get_a_influencer/${hiring.hired_influencer_id}/`,
               { method: "GET" }
             );
-            
+
             return {
               ...hiring,
               influencer_details: res.data?.influencer_profile || null,
@@ -381,83 +380,77 @@ export default function CampaignDashboard() {
   };
 
   /* ---------- Delete ---------- */
-const handleDelete = async (
-  event: Event,
-  campaign: Campaign
-) => {
-  if (event instanceof MouseEvent) {
-    event.preventDefault();
-    event.stopPropagation();
-  }
+  const handleDelete = async (event: Event, campaign: Campaign) => {
+    if (event instanceof MouseEvent) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
 
-  const result = await Swal.fire({
-    title: "Are you sure?",
-    text: "You won't be able to revert this!",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#0d2f4f",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Yes, delete it!",
-  });
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#0d2f4f",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
 
-  if (!result.isConfirmed) return;
+    if (!result.isConfirmed) return;
 
-  try {
-    await apiClient(
-      `campaign_service/delete_a_campaign/${campaign.id}/`,
-      {
+    try {
+      await apiClient(`campaign_service/delete_a_campaign/${campaign.id}/`, {
         method: "DELETE",
         auth: true,
-      }
-    );
+      });
 
-    setAllCampaigns((prev) =>
-      prev.filter((c) => c.id !== campaign.id)
-    );
+      setAllCampaigns((prev) => prev.filter((c) => c.id !== campaign.id));
 
-    Swal.fire({
-      title: "Deleted!",
-      text: "Your campaign has been deleted.",
-      icon: "success",
-    });
-  } catch (err) {
-    console.error("Delete failed", err);
-    Swal.fire({
-      title: "Error!",
-      text: "Failed to delete campaign.",
-      icon: "error",
-    });
-  }
-};
-
+      Swal.fire({
+        title: "Deleted!",
+        text: "Your campaign has been deleted.",
+        icon: "success",
+      });
+    } catch (err) {
+      console.error("Delete failed", err);
+      Swal.fire({
+        title: "Error!",
+        text: "Failed to delete campaign.",
+        icon: "error",
+      });
+    }
+  };
 
   const handleCampaignCreated = (newCampaign: Campaign) => {
     setAllCampaigns((prev) => [newCampaign, ...prev]);
     setShowModal(false);
   };
 
-const getCompleteStatus = (selectedCampaignId: number) => {
-  if (!selectedCampaignId) return null;
+  const getCompleteStatus = (selectedCampaignId: number) => {
+    if (!selectedCampaignId) return null;
 
-  // First, try to match by campaign_id
-  let status = previousHirings.find((c) => c.campaign_id === selectedCampaignId);
+    // First, try to match by campaign_id
+    let status = previousHirings.find(
+      (c) => c.campaign_id === selectedCampaignId
+    );
 
-  // If no match, fallback: try to match by id or another unique property
-  if (!status) {
-    status = previousHirings.find((c) => c.id === selectedCampaignId);
-  }
+    // If no match, fallback: try to match by id or another unique property
+    if (!status) {
+      status = previousHirings.find((c) => c.id === selectedCampaignId);
+    }
 
-  return status || null;
-};
-
-
+    return status || null;
+  };
 
   const handleComplete = async (hiringId: number) => {
     try {
-      const res = await apiClient(`campaign_service/complete_offer/${hiringId}/`, {
-        method: "PATCH",
-        auth: true,
-      });
+      const res = await apiClient(
+        `campaign_service/complete_offer/${hiringId}/`,
+        {
+          method: "PATCH",
+          auth: true,
+        }
+      );
 
       if (res?.code === 200 || res?.status === "success") {
         toast.success("Campaign marked as completed!");
@@ -484,14 +477,14 @@ const getCompleteStatus = (selectedCampaignId: number) => {
   const handleSubmitRating = async (hiringId: number, rating: number) => {
     try {
       const res = await apiClient(`campaign_service/give_rating/${hiringId}/`, {
-        method: "POST", 
+        method: "POST",
         auth: true,
         body: JSON.stringify({ rating: rating }),
       });
 
       if (res?.code === 200 || res?.status === "success") {
         toast.success("Rating submitted!");
-        
+
         // Update local states to show stars are locked in
         setPreviousHirings((prev) =>
           prev.map((h) => (h.id === hiringId ? { ...h, rating: rating } : h))
@@ -501,7 +494,6 @@ const getCompleteStatus = (selectedCampaignId: number) => {
       toast.error("Failed to submit rating.");
     }
   };
-
 
   /* -------------------------------------------------
      Render
@@ -588,8 +580,8 @@ const getCompleteStatus = (selectedCampaignId: number) => {
           </div>
 
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-  <SelectTrigger
-    className="
+            <SelectTrigger
+              className="
       w-[160px] 
       bg-white 
       border border-gray-300 
@@ -598,12 +590,12 @@ const getCompleteStatus = (selectedCampaignId: number) => {
       text-sm text-gray-700 
       focus:outline-none focus:ring-2 focus:ring-primary/30
     "
-  >
-    <SelectValue placeholder="All Status" />
-  </SelectTrigger>
+            >
+              <SelectValue placeholder="All Status" />
+            </SelectTrigger>
 
-  <SelectContent
-    className="
+            <SelectContent
+              className="
       bg-white 
       rounded-lg 
       shadow-lg 
@@ -611,20 +603,27 @@ const getCompleteStatus = (selectedCampaignId: number) => {
       mt-1 
       w-[160px]
     "
-  >
-    <SelectItem className="px-4 py-2 hover:bg-gray-50 rounded-md" value="all">
-      All Status
-    </SelectItem>
-    <SelectItem className="px-4 py-2 hover:bg-gray-50 rounded-md" value="active">
-      Active
-    </SelectItem>
-    <SelectItem className="px-4 py-2 hover:bg-gray-50 rounded-md" value="paused">
-      Paused
-    </SelectItem>
-  </SelectContent>
-</Select>
-
-
+            >
+              <SelectItem
+                className="px-4 py-2 hover:bg-gray-50 rounded-md"
+                value="all"
+              >
+                All Status
+              </SelectItem>
+              <SelectItem
+                className="px-4 py-2 hover:bg-gray-50 rounded-md"
+                value="active"
+              >
+                Active
+              </SelectItem>
+              <SelectItem
+                className="px-4 py-2 hover:bg-gray-50 rounded-md"
+                value="paused"
+              >
+                Paused
+              </SelectItem>
+            </SelectContent>
+          </Select>
 
           {/* <Select value={platformFilter} onValueChange={setPlatformFilter}>
             <SelectTrigger className="w-[160px]">
@@ -744,26 +743,59 @@ const getCompleteStatus = (selectedCampaignId: number) => {
                   </div>
                 </div>
 
-                <div className="flex justify-between items-center text-sm mb-4">
-                  <div>
-                    <span className="text-gray-500">Budget</span>
-                    <p className="font-semibold">{campaign.budget}</p>
+                <div className="mt-6 grid grid-cols-2 gap-6">
+                  {/* Budget */}
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 bg-[#0d2f4f]/10 rounded-xl">
+                      <DollarSign className="w-5 h-5 text-[#0d2f4f]" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Budget
+                      </p>
+                      <p className="text-lg font-bold text-gray-900">
+                        ${campaign.budget}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-gray-500">Campaign Objective</span>
-                    <p className="font-medium">{campaign.objective}</p>
+
+                  {/* Timeline */}
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 bg-indigo-50 rounded-xl">
+                      <Clock className="w-5 h-5 text-indigo-600" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Timeline
+                      </p>
+                      <p className="text-lg font-bold text-gray-900">
+                        {campaign.timeLeft}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                {/* Objective */}
+                <div className="mt-6 flex items-start gap-3">
+                  <div className="p-2.5 bg-purple-50 rounded-xl flex-shrink-0">
+                    <Target className="w-5 h-5 text-purple-600" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Objective
+                    </p>
+                    <p className="text-base font-semibold text-gray-900 mt-1">
+                      {campaign.objective}
+                    </p>
                   </div>
                 </div>
 
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-500">
-                    {campaign.timeLeft}
-                  </span>
+                <div className="mt-6 pt-6 border-t border-gray-100">
                   <button
-                    className="text-secondary hover:text-yellow-600 text-sm font-medium cursor-pointer"
                     onClick={() => openCampaignModal(campaign)}
+                    className="group flex w-full items-center justify-between rounded-xl bg-secondary px-5 py-3 text-primary cursor-pointer font-semibold shadow-md hover:shadow-lg hover:from-[#0a2640] hover:to-[#0d2f4f] transition-all duration-200"
                   >
-                    View Details
+                    <span>View Campaign Details</span>
+                    <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                   </button>
                 </div>
               </div>
@@ -772,18 +804,17 @@ const getCompleteStatus = (selectedCampaignId: number) => {
         </div>
 
         {/* Load more */}
-        <div className="text-center">
+        {/* <div className="text-center">
           <button className="px-8 py-2 border border-gray-300 rounded-md bg-secondary text-primary font-semibold hover:bg-[var(--secondaryhover)] transition-colors">
             Load More Campaigns
           </button>
-        </div>
+        </div> */}
       </div>
 
       {/* Detail Modal */}
       {selectedCampaign && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            
             {/* Modal Header Image */}
             <div className="relative">
               <div className="w-full h-48 bg-gray-100 flex items-center justify-center rounded-t-lg overflow-hidden">
@@ -806,22 +837,32 @@ const getCompleteStatus = (selectedCampaignId: number) => {
             <div className="p-6">
               <div className="flex justify-between items-center gap-4 mb-6">
                 <div>
-                  <h2 className="text-xl font-semibold mb-2">{selectedCampaign.title}</h2>
-                  <p className="text-gray-600">{selectedCampaign.description}</p>
+                  <h2 className="text-xl font-semibold mb-2">
+                    {selectedCampaign.title}
+                  </h2>
+                  <p className="text-gray-600">
+                    {selectedCampaign.description}
+                  </p>
                 </div>
               </div>
 
               {/* --- ASSIGNED INFLUENCERS LIST --- */}
               <div className="mb-6">
-                <h3 className="font-semibold text-gray-900 mb-4">Assigned Influencers</h3>
-                
+                <h3 className="font-semibold text-gray-900 mb-4">
+                  Assigned Influencers
+                </h3>
+
                 <div className="space-y-6">
                   {modalHirings.length === 0 ? (
-                    <p className="text-sm text-gray-500 italic">No influencers hired yet.</p>
+                    <p className="text-sm text-gray-500 italic">
+                      No influencers hired yet.
+                    </p>
                   ) : (
                     modalHirings.map((hiring) => (
-                      <div key={hiring.id} className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                        
+                      <div
+                        key={hiring.id}
+                        className="bg-gray-50 p-4 rounded-xl border border-gray-100"
+                      >
                         {/* Influencer Info */}
                         <div className="flex items-center justify-between mb-4">
                           <div className="flex items-center gap-3">
@@ -829,16 +870,22 @@ const getCompleteStatus = (selectedCampaignId: number) => {
                               <Image
                                 width={40}
                                 height={40}
-                                src={hiring.influencer_details?.profile_picture || "/images/placeholder-user.jpg"}
+                                src={
+                                  hiring.influencer_details?.profile_picture ||
+                                  "/images/placeholder-user.jpg"
+                                }
                                 alt="avatar"
                                 className="w-full h-full object-cover"
                               />
                             </div>
                             <div>
                               <p className="font-medium text-sm">
-                                {hiring.influencer_details?.display_name || `User ${hiring.hired_influencer_id}`}
+                                {hiring.influencer_details?.display_name ||
+                                  `User ${hiring.hired_influencer_id}`}
                               </p>
-                              <p className="text-xs text-gray-500">ID: {hiring.hired_influencer_id}</p>
+                              <p className="text-xs text-gray-500">
+                                ID: {hiring.hired_influencer_id}
+                              </p>
                             </div>
                           </div>
 
@@ -852,14 +899,18 @@ const getCompleteStatus = (selectedCampaignId: number) => {
                                 : "bg-secondary text-primary hover:bg-[var(--secondaryhover)] cursor-pointer"
                             }`}
                           >
-                            {hiring.is_completed_marked_by_brand ? "✓ Completed" : "Mark as Complete"}
+                            {hiring.is_completed_marked_by_brand
+                              ? "✓ Completed"
+                              : "Mark as Complete"}
                           </button>
                         </div>
 
                         {/* --- REVIEW SECTION (Only if Completed) --- */}
                         {hiring.is_completed_marked_by_brand && (
                           <div className="border-t border-gray-200 pt-3 mt-2">
-                            <p className="text-xs text-gray-500 mb-2 font-medium">Rate Experience</p>
+                            <p className="text-xs text-gray-500 mb-2 font-medium">
+                              Rate Experience
+                            </p>
                             <div className="flex items-center gap-1">
                               {[1, 2, 3, 4, 5].map((star) => (
                                 <button
@@ -891,13 +942,11 @@ const getCompleteStatus = (selectedCampaignId: number) => {
                             </div>
                           </div>
                         )}
-
                       </div>
                     ))
                   )}
                 </div>
               </div>
-
             </div>
           </div>
         </div>

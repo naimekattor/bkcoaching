@@ -31,6 +31,12 @@ interface InfluencerProfile {
   instagram_handle?: string;
   tiktok_handle?: string;
   youtube_handle?: string;
+  insta_follower?: number;
+  facebook_follower?: number;
+  tiktok_follower?: number;
+  linkedin_follower?: number;
+  youtube_follower?: number;
+  blog_follower?: number;
 }
 
 interface InfluencerUser {
@@ -58,6 +64,21 @@ const sanitizeImageSrc = (src?: string | null) => {
   if (value.startsWith("/")) return value;
   if (/^https?:\/\//i.test(value)) return value;
   return DEFAULT_AVATAR;
+};
+
+// --- Helper to calculate total followers ---
+const calculateFollowers = (inf: InfluencerProfile | undefined | null) => {
+  if (!inf) return 0;
+  
+  const total = 
+    Number(inf.insta_follower || 0) +
+    Number(inf.facebook_follower || 0) +
+    Number(inf.tiktok_follower || 0) +
+    Number(inf.linkedin_follower || 0) +
+    Number(inf.youtube_follower || 0) +
+    Number(inf.blog_follower || 0);
+    
+  return total;
 };
 
 function MicroInfluencersPageContent() {
@@ -96,14 +117,36 @@ function MicroInfluencersPageContent() {
   const [hasNextPage, setHasNextPage] = useState(false);
 
   const timeZones = [
-    { value: "America/New_York", label: "Eastern (ET)" },
-    { value: "America/Chicago", label: "Central (CT)" },
-    { value: "America/Denver", label: "Mountain (MT)" },
-    { value: "America/Phoenix", label: "Arizona (no DST)" },
-    { value: "America/Los_Angeles", label: "Pacific (PT)" },
-    { value: "America/Anchorage", label: "Alaska (AKST/AKDT)" },
-    { value: "Pacific/Honolulu", label: "Hawaii (HST)" },
-  ];
+  {
+    value: "America/New_York",
+    label: "Eastern Standard Time – EST (UTC−5) / Eastern Daylight Time – EDT (UTC−4)",
+  },
+  {
+    value: "America/Chicago",
+    label: "Central Standard Time – CST (UTC−6) / Central Daylight Time – CDT (UTC−5)",
+  },
+  {
+    value: "America/Denver",
+    label: "Mountain Standard Time – MST (UTC−7) / Mountain Daylight Time – MDT (UTC−6)",
+  },
+  {
+    value: "America/Phoenix",
+    label: "Mountain Standard Time – MST (UTC−7) – no DST",
+  },
+  {
+    value: "America/Los_Angeles",
+    label: "Pacific Standard Time – PST (UTC−8) / Pacific Daylight Time – PDT (UTC−7)",
+  },
+  {
+    value: "America/Anchorage",
+    label: "Alaska Standard Time – AKST (UTC−9) / Alaska Daylight Time – AKDT (UTC−8)",
+  },
+  {
+    value: "Pacific/Honolulu",
+    label: "Hawaii Standard Time – HST (UTC−10)",
+  },
+];
+
 
   // Check if any filters are active (using actual searchTerm)
   const hasActiveFilters =
@@ -187,6 +230,8 @@ function MicroInfluencersPageContent() {
             if (inf.tiktok_handle) platforms.push("tiktok");
             if (inf.youtube_handle) platforms.push("youtube");
 
+            const total = calculateFollowers(item.influencer_profile);
+
             return {
               id: String(item.id),
               name:
@@ -194,9 +239,8 @@ function MicroInfluencersPageContent() {
                 `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
                 "Unknown",
               profileImage: sanitizeImageSrc(inf.profile_picture),
-              followers: inf.followers_count
-                ? `${(inf.followers_count / 1000).toFixed(1)}K`
-                : "N/A",
+              // totalFollowers=inf.insta_follower + inf.facebook_follower + inf.facebook_follower + inf.tiktok_follower + inf?.linkedin_follower + inf?.youtube_follower + inf?.blog_follower ??0,
+              followers: total > 0 ? `${(total / 1000).toFixed(1)}K` : "N/A",
               socialLinks: platforms,
               niche: inf.content_niches?.[0] || "Unknown",
               timeZone: inf.timezone || "Unknown",
@@ -242,6 +286,8 @@ function MicroInfluencersPageContent() {
             if (inf.tiktok_handle) platforms.push("tiktok");
             if (inf.youtube_handle) platforms.push("youtube");
 
+            const total = calculateFollowers(item.influencer_profile);
+
             return {
               id: String(item.id),
               name:
@@ -249,9 +295,7 @@ function MicroInfluencersPageContent() {
                 `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
                 "Unknown",
               profileImage: sanitizeImageSrc(inf.profile_picture),
-              followers: inf.followers_count
-                ? `${(inf.followers_count / 1000).toFixed(1)}K`
-                : "N/A",
+              followers: total > 0 ? `${(total / 1000).toFixed(1)}K` : "N/A",
               socialLinks: platforms,
               niche: inf.content_niches?.[0] || "Unknown",
               timeZone: inf.timezone || "Unknown",
@@ -288,6 +332,8 @@ function MicroInfluencersPageContent() {
             if (inf.tiktok_handle) platforms.push("tiktok");
             if (inf.youtube_handle) platforms.push("youtube");
 
+            const total = calculateFollowers(item.influencer_profile);
+
             return {
               id: String(item.id),
               name:
@@ -295,9 +341,7 @@ function MicroInfluencersPageContent() {
                 `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
                 "Unknown",
               profileImage: sanitizeImageSrc(inf.profile_picture),
-              followers: inf.followers_count
-                ? `${(inf.followers_count / 1000).toFixed(1)}K`
-                : "N/A",
+              followers: total > 0 ? `${(total / 1000).toFixed(1)}K` : "N/A",
               socialLinks: platforms,
               niche: inf.content_niches?.[0] || "Unknown",
               timeZone: inf.timezone || "Unknown",

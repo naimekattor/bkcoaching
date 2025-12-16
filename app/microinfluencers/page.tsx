@@ -84,6 +84,21 @@ export default function InfluencersPage() {
                 voices your customers already trust—and turn everyday
                 conversations into brand growth.
               </p>
+              {/* --- Search Bar Section --- */}
+        <div className="mb-12 ">
+          <div className="relative w-full max-w-xl">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <FaSearch className="text-gray-400" />
+            </div>
+            <input
+              type="text"
+              placeholder="Search influencers by name, category, or bio..."
+              className="w-full pl-10 pr-4 py-4 rounded-xl border border-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-lg transition-all"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
             </div>
 
             {/* Right Image */}
@@ -102,21 +117,7 @@ export default function InfluencersPage() {
 
       <main className="container mx-auto py-16 lg:py-[100px] px-4">
         
-        {/* --- Search Bar Section --- */}
-        <div className="mb-12 flex justify-center">
-          <div className="relative w-full max-w-xl">
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <FaSearch className="text-gray-400" />
-            </div>
-            <input
-              type="text"
-              placeholder="Search influencers by name, category, or bio..."
-              className="w-full pl-10 pr-4 py-4 rounded-xl border border-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-lg transition-all"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-        </div>
+        
 
         {/* Results Grid */}
         {filteredInfluencers.length > 0 ? (

@@ -43,4 +43,5 @@ export interface MicroInfluencer {
     url: string;
   }>;
   content_niches?: string[];
+  response_time?:string;
 }

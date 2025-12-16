@@ -52,6 +52,12 @@ interface InfluencerOnboardingData {
   paypal_email: string;
   routing_number: number;
   stripeConnected: boolean;
+  insta_follower:string | number,
+  facebook_follower:string | number,
+  tiktok_follower:string | number,
+  linkedin_follower:string | number,
+  youtube_follower:string | number,
+  blog_follower:string | number,
 }
 
 interface InfluencerOnboardingContextType {
@@ -106,6 +112,12 @@ const initialState: InfluencerOnboardingData = {
   account_number: 0,
   routing_number: 0,
   stripeConnected: false,
+  insta_follower:"",
+  facebook_follower:"",
+  tiktok_follower:"",
+  linkedin_follower:"",
+  youtube_follower:"",
+  blog_follower:"",
 };
 const InfluencerOnboardingProvider = ({
   children,

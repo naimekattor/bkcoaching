@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Search, DollarSign, CircleCheck, X, CheckCircle, XCircle, Paperclip, Calendar, Megaphone } from "lucide-react";
+import { Search, DollarSign, CircleCheck, X, CheckCircle, XCircle, Paperclip, Calendar, Megaphone, ArrowRight, Target, Clock } from "lucide-react";
 import { StatCard } from "@/components/cards/stat-card";
 import Image from "next/image";
 import { apiClient } from "@/lib/apiClient";
@@ -396,37 +396,76 @@ export default function CampaignsPage() {
                 </div>
               </div>
 
-              <div className="p-6">
-                <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
-                  {campaign.campaign_name}
-                </h3>
-                <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-                  {campaign.campaign_description}
-                </p>
+              <div className="group relative overflow-hidden rounded-2xl bg-white shadow-sm border border-gray-100 hover:shadow-xl hover:border-gray-200 transition-all duration-300">
+  {/* Subtle gradient overlay on hover */}
+  <div className="absolute inset-0 bg-gradient-to-br from-[#00786f]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                <div className="flex justify-between items-center text-sm text-gray-600 mb-4">
-                  <div>
-                    <span className="font-medium">Budget</span>
-                    <p className="font-semibold text-gray-900">{campaign.budget_range}</p>
-                  </div>
-                  <div>
-                    <span className="font-medium">Timeline</span>
-                    <p className="font-semibold text-gray-900">{campaign.campaign_timeline}</p>
-                  </div>
-                </div>
+  <div className="group relative overflow-hidden rounded-2xl bg-white shadow-sm border border-gray-100 hover:shadow-xl hover:border-gray-200 transition-all duration-300">
+  {/* Subtle hover overlay with your primary color */}
+  <div className="absolute inset-0 bg-gradient-to-br from-[#0d2f4f]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
 
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-500 truncate max-w-[150px]">
-                    {campaign.campaign_objective}
-                  </span>
-                  <button
-                    onClick={() => handleViewDetails(campaign, "public")}
-                    className="text-secondary hover:text-yellow-600 text-sm font-medium"
-                  >
-                    View Details
-                  </button>
-                </div>
-              </div>
+  <div className="p-6 relative">
+    {/* Campaign Name */}
+    <h3 className="text-xl font-bold text-gray-900 line-clamp-2 group-hover:text-[#0d2f4f] transition-colors duration-200">
+      {campaign.campaign_name}
+    </h3>
+
+    {/* Description */}
+    <p className="mt-3 text-sm text-gray-600 line-clamp-3 leading-relaxed">
+      {campaign.campaign_description}
+    </p>
+
+    {/* Key Metrics Grid */}
+    <div className="mt-6 grid grid-cols-2 gap-6">
+      {/* Budget */}
+      <div className="flex items-center gap-3">
+        <div className="p-2.5 bg-[#0d2f4f]/10 rounded-xl">
+          <DollarSign className="w-5 h-5 text-[#0d2f4f]" />
+        </div>
+        <div>
+          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Budget</p>
+          <p className="text-lg font-bold text-gray-900">${campaign.budget_range}</p>
+        </div>
+      </div>
+
+      {/* Timeline */}
+      <div className="flex items-center gap-3">
+        <div className="p-2.5 bg-indigo-50 rounded-xl">
+          <Clock className="w-5 h-5 text-indigo-600" />
+        </div>
+        <div>
+          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Timeline</p>
+          <p className="text-lg font-bold text-gray-900">{campaign.campaign_timeline}</p>
+        </div>
+      </div>
+    </div>
+
+    {/* Objective */}
+    <div className="mt-6 flex items-start gap-3">
+      <div className="p-2.5 bg-purple-50 rounded-xl flex-shrink-0">
+        <Target className="w-5 h-5 text-purple-600" />
+      </div>
+      <div className="flex-1">
+        <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Objective</p>
+        <p className="text-base font-semibold text-gray-900 mt-1">
+          {campaign.campaign_objective}
+        </p>
+      </div>
+    </div>
+
+    {/* CTA Button */}
+    <div className="mt-6 pt-6 border-t border-gray-100">
+      <button
+        onClick={() => handleViewDetails(campaign, "public")}
+        className="group flex w-full items-center justify-between rounded-xl bg-secondary px-5 py-3 text-primary cursor-pointer font-semibold shadow-md hover:shadow-lg hover:from-[#0a2640] hover:to-[#0d2f4f] transition-all duration-200"
+      >
+        <span>View Campaign Details</span>
+        <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+      </button>
+    </div>
+  </div>
+</div>
+</div>
             </div>
           ))
         )}
@@ -712,7 +751,7 @@ export default function CampaignsPage() {
                     onClick={handleConnectWithOwner}
                     className="px-6 py-2 bg-secondary text-primary rounded-lg font-medium hover:bg-[var(--secondaryhover)]"
                 >
-                    Message Owner
+                    Message Brand
                 </button>
               )}
             </div>

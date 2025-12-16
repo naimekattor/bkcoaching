@@ -1,7 +1,5 @@
-// app/brands/page.tsx (or wherever your main file is)
 import { apiClient } from "@/lib/apiClient";
-import Image from "next/image";
-import BrandListWithSearch from "@/components/BrandListWithSearch"; 
+import BrandListWithSearch from "@/components/BrandListWithSearch";
 
 export interface BrandProfile {
   id: number;
@@ -36,7 +34,6 @@ interface BrandApiResponse {
 
 export default async function BrandsPage() {
   async function fetchBrands() {
-    // Add try/catch for safety
     try {
       const res = await apiClient("user_service/get_all_brands/", {
         method: "GET",
@@ -69,43 +66,6 @@ export default async function BrandsPage() {
 
   const brands = await fetchBrands();
 
-  return (
-    <section>
-      <section className="bg-gradient-to-b ">
-        <main className="container mx-auto px-4 pt-8 lg:pt-16">
-          <div className="grid lg:grid-cols-2 gap-2 items-center">
-            {/* Left Content */}
-            <div className="lg:col-span-1 space-y-8 flex-1 ">
-              <div className="space-y-4">
-                <h1 className="text-4xl md:text-5xl font-bold text-primary leading-tight">
-                  Discover Brands You’ll Love Sharing
-                </h1>
-              </div>
-
-              <p className="text-primary text-[16px] leading-relaxed max-w-lg">
-                Browse campaigns from brands that value your authentic voice.
-                Choose partnerships that fit your style, share them with your
-                audience, and get paid for creating real influence.
-              </p>
-            </div>
-
-            {/* Right Image */}
-            <div className="relative">
-              <Image
-                width={833}
-                height={519}
-                src={"/images/brand-hero1.png"}
-                alt="Two stylish women representing micro-influencers"
-                className="w-full h-auto max-w-md mx-auto lg:max-w-full"
-              />
-            </div>
-          </div>
-        </main>
-      </section>
-
-      {/* Replaced the direct map with the Search Component */}
-      <BrandListWithSearch brands={brands} />
-      
-    </section>
-  );
+  // We pass the data to the client component, which now handles the full layout
+  return <BrandListWithSearch brands={brands} />;
 }

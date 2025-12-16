@@ -21,16 +21,17 @@ export default function AboutPage() {
             {/* Left Content */}
             <div className="space-y-8 pb-8 md:pt-36 pt-16">
               <div className="space-y-4">
-                <h1 className="text-4xl md:text-5xl font-bold text-primary leading-tight">
-                  The Social Market Backstory
-                </h1>
-              </div>
-              <div className="w-full space-y-6">
                 <p className="text-primary text-[16px] leading-relaxed">
                   Hi — we’re so glad you’re here! Truly. Whether you stumbled in
                   out of curiosity or came looking for something specific,
                   you’re part of a community we’re excited to welcome.
                 </p>
+              </div>
+              <div className="w-full space-y-6">
+                <h1 className="text-4xl md:text-5xl font-bold text-primary leading-tight">
+                  The Social Market Backstory
+                </h1>
+                
                 <p className="text-primary text-[16px] leading-relaxed">
                   I had all these events and programs I wanted to share with the
                   world. But every time I looked into advertising, it felt like
@@ -85,7 +86,7 @@ export default function AboutPage() {
               <Image
                 width={833}
                 height={519}
-                src={"/images/about-hero.png"}
+                src={"/images/about-hero1.png"}
                 alt="Two stylish women representing micro-influencers"
                 className="w-full h-[619px] max-w-md mx-auto lg:max-w-full"
               />

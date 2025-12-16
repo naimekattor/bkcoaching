@@ -47,14 +47,36 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
   ];
 
   const timeZones = [
-    { value: "America/New_York", label: "Eastern (ET)" },
-    { value: "America/Chicago", label: "Central (CT)" },
-    { value: "America/Denver", label: "Mountain (MT)" },
-    { value: "America/Phoenix", label: "Arizona (no DST)" },
-    { value: "America/Los_Angeles", label: "Pacific (PT)" },
-    { value: "America/Anchorage", label: "Alaska (AKST/AKDT)" },
-    { value: "Pacific/Honolulu", label: "Hawaii (HST)" },
-  ];
+  {
+    value: "America/New_York",
+    label: "Eastern Standard Time – EST (UTC−5) / Eastern Daylight Time – EDT (UTC−4)",
+  },
+  {
+    value: "America/Chicago",
+    label: "Central Standard Time – CST (UTC−6) / Central Daylight Time – CDT (UTC−5)",
+  },
+  {
+    value: "America/Denver",
+    label: "Mountain Standard Time – MST (UTC−7) / Mountain Daylight Time – MDT (UTC−6)",
+  },
+  {
+    value: "America/Phoenix",
+    label: "Mountain Standard Time – MST (UTC−7) – no DST",
+  },
+  {
+    value: "America/Los_Angeles",
+    label: "Pacific Standard Time – PST (UTC−8) / Pacific Daylight Time – PDT (UTC−7)",
+  },
+  {
+    value: "America/Anchorage",
+    label: "Alaska Standard Time – AKST (UTC−9) / Alaska Daylight Time – AKDT (UTC−8)",
+  },
+  {
+    value: "Pacific/Honolulu",
+    label: "Hawaii Standard Time – HST (UTC−10)",
+  },
+];
+
 
   const handleBusinessTypeChange = (type: string, checked: boolean) => {
     if (checked) {
@@ -194,7 +216,7 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
           {tz.label}
         </SelectItem>
       ))}
-      <SelectItem value="Others">Others</SelectItem>
+      <SelectItem value="Others">Other</SelectItem>
     </SelectContent>
   </Select>
 </div>
