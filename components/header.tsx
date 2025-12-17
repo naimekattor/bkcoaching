@@ -16,6 +16,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { X, LogOut, LayoutDashboard, Loader2 } from "lucide-react";
 import { apiClient } from "@/lib/apiClient"; 
+import { useParams, usePathname } from "next/navigation";
 
 const navigationLinks = [
   { name: "Home", href: "/" },
@@ -39,7 +40,8 @@ const Header = () => {
   const [token, setToken] = useState<string | null>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
-
+  const [activeLink,setActiveLink]=useState(false);
+  const pathName=usePathname();
   const fetchUser = async () => {
     const accessToken = localStorage.getItem("access_token");
     setToken(accessToken);
@@ -230,6 +232,13 @@ const Header = () => {
     );
   };
 
+  // handle activeLink
+  const handleActiveLink=(link:string)=>{
+     if (pathName===link) {
+      setActiveLink(true);
+     }
+  }
+
   return (
     <>
       <header className="sticky top-0 z-40 w-full px-4 pt-6">
@@ -260,10 +269,14 @@ const Header = () => {
                   whileTap={{ scale: 0.95 }}
                 >
                   <Link
+                  onClick={()=>handleActiveLink(link.href)}
                     href={link.href}
                     className={cn(
                       "relative text-sm font-medium text-navlink-primary transition-colors duration-300",
-                      "hover:text-[#F6FBFF] hover:bg-[#002140] hover:border-[#F7FBFF] hover:border hover:scale-105 transform rounded-md px-2 py-1 block"
+                      "hover:text-[#F6FBFF] hover:bg-[#002140] hover:border-[#F7FBFF] hover:border hover:scale-105 transform rounded-md px-2 py-1 block",
+                      activeLink
+      ? "bg-[#002140] text-[#F6FBFF] border border-[#F7FBFF]" 
+      : "border border-transparent"
                     )}
                   >
                     {link.name}

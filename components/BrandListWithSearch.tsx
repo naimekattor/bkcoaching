@@ -65,9 +65,9 @@ export default function BrandListWithSearch({ brands }: { brands: BrandData[] })
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-medium">
+                {/* <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-medium">
                   {filteredBrands.length} brands
-                </div>
+                </div> */}
               </div>
             </div>
 
