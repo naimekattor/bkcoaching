@@ -141,18 +141,20 @@ export default function ProposalsPage() {
       console.log("Sending proposal with FormData");
 
       const response = await fetch(
-  `${process.env.NEXT_PUBLIC_API_BASE_URL}campaign_service/hire_influencer/`,
-  {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${localStorage.getItem("access_token") || ""}`,
-    },
-    body: formPayload,
-  }
-);
-console.log(response);
-const data=await response.json();
-console.log(data);
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}campaign_service/hire_influencer/`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${
+              localStorage.getItem("access_token") || ""
+            }`,
+          },
+          body: formPayload,
+        }
+      );
+      console.log(response);
+      const data = await response.json();
+      console.log(data);
 
       if (data.code == 201) {
         console.log("Proposal sent successfully:", data.data);
@@ -225,15 +227,15 @@ console.log(data);
             Select Campaign *
           </label>
           <Select
-            onValueChange={(value) =>{
+            onValueChange={(value) => {
               const selectedCampaign = myCampaigns.find(
-      (c) => c.id === Number(value)
-    );
-    if (!selectedCampaign) return;
+                (c) => c.id === Number(value)
+              );
+              if (!selectedCampaign) return;
 
-    // Use the generic handleInputChange
-    handleInputChange("campaignId", String(selectedCampaign.id));
-    handleInputChange("campaignName", selectedCampaign.campaign_name);
+              // Use the generic handleInputChange
+              handleInputChange("campaignId", String(selectedCampaign.id));
+              handleInputChange("campaignName", selectedCampaign.campaign_name);
             }}
           >
             <SelectTrigger className="w-[250px]">
@@ -564,7 +566,6 @@ console.log(data);
                   >
                     {loading ? "Sending..." : "Send Proposal"}
                   </button>
-                  
                 </div>
               </div>
             </div>
@@ -594,7 +595,6 @@ console.log(data);
                 >
                   Continue
                 </button>
-                
               </div>
             </div>
           </div>

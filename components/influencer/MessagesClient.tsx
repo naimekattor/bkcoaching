@@ -348,6 +348,38 @@ export default function InfluencerMessagesClient() {
       return () => clearTimeout(timeout);
     }
   }, [messages]);
+// websocket notification
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+
+    if (!token) return;
+
+    const ws = new WebSocket(
+      `wss://exhaust-minute-picked-reservations.trycloudflare.com/chat_handshake/ws/notification/?token=${token}`
+    );
+
+    ws.onopen = () => {
+      console.log("✅ WebSocket connected");
+    };
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      console.log("🔔 Notification:", data);
+    };
+
+    ws.onerror = (err) => {
+      console.error("❌ WS error", err);
+    };
+
+    ws.onclose = () => {
+      console.log("🔌 WebSocket closed");
+    };
+
+    // cleanup (VERY IMPORTANT)
+    return () => {
+      ws.close();
+    };
+  }, []);
 
   // Initialize WebSocket
   useEffect(() => {

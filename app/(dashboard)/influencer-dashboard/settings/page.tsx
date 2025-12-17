@@ -172,6 +172,7 @@ export default function ProfilePage() {
       twitter: p.twitter_handle || "",
       linkedin: p.linkedin_handle || "",
       whatsapp: p.whatsapp_handle || "",
+      blog:p.blog_url || "",
     },
     followers: {
     instagram: p.insta_follower || "",
@@ -425,77 +426,124 @@ export default function ProfilePage() {
           </CardContent>
         </Card>
 
-        {/* Social Links */}
+        {/* Combined Social Presence & Reach Card */}
         <Card className="border-none shadow-sm">
           <CardHeader className="pb-4 border-b border-gray-100">
-            <CardTitle className="text-xl">Social Media Handles</CardTitle>
-            <CardDescription>Connect your active platforms</CardDescription>
+            <CardTitle className="text-xl">Social Presence & Reach</CardTitle>
+            <CardDescription>
+              Connect your accounts and specify your audience size for each platform.
+            </CardDescription>
           </CardHeader>
-          <CardContent className="grid md:grid-cols-2 gap-6 pt-6">
-            {Object.entries(formData.socialLinks).map(([platform, value]) => (
-              <div key={platform} className="space-y-2">
-                <Label className="capitalize text-sm font-medium">{platform}</Label>
-                <div className="relative">
+          
+          <CardContent className="space-y-6 pt-6">
+            
+            {[
+              { id: "instagram", label: "Instagram", hasStats: true, placeholder: "https://instagram.com/username" },
+              { id: "tiktok", label: "TikTok", hasStats: true, placeholder: "https://tiktok.com/@username" },
+              { id: "youtube", label: "YouTube", hasStats: true, placeholder: "youtube.com/@channel" },
+              { id: "facebook", label: "Facebook", hasStats: true, placeholder: "facebook.com/username" },
+              { id: "linkedin", label: "LinkedIn", hasStats: true, placeholder: "linkedin.com/in/profile" },
+              { id: "twitter", label: "Twitter", hasStats: true, placeholder: "twitter.com/username" },
+              { id: "whatsapp", label: "WhatsApp", hasStats: false, placeholder: "wa.me/15551234567" },
+            ].map((platform) => (
+              <div 
+                key={platform.id} 
+                className={`grid gap-4 ${platform.hasStats ? 'md:grid-cols-2' : 'grid-cols-1'}`}
+              >
+                {/* 1. Link Input */}
+                <div className="space-y-2">
+                  <Label htmlFor={`${platform.id}_handle`} className="text-sm font-medium">
+                    {platform.label} Link
+                  </Label>
                   <Input
-                    value={value}
+                    id={`${platform.id}_handle`}
+                    value={formData.socialLinks[platform.id as keyof typeof formData.socialLinks] || ""}
                     onChange={(e) =>
                       setFormData({
                         ...formData,
                         socialLinks: {
                           ...formData.socialLinks,
-                          [platform]: e.target.value,
+                          [platform.id]: e.target.value,
                         },
                       })
                     }
-                    placeholder={placeholders[platform] || "Enter link"}
+                    placeholder={platform.placeholder}
                     className="h-11"
                   />
                 </div>
+
+                {/* 2. Follower Count Input (Only rendered if hasStats is true) */}
+                {platform.hasStats && (
+                  <div className="space-y-2">
+                    <Label htmlFor={`${platform.id}_followers`} className="text-sm font-medium">
+                      {platform.label === "YouTube" ? "Subscribers" : 
+                       platform.label === "LinkedIn" ? "Connections" : "Followers"}
+                    </Label>
+                    <Input
+                      id={`${platform.id}_followers`}
+                      type="number"
+                      min="0"
+                      placeholder="e.g. 5000"
+                      value={formData.followers[platform.id as keyof typeof formData.followers] || ""}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          followers: {
+                            ...formData.followers,
+                            [platform.id]: e.target.value,
+                          },
+                        })
+                      }
+                      className="h-11"
+                    />
+                  </div>
+                )}
               </div>
             ))}
-          </CardContent>
-        </Card>
 
-        {/* Audience Size */}
-        <Card className="border-none shadow-sm">
-          <CardHeader className="pb-4 border-b border-gray-100">
-            <CardTitle className="text-xl">Audience Size</CardTitle>
-            <CardDescription>Enter your total followers or subscribers</CardDescription>
-          </CardHeader>
-          <CardContent className="pt-6">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[
-                { key: "instagram", label: "Instagram Followers" },
-                { key: "tiktok", label: "TikTok Followers" },
-                { key: "youtube", label: "YouTube Subscribers" },
-                { key: "facebook", label: "Facebook Followers" },
-                { key: "linkedin", label: "LinkedIn Connections" },
-                { key: "blog", label: "Monthly Blog Visitors" },
-              ].map(({ key, label }) => (
-                <div key={key} className="space-y-2">
-                  <Label htmlFor={`${key}_followers`} className="text-sm font-medium">
-                    {label}
-                  </Label>
-                  <Input
-                    id={`${key}_followers`}
-                    type="number"
-                    min="0"
-                    placeholder="e.g. 5000"
-                    value={formData.followers[key as keyof typeof formData.followers]}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        followers: {
-                          ...formData.followers,
-                          [key]: e.target.value,
-                        },
-                      })
-                    }
-                    className="h-11"
-                  />
-                </div>
-              ))}
+            
+            <div className="grid md:grid-cols-2 gap-4 pt-2 border-t border-gray-50">
+              <div className="space-y-2">
+                <Label htmlFor="blog_url" className="text-sm font-medium">Blog / Website URL</Label>
+                <Input
+                  id="blog_url"
+                  
+                  value={formData.socialLinks['blog' as keyof typeof formData.socialLinks] || ""} 
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      socialLinks: {
+                        ...formData.socialLinks,
+                        blog: e.target.value, 
+                      },
+                    })
+                  }
+                  placeholder="https://myblog.com"
+                  className="h-11"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="blog_visitors" className="text-sm font-medium">Monthly Visitors</Label>
+                <Input
+                  id="blog_visitors"
+                  type="number"
+                  min="0"
+                  placeholder="e.g. 1500"
+                  value={formData.followers.blog || ""}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      followers: {
+                        ...formData.followers,
+                        blog: e.target.value,
+                      },
+                    })
+                  }
+                  className="h-11"
+                />
+              </div>
             </div>
+
           </CardContent>
         </Card>
 

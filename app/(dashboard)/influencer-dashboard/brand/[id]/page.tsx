@@ -114,12 +114,12 @@ export default function BrandProfilePage() {
             title: raw.contact_person_title ?? "",
           },
           // ---- Campaign stats (fallback to 0) ----
-          campaigns: {
-            total: raw.campaigns_total ?? 0,
-            creators: raw.campaigns_creators ?? 0,
-            avgRating: raw.campaigns_avg_rating ?? 0,
-            totalInvested: raw.campaigns_total_invested ?? 0,
-          },
+          // campaigns: {
+          //   total: userOtherData?.campaigns_total ?? 0,
+          //   creators: userOtherData?.campaigns_creators ?? 0,
+          //   avgRating: userOtherData?.campaigns_avg_rating ?? 0,
+          //   totalInvested: userOtherData?.campaigns_total_invested ?? 0,
+          // },
           // ---- Active campaigns (you may store them in a separate endpoint) ----
           activeCampaigns: raw.active_campaigns ?? [],
           // ---- Reviews (fallback to empty) ----
@@ -292,13 +292,13 @@ export default function BrandProfilePage() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-primary mb-1">
-                    {userOtherData.campaigns ?? 0}
+                    {userOtherData?.campaigns ?? 0}
                   </div>
                   <div className="text-sm text-gray-600">Total Campaigns</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-green-600 mb-1">
-                    {userOtherData.hires_data ?? 0}
+                    {userOtherData?.hires_data ?? 0}
                   </div>
                   <div className="text-sm text-gray-600">micro-influencers</div>
                 </div>
