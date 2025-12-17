@@ -321,38 +321,7 @@ export default function MessagesClient() {
   }
 }, [messages]);
 
-// Websocket Notification
-useEffect(() => {
-    const token = localStorage.getItem("access_token");
 
-    if (!token) return;
-
-    const ws = new WebSocket(
-      `wss://exhaust-minute-picked-reservations.trycloudflare.com/chat_handshake/ws/notification/?token=${token}`
-    );
-
-    ws.onopen = () => {
-      console.log("✅ WebSocket connected");
-    };
-
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      console.log("🔔 Notification:", data);
-    };
-
-    ws.onerror = (err) => {
-      console.error("❌ WS error", err);
-    };
-
-    ws.onclose = () => {
-      console.log("🔌 WebSocket closed");
-    };
-
-    // cleanup (VERY IMPORTANT)
-    return () => {
-      ws.close();
-    };
-  }, []);
 
   // Initialize WebSocket
   useEffect(() => {
@@ -624,12 +593,12 @@ useEffect(() => {
               </button>
               <h1 className="text-xl font-bold text-primary">Messages</h1>
             </div>
-            <div className="flex items-center gap-2">
+            {/* <div className="flex items-center gap-2">
               <button className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all duration-200">
                 <Bell className="h-5 w-5" />
                 <span className="absolute -top-1 -right-1 w-3 h-3 bg-secondary rounded-full"></span>
               </button>
-            </div>
+            </div> */}
           </div>
 
           <div className="relative">

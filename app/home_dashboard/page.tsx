@@ -2,145 +2,113 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useAuthStore } from "@/stores/useAuthStore";
 import { apiClient } from "@/lib/apiClient";
-import { Loader2 } from "lucide-react"; 
+import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { setAuthFromResponse } from "@/lib/auth";
 
 function DashboardPageContent() {
   const router = useRouter();
-  const params = useSearchParams();
-
   const searchParams = useSearchParams();
-  const token = useAuthStore((state) => state.token);
+  const { data: session, status: sessionStatus } = useSession(); 
+  
   const [error, setError] = useState<string | null>(null);
-  const [status, setStatus] = useState<string | null>(null);
-  const { data: session } = useSession();
-  const returnTo = params.get("returnTo");
+  const [statusParam, setStatusParam] = useState<string | null>(null);
 
-  console.log(session, returnTo);
-
-  console.log(token);
   useEffect(() => {
-    const statusParam = searchParams.get("status");
-    if (statusParam) setStatus(statusParam);
+    const s = searchParams.get("status");
+    if (s) setStatusParam(s);
   }, [searchParams]);
-
-  // useEffect(() => {
-  //   const handleGoogleAuth = async () => {
-  //     if (!session) return;
-
-  //     const payload = {
-  //       first_name: session.user?.name?.split(" ")[0] || "",
-  //       last_name: session.user?.name?.split(" ")[1] || "",
-  //       email: session.user?.email,
-  //       password: "google_auth",
-  //       signup_method: "google",
-  //       signed_up_as: "brand", // or dynamic
-  //     };
-
-  //     try {
-  //       const res = await apiClient(`user_service/signup/`, {
-  //         method: "POST",
-  //         body: JSON.stringify(payload),
-  //       });
-
-  //       console.log(res);
-
-  //       setAuthFromResponse(res);
-  //       if (returnTo) {
-  //         router.push(returnTo);
-  //       }
-  //     } catch (err:unknown) {
-  //       if (err && typeof err === "object" && "status" in err) {
-  //   const apiErr = err as { status: number };
-  //       if (err?.status === 400) {
-  //         const loginRes = await apiClient(`user_service/login/`, {
-  //           method: "POST",
-
-  //           body: JSON.stringify({
-  //             email: payload.email,
-  //             password: "google_auth",
-  //           }),
-  //         });
-
-  //         console.log(loginRes);
-
-  //         setAuthFromResponse(loginRes);
-  //         if (returnTo) {
-  //           router.push(returnTo);
-  //         }
-  //       } else {
-  //         console.error("Google Auth failed", err);
-  //       }
-  //     }
-  //   };}
-
-  //   handleGoogleAuth();
-  // }, [session]);
 
   useEffect(() => {
     const checkUserProfile = async () => {
-      console.log("Token found, checking user profile...");
+      // 1. Resolve the token (Session has priority, fallback to LocalStorage)
+      // We access localStorage inside useEffect to avoid Next.js hydration mismatch
+      const localToken = typeof window !== 'undefined' ? localStorage.getItem("access_token") : null;
+      const effectiveToken = session?.accessToken || localToken;
+      console.log(session?.accessToken);
+      console.log(localToken);
+      
+      
+
+      // 2. Handle Loading State
+      // If we don't have a token yet AND the session is still loading, wait.
+      // If we DO have a localToken, we proceed immediately without waiting for session.
+      if (!effectiveToken && sessionStatus === "loading") {
+        return; 
+      }
+      
+      // 3. Handle Unauthenticated State
+      if (!effectiveToken) {
+        console.log("No session or local token found");
+        setError("Please log in to continue.");
+        return;
+      }
+
+      console.log("Token found, fetching profile...");
+
       try {
-        const userInfo = await apiClient("user_service/get_user_info/", {
-          auth: true, 
+        const res = await apiClient("user_service/get_user_info/", {
           method: "GET",
+          headers: {
+            Authorization: `Bearer ${effectiveToken}`,
+          },
         });
 
-        if (!userInfo?.data) {
-          throw new Error("Failed to load user information.");
+        if (!res || !res.data) {
+          throw new Error("Invalid API response");
         }
 
-        const userData = userInfo.data;
+        const userData = res?.data; 
 
-        const hasBrandProfile =
-          userData.signed_up_as == "brand";
+        console.log("User Data Received:", userData);
 
-        const hasInfluencerProfile =
-          userData.signed_up_as == "influencer";
+        // const hasBrandProfile = userData.signed_up_as === "brand";
+        // const hasInfluencerProfile = userData.signed_up_as === "influencer";
+        const role = userData.signed_up_as;
 
         let redirectPath = "/influencer-dashboard";
-        if (hasBrandProfile && !hasInfluencerProfile) {
+        
+         if (role === "brand") {
           redirectPath = "/brand-dashboard";
-        }
+        } 
+        else if (role === "influencer") {
+          // This block will execute for your specific API response
+          redirectPath = "/influencer-dashboard";
+        } 
 
-        if (status === "success") {
+        if (statusParam === "success") {
           router.replace(`${redirectPath}?status=success`);
         } else {
           router.replace(redirectPath);
         }
       } catch (error: unknown) {
         console.error("Profile check failed:", error);
-        setError(
-          "Could not retrieve your profile. Please try logging in again."
-        );
+        // Optional: If API fails with 401, clear local storage
+        // localStorage.removeItem("access_token"); 
+        setError("Could not retrieve your profile. Please try logging in again.");
       }
     };
 
-    if (token) {
-      checkUserProfile();
-    }
-  }, [token, router, status]);
+    checkUserProfile();
+  }, [session, sessionStatus, router, statusParam]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50">
       {error ? (
         <div className="text-center">
-          <p className="text-red-500">{error}</p>
+          <p className="text-red-500 mb-4">{error}</p>
           <Link
             href="/auth/login"
-            className="text-blue-600 hover:underline mt-4"
+            className="text-white bg-blue-600 px-4 py-2 rounded hover:bg-blue-700 transition"
           >
             Go to Login
           </Link>
         </div>
       ) : (
-        <div className="flex items-center space-x-2 text-gray-600">
-          <Loader2 className="w-8 h-8 animate-spin" />
-          <span className="text-xl">Loading your dashboard...</span>
+        <div className="flex flex-col items-center space-y-4 text-gray-600">
+          <Loader2 className="w-10 h-10 animate-spin text-blue-600" />
+          <span className="text-xl font-medium">Loading your dashboard...</span>
         </div>
       )}
     </div>
@@ -149,7 +117,7 @@ function DashboardPageContent() {
 
 export default function DashboardPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-slate-50" />}>
+    <Suspense fallback={<div className="min-h-screen bg-slate-50 flex items-center justify-center"><Loader2 className="animate-spin"/></div>}>
       <DashboardPageContent />
     </Suspense>
   );

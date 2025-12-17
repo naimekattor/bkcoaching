@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-
+import Cookies from "js-cookie";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Check, Eye, EyeOff, X } from "lucide-react";
@@ -101,12 +101,17 @@ export default function SignupPage() {
    
   };
 
-  const handleGoogleSignUp = async () => {
-    signIn("google", {
-      callbackUrl: `/home_dashboard?returnTo=${returnTo}`,
-      state: result,
+const handleGoogleSignUp = async () => {
+  if (result) {
+    Cookies.set("signup_role", result, {
+      expires: 1,
+      sameSite: "lax",
     });
-  };
+  }
+  signIn("google", {
+    callbackUrl: `/home_dashboard?returnTo=${returnTo}`,
+  });
+};
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
