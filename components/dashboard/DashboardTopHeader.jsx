@@ -126,7 +126,7 @@ const DashboardTopHeader = () => {
     <div className="bg-white px-4 sm:px-8 py-5 border-b border-gray-100">
       <div className="flex items-center justify-between">
         {/* Left Spacer */}
-        <div className="flex-grow" />
+        {/* <div className="flex-grow" /> */}
          {/* --- NEW CONTEXT SWITCHER --- */}
   <div className="mr-6 hidden md:block">
     {pathname.startsWith("/brand-dashboard") && (
@@ -138,7 +138,7 @@ const DashboardTopHeader = () => {
         <Briefcase size={14} className="fill-blue-700/10" />
         <div className="flex flex-col leading-none">
           <span className="text-[10px] uppercase tracking-wider font-bold opacity-60">Current View</span>
-          <span className="text-xs font-semibold">Brand Workspace</span>
+          <span className="text-xs font-semibold">Brand Dashboard</span>
         </div>
         <div className="w-px h-4 bg-blue-200 mx-1"></div>
         <span className="flex items-center text-[10px] font-medium opacity-70 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all">
@@ -150,15 +150,15 @@ const DashboardTopHeader = () => {
     {pathname.startsWith("/influencer-dashboard") && (
       <Link
         href="/brand-dashboard"
-        className="group flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-50 border border-purple-100 text-purple-700 hover:bg-purple-100 transition-all duration-200"
+        className="group flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary border border-primary text-primary hover:bg-primary transition-all duration-200"
         title="Switch to Brand Dashboard"
       >
-        <Sparkles size={14} className="fill-purple-700/10" />
+        <Sparkles size={14} className="fill-primary" />
         <div className="flex flex-col leading-none">
           <span className="text-[10px] uppercase tracking-wider font-bold opacity-60">Current View</span>
-          <span className="text-xs font-semibold">Influencer Hub</span>
+          <span className="text-xs font-semibold">Influencer Dashboard</span>
         </div>
-        <div className="w-px h-4 bg-purple-200 mx-1"></div>
+        <div className="w-px h-4 bg-primary mx-1"></div>
         <span className="flex items-center text-[10px] font-medium opacity-70 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all">
           Switch <ArrowRightLeft size={10} className="ml-1" />
         </span>
