@@ -28,58 +28,58 @@ function DashboardPageContent() {
     if (statusParam) setStatus(statusParam);
   }, [searchParams]);
 
-  useEffect(() => {
-    const handleGoogleAuth = async () => {
-      if (!session) return;
+  // useEffect(() => {
+  //   const handleGoogleAuth = async () => {
+  //     if (!session) return;
 
-      const payload = {
-        first_name: session.user?.name?.split(" ")[0] || "",
-        last_name: session.user?.name?.split(" ")[1] || "",
-        email: session.user?.email,
-        password: "google_auth",
-        signup_method: "google",
-        signed_up_as: "brand", // or dynamic
-      };
+  //     const payload = {
+  //       first_name: session.user?.name?.split(" ")[0] || "",
+  //       last_name: session.user?.name?.split(" ")[1] || "",
+  //       email: session.user?.email,
+  //       password: "google_auth",
+  //       signup_method: "google",
+  //       signed_up_as: "brand", // or dynamic
+  //     };
 
-      try {
-        const res = await apiClient(`user_service/signup/`, {
-          method: "POST",
-          body: JSON.stringify(payload),
-        });
+  //     try {
+  //       const res = await apiClient(`user_service/signup/`, {
+  //         method: "POST",
+  //         body: JSON.stringify(payload),
+  //       });
 
-        console.log(res);
+  //       console.log(res);
 
-        setAuthFromResponse(res);
-        if (returnTo) {
-          router.push(returnTo);
-        }
-      } catch (err:unknown) {
-        if (err && typeof err === "object" && "status" in err) {
-    const apiErr = err as { status: number };
-        if (err?.status === 400) {
-          const loginRes = await apiClient(`user_service/login/`, {
-            method: "POST",
+  //       setAuthFromResponse(res);
+  //       if (returnTo) {
+  //         router.push(returnTo);
+  //       }
+  //     } catch (err:unknown) {
+  //       if (err && typeof err === "object" && "status" in err) {
+  //   const apiErr = err as { status: number };
+  //       if (err?.status === 400) {
+  //         const loginRes = await apiClient(`user_service/login/`, {
+  //           method: "POST",
 
-            body: JSON.stringify({
-              email: payload.email,
-              password: "google_auth",
-            }),
-          });
+  //           body: JSON.stringify({
+  //             email: payload.email,
+  //             password: "google_auth",
+  //           }),
+  //         });
 
-          console.log(loginRes);
+  //         console.log(loginRes);
 
-          setAuthFromResponse(loginRes);
-          if (returnTo) {
-            router.push(returnTo);
-          }
-        } else {
-          console.error("Google Auth failed", err);
-        }
-      }
-    };}
+  //         setAuthFromResponse(loginRes);
+  //         if (returnTo) {
+  //           router.push(returnTo);
+  //         }
+  //       } else {
+  //         console.error("Google Auth failed", err);
+  //       }
+  //     }
+  //   };}
 
-    handleGoogleAuth();
-  }, [session]);
+  //   handleGoogleAuth();
+  // }, [session]);
 
   useEffect(() => {
     const checkUserProfile = async () => {
