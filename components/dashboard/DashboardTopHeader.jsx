@@ -8,7 +8,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { ChevronDown, LogOut, RefreshCw } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
-
+import { ArrowRightLeft, Briefcase, Sparkles } from "lucide-react";
 const DashboardTopHeader = () => {
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
