@@ -132,7 +132,7 @@ const DashboardTopHeader = () => {
     {pathname.startsWith("/brand-dashboard") && (
       <Link
         href="/influencer-dashboard"
-        className="group flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-blue-700 hover:bg-blue-100 transition-all duration-200"
+        className="group flex items-center gap-2 px-3 py-1.5 rounded-full  border border-blue-100 text-blue-700  transition-all duration-200"
         title="Switch to Influencer Dashboard"
       >
         <Briefcase size={14} className="fill-blue-700/10" />
@@ -150,7 +150,7 @@ const DashboardTopHeader = () => {
     {pathname.startsWith("/influencer-dashboard") && (
       <Link
         href="/brand-dashboard"
-        className="group flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary border border-primary text-primary hover:bg-primary transition-all duration-200"
+        className="group flex items-center gap-2 px-3 py-1.5 rounded-full  border border-primary text-primary  transition-all duration-200"
         title="Switch to Brand Dashboard"
       >
         <Sparkles size={14} className="fill-primary" />
