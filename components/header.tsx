@@ -16,7 +16,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { X, LogOut, LayoutDashboard, Loader2 } from "lucide-react";
 import { apiClient } from "@/lib/apiClient"; 
-import { useParams, usePathname } from "next/navigation";
+import {  usePathname } from "next/navigation";
 
 const navigationLinks = [
   { name: "Home", href: "/" },
@@ -40,7 +40,6 @@ const Header = () => {
   const [token, setToken] = useState<string | null>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeLink,setActiveLink]=useState(false);
   const pathName=usePathname();
   const fetchUser = async () => {
     const accessToken = localStorage.getItem("access_token");
@@ -232,12 +231,7 @@ const Header = () => {
     );
   };
 
-  // handle activeLink
-  const handleActiveLink=(link:string)=>{
-     if (pathName===link) {
-      setActiveLink(true);
-     }
-  }
+  
 
   return (
     <>
@@ -259,7 +253,10 @@ const Header = () => {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex md:items-center md:space-x-8">
-              {navigationLinks.map((link, index) => (
+              {navigationLinks.map((link, index) =>{ 
+                const isActive = pathName === link.href;
+
+              return(
                 <motion.div
                   key={link.name}
                   initial={{ opacity: 0, y: -10 }}
@@ -269,12 +266,12 @@ const Header = () => {
                   whileTap={{ scale: 0.95 }}
                 >
                   <Link
-                  onClick={()=>handleActiveLink(link.href)}
+                  
                     href={link.href}
                     className={cn(
                       "relative text-sm font-medium text-navlink-primary transition-colors duration-300",
                       "hover:text-[#F6FBFF] hover:bg-[#002140] hover:border-[#F7FBFF] hover:border hover:scale-105 transform rounded-md px-2 py-1 block",
-                      activeLink
+                      isActive
       ? "bg-[#002140] text-[#F6FBFF] border border-[#F7FBFF]" 
       : "border border-transparent"
                     )}
@@ -288,7 +285,7 @@ const Header = () => {
                     />
                   </Link>
                 </motion.div>
-              ))}
+              )})}
             </nav>
 
             {/* Desktop Auth */}
