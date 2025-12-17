@@ -137,7 +137,7 @@ const DashboardTopHeader = () => {
       >
         <Briefcase size={14} className="fill-blue-700/10" />
         <div className="flex flex-col leading-none">
-          <span className="text-[10px] uppercase tracking-wider font-bold opacity-60">Current View</span>
+          <span className="text-[10px] uppercase tracking-wider font-bold opacity-90">Current View</span>
           <span className="text-xs font-semibold">Brand Dashboard</span>
         </div>
         <div className="w-px h-4 bg-blue-200 mx-1"></div>
@@ -155,7 +155,7 @@ const DashboardTopHeader = () => {
       >
         <Sparkles size={14} className="fill-primary" />
         <div className="flex flex-col leading-none">
-          <span className="text-[10px] uppercase tracking-wider font-bold opacity-60">Current View</span>
+          <span className="text-[10px] uppercase tracking-wider font-bold opacity-90">Current View</span>
           <span className="text-xs font-semibold">Influencer Dashboard</span>
         </div>
         <div className="w-px h-4 bg-primary mx-1"></div>
