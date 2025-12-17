@@ -1,6 +1,28 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
+import NextAuth, { NextAuthOptions, Session } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import { JWT } from "next-auth/jwt";
 import { cookies } from "next/headers";
+
+// Extend NextAuth types
+declare module "next-auth" {
+  interface Session {
+    accessToken?: string;
+    user?: {
+      email?: string | null;
+      name?: string | null;
+      image?: string | null;
+      role?: string;
+    };
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    backendAccessToken?: string;
+    backendRefreshToken?: string;
+    role?: string;
+  }
+}
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -8,24 +30,22 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       httpOptions: {
-        timeout: 10000, 
+        timeout: 10000,
       },
     }),
   ],
   session: { strategy: "jwt" },
   secret: process.env.NEXTAUTH_SECRET,
-  debug: true, // Keep debug on for now
+  debug: true,
 
   callbacks: {
     async jwt({ token, account, profile }) {
-      // Runs only on initial sign-in
       if (account && profile && account.provider === "google") {
         try {
           const cookieStore = await cookies();
           const role = cookieStore.get("signup_role")?.value || "influencer";
           const googleProfile = profile as any;
 
-          // 1. Prepare Payload
           const payload = {
             first_name: googleProfile.given_name ?? googleProfile.name?.split(" ")[0] ?? "",
             last_name: googleProfile.family_name ?? googleProfile.name?.split(" ")[1] ?? "",
@@ -35,10 +55,8 @@ export const authOptions: NextAuthOptions = {
 
           console.log("🚀 Payload sending to Backend:", JSON.stringify(payload, null, 2));
 
-          // 2. Use FETCH directly (Bypass apiClient to avoid token/header issues)
-          // Ensure NEXT_PUBLIC_API_URL is defined in .env
-          const backendUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}user_service/social_signup_signin/`; 
-          
+          const backendUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}user_service/social_signup_signin/`;
+
           const response = await fetch(backendUrl, {
             method: "POST",
             headers: {
@@ -48,10 +66,8 @@ export const authOptions: NextAuthOptions = {
             body: JSON.stringify(payload),
           });
 
-          // 3. Parse Response
           const data = await response.json();
 
-          // 4. Detailed Error Logging
           if (!response.ok) {
             console.error("❌ Backend Error Status:", response.status);
             console.error("❌ Backend Error Body:", JSON.stringify(data, null, 2));
@@ -60,8 +76,6 @@ export const authOptions: NextAuthOptions = {
 
           console.log("✅ Backend Success:", data);
 
-          // 5. Save Tokens
-          // Check exactly where your API puts the token (data.data.access_token vs data.access_token)
           const accessToken = data.data?.access_token || data.access_token;
           const refreshToken = data.data?.refresh_token || data.refresh_token;
 
@@ -72,26 +86,24 @@ export const authOptions: NextAuthOptions = {
           } else {
             throw new Error("No access token received from backend");
           }
-
         } catch (error) {
           console.error("🔥 Critical Error in JWT Callback:", error);
-          throw error; // This redirects to the error page
+          throw error;
         }
       }
 
       return token;
     },
 
-    async session({ session, token }) {
+    async session({ session, token }: { session: Session; token: JWT }) {
       if (token.backendAccessToken) {
-        session.accessToken = token.backendAccessToken as string;
-        session.user = {
-          ...session.user,
-          role: token.role as string,
-        };
+        session.accessToken = token.backendAccessToken;
+        if (session.user) {
+          session.user.role = token.role;
+        }
       }
       return session;
-    }
+    },
   },
 };
 
