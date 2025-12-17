@@ -7,6 +7,7 @@ import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { ChevronDown, LogOut, RefreshCw } from "lucide-react";
 import { signOut } from "next-auth/react";
+import Link from "next/link";
 
 const DashboardTopHeader = () => {
   const user = useAuthStore((state) => state.user);
@@ -126,6 +127,44 @@ const DashboardTopHeader = () => {
       <div className="flex items-center justify-between">
         {/* Left Spacer */}
         <div className="flex-grow" />
+         {/* --- NEW CONTEXT SWITCHER --- */}
+  <div className="mr-6 hidden md:block">
+    {pathname.startsWith("/brand-dashboard") && (
+      <Link
+        href="/influencer-dashboard"
+        className="group flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-blue-700 hover:bg-blue-100 transition-all duration-200"
+        title="Switch to Influencer Dashboard"
+      >
+        <Briefcase size={14} className="fill-blue-700/10" />
+        <div className="flex flex-col leading-none">
+          <span className="text-[10px] uppercase tracking-wider font-bold opacity-60">Current View</span>
+          <span className="text-xs font-semibold">Brand Workspace</span>
+        </div>
+        <div className="w-px h-4 bg-blue-200 mx-1"></div>
+        <span className="flex items-center text-[10px] font-medium opacity-70 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all">
+          Switch <ArrowRightLeft size={10} className="ml-1" />
+        </span>
+      </Link>
+    )}
+
+    {pathname.startsWith("/influencer-dashboard") && (
+      <Link
+        href="/brand-dashboard"
+        className="group flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-50 border border-purple-100 text-purple-700 hover:bg-purple-100 transition-all duration-200"
+        title="Switch to Brand Dashboard"
+      >
+        <Sparkles size={14} className="fill-purple-700/10" />
+        <div className="flex flex-col leading-none">
+          <span className="text-[10px] uppercase tracking-wider font-bold opacity-60">Current View</span>
+          <span className="text-xs font-semibold">Influencer Hub</span>
+        </div>
+        <div className="w-px h-4 bg-purple-200 mx-1"></div>
+        <span className="flex items-center text-[10px] font-medium opacity-70 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all">
+          Switch <ArrowRightLeft size={10} className="ml-1" />
+        </span>
+      </Link>
+    )}
+  </div>
 
         <div className="flex items-center gap-4">
           
