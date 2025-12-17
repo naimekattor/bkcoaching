@@ -1,3 +1,4 @@
+import { Layers, Map, MapPin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { FaStar } from "react-icons/fa";
@@ -49,20 +50,34 @@ export default function BrandCard({
       <div className="flex-1 flex flex-col justify-center text-center lg:text-left p-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">
-              {name}
-            </h1>
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-2 sm:space-y-0 sm:space-x-6 mb-4">
-              <div className="flex items-center text-gray-600">
-                <span className="mr-2">📍</span>
-                <span>{location}</span>
-              </div>
-              <div className="flex items-center text-gray-600">
-                <span className="mr-2">🗓</span>
-                <span>{category}</span>
-              </div>
-            </div>
-          </div>
+  {/* Name with fallback */}
+  <h1 className="text-3xl md:text-5xl font-bold text-gray-900 mb-3 tracking-tight">
+    {name || "Influencer Name"}
+  </h1>
+
+  {/* Meta Data Row */}
+  <div className="flex flex-wrap items-center justify-center lg:justify-start gap-y-2 gap-x-6 text-sm md:text-base text-gray-600 font-medium">
+    
+    {/* Location Item */}
+    <div className="flex items-center gap-2 group">
+      <MapPin className="w-4 h-4 text-gray-400 group-hover:text-primary transition-colors" />
+      <span>{location || "Location not specified"}</span>
+    </div>
+
+    {/* Optional Dot Separator (Visible only on larger screens) */}
+    <span className="hidden sm:block text-gray-300">•</span>
+
+    {/* Category Item */}
+    <div className="flex items-center gap-2 group">
+      {/* 'Layers' or 'Tag' is better for categories than a Calendar */}
+      <Layers className="w-4 h-4 text-gray-400 group-hover:text-primary transition-colors" />
+      <span className="uppercase tracking-wide text-xs md:text-sm">
+        {category || "General Creator"}
+      </span>
+    </div>
+
+  </div>
+</div>
 
           <div className="flex items-center mb-6 justify-center lg:justify-start">
             

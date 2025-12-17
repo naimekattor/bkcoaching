@@ -47,10 +47,10 @@ export default async function BrandsPage() {
           brand?.brand_profile?.display_name ||
           brand?.brand_profile?.business_name ||
           "Unnamed",
-        location: brand?.brand_profile?.timezone || "Not provided",
+        location: brand?.brand_profile?.timezone || "Location not specified",
         category: brand?.brand_profile?.business_type
           ? brand.brand_profile.business_type.split("–")[0].trim()
-          : "General",
+          : "General Influencer",
         description: brand?.brand_profile?.short_bio || "",
         image: brand?.brand_profile?.logo || "/images/placeholder.jpg",
         logo: brand?.brand_profile?.logo || "/images/placeholder.jpg",
