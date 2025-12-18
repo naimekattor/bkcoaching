@@ -41,10 +41,10 @@ export default function BrandDashboardLayout({ children }) {
       {!showSideBar && (
   <button
     onClick={() => setShowSideBar(true)}
-    className="fixed top-10 -left-4 z-30 p-2  text-secondary rounded-lg md:hidden"
+    className="fixed top-10 -left-4 z-30 p-2  text-primary rounded-lg md:hidden"
     aria-label="Open sidebar"
   >
-    <PanelRightClose size={34} />
+    <PanelRightClose size={30} />
   </button>
 )}
 

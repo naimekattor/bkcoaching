@@ -192,7 +192,10 @@ export default function BrandProfilePage() {
           <span className="text-gray-600">Back</span>
         </div>
 
-        {/* Brand Header Card */}
+        
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Brand Header Card */}
         <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
             <div className="flex items-center gap-4">
@@ -259,14 +262,10 @@ export default function BrandProfilePage() {
             </div>
           </div>
         </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* LEFT COLUMN */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* About */}
+        {/* About */}
             <div className="bg-white rounded-lg border border-gray-200 p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                About the Company
+                About the Brand
               </h2>
               <p className="text-gray-600 mb-6">{brand.description}</p>
 
@@ -283,13 +282,15 @@ export default function BrandProfilePage() {
                 </div>
               </div>
             </div>
-
-            {/* Campaign Stats */}
+          {/* LEFT COLUMN */}
+          <div className="lg:col-span-2 space-y-6">
+            
+{/* Campaign Stats */}
             <div className="bg-white rounded-lg border border-gray-200 p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 Campaign
               </h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-primary mb-1">
                     {userOtherData?.campaigns ?? 0}
@@ -297,19 +298,14 @@ export default function BrandProfilePage() {
                   <div className="text-sm text-gray-600">Total Campaigns</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600 mb-1">
+                  <div className="text-2xl font-bold text-primary mb-1">
                     {userOtherData?.hires_data ?? 0}
                   </div>
                   <div className="text-sm text-gray-600">micro-influencers</div>
                 </div>
-                {/* <div className="text-center">
-                  <div className="text-2xl font-bold text-secondary mb-1">
-                    {brand.campaigns?.avgRating ?? 0}
-                  </div>
-                  <div className="text-sm text-gray-600">Avg Rating</div>
-                </div> */}
+                
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-600 mb-1">
+                  <div className="text-2xl font-bold text-primary mb-1">
                     ${((brand.campaigns?.totalInvested ?? 0) / 1000).toFixed(0)}
                     K
                   </div>
@@ -363,169 +359,12 @@ export default function BrandProfilePage() {
                 </p>
               )}
             </div>
+            
 
-            {/* Reviews */}
-            {/* <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                Reviews & Testimonials
-              </h2>
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-2xl font-bold text-gray-900">
-                  {brand.campaigns?.avgRating ?? 0}
-                </span>
-                <div className="flex">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`w-5 h-5 ${
-                        i < Math.floor(brand.campaigns?.avgRating ?? 0)
-                          ? "text-yellow-400 fill-current"
-                          : "text-gray-300"
-                      }`}
-                    />
-                  ))}
-                </div>
-                <span className="text-sm text-gray-600">
-                  Based on {brand.reviews?.length ?? 0}+ reviews
-                </span>
-              </div>
-
-              {brand.reviews?.length ? (
-                <div className="space-y-4">
-                  {brand.reviews.map((r) => (
-                    <div
-                      key={r.id}
-                      className="border-l-4 border-green-500 pl-4"
-                    >
-                      <p className="text-gray-700 mb-2">
-                        &quot;{r.comment}&quot;
-                      </p>
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <div className="w-6 h-6 bg-gray-300 rounded-full"></div>
-                        <span className="font-medium">{r.reviewer}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-gray-500">No reviews yet.</p>
-              )}
-            </div> */}
+            
           </div>
 
-          {/* RIGHT COLUMN */}
-          <div className="space-y-6">
-            {/* Contact */}
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                Contact Information
-              </h2>
-              <div className="space-y-4">
-                <div>
-                  <div className="font-medium text-gray-900 mb-1">
-                    {brand.contactPerson?.name ?? ""}
-                  </div>
-                  <div className="text-sm text-gray-600">
-                    {brand.contactPerson?.title}
-                  </div>
-                </div>
-                {brand.email && (
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Mail className="w-4 h-4" />
-                    {brand.email}
-                  </div>
-                )}
-                {/* {brand.phone && (
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Phone className="w-4 h-4" />
-                    {brand.phone}
-                  </div>
-                )} */}
-                <div className="flex gap-2">
-                  {brand.socialLinks?.linkedin && (
-                    <a
-                      href={brand.socialLinks.linkedin}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 bg-primary rounded flex items-center justify-center"
-                    >
-                      <Linkedin className="w-4 h-4 text-white" />
-                    </a>
-                  )}
-                  {brand.socialLinks?.twitter && (
-                    <a
-                      href={brand.socialLinks.twitter}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 bg-primary rounded flex items-center justify-center"
-                    >
-                      <Twitter className="w-4 h-4 text-white" />
-                    </a>
-                  )}
-                  {brand.socialLinks?.instagram && (
-                    <a
-                      href={brand.socialLinks.instagram}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 bg-primary rounded flex items-center justify-center"
-                    >
-                      <Instagram className="w-4 h-4 text-white" />
-                    </a>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Resources */}
-            {/* <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                Business Resources
-              </h2>
-              {brand.resources?.length ? (
-                <div className="space-y-3">
-                  {brand.resources.map((res, idx) => (
-                    <a
-                      key={idx}
-                      href={res.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50"
-                    >
-                      <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
-                        {res.type.includes("Video") ? (
-                          <Video className="w-4 h-4 text-white" />
-                        ) : res.type.includes("Media") ? (
-                          <ImageIcon className="w-4 h-4 text-white" />
-                        ) : (
-                          <FileText className="w-4 h-4 text-white" />
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <div className="font-medium text-gray-900 text-sm">
-                          {res.type}
-                        </div>
-                        <div className="text-xs text-gray-600">{res.title}</div>
-                      </div>
-                    </a>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-gray-500">No resources available.</p>
-              )}
-            </div> */}
-
-            {/* Share */}
-            {/* <div className="bg-primary rounded p-6 text-white">
-              <h2 className="text-lg font-semibold mb-4">Share Profile</h2>
-              <button
-                onClick={handleCopyLink}
-                className="w-full bg-white/20 hover:bg-white/30 text-white py-3 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors"
-              >
-                <Copy className="w-4 h-4" />
-                {copied ? "Copied!" : "Copy Link"}
-              </button>
-            </div> */}
-          </div>
+          
         </div>
       </div>
     </div>

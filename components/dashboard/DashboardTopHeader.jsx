@@ -129,69 +129,71 @@ const DashboardTopHeader = () => {
   return (
     <div className="bg-white px-4 sm:px-8 py-5 border-b border-gray-100">
       <div className="flex items-center justify-between">
-        {/* --- NEW CONTEXT SWITCHER --- */}
-        <div className="mr-6 hidden md:block">
-          {pathname.startsWith("/brand-dashboard") && (
-            <Link
-              href="/influencer-dashboard"
-              className="group flex items-center gap-2 px-3 py-1.5 rounded-full  border border-primary text-primary  transition-all duration-200"
-              title="Switch to Influencer Dashboard"
-            >
-              <Briefcase size={14} className="fill-primary" />
-              <div className="flex flex-col leading-none">
-                <span className="text-[10px] uppercase tracking-wider font-bold opacity-90">
-                  Current View
-                </span>
-                <span className="text-xs font-semibold">Brand Dashboard</span>
-              </div>
-              <div className="w-px h-4  mx-1"></div>
-              <span className="flex items-center text-[10px] font-medium opacity-70 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all">
-                Switch <ArrowRightLeft size={10} className="ml-1" />
-              </span>
-            </Link>
-          )}
+        {/* --- CONTEXT SWITCHER (DESKTOP) --- */}
+<div className="mr-6 hidden md:flex items-center">
+  <Link
+    href={
+      pathname.startsWith("/brand-dashboard")
+        ? "/influencer-dashboard"
+        : "/brand-dashboard"
+    }
+    className="
+      group flex items-center gap-2
+      px-3 py-2 rounded-lg
+      text-sm font-medium text-primary
+      hover:bg-primary/5 transition
+      whitespace-nowrap
+    "
+    title={
+      pathname.startsWith("/brand-dashboard")
+        ? "Currently logged in as Brand"
+        : "Currently logged in as Influencer"
+    }
+  >
+    {pathname.startsWith("/brand-dashboard") ? (
+      <Briefcase size={16} className="opacity-70" />
+    ) : (
+      <Sparkles size={16} className="opacity-70" />
+    )}
 
-          {pathname.startsWith("/influencer-dashboard") && (
-            <Link
-              href="/brand-dashboard"
-              className="group flex items-center gap-2 px-3 py-1.5 rounded-full  border border-primary text-primary  transition-all duration-200"
-              title="Switch to Brand Dashboard"
-            >
-              <Sparkles size={14} className="fill-primary" />
-              <div className="flex flex-col leading-none">
-                <span className="text-[10px] uppercase tracking-wider font-bold opacity-90">
-                  Current View
-                </span>
-                <span className="text-xs font-semibold">
-                  Influencer Dashboard
-                </span>
-              </div>
-              <div className="w-px h-4 bg-primary mx-1"></div>
-              <span className="flex items-center text-[10px] font-medium opacity-70 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all">
-                Switch <ArrowRightLeft size={10} className="ml-1" />
-              </span>
-            </Link>
-          )}
-        </div>
-        {/* --- MOBILE CURRENT DASHBOARD LABEL --- */}
-        <div className="md:hidden">
-          <span className="px-3 py-1.5 rounded-full bg-gray-100 text-gray-700 text-xs font-semibold">
-            {pathname.startsWith("/brand-dashboard")
-              ? "Brand Dashboard"
-              : "Influencer Dashboard"}
-          </span>
-        </div>
+    <span>
+      {pathname.startsWith("/brand-dashboard")
+        ? "Brand Account"
+        : "Influencer Account"}
+    </span>
+
+    <ArrowRightLeft
+      size={14}
+      className="ml-1 opacity-50 group-hover:opacity-80 transition"
+    />
+  </Link>
+</div>
+{/* --- CONTEXT SWITCHER (MOBILE) --- */}
+<div className="md:hidden flex justify-center">
+  <button
+    className="
+      flex items-center gap-2
+      px-3 py-1.5 rounded-md
+      bg-primary/5 text-primary
+      text-xs font-medium
+      whitespace-nowrap
+    "
+  >
+    {pathname.startsWith("/brand-dashboard") ? (
+      <Briefcase size={14} className="opacity-70" />
+    ) : (
+      <Sparkles size={14} className="opacity-70" />
+    )}
+
+    {pathname.startsWith("/brand-dashboard")
+      ? "Brand Account"
+      : "Influencer Account"}
+  </button>
+</div>
+
 
         <div className="flex items-center gap-4">
-          {/* --- CONNECTION STATUS INDICATOR (For Debugging/User Info) --- */}
-          {/* <div className="flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full bg-gray-50 border border-gray-100">
-             <div 
-               className={`w-2.5 h-2.5 rounded-full ${isSocketConnected ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} 
-             />
-             <span className={isSocketConnected ? "text-green-700" : "text-red-700"}>
-               {isSocketConnected ? "Live" : "Offline"}
-             </span>
-          </div> */}
+          
 
           {/* --- NOTIFICATIONS --- */}
           <div className="relative">

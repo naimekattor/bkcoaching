@@ -254,7 +254,7 @@ export default function CampaignsPage() {
         <StatCard
           title="Completed"
           value={completedCampaigns.length.toString()}
-          subtitle="Total completed jobs"
+          subtitle="Total completed"
           icon={<CircleCheck className="w-8 h-8 text-primary" />}
         />
         <StatCard
@@ -266,7 +266,7 @@ export default function CampaignsPage() {
         <StatCard
           title="Total Earnings"
           value={`$${totalEarnings}`}
-          icon={<DollarSign className="w-8 h-8 text-purple-600" />}
+          icon={<DollarSign className="w-8 h-8 text-primary" />}
         />
       </div>
 
@@ -430,8 +430,8 @@ export default function CampaignsPage() {
 
       {/* Timeline */}
       <div className="flex items-center gap-3">
-        <div className="p-2.5 bg-indigo-50 rounded-xl">
-          <Clock className="w-5 h-5 text-indigo-600" />
+        <div className="p-2.5 bg-[#0d2f4f]/10 rounded-xl">
+          <Clock className="w-5 h-5 text-[#0d2f4f]" />
         </div>
         <div>
           <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Timeline</p>
@@ -442,8 +442,8 @@ export default function CampaignsPage() {
 
     {/* Objective */}
     <div className="mt-6 flex items-start gap-3">
-      <div className="p-2.5 bg-purple-50 rounded-xl flex-shrink-0">
-        <Target className="w-5 h-5 text-purple-600" />
+      <div className="p-2.5 bg-[#0d2f4f]/10 rounded-xl flex-shrink-0">
+        <Target className="w-5 h-5 text-[#0d2f4f]" />
       </div>
       <div className="flex-1">
         <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Objective</p>
