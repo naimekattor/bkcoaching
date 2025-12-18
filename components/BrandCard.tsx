@@ -94,7 +94,7 @@ export default function BrandCard({
         <p className="font-bold text-gray-900 mb-2">Description</p>
         <p className="text-gray-600 mb-6">{description}</p>
 
-        <div className="text-left lg:text-left mt-4">
+        <div className="text-center lg:text-left mt-4">
           <button  className="bg-primary text-white font-semibold py-3 px-8 inline-block rounded-lg shadow-md hover:shadow-lg hover:border-2 hover:border-[#001F3F] hover:bg-white hover:text-[#001F3F] transition-all duration-300 cursor-pointer">
            <Link href={`/brands/${id}`}> Explore Brand</Link>
           </button>

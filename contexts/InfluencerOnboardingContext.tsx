@@ -60,6 +60,7 @@ interface InfluencerOnboardingData {
   youtube_follower:string | number,
   blog_follower:string | number,
   twitter_follower:string | number,
+  whatsapp_follower:string | number,
 }
 
 interface InfluencerOnboardingContextType {
@@ -122,6 +123,7 @@ const initialState: InfluencerOnboardingData = {
   youtube_follower:"",
   blog_follower:"",
   twitter_follower:"",
+  whatsapp_follower:"",
 };
 const InfluencerOnboardingProvider = ({
   children,

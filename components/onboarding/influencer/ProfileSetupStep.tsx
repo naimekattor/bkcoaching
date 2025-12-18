@@ -388,6 +388,8 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
         />
       </div>
     </div>
+    
+      <div className="grid md:grid-cols-2 gap-4">
     <div className="space-y-2">
         <Label htmlFor="whatsapp_handle">WhatsApp</Label>
         <Input
@@ -401,6 +403,21 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
           }
           placeholder="e.g. wa.me/15551234567"
         />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="whatsapp_handle">Average Status Views / Group Size</Label>
+        <Input
+          id="twitter_follower"
+          value={onboardingDataInfluencer.twitter_follower}
+          onChange={(e) =>
+            setOnboardingDataInfluencer((prev) => ({
+              ...prev,
+              whatsapp_follower: e.target.value,
+            }))
+          }
+          placeholder="e.g. 500"
+        />
+      </div>
       </div>
       {/* Blog (New Corresponding URL field added) */}
     <div className="grid md:grid-cols-2 gap-4">

@@ -240,7 +240,7 @@ function MicroInfluencersPageContent() {
                 "Unknown",
               profileImage: sanitizeImageSrc(inf.profile_picture),
               // totalFollowers=inf.insta_follower + inf.facebook_follower + inf.facebook_follower + inf.tiktok_follower + inf?.linkedin_follower + inf?.youtube_follower + inf?.blog_follower ??0,
-              followers: total > 0 ? `${(total / 1000).toFixed(1)}K` : "N/A",
+              followers: total > 0 ? `${(total / 1000).toFixed(1)}K` : "New Talent",
               socialLinks: platforms,
               niche: inf.content_niches?.[0] || "Unknown",
               timeZone: inf.timezone || "Unknown",
@@ -295,7 +295,7 @@ function MicroInfluencersPageContent() {
                 `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
                 "Unknown",
               profileImage: sanitizeImageSrc(inf.profile_picture),
-              followers: total > 0 ? `${(total / 1000).toFixed(1)}K` : "N/A",
+              followers: total > 0 ? `${(total / 1000).toFixed(1)}K` : "New Talent",
               socialLinks: platforms,
               niche: inf.content_niches?.[0] || "Unknown",
               timeZone: inf.timezone || "Unknown",
@@ -341,7 +341,7 @@ function MicroInfluencersPageContent() {
                 `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
                 "Unknown",
               profileImage: sanitizeImageSrc(inf.profile_picture),
-              followers: total > 0 ? `${(total / 1000).toFixed(1)}K` : "N/A",
+              followers: total > 0 ? `${(total / 1000).toFixed(1)}K` : "New Talent",
               socialLinks: platforms,
               niche: inf.content_niches?.[0] || "Unknown",
               timeZone: inf.timezone || "Unknown",
@@ -648,6 +648,9 @@ function MicroInfluencersPageContent() {
                       </svg>
                       {creator.followers}
                     </p>
+                  </div>
+                  <div>
+                    
                   </div>
 
                   {/* Social Icons (Condensed for brevity) */}

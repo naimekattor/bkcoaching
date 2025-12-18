@@ -198,7 +198,6 @@ export default function MessagesClient() {
         fetchOtherUserProfile();
   },[otherUserId,selectedRoom])
 
-  const avatarSrc = otherUserProfile?.brand_profile?.logo || otherUserProfile?.influencer_profile?.profile_picture;
 
   // Fetch rooms for sidebar
   useEffect(() => {
@@ -652,7 +651,7 @@ export default function MessagesClient() {
                         />
                       ) : (
                         <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold">
-                          {room.name?.[0] || room.other_user_id?.[0] || "?"}
+                          {room.name?.[0] || room.other_user_id?.[0] }
                         </div>
                       )}
                     </div>
@@ -704,14 +703,13 @@ export default function MessagesClient() {
                   {selectedRoom.profile_picture ? (
                     <Image src={selectedRoom.profile_picture} alt="" width={48} height={48} className="w-[48px] h-[48px] rounded-full"/>
                   ) : (
-                    <span>{otherUserProfile?.brand_profile?.business_name?.[0] || otherUserProfile?.influencer_profile?.display_name?.[0] || "?"}</span>
+                    <span>{otherUserProfile?.brand_profile?.business_name?.[0] || otherUserProfile?.influencer_profile?.display_name?.[0] }</span>
                   )}
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="font-bold text-gray-900 truncate">
                      {selectedRoom.name || otherUserProfile?.brand_profile?.business_name ||
-                    otherUserProfile?.influencer_profile?.display_name ||
-                    "?"}
+                    otherUserProfile?.influencer_profile?.display_name }
                   </p>
                   {/* <p className="text-sm text-gray-500">Active now</p> */}
                 </div>
@@ -753,8 +751,8 @@ export default function MessagesClient() {
                     {!message.isOwn && (
                       <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold text-xs flex-shrink-0">
                         {selectedRoom?.name?.[0] ||
-                          selectedRoom?.other_user_id?.[0] ||
-                          "?"}
+                          selectedRoom?.other_user_id?.[0]
+                          }
                       </div>
                     )}
                     <div

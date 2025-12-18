@@ -359,7 +359,7 @@ const CampaignStep = ({ onBack,onNext }: CampaignStepProps) => {
 
               <div>
                 <Label htmlFor="campaignposter" className="mb-2">
-                  Campaign Poster
+                  Campaign Flyer
                 </Label>
                 {!onboardingData.posterPreview ? (
                   <div

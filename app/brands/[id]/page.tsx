@@ -87,14 +87,15 @@ export default function BrandProfilePage() {
 
         const normalised: Brand = {
           id: String(raw.id ?? id),
-          name: raw.business_name ?? "Unnamed Brand",
-          description: raw.short_bio ?? "",
-          logo: raw.logo ?? undefined,
+          name: raw.business_name || "Unnamed Brand",
+          // Fallback handled in UI, but safe empty string here
+          description: raw.short_bio || "", 
+          logo: raw.logo || undefined,
           verified: raw.is_verified ?? false,
-          location: raw.timezone ?? "",
-          website: raw.website ?? "user.com",
-          email: raw.email ?? "",
-          phone: raw.phone ?? "",
+          location: raw.timezone || "",
+          website: raw.website || "", // Ensure empty string if null
+          email: raw.email || "",
+          phone: raw.phone || "",
           socialLinks: {
             instagram: raw?.instagram_handle,
             tiktok: raw?.tiktok_handle,
@@ -102,24 +103,20 @@ export default function BrandProfilePage() {
             linkedin: raw?.linkedin_profile,
             twitter: raw?.x_handle,
           },
-          mission: raw.mission ?? "",
-          businessType: raw.business_type ?? "",
+          mission: raw.mission || "",
+          businessType: raw.business_type?.split(' – ')[0] || "",
           contactPerson: {
-            name: raw.business_name ?? "",
-            title: raw.contact_person_title ?? "",
+            name: raw.business_name || "",
+            title: raw.contact_person_title || "",
           },
-          // ---- Campaign stats (fallback to 0) ----
           campaigns: {
             total: raw.campaigns_total ?? 0,
             creators: raw.campaigns_creators ?? 0,
             avgRating: raw.campaigns_avg_rating ?? 0,
             totalInvested: raw.campaigns_total_invested ?? 0,
           },
-          // ---- Active campaigns (you may store them in a separate endpoint) ----
           activeCampaigns: raw.active_campaigns ?? [],
-          // ---- Reviews (fallback to empty) ----
           reviews: raw.reviews ?? [],
-          // ---- Resources (fallback to empty) ----
           resources: raw.resources ?? [],
         };
 
@@ -147,15 +144,6 @@ export default function BrandProfilePage() {
   }, [id]);
 
   // -------------------------------------------------
-  // 2. Copy-link handler
-  // -------------------------------------------------
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  // -------------------------------------------------
   // 3. Loading / Not-found UI
   // -------------------------------------------------
   if (loading) {
@@ -169,6 +157,14 @@ export default function BrandProfilePage() {
   if (!brand) {
     notFound();
   }
+
+  // --- Helper for Professional Fallback Text ---
+  const renderFallbackText = (text: string | undefined, fallback: string) => {
+    if (text && text.trim().length > 0) {
+      return <span className="text-gray-600">{text}</span>;
+    }
+    return <span className="text-gray-400  text-sm">{fallback}</span>;
+  };
 
   // -------------------------------------------------
   // 4. Render the full profile
@@ -208,26 +204,39 @@ export default function BrandProfilePage() {
                     </div>
                   )}
                 </div>
-                <p className="text-gray-600 mb-2">{brand.description}</p>
-                <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
-                  {brand.website && (
-                    <div className="flex items-center gap-1">
-                      <Globe className="w-4 h-4" />
+                {/* Description Fallback */}
+                <div className="mb-3">
+                   {renderFallbackText(brand.description, "This brand has not provided a short bio yet.")}
+                </div>
+                <div className="flex flex-wrap items-center gap-6 text-sm text-gray-500">
+                  
+                  {/* Website Fallback */}
+                  <div className="flex items-center gap-1.5">
+                    <Globe className="w-4 h-4 text-gray-400" />
+                    {brand.website ? (
                       <a
-                        href={brand.website}
+                        href={brand.website.startsWith("http") ? brand.website : `https://${brand.website}`}
                         target="_blank"
                         rel="noopener noreferrer"
+                        className="hover:text-primary transition-colors underline decoration-dotted"
                       >
-                        {brand.website.replace(/^https?:\/\//, "")}
+                        {brand.website.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "")}
                       </a>
-                    </div>
-                  )}
-                  {/* {brand.location && (
-                    <div className="flex items-center gap-1">
-                      <MapPin className="w-4 h-4" />
-                      {brand.location}
-                    </div>
-                  )} */}
+                    ) : (
+                      <span className="text-gray-400 italic">Website not provided</span>
+                    )}
+                  </div>
+
+                  {/* Location Fallback (Optional if you want to show it) */}
+                  <div className="flex items-center gap-1.5">
+                    <MapPin className="w-4 h-4 text-gray-400" />
+                    {brand.location ? (
+                      <span>{brand.location}</span>
+                    ) : (
+                      <span className="text-gray-400 italic">Not Specified</span>
+                    )}
+                  </div>
+
                 </div>
               </div>
             </div>
@@ -239,157 +248,46 @@ export default function BrandProfilePage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* LEFT COLUMN */}
           <div className="lg:col-span-2 space-y-6">
-            {/* About */}
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            
+            {/* About Section */}
+            <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-100 pb-2">
                 About the Company
               </h2>
-              <p className="text-gray-600 mb-6">{brand.description}</p>
+              
+              <div className="mb-8">
+                {renderFallbackText(brand.description, "No detailed company description is currently available.")}
+              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Mission Fallback */}
                 <div>
-                  <h3 className="font-medium text-gray-900 mb-2">Mission</h3>
-                  <p className="text-gray-600 text-sm">{brand.mission}</p>
-                </div>
-                <div>
-                  <h3 className="font-medium text-gray-900 mb-2">
-                    Business Type
+                  <h3 className="font-medium text-gray-900 mb-2 flex items-center gap-2">
+                    <Star className="w-4 h-4 text-gray-400" /> Mission
                   </h3>
-                  <p className="text-gray-600 text-sm">{brand.businessType}</p>
+                  <div className="text-sm">
+                    {renderFallbackText(brand.mission, "Mission statement not specified.")}
+                  </div>
+                </div>
+
+                {/* Industry Fallback */}
+                <div>
+                  <h3 className="font-medium text-gray-900 mb-2 flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-gray-400" /> Industry
+                  </h3>
+                  <div className="text-sm">
+                    {renderFallbackText(brand.businessType, "Industry not listed.")}
+                  </div>
                 </div>
               </div>
             </div>
-
-            {/* Campaign Stats */}
-            {/* <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                Campaign
-              </h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary mb-1">
-                    {brand.campaigns?.total ?? 0}
-                  </div>
-                  <div className="text-sm text-gray-600">Total Campaigns</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600 mb-1">
-                    {brand.campaigns?.creators ?? 0}
-                  </div>
-                  <div className="text-sm text-gray-600">micro-influencers</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-secondary mb-1">
-                    {brand.campaigns?.avgRating ?? 0}
-                  </div>
-                  <div className="text-sm text-gray-600">Avg Rating</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-600 mb-1">
-                    ${((brand.campaigns?.totalInvested ?? 0) / 1000).toFixed(0)}
-                    K
-                  </div>
-                  <div className="text-sm text-gray-600">Total Invested</div>
-                </div>
-              </div>
-            </div> */}
-
-            {/* Active Campaigns */}
-            {/* <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                Active Campaigns
-              </h2>
-              {brand.activeCampaigns?.length ? (
-                <div className="space-y-4">
-                  {brand.activeCampaigns.map((c) => (
-                    <div
-                      key={c.id}
-                      className="border border-gray-200 rounded-lg p-4"
-                    >
-                      <div className="flex items-start justify-between mb-2">
-                        <h3 className="font-medium text-gray-900">{c.title}</h3>
-                        <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-medium">
-                          {c.status}
-                        </span>
-                      </div>
-                      <p className="text-gray-600 text-sm mb-3">
-                        {c.description}
-                      </p>
-                      <div className="flex items-center justify-between text-sm text-gray-500">
-                        <span>Deadline: {c.deadline}</span>
-                        <div className="flex items-center gap-4">
-                          <span>
-                            {c.creatorsNeeded} micro-influencers needed
-                          </span>
-                          <div className="flex -space-x-2">
-                            <div className="w-6 h-6 bg-gray-300 rounded-full border-2 border-white"></div>
-                            <div className="w-6 h-6 bg-gray-300 rounded-full border-2 border-white"></div>
-                            <div className="w-6 h-6 bg-gray-300 rounded-full border-2 border-white flex items-center justify-center text-xs">
-                              +2
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-gray-500">
-                  No active campaigns at the moment.
-                </p>
-              )}
-            </div> */}
-
-            {/* Reviews */}
-            {/* <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                Reviews & Testimonials
-              </h2>
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-2xl font-bold text-gray-900">
-                  {brand.campaigns?.avgRating ?? 0}
-                </span>
-                <div className="flex">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`w-5 h-5 ${
-                        i < Math.floor(brand.campaigns?.avgRating ?? 0)
-                          ? "text-yellow-400 fill-current"
-                          : "text-gray-300"
-                      }`}
-                    />
-                  ))}
-                </div>
-                <span className="text-sm text-gray-600">
-                  Based on {brand.reviews?.length ?? 0}+ reviews
-                </span>
-              </div>
-
-              {brand.reviews?.length ? (
-                <div className="space-y-4">
-                  {brand.reviews.map((r) => (
-                    <div
-                      key={r.id}
-                      className="border-l-4 border-green-500 pl-4"
-                    >
-                      <p className="text-gray-700 mb-2">
-                        &quot;{r.comment}&quot;
-                      </p>
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <div className="w-6 h-6 bg-gray-300 rounded-full"></div>
-                        <span className="font-medium">{r.reviewer}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-gray-500">No reviews yet.</p>
-              )}
-            </div> */}
+          </div>
+          
+          {/* RIGHT COLUMN (Placeholder for future stats/contact) */}
+          <div className="lg:col-span-1">
+             {/* You can add contact info cards here later */}
           </div>
 
-          
         </div>
       </div>
     </div>

@@ -343,7 +343,7 @@ export default function BrandProfilePage() {
             {/* About */}
             <div className="bg-white rounded-lg border border-gray-200 p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                About the Company
+                About 
               </h2>
               <p className="text-gray-600 mb-6">{influencer.description}</p>
 

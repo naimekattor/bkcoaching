@@ -61,7 +61,7 @@ const token=localStorage.getItem("access_token");
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <ScrollArea className="h-32 w-full border rounded-lg p-4">
+            <ScrollArea className="h-72 w-full border rounded-lg p-4">
               <div className="text-sm space-y-2">
                 <p>
                   <strong>1. Account Registration</strong>
@@ -134,7 +134,7 @@ const token=localStorage.getItem("access_token");
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <ScrollArea className="h-32 w-full border rounded-lg p-4">
+            <ScrollArea className="h-72 w-full border rounded-lg p-4">
               <div className="text-sm space-y-2">
                 <p>
                   <strong>Data Collection</strong>
@@ -208,7 +208,7 @@ const token=localStorage.getItem("access_token");
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <ScrollArea className="h-32 w-full border rounded-lg p-4">
+            <ScrollArea className="h-72 w-full border rounded-lg p-4">
               <div className="text-sm space-y-2">
                 <p>
                   <strong>Content Standards</strong>
@@ -280,8 +280,7 @@ const token=localStorage.getItem("access_token");
             <strong>Important:</strong> By creating an account, you acknowledge
             that you understand these policies and agree to follow them.
             Violation of these terms may result in account suspension or
-            termination. You can always review these policies in your account
-            settings.
+            termination.
           </p>
         </CardContent>
       </Card>

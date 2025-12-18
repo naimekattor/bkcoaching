@@ -35,11 +35,11 @@ interface BrandApiResponse {
 export default async function BrandsPage() {
   async function fetchBrands() {
     try {
-      const res = await apiClient("user_service/get_all_brands/", {
+      const res = await apiClient("user_service/get_featured_brands/", {
         method: "GET",
       });
 
-      const items: BrandApiResponse[] = res?.data ?? [];
+      const items: BrandApiResponse[] = res ?? [];
 
       return items.map((brand: BrandApiResponse) => ({
         id: brand?.id,

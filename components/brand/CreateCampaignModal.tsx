@@ -542,7 +542,7 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }:Creat
 
               <div>
                 <Label htmlFor="campaignposter" className="mb-2">
-                  Campaign Poster
+                  Campaign Flyer
                 </Label>
                 {!formData.posterPreview ? (
                   <div

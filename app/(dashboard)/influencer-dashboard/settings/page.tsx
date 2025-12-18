@@ -180,7 +180,8 @@ export default function ProfilePage() {
     youtube: p.youtube_follower || "",
     facebook: p.facebook_follower || "",
     linkedin: p.linkedin_follower || "",
-    blog: p.blog_follower || "", 
+    blog: p.blog_follower || "",
+    whatsapp:p.whatsapp_follower || "", 
   }
   });
 
@@ -290,6 +291,7 @@ export default function ProfilePage() {
     facebook_follower: formData.followers.facebook || null,
     linkedin_follower: formData.followers.linkedin || null,
     blog_follower: formData.followers.blog || null,
+    whatsapp_follower: formData.followers.whatsapp || null,
       
         },
     };
@@ -444,7 +446,7 @@ export default function ProfilePage() {
               { id: "facebook", label: "Facebook", hasStats: true, placeholder: "facebook.com/username" },
               { id: "linkedin", label: "LinkedIn", hasStats: true, placeholder: "linkedin.com/in/profile" },
               { id: "twitter", label: "Twitter", hasStats: true, placeholder: "twitter.com/username" },
-              { id: "whatsapp", label: "WhatsApp", hasStats: false, placeholder: "wa.me/15551234567" },
+              { id: "whatsapp", label: "WhatsApp", hasStats: true, placeholder: "wa.me/15551234567" },
             ].map((platform) => (
               <div 
                 key={platform.id} 
@@ -476,8 +478,8 @@ export default function ProfilePage() {
                 {platform.hasStats && (
                   <div className="space-y-2">
                     <Label htmlFor={`${platform.id}_followers`} className="text-sm font-medium">
-                      {platform.label === "YouTube" ? "Subscribers" : 
-                       platform.label === "LinkedIn" ? "Connections" : "Followers"}
+                      {platform.label === "YouTube" ? "Subscribers / Followers" : 
+                       platform.label === "LinkedIn" ? "Connections / Followers" :platform.label === "WhatsApp"  ?"Average Status View / Group Size": "Followers"}
                     </Label>
                     <Input
                       id={`${platform.id}_followers`}
