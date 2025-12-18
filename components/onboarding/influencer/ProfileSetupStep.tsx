@@ -356,7 +356,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
 
     <div className="border-t border-gray-100 my-4"></div>
 
-    {/* Other Platforms (Links Only) */}
+    {/*  WhatsApp  */}
     <div className="grid md:grid-cols-2 gap-4">
       <div className="space-y-2">
         <Label htmlFor="twitter_handle">Twitter/X Link</Label>
@@ -382,6 +382,37 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
             setOnboardingDataInfluencer((prev) => ({
               ...prev,
               twitter_follower: e.target.value,
+            }))
+          }
+          placeholder="e.g. 500"
+        />
+      </div>
+    </div>
+    <div className="grid md:grid-cols-2 gap-4">
+      <div className="space-y-2">
+        <Label htmlFor="twitter_handle">Podcast Mention</Label>
+        <Input
+          id="twitter_handle"
+          value={onboardingDataInfluencer.podcast_handle}
+          onChange={(e) =>
+            setOnboardingDataInfluencer((prev) => ({
+              ...prev,
+              podcast_handle: e.target.value,
+            }))
+          }
+          placeholder="https://www.example.com/podcast"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="whatsapp_handle">Followers</Label>
+        <Input
+          id="twitter_follower"
+          value={onboardingDataInfluencer.podcast_follower}
+          onChange={(e) =>
+            setOnboardingDataInfluencer((prev) => ({
+              ...prev,
+              podcast_follower: e.target.value,
             }))
           }
           placeholder="e.g. 500"

@@ -231,69 +231,82 @@ export default function Page() {
   return (
     <div className="relative">
       <div className="flex-1">
-        {/* Header Section */}
-        <div className="bg-white rounded-lg border-[#E5E7EB] shadow border-[1px] p-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 rounded-md flex items-center justify-center overflow-hidden">
-                <Image
-                  src={profileSrc}
-                  width={44}
-                  height={44}
-                  alt={profileName}
-                  className="w-11 h-11 rounded-full object-cover ring-2 ring-gray-200"
-                />
-              </div>
-              <div>
-                <h2 className="text-xl font-bold text-slate-800">
-                  Welcome back,{" "}
-                  {(user?.influencer_profile?.display_name as string) || "User"}
-                  ! 👋
-                </h2>
-                <p className="text-slate-600">
-                  Ready to grow your influence today?
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Link
-                href={"/influencer-dashboard/settings"}
-                className="bg-secondary hover:bg-[var(--secondaryhover)] text-slate-800 font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-1"
-              >
-                <FaEdit /> Edit Profile
-              </Link>
-            </div>
-          </div>
+        <div className="bg-white rounded-xl shadow-md border border-gray-200 p-5 sm:p-6 transition-shadow hover:shadow-lg">
+  
+  {/* --- Top Row: Greeting + Action --- */}
+  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    
+    {/* Greeting + Profile */}
+    <div className="flex items-center gap-4">
+      <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center flex-shrink-0">
+        <Image
+          src={profileSrc}
+          width={64}
+          height={64}
+          alt={profileName}
+          className="object-cover w-full h-full"
+        />
+      </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-            {[
-              {
-                value: campaigns.length,
-                label: "Total Campaigns",
-                color: "#ffc006",
-              },
-              {
-                value: `$${totalEarnings}`,
-                label: "Earnings",
-                color: "#dcfce7",
-              },
-              { value: "0", label: "New Messages", color: "#FEFCE8" },
-            ].map((item, index) => (
-              <div
-                key={index}
-                className="rounded-lg p-6 text-center"
-                style={{ backgroundColor: item.color }}
-              >
-                <div className="text-3xl text-primary font-bold mb-2">
-                  {item.value}
-                </div>
-                <div className="text-primary text-sm font-medium">
-                  {item.label}
-                </div>
-              </div>
-            ))}
-          </div>
+      <div className="flex flex-col">
+        <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
+          Welcome back, {String(user?.influencer_profile?.display_name) || "User"}! 👋
+        </h2>
+        <p className="text-gray-500 text-sm sm:text-base">
+          Ready to grow your influence today?
+        </p>
+      </div>
+    </div>
+
+    {/* Action Button */}
+    <div className="flex gap-2">
+      <Link
+        href="/influencer-dashboard/settings"
+        className="flex items-center gap-2 px-4 py-2 text-sm sm:text-base font-medium rounded-lg bg-secondary  text-primary transition"
+      >
+        <FaEdit /> Edit Profile
+      </Link>
+    </div>
+  </div>
+
+  {/* --- Stats Cards --- */}
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+    {[
+      {
+        value: campaigns.length,
+        label: "Total Campaigns",
+        icon: "📊",
+        bgColor: "bg-yellow-100",
+        textColor: "text-yellow-700",
+      },
+      {
+        value: `$${totalEarnings}`,
+        label: "Earnings",
+        icon: "💰",
+        bgColor: "bg-green-100",
+        textColor: "text-green-700",
+      },
+      {
+        value: "0",
+        label: "New Messages",
+        icon: "✉️",
+        bgColor: "bg-orange-100",
+        textColor: "text-orange-700",
+      },
+    ].map((item, index) => (
+      <div
+        key={index}
+        className={`rounded-xl p-5 flex flex-col items-center justify-center gap-2 ${item.bgColor}`}
+      >
+        <div className={`text-3xl font-bold ${item.textColor}`}>{item.value}</div>
+        <div className={`text-sm font-medium ${item.textColor} flex items-center gap-1`}>
+          <span>{item.icon}</span> {item.label}
         </div>
+      </div>
+    ))}
+  </div>
+</div>
+
 
         <div className="pt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">

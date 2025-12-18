@@ -182,6 +182,7 @@ export default function ProfilePage() {
     linkedin: p.linkedin_follower || "",
     blog: p.blog_follower || "",
     whatsapp:p.whatsapp_follower || "", 
+    podcast:p.podcast_follower || "", 
   }
   });
 
@@ -292,6 +293,7 @@ export default function ProfilePage() {
     linkedin_follower: formData.followers.linkedin || null,
     blog_follower: formData.followers.blog || null,
     whatsapp_follower: formData.followers.whatsapp || null,
+    podcast_follower: formData.followers.podcast || null,
       
         },
     };
@@ -442,10 +444,11 @@ export default function ProfilePage() {
             {[
               { id: "instagram", label: "Instagram", hasStats: true, placeholder: "https://instagram.com/username" },
               { id: "tiktok", label: "TikTok", hasStats: true, placeholder: "https://tiktok.com/@username" },
-              { id: "youtube", label: "YouTube", hasStats: true, placeholder: "youtube.com/@channel" },
-              { id: "facebook", label: "Facebook", hasStats: true, placeholder: "facebook.com/username" },
-              { id: "linkedin", label: "LinkedIn", hasStats: true, placeholder: "linkedin.com/in/profile" },
-              { id: "twitter", label: "Twitter", hasStats: true, placeholder: "twitter.com/username" },
+              { id: "youtube", label: "YouTube", hasStats: true, placeholder: "https://youtube.com/@channel" },
+              { id: "facebook", label: "Facebook", hasStats: true, placeholder: "https://facebook.com/username" },
+              { id: "linkedin", label: "LinkedIn", hasStats: true, placeholder: "https://linkedin.com/in/profile" },
+              { id: "twitter", label: "Twitter", hasStats: true, placeholder: "https://twitter.com/username" },
+              { id: "podcast", label: "Podcast", hasStats: true, placeholder: "https://www.example.com/podcast" },
               { id: "whatsapp", label: "WhatsApp", hasStats: true, placeholder: "wa.me/15551234567" },
             ].map((platform) => (
               <div 

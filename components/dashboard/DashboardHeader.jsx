@@ -9,41 +9,59 @@ export function DashboardHeader() {
 const businessType=user?.brand_profile?.business_type.split("–")[0];
   return (
     <>
-      <div className="bg-white rounded-lg shadow p-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 bg-slate-800 rounded-lg flex items-center justify-center">
-              {user?.brand_profile?.logo ? (
-                <Image
-                  width={64}
-                  height={64}
-                  src={user.brand_profile.logo}
-                  alt="Brand logo"
-                  className="h-full w-full rounded-md object-cover"
-                />
-              ) : (
-                <span className="text-white font-semibold text-lg">
-                  {user?.brand_profile?.business_name?.[0] || "B"}
-                </span>
-              )}
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-slate-800">
-                {user?.brand_profile?.business_name}
-              </h2>
-              <p className="text-slate-600">{businessType}</p>
-            </div>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Link
-              href={"/brand-dashboard/settings"}
-              className="bg-secondary hover:bg-[var(--secondaryhover)] text-slate-800 font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-1 "
-            >
-              <FaEdit /> Edit Profile
-            </Link>
-          </div>
-        </div>
+      <div className="bg-white rounded-xl shadow-md p-5 sm:p-6 hover:shadow-lg transition-shadow duration-300">
+  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6">
+    
+    {/* Logo + Info */}
+    <div className="flex items-center gap-4">
+      {/* Brand Logo */}
+      <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100 flex items-center justify-center">
+        {user?.brand_profile?.logo ? (
+          <Image
+            width={64}
+            height={64}
+            src={user.brand_profile.logo}
+            alt="Brand Logo"
+            className="object-cover w-full h-full"
+          />
+        ) : (
+          <span className="text-gray-500 font-bold text-xl">
+            {user?.brand_profile?.business_name?.[0] || "B"}
+          </span>
+        )}
       </div>
+
+      {/* Brand Info */}
+      <div className="flex flex-col">
+        <h2 className="text-lg sm:text-xl font-semibold text-gray-900 truncate max-w-[200px]">
+          {user?.brand_profile?.business_name || "Brand Name"}
+        </h2>
+        <span className="text-gray-500 text-sm sm:text-base">
+          {businessType || "Industry / Category"}
+        </span>
+      </div>
+    </div>
+
+    {/* Action Buttons */}
+    <div className="flex flex-col sm:flex-row gap-3 sm:gap-2">
+      <Link
+        href="/brand-dashboard/settings"
+        className="px-4 py-2 rounded-lg bg-secondary  text-primary font-medium text-sm flex items-center justify-center gap-2 transition"
+      >
+        <FaEdit className="text-base" /> Edit Profile
+      </Link>
+
+      {/* Optional: Featured badge button */}
+      {user?.brand_profile?.isFeatured && (
+        <span className="px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 font-semibold text-xs uppercase tracking-wide">
+          Featured
+        </span>
+      )}
+    </div>
+  </div>
+</div>
+
+
     </>
   );
 }

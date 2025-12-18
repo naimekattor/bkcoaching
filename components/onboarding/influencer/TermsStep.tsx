@@ -61,7 +61,7 @@ const token=localStorage.getItem("access_token");
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <ScrollArea className="h-72 w-full border rounded-lg p-4">
+            <div className="h-auto w-full border rounded-lg p-4">
               <div className="text-sm space-y-2">
                 <p>
                   <strong>1. Account Registration</strong>
@@ -106,7 +106,7 @@ const token=localStorage.getItem("access_token");
                   or use the platform for any illegal activities.
                 </p>
               </div>
-            </ScrollArea>
+            </div>
             <div className="flex items-center space-x-2">
               <Checkbox
                 id="terms"
@@ -116,10 +116,8 @@ const token=localStorage.getItem("access_token");
                 }
               />
               <Label htmlFor="terms" className="text-sm">
-                I have read and agree to the{" "}
-                <button className="text-primary hover:underline">
-                  Terms of Service
-                </button>
+                I have read and agree to the Terms of Service
+                
               </Label>
             </div>
           </CardContent>
@@ -134,10 +132,10 @@ const token=localStorage.getItem("access_token");
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <ScrollArea className="h-72 w-full border rounded-lg p-4">
+            <div className="h-auto w-full border rounded-lg p-4">
               <div className="text-sm space-y-2">
                 <p>
-                  <strong>Data Collection</strong>
+                  <strong>1. Data Collection</strong>
                 </p>
                 <p>
                   We collect information you provide during registration,
@@ -147,7 +145,7 @@ const token=localStorage.getItem("access_token");
                 </p>
 
                 <p>
-                  <strong>Data Usage</strong>
+                  <strong>2. Data Usage</strong>
                 </p>
                 <p>
                   Your data is used to match you with relevant brands, process
@@ -156,7 +154,7 @@ const token=localStorage.getItem("access_token");
                 </p>
 
                 <p>
-                  <strong>Data Sharing</strong>
+                  <strong>3. Data Sharing</strong>
                 </p>
                 <p>
                   We share necessary information with brands for collaboration
@@ -165,7 +163,7 @@ const token=localStorage.getItem("access_token");
                 </p>
 
                 <p>
-                  <strong>Data Security</strong>
+                  <strong>4. Data Security</strong>
                 </p>
                 <p>
                   We use industry-standard encryption and security measures to
@@ -173,14 +171,14 @@ const token=localStorage.getItem("access_token");
                 </p>
 
                 <p>
-                  <strong>Your Rights</strong>
+                  <strong>5. Your Rights</strong>
                 </p>
                 <p>
                   You can access, update, or delete your personal data at any
                   time through your account settings.
                 </p>
               </div>
-            </ScrollArea>
+            </div>
             <div className="flex items-center space-x-2">
               <Checkbox
                 id="privacy"
@@ -190,10 +188,8 @@ const token=localStorage.getItem("access_token");
                 }
               />
               <Label htmlFor="privacy" className="text-sm">
-                I have read and agree to the{" "}
-                <button className="text-primary hover:underline">
-                  Privacy Policy
-                </button>
+                I have read and agree to the Privacy Policy
+                
               </Label>
             </div>
           </CardContent>
@@ -208,10 +204,10 @@ const token=localStorage.getItem("access_token");
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <ScrollArea className="h-72 w-full border rounded-lg p-4">
+            <div className="h-auto w-full border rounded-lg p-4">
               <div className="text-sm space-y-2">
                 <p>
-                  <strong>Content Standards</strong>
+                  <strong>1. Content Standards</strong>
                 </p>
                 <p>
                   All content must be original, authentic, and comply with
@@ -220,7 +216,7 @@ const token=localStorage.getItem("access_token");
                 </p>
 
                 <p>
-                  <strong>Prohibited Content</strong>
+                  <strong>2. Prohibited Content</strong>
                 </p>
                 <p>
                   Content promoting illegal activities, adult content (unless
@@ -229,7 +225,7 @@ const token=localStorage.getItem("access_token");
                 </p>
 
                 <p>
-                  <strong>Brand Safety</strong>
+                  <strong>3. Brand Safety</strong>
                 </p>
                 <p>
                   Content must align with brand values and guidelines.
@@ -238,7 +234,7 @@ const token=localStorage.getItem("access_token");
                 </p>
 
                 <p>
-                  <strong>Intellectual Property</strong>
+                  <strong>4. Intellectual Property</strong>
                 </p>
                 <p>
                   You must have rights to all content you create and not
@@ -246,14 +242,14 @@ const token=localStorage.getItem("access_token");
                 </p>
 
                 <p>
-                  <strong>Compliance</strong>
+                  <strong>5. Compliance</strong>
                 </p>
                 <p>
                   All sponsored content must include proper disclosures and
                   comply with relevant advertising regulations.
                 </p>
               </div>
-            </ScrollArea>
+            </div>
             <div className="flex items-center space-x-2">
               <Checkbox
                 id="content"
@@ -263,10 +259,8 @@ const token=localStorage.getItem("access_token");
                 }
               />
               <Label htmlFor="content" className="text-sm">
-                I have read and agree to the{" "}
-                <button className="text-primary hover:underline">
-                  Content Policy
-                </button>
+                I have read and agree to the Content Policy
+                
               </Label>
             </div>
           </CardContent>

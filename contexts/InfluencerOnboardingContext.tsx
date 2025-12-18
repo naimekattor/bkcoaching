@@ -17,6 +17,7 @@ interface InfluencerOnboardingData {
   linkedin_handle: string;
   facebook_handle:string;
   whatsapp_handle: string;
+  podcast_handle:string;
   blog_url:string;
   content_niches: string[];
   audience_demographics: string[];
@@ -61,6 +62,7 @@ interface InfluencerOnboardingData {
   blog_follower:string | number,
   twitter_follower:string | number,
   whatsapp_follower:string | number,
+  podcast_follower:string | number,
 }
 
 interface InfluencerOnboardingContextType {
@@ -83,6 +85,7 @@ const initialState: InfluencerOnboardingData = {
   linkedin_handle: "",
   facebook_handle:"",
   whatsapp_handle: "",
+  podcast_handle:"",
   blog_url:"",
   content_niches: [],
   audience_demographics: [],
@@ -124,6 +127,7 @@ const initialState: InfluencerOnboardingData = {
   blog_follower:"",
   twitter_follower:"",
   whatsapp_follower:"",
+  podcast_follower:"",
 };
 const InfluencerOnboardingProvider = ({
   children,
