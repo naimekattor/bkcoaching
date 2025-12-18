@@ -512,7 +512,7 @@ export default function BrandProfilePage() {
           {/* RIGHT COLUMN */}
           <div className="space-y-6">
             {/* Contact */}
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
+            {/* <div className="bg-white rounded-lg border border-gray-200 p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 Contact Information
               </h2>
@@ -559,7 +559,7 @@ export default function BrandProfilePage() {
                   )}
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Resources */}
             <div className="bg-white rounded-lg border border-gray-200 p-6">
