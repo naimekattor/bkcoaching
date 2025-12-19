@@ -15,6 +15,7 @@ import Image from "next/image";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { apiClient } from "@/lib/apiClient";
 import { uploadToCloudinary } from "@/lib/fileUpload";
+import { toast } from "react-toastify";
 
 interface Room {
   room_id: string;
@@ -139,8 +140,8 @@ export default function MessagesClient() {
     useState<OtherUserProfile | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { user } = useAuthStore();
-  const currentUserId = user?.id;
-  console.log(currentUserId);
+  const currentUserId = user?.user?.id;
+  console.log(currentUserId,user);
   const pathName = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -337,7 +338,7 @@ export default function MessagesClient() {
       try {
         const token = localStorage.getItem("access_token");
         if (!token) {
-          alert("Login expired");
+          toast("Login expired");
           router.push("/login");
           return;
         }
@@ -357,16 +358,20 @@ export default function MessagesClient() {
         const userId = Number(currentUserId);
 
         ws.onmessage = (event) => {
+
           try {
             const payload = JSON.parse(event.data);
             console.log(payload);
+            const senderId = String(payload.sender_id);
+        const myId = String(currentUserId);
+        const isOwn = senderId === myId;
 
             console.log("Message received:", {
               sender_id: payload.sender_id,
               current_user: userId,
-              isOwn: Number(payload.sender_id) == userId,
+              isOwn,
             });
-            const isOwn= Number(payload.sender_id) == userId;
+            if (isOwn) return; 
 
             let incomingMessage = payload.message ?? "";
             let fileUrl: string | undefined = payload.file ?? undefined;
@@ -385,7 +390,9 @@ export default function MessagesClient() {
             }
 
             const hasContent = Boolean(incomingMessage || fileUrl);
-            if (hasContent && !isOwn) {
+            if (hasContent && isOwn == false) {
+              console.log("message printing");
+              
               setMessages((prev) => [
                 ...prev,
                 {
@@ -404,7 +411,6 @@ export default function MessagesClient() {
                 },
               ]);
 
-              console.log("log for isOwn", messages);
 
               // Scroll to bottom
               setTimeout(() => {
@@ -482,10 +488,11 @@ export default function MessagesClient() {
     wsRef.current.send(JSON.stringify(payload));
 
     // Optimistic update
+    const optimisticId = `temp-${Date.now()}`;
     setMessages((prev) => [
       ...prev,
       {
-        id: Date.now(),
+        id: optimisticId,
         content: hasText ? newMessage : "",
         senderId: currentUserId!,
         senderName: "You",
