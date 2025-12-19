@@ -118,10 +118,10 @@ const getSafeImageSrc = (src?: string) => {
   }
 
   if (src.startsWith("/")) {
-    return src;
+    return "/images/person.jpg";
   }
 
-  return `/${src}`;
+  return "/images/person.jpg";
 };
 
 export default function MessagesClient() {
@@ -719,7 +719,7 @@ export default function MessagesClient() {
                     />
                   ) : (
                     <span>
-                      {otherUserProfile?.brand_profile?.business_name?.[0] ||
+                      {selectedRoom?.name?.[0] ||
                         otherUserProfile?.influencer_profile?.display_name?.[0]}
                     </span>
                   )}

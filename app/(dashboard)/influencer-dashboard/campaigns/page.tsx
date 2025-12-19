@@ -733,12 +733,12 @@ export default function CampaignsPage() {
             <div className="p-6 border-t border-gray-200 bg-gray-50 flex gap-3 justify-end rounded-b-2xl">
               {selectedType === "hired" && !(selectedCampaign as HiredCampaign).is_accepted_by_influencer ? (
                  <>
-                    <button
+                    {/* <button
                         onClick={() => handleCampaignAction(selectedCampaign.id, "reject")}
                         className="px-4 py-2 border border-red-200 text-red-600 rounded-lg hover:bg-red-50"
                     >
                         Reject
-                    </button>
+                    </button> */}
                     <button
                         onClick={() => handleCampaignAction(selectedCampaign.id, "accept")}
                         className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"

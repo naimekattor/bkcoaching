@@ -215,7 +215,12 @@ export default function Page() {
     }
   };
 
-  const totalEarnings = campaigns.reduce((acc, curr) => acc + curr.budget, 0);
+  console.log(campaigns);
+
+  const acceptedCampaign=campaigns.filter((campaign)=>campaign.is_accepted_by_influencer==true);
+  
+
+  const totalEarnings = acceptedCampaign.reduce((acc, curr) => acc + curr.budget, 0);
   const profileSrc: string =
     typeof user?.influencer_profile?.profile_picture === "string" &&
     user.influencer_profile.profile_picture !== ""

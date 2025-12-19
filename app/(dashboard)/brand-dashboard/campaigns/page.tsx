@@ -872,7 +872,7 @@ export default function CampaignDashboard() {
                                 height={40}
                                 src={
                                   hiring.influencer_details?.profile_picture ||
-                                  "/images/placeholder-user.jpg"
+                                  "/images/person.jpg"
                                 }
                                 alt="avatar"
                                 className="w-full h-full object-cover"

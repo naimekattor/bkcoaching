@@ -92,16 +92,16 @@ export default function InfluencersPage() {
         <main className="container mx-auto px-4 pt-16 lg:pt-20 pb-16">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
-              <span className="inline-block px-4 py-1.5 rounded-full bg-blue-50 text-primary font-semibold text-sm tracking-wide uppercase">
+              {/* <span className="inline-block px-4 py-1.5 rounded-full bg-blue-50 text-primary font-semibold text-sm tracking-wide uppercase">
                 Find Your Voice
-              </span>
-              <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight">
-                Authentic Voices. <br />
-                <span className="text-primary">Real Impact.</span>
+              </span> */}
+              <h1 className="text-4xl md:text-6xl font-bold text-primary leading-tight">
+
+                Grow with <br />
+                <span className="text-primary">Micro-Influencers</span>
               </h1>
               <p className="text-lg text-gray-600 max-w-lg leading-relaxed">
-                Connect with micro-influencers who have built genuine trust with their audience. 
-                Turn everyday conversations into measurable brand growth.
+                Reach real people through trusted voices.Micro-influencer bring authentic connections and strong engagement,helping your brand shine without big budget.
               </p>
               
               {/* Search Bar */}
@@ -240,7 +240,7 @@ export default function InfluencersPage() {
                     ) : (
                       <button
                         onClick={() => setShowAuthModal(true)} // Opens the modal
-                        className="w-full py-2.5 text-center rounded-lg bg-gray-900 text-white font-medium text-sm hover:bg-gray-800 transition-colors shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+                        className="w-full py-2.5 text-center rounded-lg bg-primary text-white font-medium text-sm hover:bg-gray-800 transition-colors shadow-sm flex items-center justify-center gap-2 cursor-pointer"
                       >
                         <FaLock className="w-3 h-3" />
                         Unlock to View
