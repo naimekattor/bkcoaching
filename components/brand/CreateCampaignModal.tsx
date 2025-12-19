@@ -458,7 +458,7 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }:Creat
               Create New Campaign
             </h2>
             <p className="text-sm text-gray-500 mt-1">
-              Set up your influencer marketing campaign
+              Set up your campaign
             </p>
           </div>
           <button onClick={onClose} className="p-2 rounded hover:bg-gray-100">
@@ -822,7 +822,7 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }:Creat
                 <CardTitle>Campaign Settings</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
+                {/* <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <Label>Content Approval Required</Label>
                     <p className="text-xs text-muted-foreground">
@@ -835,7 +835,7 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }:Creat
                       handleInputChange("content_approval_required", checked)
                     }
                   />
-                </div>
+                </div> */}
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">

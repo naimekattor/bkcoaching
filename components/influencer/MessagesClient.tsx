@@ -15,6 +15,7 @@ import Image from "next/image";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { apiClient } from "@/lib/apiClient";
 import { uploadFile, uploadToCloudinary } from "@/lib/fileUpload";
+import { toast } from "react-toastify";
 
 interface Room {
   room_id: string;
@@ -117,10 +118,10 @@ const getSafeImageSrc = (src?: string) => {
   }
 
   if (src.startsWith("/")) {
-    return src;
+    return "/images/person.jpg";
   }
 
-  return `/${src}`;
+  return "/images/person.jpg";
 };
 
 
@@ -348,38 +349,7 @@ export default function InfluencerMessagesClient() {
       return () => clearTimeout(timeout);
     }
   }, [messages]);
-// websocket notification
-  useEffect(() => {
-    const token = localStorage.getItem("access_token");
 
-    if (!token) return;
-
-    const ws = new WebSocket(
-      `wss://exhaust-minute-picked-reservations.trycloudflare.com/chat_handshake/ws/notification/?token=${token}`
-    );
-
-    ws.onopen = () => {
-      console.log("✅ WebSocket connected");
-    };
-
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      console.log("🔔 Notification:", data);
-    };
-
-    ws.onerror = (err) => {
-      console.error("❌ WS error", err);
-    };
-
-    ws.onclose = () => {
-      console.log("🔌 WebSocket closed");
-    };
-
-    // cleanup (VERY IMPORTANT)
-    return () => {
-      ws.close();
-    };
-  }, []);
 
   // Initialize WebSocket
   useEffect(() => {
@@ -400,8 +370,8 @@ export default function InfluencerMessagesClient() {
         const token = localStorage.getItem("access_token");
         if (!token) {
           console.error("No access token found");
-          alert("Login expired");
-          router.push("/login");
+          toast("Login expired");
+          router.push("/auth/login");
           return;
         }
 
@@ -427,7 +397,7 @@ export default function InfluencerMessagesClient() {
         const ws = new WebSocket(wsUrl);
         wsRef.current = ws;
 
-        const userId = String(currentUserId);
+        const userId = currentUserId;
 
         ws.onopen = () => {
           console.log("✅ WebSocket connected to room:", selectedRoom.room_id);
@@ -446,7 +416,7 @@ export default function InfluencerMessagesClient() {
             console.log("Message received:", {
               sender_id: payload.sender_id,
               current_user: userId,
-              is_own: String(payload.sender_id) === userId,
+              is_own: Number(payload.sender_id) !== Number(userId),
             });
 
             let incomingMessage = payload.message ?? "";
@@ -464,7 +434,7 @@ export default function InfluencerMessagesClient() {
 
             if (
               (incomingMessage || fileUrl) &&
-              String(payload.sender_id) !== userId
+              Number(payload.sender_id) !== Number(userId)
             ) {
               setMessages((prev) => [
                 ...prev,
@@ -475,7 +445,7 @@ export default function InfluencerMessagesClient() {
                   fileType,
                   fileName,
                   senderId: payload.sender_id,
-                  isOwn: false,
+                  isOwn: Number(payload.sender_id) === Number(userId),
                   timestamp: new Date().toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
@@ -519,7 +489,7 @@ export default function InfluencerMessagesClient() {
 
   const handleSendMessage = async () => {
     if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
-      alert("Not connected. Reconnecting...");
+      toast("Not connected. Reconnecting...");
       return;
     }
 

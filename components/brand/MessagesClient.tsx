@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   Search,
   MoreHorizontal,
@@ -27,16 +27,16 @@ interface Room {
 }
 
 interface OtherUserProfile {
-  id:string;
-  first_name:string;
-  brand_profile:{
-    business_name:string;
-    logo:string;
-  }
-  influencer_profile:{
-    display_name:string;
-    profile_picture:string;
-  }
+  id: string;
+  first_name: string;
+  brand_profile: {
+    business_name: string;
+    logo: string;
+  };
+  influencer_profile: {
+    display_name: string;
+    profile_picture: string;
+  };
 }
 
 interface HistoryMessage {
@@ -135,12 +135,13 @@ export default function MessagesClient() {
   const [attachedFile, setAttachedFile] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [otherUserProfile,setOtherUserProfile]=useState<OtherUserProfile | null>(null);
+  const [otherUserProfile, setOtherUserProfile] =
+    useState<OtherUserProfile | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { user } = useAuthStore();
   const currentUserId = user?.id;
   console.log(currentUserId);
-
+  const pathName = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
   const otherUserId = searchParams.get("id");
@@ -165,7 +166,7 @@ export default function MessagesClient() {
             ? { ...prev, room_id: res?.data.room_id ?? prev.room_id }
             : {
                 room_id: res?.data.room_id ?? "",
-                other_user_id: String(otherUserId),
+                other_user_id: otherUserId,
                 last_message: "",
                 timestamp: new Date().toISOString(),
                 name: "",
@@ -180,24 +181,24 @@ export default function MessagesClient() {
     createRoom();
   }, [otherUserId]);
 
-  useEffect(()=>{
-        const fetchOtherUserProfile=async()=>{
-          const targetId = selectedRoom?.other_user_id || otherUserId;
-    if (!targetId) return;
-    try {
-      const response=await apiClient(`user_service/get_a_brand/${targetId}/`,{
-        method:"GET"
-      });
-      setOtherUserProfile(response?.data);
-      
-    } catch (error) {
-      console.log("error",error);
-      
-    }
-        }
-        fetchOtherUserProfile();
-  },[otherUserId,selectedRoom])
-
+  useEffect(() => {
+    const fetchOtherUserProfile = async () => {
+      const targetId = selectedRoom?.other_user_id || otherUserId;
+      if (!targetId) return;
+      try {
+        const response = await apiClient(
+          `user_service/get_a_brand/${targetId}/`,
+          {
+            method: "GET",
+          }
+        );
+        setOtherUserProfile(response?.data);
+      } catch (error) {
+        console.log("error", error);
+      }
+    };
+    fetchOtherUserProfile();
+  }, [otherUserId, selectedRoom]);
 
   // Fetch rooms for sidebar
   useEffect(() => {
@@ -289,12 +290,10 @@ export default function MessagesClient() {
 
           console.log("Sorted Messages:", cleanedMessages);
           setMessages(cleanedMessages);
-
-          
         }
       } catch (err) {
         console.error("Failed to fetch chat history:", err);
-        setMessages([]); 
+        setMessages([]);
       } finally {
         setLoadingHistory(false);
       }
@@ -304,23 +303,23 @@ export default function MessagesClient() {
   }, [selectedRoom, router]);
 
   useEffect(() => {
-  if (messagesEndRef.current) {
-    messagesEndRef.current.scrollIntoView({ 
-  behavior: "smooth", 
-  block: "end",   
-  inline: "nearest" 
-});
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+        inline: "nearest",
+      });
 
-   
-    const timeout = setTimeout(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-    }, 200);
+      const timeout = setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "end",
+        });
+      }, 200);
 
-    return () => clearTimeout(timeout);
-  }
-}, [messages]);
-
-
+      return () => clearTimeout(timeout);
+    }
+  }, [messages]);
 
   // Initialize WebSocket
   useEffect(() => {
@@ -355,7 +354,7 @@ export default function MessagesClient() {
         const ws = new WebSocket(wsUrl);
         wsRef.current = ws;
 
-        const userId = String(currentUserId);
+        const userId = Number(currentUserId);
 
         ws.onmessage = (event) => {
           try {
@@ -365,8 +364,9 @@ export default function MessagesClient() {
             console.log("Message received:", {
               sender_id: payload.sender_id,
               current_user: userId,
-              is_own: String(payload.sender_id) === userId,
+              isOwn: Number(payload.sender_id) == userId,
             });
+            const isOwn= Number(payload.sender_id) == userId;
 
             let incomingMessage = payload.message ?? "";
             let fileUrl: string | undefined = payload.file ?? undefined;
@@ -385,7 +385,7 @@ export default function MessagesClient() {
             }
 
             const hasContent = Boolean(incomingMessage || fileUrl);
-            if (hasContent && String(payload.sender_id) !== userId) {
+            if (hasContent && !isOwn) {
               setMessages((prev) => [
                 ...prev,
                 {
@@ -395,7 +395,7 @@ export default function MessagesClient() {
                   fileType,
                   fileName,
                   senderId: payload.sender_id,
-                  isOwn: false,
+                  isOwn: Number(payload.sender_id) == userId,
                   timestamp: new Date().toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
@@ -403,6 +403,8 @@ export default function MessagesClient() {
                   senderName: selectedRoom?.name || "User",
                 },
               ]);
+
+              console.log("log for isOwn", messages);
 
               // Scroll to bottom
               setTimeout(() => {
@@ -570,8 +572,8 @@ export default function MessagesClient() {
       )}
 
       {/* Left Sidebar - Rooms */}
-<div
-  className={`
+      <div
+        className={`
     fixed md:relative inset-y-0 left-0 z-30 w-full md:w-80 
     bg-white border-r border-gray-200 flex flex-col 
     transform transition-transform duration-300 ease-in-out
@@ -580,7 +582,7 @@ export default function MessagesClient() {
     ${selectedRoom ? "md:block" : "block"} 
     h-full
   `}
->
+      >
         <div className="p-4 border-b border-gray-200 bg-white">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
@@ -627,7 +629,7 @@ export default function MessagesClient() {
                 room.last_message,
                 room.timestamp
               );
-              const profilePicture=getSafeImageSrc(room?.profile_picture);
+              const profilePicture = getSafeImageSrc(room?.profile_picture);
 
               return (
                 <div
@@ -651,7 +653,7 @@ export default function MessagesClient() {
                         />
                       ) : (
                         <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold">
-                          {room.name?.[0] || room.other_user_id?.[0] }
+                          {room.name?.[0] || room.other_user_id?.[0]}
                         </div>
                       )}
                     </div>
@@ -675,7 +677,7 @@ export default function MessagesClient() {
           )}
         </div>
       </div>
-      {!selectedRoom  ? (
+      {!selectedRoom ? (
         <div className="flex-1 flex flex-col items-center justify-center bg-gray-50 text-gray-500">
           <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mb-4">
             <Search className="h-8 w-8 text-gray-400" />
@@ -701,29 +703,41 @@ export default function MessagesClient() {
                 </button>
                 <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold">
                   {selectedRoom.profile_picture ? (
-                    <Image src={selectedRoom.profile_picture} alt="" width={48} height={48} className="w-[48px] h-[48px] rounded-full"/>
+                    <Image
+                      src={selectedRoom.profile_picture}
+                      alt=""
+                      width={48}
+                      height={48}
+                      className="w-[48px] h-[48px] rounded-full"
+                    />
                   ) : (
-                    <span>{otherUserProfile?.brand_profile?.business_name?.[0] || otherUserProfile?.influencer_profile?.display_name?.[0] }</span>
+                    <span>
+                      {otherUserProfile?.brand_profile?.business_name?.[0] ||
+                        otherUserProfile?.influencer_profile?.display_name?.[0]}
+                    </span>
                   )}
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="font-bold text-gray-900 truncate">
-                     {selectedRoom.name || otherUserProfile?.brand_profile?.business_name ||
-                    otherUserProfile?.influencer_profile?.display_name }
+                    {selectedRoom.name ||
+                      otherUserProfile?.brand_profile?.business_name ||
+                      otherUserProfile?.influencer_profile?.display_name}
                   </p>
                   {/* <p className="text-sm text-gray-500">Active now</p> */}
                 </div>
               </div>
-              <button
-                onClick={() => {
-                  router.push(
-                    `/brand-dashboard/influencers/${selectedRoom?.other_user_id}/send-proposal`
-                  );
-                }}
-                className="px-4 py-2 bg-secondary text-primary rounded-xl font-semibold transition-all duration-200 cursor-pointer text-sm shadow-sm"
-              >
-                Hire
-              </button>
+              {pathName.startsWith("/brand-dashboard") && (
+                <button
+                  onClick={() => {
+                    router.push(
+                      `/brand-dashboard/influencers/${selectedRoom?.other_user_id}/send-proposal`
+                    );
+                  }}
+                  className="px-4 py-2 bg-secondary text-primary rounded-xl font-semibold transition-all duration-200 cursor-pointer text-sm shadow-sm"
+                >
+                  Hire
+                </button>
+              )}
             </div>
           </div>
 
@@ -751,8 +765,7 @@ export default function MessagesClient() {
                     {!message.isOwn && (
                       <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold text-xs flex-shrink-0">
                         {selectedRoom?.name?.[0] ||
-                          selectedRoom?.other_user_id?.[0]
-                          }
+                          selectedRoom?.other_user_id?.[0]}
                       </div>
                     )}
                     <div
