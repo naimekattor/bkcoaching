@@ -141,7 +141,7 @@ export default function MessagesClient() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { user } = useAuthStore();
   const currentUserId = user?.user?.id;
-  console.log(currentUserId,user);
+  console.log(currentUserId);
   const pathName = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -369,7 +369,7 @@ export default function MessagesClient() {
             console.log("Message received:", {
               sender_id: payload.sender_id,
               current_user: userId,
-              isOwn,
+              isOwn: Number(payload.sender_id) == userId,
             });
             if (isOwn) return; 
 
@@ -476,6 +476,8 @@ export default function MessagesClient() {
       fileName = result.filename || attachedFile.name;
     }
 
+    const myId = currentUserId ? String(currentUserId) : "";
+
     // Send via WebSocket
     const payload: ChatMessagePayload = { type: "chat_message" };
     if (hasText) payload.message = newMessage;
@@ -494,7 +496,7 @@ export default function MessagesClient() {
       {
         id: optimisticId,
         content: hasText ? newMessage : "",
-        senderId: currentUserId!,
+        senderId: myId,
         senderName: "You",
         isOwn: true,
         timestamp: new Date().toLocaleTimeString([], {
@@ -719,7 +721,7 @@ export default function MessagesClient() {
                     />
                   ) : (
                     <span>
-                      {selectedRoom?.name?.[0] ||
+                      {otherUserProfile?.brand_profile?.business_name?.[0] ||
                         otherUserProfile?.influencer_profile?.display_name?.[0]}
                     </span>
                   )}
