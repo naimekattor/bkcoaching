@@ -132,9 +132,12 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
     navigator.clipboard.writeText(referralCode);
     toast("Referral code copied!");
   };
-  const { token } = useAuthStore();
+
+  
 
   useEffect(() => {
+      const  token  = localStorage.getItem("access_token");
+
     const submitOnboardingData = async () => {
       const storedData = localStorage.getItem("InfluencerOnboardingData");
       if (!storedData) return;
@@ -162,7 +165,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
     if (token) {
       submitOnboardingData();
     }
-  }, [token]);
+  }, []);
 
   return (
     <div className="text-center space-y-8">

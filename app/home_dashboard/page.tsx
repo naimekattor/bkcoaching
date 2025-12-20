@@ -22,18 +22,24 @@ function DashboardPageContent() {
 
   useEffect(() => {
     const checkUserProfile = async () => {
-      // 1. Resolve the token (Session has priority, fallback to LocalStorage)
-      // We access localStorage inside useEffect to avoid Next.js hydration mismatch
-      const localToken = typeof window !== 'undefined' ? localStorage.getItem("access_token") : null;
-      const effectiveToken = session?.accessToken || localToken;
+      
+      const localToken =
+  typeof window !== "undefined"
+    ? localStorage.getItem("access_token")
+    : null;
+
+const effectiveToken = session?.accessToken ?? localToken;
+
+if (effectiveToken) {
+  localStorage.setItem("access_token", effectiveToken);
+}
+
       console.log(session?.accessToken);
       console.log(localToken);
       
       
 
-      // 2. Handle Loading State
-      // If we don't have a token yet AND the session is still loading, wait.
-      // If we DO have a localToken, we proceed immediately without waiting for session.
+      
       if (!effectiveToken && sessionStatus === "loading") {
         return; 
       }
@@ -100,7 +106,7 @@ function DashboardPageContent() {
           <p className="text-red-500 mb-4">{error}</p>
           <Link
             href="/auth/login"
-            className="text-white bg-primary px-4 py-2 rounded hover:bg-blue-700 transition"
+            className="text-white bg-primary px-4 py-2 rounded cursor-pointer transition"
           >
             Go to Login
           </Link>

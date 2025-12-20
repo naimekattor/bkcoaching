@@ -1,11 +1,16 @@
+import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
   const pathname = url.pathname;
-  const token = request.cookies.get("access_token")?.value;
+const token = await getToken({
+    req: request,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
 
+  console.log("Middleware token:", token);
   // 1. No token → login
   if (!token) {
     url.pathname = "/auth/login";
