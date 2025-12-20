@@ -334,7 +334,7 @@ export default function MessagesClient() {
     };
 
     loadChatHistory();
-  }, [selectedRoom, router]);
+  }, [selectedRoom?.room_id, router]);
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -753,7 +753,7 @@ export default function MessagesClient() {
     className="w-[48px] h-[48px] rounded-full"
   />
 ) : (
-  <span className="rounded-full overflow-hidden flex items-center justify-center text-white font-semibold text-xs flex-shrink-0 w-[48px] h-[48px] bg-secondary">
+  <span className="rounded-full overflow-hidden flex items-center justify-center text-white font-semibold text-xs flex-shrink-0">
     {selectedRoom?.name?.[0] ||
       otherUserProfile?.influencer_profile?.display_name?.[0] ||
       "U"}
