@@ -162,6 +162,13 @@ export default function MessagesClient() {
             target_user_id: Number(otherUserId),
           }),
         });
+        console.log("raw res",res);
+
+        const matchedRoom = rooms.find(
+  (room) => room.room_id === res?.data?.room_id
+);
+
+        
         setSelectedRoom((prev) =>
           prev
             ? { ...prev, room_id: res?.data.room_id ?? prev.room_id }
@@ -170,7 +177,8 @@ export default function MessagesClient() {
                 other_user_id: otherUserId,
                 last_message: "",
                 timestamp: new Date().toISOString(),
-                name: "",
+                name: matchedRoom?.name,
+                profile_picture:matchedRoom?.profile_picture
               }
         );
         // handle res if needed
@@ -181,6 +189,31 @@ export default function MessagesClient() {
 
     createRoom();
   }, [otherUserId]);
+
+  useEffect(() => {
+  if (!selectedRoom?.room_id || rooms.length === 0) return;
+
+  const matchedRoom = rooms.find(
+    (room) => room.room_id === selectedRoom.room_id
+  );
+
+  if (!matchedRoom) return;
+
+  setSelectedRoom((prev) =>
+    prev
+      ? {
+          ...prev,
+          name: matchedRoom.name,
+          profile_picture: matchedRoom.profile_picture,
+        }
+      : prev
+  );
+}, [rooms, selectedRoom?.room_id]);
+
+
+
+  console.log("when coming from outside",selectedRoom);
+  
 
   useEffect(() => {
     const fetchOtherUserProfile = async () => {
@@ -720,8 +753,8 @@ export default function MessagesClient() {
                       className="w-[48px] h-[48px] rounded-full"
                     />
                   ) : (
-                    <span>
-                      {otherUserProfile?.brand_profile?.business_name?.[0] ||
+                    <span className=" rounded-full overflow-hidden  flex items-center justify-center text-white font-semibold text-xs flex-shrink-0">
+                      {selectedRoom.name?.[0] ||
                         otherUserProfile?.influencer_profile?.display_name?.[0]}
                     </span>
                   )}
