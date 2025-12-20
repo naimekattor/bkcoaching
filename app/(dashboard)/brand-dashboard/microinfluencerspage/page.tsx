@@ -14,6 +14,7 @@ const PAGE_SIZE = 10;
 
 interface Influencer {
   id: string;
+  userId:string;
   name: string;
   profileImage: string;
   followers: string;
@@ -42,6 +43,7 @@ interface InfluencerProfile {
 interface InfluencerUser {
   first_name?: string;
   last_name?: string;
+  id?:string;
 }
 
 interface InfluencerRecord {

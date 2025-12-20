@@ -19,11 +19,17 @@ interface BrandProfileResponse {
   website?: string;
   platforms?: string[];
   timezone?: string;
+  user?:{
+    id?:string;
+  }
 }
 
 interface BrandApiResponse {
   id?: string | number;
   brand_profile?: BrandProfileResponse | null;
+  user?: {
+    id?: string | number;
+  };
 }
 
 const PAGE_SIZE = 12;
