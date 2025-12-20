@@ -116,6 +116,7 @@ export default function BrandPage() {
 
           return {
             id: String(raw.id ?? ""),
+            userId:String(raw?.user?.id ?? ""),
             name: bp.business_name ?? "Unnamed Brand",
             description: bp.short_bio ?? "",
             timeZone:bp.timezone??"Others",
@@ -381,7 +382,7 @@ export default function BrandPage() {
                     View Profile
                   </Link>
                   <Link
-                    href={`/influencer-dashboard/messages?id=${brand.id}`}
+                    href={`/influencer-dashboard/messages?id=${brand.userId}`}
                     className="bg-secondary hover:bg-[var(--secondaryhover)] text-primary px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                   >
                     Message

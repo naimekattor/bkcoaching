@@ -744,20 +744,22 @@ export default function MessagesClient() {
                   <MoreHorizontal className="h-5 w-5" />
                 </button>
                 <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold">
-                  {selectedRoom.profile_picture ? (
-                    <Image
-                      src={selectedRoom.profile_picture}
-                      alt=""
-                      width={48}
-                      height={48}
-                      className="w-[48px] h-[48px] rounded-full"
-                    />
-                  ) : (
-                    <span className=" rounded-full overflow-hidden  flex items-center justify-center text-white font-semibold text-xs flex-shrink-0">
-                      {selectedRoom.name?.[0] ||
-                        otherUserProfile?.influencer_profile?.display_name?.[0]}
-                    </span>
-                  )}
+                  {selectedRoom?.profile_picture ? (
+  <Image
+    src={getSafeImageSrc(selectedRoom.profile_picture)}
+    alt="Profile picture"
+    width={48}
+    height={48}
+    className="w-[48px] h-[48px] rounded-full"
+  />
+) : (
+  <span className="rounded-full overflow-hidden flex items-center justify-center text-white font-semibold text-xs flex-shrink-0 w-[48px] h-[48px] bg-secondary">
+    {selectedRoom?.name?.[0] ||
+      otherUserProfile?.influencer_profile?.display_name?.[0] ||
+      "U"}
+  </span>
+)}
+
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="font-bold text-gray-900 truncate">

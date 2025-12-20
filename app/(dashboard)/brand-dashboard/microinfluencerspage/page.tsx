@@ -336,6 +336,7 @@ function MicroInfluencersPageContent() {
 
             return {
               id: String(item.id),
+              userId:String(item?.user?.id ?? ""),
               name:
                 inf.display_name ||
                 `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
@@ -679,7 +680,7 @@ function MicroInfluencersPageContent() {
                     </Link>
                     <button
                       onClick={() =>
-                        router.push(`/brand-dashboard/messages?id=${creator.id}`)
+                        router.push(`/brand-dashboard/messages?id=${creator.userId}`)
                       }
                       className="flex-1 px-4 py-2 bg-secondary text-primary rounded-lg hover:bg-[var(--secondaryhover)] transition-colors text-sm font-medium"
                     >
