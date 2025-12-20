@@ -1,6 +1,6 @@
 export interface Brand {
   id: string;
-  userId: string;
+  userId?: string;
   name: string;
   description?: string;
   logo?: string;

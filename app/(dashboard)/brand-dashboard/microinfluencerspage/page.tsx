@@ -14,13 +14,13 @@ const PAGE_SIZE = 10;
 
 interface Influencer {
   id: string;
-  userId:string;
   name: string;
   profileImage: string;
   followers: string;
   socialLinks: string[];
   niche: string;
   timeZone: string;
+  userId?: string;
 }
 
 interface InfluencerProfile {
@@ -338,7 +338,7 @@ function MicroInfluencersPageContent() {
 
             return {
               id: String(item.id),
-              userId:String(item?.user?.id ?? ""),
+              userId: item.user?.id ? String(item.user.id) : undefined,
               name:
                 inf.display_name ||
                 `${user.first_name || ""} ${user.last_name || ""}`.trim() ||

@@ -19,9 +19,6 @@ interface BrandProfileResponse {
   website?: string;
   platforms?: string[];
   timezone?: string;
-  user?:{
-    id?:string;
-  }
 }
 
 interface BrandApiResponse {
@@ -122,7 +119,7 @@ export default function BrandPage() {
 
           return {
             id: String(raw.id ?? ""),
-            userId:String(raw?.user?.id ?? ""),
+            userId: raw.user?.id ? String(raw.user.id) : undefined,
             name: bp.business_name ?? "Unnamed Brand",
             description: bp.short_bio ?? "",
             timeZone:bp.timezone??"Others",
