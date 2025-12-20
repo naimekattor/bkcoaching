@@ -416,9 +416,9 @@ export default function Page() {
                           
 
                           return (
-                            <Link href={`/influencer-dashboard/messages?id=${otherUserId}`}>
+                            <Link href={`/influencer-dashboard/messages?id=${otherUserId}`} key={room.room_id || index}>
                             <div
-                      key={room.room_id || index}
+                      
                       className="flex items-start space-x-4 py-4 border-b border-gray-100 last:border-0"
                     >
                       <Image

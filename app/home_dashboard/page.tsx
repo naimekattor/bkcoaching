@@ -100,14 +100,14 @@ function DashboardPageContent() {
           <p className="text-red-500 mb-4">{error}</p>
           <Link
             href="/auth/login"
-            className="text-white bg-blue-600 px-4 py-2 rounded hover:bg-blue-700 transition"
+            className="text-white bg-primary px-4 py-2 rounded hover:bg-blue-700 transition"
           >
             Go to Login
           </Link>
         </div>
       ) : (
         <div className="flex flex-col items-center space-y-4 text-gray-600">
-          <Loader2 className="w-10 h-10 animate-spin text-blue-600" />
+          <Loader2 className="w-10 h-10 animate-spin text-primary" />
           <span className="text-xl font-medium">Loading your dashboard...</span>
         </div>
       )}
