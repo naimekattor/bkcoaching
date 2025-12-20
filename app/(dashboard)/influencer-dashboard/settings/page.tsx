@@ -286,14 +286,14 @@ export default function ProfilePage() {
         rate_range_for_affiliate_marketing_percent: paymentModels.affiliate
           ? affiliatePercent
           : null,
-      insta_follower: formData.followers.instagram || null,
-    tiktok_follower: formData.followers.tiktok || null,
-    youtube_follower: formData.followers.youtube || null,
-    facebook_follower: formData.followers.facebook || null,
-    linkedin_follower: formData.followers.linkedin || null,
-    blog_follower: formData.followers.blog || null,
-    whatsapp_follower: formData.followers.whatsapp || null,
-    podcast_follower: formData.followers.podcast || null,
+      insta_follower: formData.followers.instagram || 0,
+    tiktok_follower: formData.followers.tiktok || 0,
+    youtube_follower: formData.followers.youtube || 0,
+    facebook_follower: formData.followers.facebook || 0,
+    linkedin_follower: formData.followers.linkedin || 0,
+    blog_follower: formData.followers.blog || 0,
+    whatsapp_follower: formData.followers.whatsapp || 0,
+    podcast_follower: formData.followers.podcast || 0,
       
         },
     };
