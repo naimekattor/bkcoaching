@@ -17,6 +17,8 @@ export default function SignupPage() {
   const returnTo = params.get("returnTo") || "";
   const match = returnTo.match(/^\/([^-]+)/);
   const result = match ? match[1] : null;
+  console.log("current to where go",returnTo);
+  
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -109,7 +111,7 @@ const handleGoogleSignUp = async () => {
     });
   }
   signIn("google", {
-    callbackUrl: `/home_dashboard?returnTo=${returnTo}`,
+    callbackUrl: `${returnTo}`,
   });
 };
 
