@@ -105,7 +105,7 @@ export function PricingSection({
         {
           auth: true,
           method: "POST",
-          body: JSON.stringify({ price_id: priceId,success_url:"http://localhost:3000/home_dashboard?success",cancel_url:"http://localhost:3000/home_dashboard?cancel" }),
+          body: JSON.stringify({ price_id: priceId,success_url:"http://thesocialmarket.ai/home_dashboard?success",cancel_url:"http://thesocialmarket.ai/home_dashboard?cancel" }),
         }
       );
 
