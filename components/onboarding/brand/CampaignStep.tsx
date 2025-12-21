@@ -738,7 +738,7 @@ const CampaignStep = ({ onBack,onNext }: CampaignStepProps) => {
                 <CardTitle>Campaign Settings</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
+                {/* <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <Label>Content Approval Required</Label>
                     <p className="text-xs text-muted-foreground">
@@ -754,7 +754,7 @@ const CampaignStep = ({ onBack,onNext }: CampaignStepProps) => {
                       }))
                     }
                   />
-                </div>
+                </div> */}
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
@@ -843,7 +843,7 @@ const CampaignStep = ({ onBack,onNext }: CampaignStepProps) => {
           >
             {onboardingData.autoMatch
               ? "Create Campaign & Find micro-influencers"
-              : "Create Campaign & next"}
+              : "Create Campaign & Next"}
           </Button>
         </div>
       </div>
