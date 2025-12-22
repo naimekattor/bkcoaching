@@ -170,6 +170,7 @@ export default function CampaignDashboard() {
   const [hoverRating, setHoverRating] = useState<number>(0);
   const [ratingValue, setRatingValue] = useState<number>(0);
   const [modalHirings, setModalHirings] = useState<HiringCampaign[]>([]);
+  const [archieveStatus, setArchieveStatus] = useState<CampaignApiResponse | null>(null);
 
   /* ---------- Stats (no type errors) ---------- */
   const stats = [
@@ -492,6 +493,31 @@ export default function CampaignDashboard() {
       }
     } catch (error) {
       toast.error("Failed to submit rating.");
+    }
+  };
+
+  // handle archieve
+  const handleArchieve = async (status: string, id:string) => {
+    try {
+      const res = await apiClient(`campaign_service/update_a_campaign/${id}/`, {
+        method: "PATCH",
+        auth: true,
+        body: JSON.stringify({ campaign_status: status }),
+      });
+      console.log(res);
+      if (res.code == 200) {
+        setArchieveStatus(res?.data);
+      }
+
+      // setAllCampaigns((prev) =>
+      //   prev.map((c) =>
+      //     c.id === campaign.id
+      //       ? { ...c, status: newStatus as "active" | "paused" }
+      //       : c
+      //   )
+      // );
+    } catch (err) {
+      console.error("Pause/Resume failed", err);
     }
   };
 
@@ -948,21 +974,30 @@ export default function CampaignDashboard() {
                 </div>
               </div>
               {/* Mark as Archieve button */}
-              {/* <div>
+              <div className="flex justify-center items-center">
                 <button
-                            onClick={() => handleComplete(hiring.id)}
-                            disabled={hiring.is_completed_marked_by_brand}
-                            className={`px-4 py-2 text-sm font-semibold rounded-md transition-colors ${
-                              hiring.is_completed_marked_by_brand
-                                ? "bg-green-100 text-green-700 cursor-default"
-                                : "bg-secondary text-primary hover:bg-[var(--secondaryhover)] cursor-pointer"
-                            }`}
-                          >
-                            {hiring.is_completed_marked_by_brand
-                              ? "✓ Archieved"
-                              : "Mark as Archieve"}
-                          </button>
-              </div> */}
+                  onClick={() => {
+                    const nextStatus =
+                      archieveStatus?.campaign_status === "archive"
+                        ? "active"
+                        : "archive";
+
+                    handleArchieve(nextStatus, selectedCampaign.id);
+                  }}
+                  className={`px-8 py-3 text-sm font-semibold rounded-md transition-all
+      cursor-pointer
+      ${
+        archieveStatus?.campaign_status === "archive"
+          ? "bg-slate-200 text-slate-600 hover:bg-gray-300 cursor-not-allowed"
+          : "bg-secondary text-primary hover:bg-[var(--secondaryhover)]"
+      }
+    `}
+                >
+                  {archieveStatus?.campaign_status === "archive"
+                    ? "Archived"
+                    : "Mark as Archive"}
+                </button>
+              </div>
             </div>
           </div>
         </div>
