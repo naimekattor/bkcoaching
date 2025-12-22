@@ -6,7 +6,7 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { ChevronDown, LogOut, RefreshCw } from "lucide-react";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { ArrowRightLeft, Briefcase, Sparkles } from "lucide-react";
 const DashboardTopHeader = () => {
@@ -30,6 +30,7 @@ const DashboardTopHeader = () => {
 
   const isBrandDashboard = pathname.startsWith("/brand-dashboard");
   const isInfluencerDashboard = pathname.startsWith("/influencer-dashboard");
+  const { data: session, status: sessionStatus } = useSession(); 
 
   // --- 1. WebSocket Connection Logic ---
   const connectWebSocket = () => {
@@ -125,6 +126,53 @@ const DashboardTopHeader = () => {
       // TODO: Call API to mark read here
     }
   };
+
+
+  useEffect(() => {
+  const fetchUnreadNotifications = async () => {
+    const token = session?.accessToken || localStorage.getItem("access_token");
+    if (!token) return;
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}chat_service/get_unread_noti/`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (!res.ok) {
+        console.error("Failed to fetch unread notifications");
+        return;
+      }
+
+      const json = await res.json();
+
+      console.log("📦 Backend unread notifications:", json.data);
+
+      const mapped = json.data.map((n) => ({
+    id: n.id,
+    message: n.payload.message
+}));
+
+      console.log("🧠 Mapped notifications:", mapped);
+
+      // 🔥 Replace state (not append)
+      setNotifications((prev) => [...mapped, ...prev]);
+
+      // 🔥 Set exact unread count
+      setNotificationCount(mapped.length);
+
+      console.log("🔔 Unread count:", mapped.length);
+    } catch (err) {
+      console.error("Notification fetch error:", err);
+    }
+  };
+
+  fetchUnreadNotifications();
+}, []);
+
+
 
   return (
     <div className="bg-white px-4 sm:px-8 py-5 border-b border-gray-100">

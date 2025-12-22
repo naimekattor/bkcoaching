@@ -9,6 +9,7 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import { X, Calendar, Paperclip, CheckCircle, XCircle } from "lucide-react";
 import { toast } from "react-toastify";
 import { usePathname } from "next/navigation";
+import { useNotificationStore } from "@/stores/useNotificationStore";
 
 // --- Interfaces ---
 interface Attachment {
@@ -84,6 +85,8 @@ export default function Page() {
   const user = useAuthStore((state) => state.user);
   const setUser = useAuthStore((state) => state.setUser);
   console.log(user);
+  const unread = useNotificationStore((s) => s.unreadCount);
+  console.log(unread);
 
   // const store = useAuthStore.getState();
 

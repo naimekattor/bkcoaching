@@ -777,7 +777,7 @@ export default function CampaignDashboard() {
                 {/* Objective */}
                 <div className="mt-6 flex items-start gap-3">
                   <div className="p-2.5 bg-purple-50 rounded-xl flex-shrink-0">
-                    <Target className="w-5 h-5 text-purple-600" />
+                    <Target className="w-5 h-5 text-primary" />
                   </div>
                   <div className="flex-1">
                     <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">

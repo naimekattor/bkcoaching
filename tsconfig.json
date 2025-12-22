@@ -36,7 +36,7 @@
     "components/brand/CreateCampaignModal.tsx",
     "components/dashboard/Sidebar.jsx",
     ".next/dev/types/**/*.ts"
-  ],
+, "components/dashboard/DashboardTopHeader.jsx"  ],
   "exclude": [
     "node_modules"
   ]

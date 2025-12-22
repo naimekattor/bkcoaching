@@ -16,6 +16,7 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import { apiClient } from "@/lib/apiClient";
 import { uploadToCloudinary } from "@/lib/fileUpload";
 import { toast } from "react-toastify";
+import { useNotificationStore } from "@/stores/useNotificationStore";
 
 interface Room {
   room_id: string;
@@ -162,13 +163,12 @@ export default function MessagesClient() {
             target_user_id: Number(otherUserId),
           }),
         });
-        console.log("raw res",res);
+        console.log("raw res", res);
 
         const matchedRoom = rooms.find(
-  (room) => room.room_id === res?.data?.room_id
-);
+          (room) => room.room_id === res?.data?.room_id
+        );
 
-        
         setSelectedRoom((prev) =>
           prev
             ? { ...prev, room_id: res?.data.room_id ?? prev.room_id }
@@ -178,7 +178,7 @@ export default function MessagesClient() {
                 last_message: "",
                 timestamp: new Date().toISOString(),
                 name: matchedRoom?.name,
-                profile_picture:matchedRoom?.profile_picture
+                profile_picture: matchedRoom?.profile_picture,
               }
         );
         // handle res if needed
@@ -191,29 +191,26 @@ export default function MessagesClient() {
   }, [otherUserId]);
 
   useEffect(() => {
-  if (!selectedRoom?.room_id || rooms.length === 0) return;
+    if (!selectedRoom?.room_id || rooms.length === 0) return;
 
-  const matchedRoom = rooms.find(
-    (room) => room.room_id === selectedRoom.room_id
-  );
+    const matchedRoom = rooms.find(
+      (room) => room.room_id === selectedRoom.room_id
+    );
 
-  if (!matchedRoom) return;
+    if (!matchedRoom) return;
 
-  setSelectedRoom((prev) =>
-    prev
-      ? {
-          ...prev,
-          name: matchedRoom.name,
-          profile_picture: matchedRoom.profile_picture,
-        }
-      : prev
-  );
-}, [rooms, selectedRoom?.room_id]);
+    setSelectedRoom((prev) =>
+      prev
+        ? {
+            ...prev,
+            name: matchedRoom.name,
+            profile_picture: matchedRoom.profile_picture,
+          }
+        : prev
+    );
+  }, [rooms, selectedRoom?.room_id]);
 
-
-
-  console.log("when coming from outside",selectedRoom);
-  
+  console.log("when coming from outside", selectedRoom);
 
   useEffect(() => {
     const fetchOtherUserProfile = async () => {
@@ -391,20 +388,29 @@ export default function MessagesClient() {
         const userId = Number(currentUserId);
 
         ws.onmessage = (event) => {
-
           try {
             const payload = JSON.parse(event.data);
             console.log(payload);
+
             const senderId = String(payload.sender_id);
-        const myId = String(currentUserId);
-        const isOwn = senderId === myId;
+            const myId = String(currentUserId);
+            const isOwn = senderId === myId;
 
             console.log("Message received:", {
               sender_id: payload.sender_id,
               current_user: userId,
               isOwn: Number(payload.sender_id) == userId,
             });
-            if (isOwn) return; 
+            if (isOwn) return;
+            const isCurrentRoom = payload.room_id === selectedRoom?.room_id;
+
+            if (!isOwn && !isCurrentRoom) {
+              useNotificationStore.getState().add({
+                kind: "message",
+                title: "New Message",
+                message: payload.message,
+              });
+            }
 
             let incomingMessage = payload.message ?? "";
             let fileUrl: string | undefined = payload.file ?? undefined;
@@ -425,7 +431,7 @@ export default function MessagesClient() {
             const hasContent = Boolean(incomingMessage || fileUrl);
             if (hasContent && isOwn == false) {
               console.log("message printing");
-              
+
               setMessages((prev) => [
                 ...prev,
                 {
@@ -443,7 +449,6 @@ export default function MessagesClient() {
                   senderName: selectedRoom?.name || "User",
                 },
               ]);
-
 
               // Scroll to bottom
               setTimeout(() => {
@@ -745,21 +750,21 @@ export default function MessagesClient() {
                 </button>
                 <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold">
                   {selectedRoom?.profile_picture ? (
-  <Image
-    src={getSafeImageSrc(selectedRoom.profile_picture)}
-    alt="Profile picture"
-    width={48}
-    height={48}
-    className="w-[48px] h-[48px] rounded-full"
-  />
-) : (
-  <span className="rounded-full overflow-hidden flex items-center justify-center text-white font-semibold text-xs flex-shrink-0">
-    {selectedRoom?.name?.[0] ||
-      otherUserProfile?.influencer_profile?.display_name?.[0] ||
-      "U"}
-  </span>
-)}
-
+                    <Image
+                      src={getSafeImageSrc(selectedRoom.profile_picture)}
+                      alt="Profile picture"
+                      width={48}
+                      height={48}
+                      className="w-[48px] h-[48px] rounded-full"
+                    />
+                  ) : (
+                    <span className="rounded-full overflow-hidden flex items-center justify-center text-white font-semibold text-xs flex-shrink-0">
+                      {selectedRoom?.name?.[0] ||
+                        otherUserProfile?.influencer_profile
+                          ?.display_name?.[0] ||
+                        "U"}
+                    </span>
+                  )}
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="font-bold text-gray-900 truncate">
