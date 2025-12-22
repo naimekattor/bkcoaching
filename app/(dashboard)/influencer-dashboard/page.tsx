@@ -281,8 +281,8 @@ export default function Page() {
         value: campaigns.length,
         label: "Total Campaigns",
         icon: "📊",
-        bgColor: "bg-yellow-100",
-        textColor: "text-yellow-700",
+        bgColor: "bg-secondary",
+        textColor: "text-primary",
       },
       {
         value: `$${totalEarnings}`,
@@ -295,8 +295,8 @@ export default function Page() {
         value: "0",
         label: "New Messages",
         icon: "✉️",
-        bgColor: "bg-orange-100",
-        textColor: "text-orange-700",
+        bgColor: "bg-[#fefce9]",
+        textColor: "text-primary",
       },
     ].map((item, index) => (
       <div
