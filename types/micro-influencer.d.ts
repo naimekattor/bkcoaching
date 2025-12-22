@@ -1,5 +1,6 @@
 export interface MicroInfluencer {
   id: string;
+  userId?: string;
   name: string;
   description: string;
   logo?: string;

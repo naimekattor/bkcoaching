@@ -80,6 +80,7 @@ interface InfluencerProfileResponse {
 
 interface ApiResponse {
   influencer_profile?: InfluencerProfileResponse;
+  
 }
 
 export default function BrandProfilePage() {
@@ -102,6 +103,8 @@ export default function BrandProfilePage() {
         const res = await apiClient(`user_service/get_a_influencer/${id}/`, {
           method: "GET",
         });
+        console.log(res);
+        
 
         const profile = (res.data as ApiResponse | undefined)?.influencer_profile;
 
@@ -128,6 +131,7 @@ export default function BrandProfilePage() {
         // Map ONLY influencer_profile → MicroInfluencer
         const normalised: MicroInfluencer = {
           id: String(profile.id ?? id),
+          userId: res?.data?.user?.id ? String(res?.data?.user?.id) : undefined,
           name: str(profile.display_name, "Unnamed Influencer"),
           description: str(profile.short_bio, ""),
           logo:
@@ -325,7 +329,7 @@ export default function BrandProfilePage() {
 
             <div className="flex gap-3">
               <button className="bg-yellow-500 hover:bg-[var(--secondaryhover)] text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2"
-              onClick={()=>router.push(`/brand-dashboard/messages?id=${id}`)}>
+              onClick={()=>router.push(`/brand-dashboard/messages?id=${influencer?.userId}`)}>
                 <MessageCircle className="w-4 h-4" />
                 Message
               </button>

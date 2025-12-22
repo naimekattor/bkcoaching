@@ -55,6 +55,9 @@ interface BrandProfileResponse {
   resources?: unknown[];
   platforms?: string[];
   youtube_handle?: string;
+  user?: {
+    id?: string | number;
+  };
 }
 
 interface BrandResponse {
@@ -79,12 +82,14 @@ export default function BrandProfilePage() {
           method: "GET",
         });
         setUserOtherData(res?.data?.res);
-        console.log(userOtherData);
+        console.log(res);
         
 
         // ---- Normalise API → Brand ----
         const raw =
           (res.data.data as BrandResponse | undefined)?.brand_profile ?? {};
+          console.log(raw);
+          
 
         const platforms: string[] = Array.isArray(raw.platforms)
           ? raw.platforms
@@ -92,6 +97,7 @@ export default function BrandProfilePage() {
 
         const normalised: Brand = {
           id: String(raw.id ?? id),
+          userId: res?.data?.data?.user?.id ? String(res?.data?.data?.user?.id) : undefined,
           name: raw.business_name ?? "Unnamed Brand",
           description: raw.short_bio ?? "",
           logo: raw.logo ?? undefined,
@@ -249,7 +255,7 @@ export default function BrandProfilePage() {
             </div>
 
             <div className="flex gap-3">
-              <Link href={`/influencer-dashboard/messages?id=${id}`}>
+              <Link href={`/influencer-dashboard/messages?id=${brand?.userId}`}>
               <button className="bg-yellow-500 cursor-pointer hover:bg-[var(--secondaryhover)] text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2">
                 <MessageCircle className="w-4 h-4" />
                 Message
