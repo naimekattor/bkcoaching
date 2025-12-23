@@ -9,6 +9,7 @@ interface InfluencerOnboardingData {
   // From micro-influencer profile
   display_name: string;
   short_bio: string;
+  gender:string;
   profile_picture: string;
   instagram_handle: string;
   tiktok_handle: string;
@@ -77,6 +78,7 @@ const InfluencerOnboardingContext = createContext<
 const initialState: InfluencerOnboardingData = {
   display_name: "",
   short_bio: "",
+  gender:"",
   profile_picture: "",
   instagram_handle: "",
   tiktok_handle: "",

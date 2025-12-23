@@ -117,13 +117,34 @@ const DashboardTopHeader = () => {
     setShowProfileDropdown(false);
   };
 
-  const handleNotificationClick = () => {
-    setShowNotifDropdown(!showNotifDropdown);
-    setShowProfileDropdown(false);
+  const handleNotificationClick = async() => {
+    // setShowNotifDropdown(!showNotifDropdown);
+    // setShowProfileDropdown(false);
+    const nextState = !showNotifDropdown;
+setShowNotifDropdown(nextState);
 
     if (!showNotifDropdown && notificationCount > 0) {
-      setNotificationCount(0);
-      // TODO: Call API to mark read here
+      
+      try {
+        const token = session?.accessToken || localStorage.getItem("access_token");
+    if (!token) return;
+    const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}chat_service/noti_seen_all/`,
+        {
+          method:"POST",
+          headers: { Authorization: `Bearer ${token}` },
+          
+        }
+      );
+      const data=await  res.json();
+      if (data) {
+        setNotificationCount(0);
+      }
+        
+      } catch (error) {
+        console.log(error);
+        
+      }
     }
   };
 

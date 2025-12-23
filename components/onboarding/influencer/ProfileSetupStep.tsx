@@ -14,6 +14,7 @@ import { industriesNiches } from "@/constants/niches";
 import { demographics } from "@/constants/demographics";
 import { useInfluencerOnboarding } from "@/contexts/InfluencerOnboardingContext";
 import { uploadToCloudinary } from "@/lib/fileUpload";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface ProfileSetupStepProps {
   onNext: () => void;
@@ -73,6 +74,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
   const isValid =
     onboardingDataInfluencer.display_name &&
     onboardingDataInfluencer.short_bio &&
+    onboardingDataInfluencer.gender &&
     onboardingDataInfluencer.content_niches.length > 0;
 
   return (
@@ -132,41 +134,66 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
 
               {/* Basic Info */}
               <div className="space-y-4 flex-1">
-                <div className="space-y-2 ">
-                  <Label htmlFor="displayName">Display Name *</Label>
-                  <Input
-                    id="displayName"
-                    value={onboardingDataInfluencer.display_name}
-                    onChange={(e) =>
-                      setOnboardingDataInfluencer((prev) => ({
-                        ...prev,
-                        display_name: e.target.value,
-                      }))
-                    }
-                    placeholder="Your micro-influencer name"
-                  />
-                </div>
+  {/* Display Name */}
+  <div className="space-y-2">
+    <Label htmlFor="displayName">Display Name *</Label>
+    <Input
+      id="displayName"
+      value={onboardingDataInfluencer.display_name}
+      onChange={(e) =>
+        setOnboardingDataInfluencer((prev) => ({
+          ...prev,
+          display_name: e.target.value,
+        }))
+      }
+      placeholder="Your micro-influencer name"
+    />
+  </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="bio">Short Bio (160 characters) *</Label>
-                  <Textarea
-                    id="bio"
-                    value={onboardingDataInfluencer.short_bio}
-                    onChange={(e) =>
-                      setOnboardingDataInfluencer((prev) => ({
-                        ...prev,
-                        short_bio: e.target.value,
-                      }))
-                    }
-                    placeholder="Tell brands what makes you unique..."
-                    rows={3}
-                    maxLength={160}
-                  />
-                  <p className="text-xs text-muted-foreground text-right">
-                    {onboardingDataInfluencer.short_bio.length}/160 characters
-                  </p>
-                </div>
-              </div>
+  {/* Gender */}
+  <div className="space-y-2">
+    <Label htmlFor="gender">Gender *</Label>
+    <Select
+      value={onboardingDataInfluencer.gender || ""}
+      onValueChange={(value) =>
+        setOnboardingDataInfluencer((prev) => ({
+          ...prev,
+          gender: value,
+        }))
+      }
+    >
+      <SelectTrigger id="gender" className="w-full">
+        <SelectValue placeholder="Select your gender" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="male">Male</SelectItem>
+        <SelectItem value="female">Female</SelectItem>
+        <SelectItem value="prefer_not_to_say">No preference</SelectItem>
+      </SelectContent>
+    </Select>
+  </div>
+
+  {/* Short Bio */}
+  <div className="space-y-2">
+    <Label htmlFor="bio">Short Bio (160 characters) *</Label>
+    <Textarea
+      id="bio"
+      value={onboardingDataInfluencer.short_bio}
+      onChange={(e) =>
+        setOnboardingDataInfluencer((prev) => ({
+          ...prev,
+          short_bio: e.target.value.slice(0, 160), // Enforce limit
+        }))
+      }
+      placeholder="Tell brands what makes you unique..."
+      rows={3}
+      maxLength={160}
+    />
+    <p className="text-xs text-muted-foreground text-right">
+      {onboardingDataInfluencer.short_bio.length}/160 characters
+    </p>
+  </div>
+</div>
             </div>
           </CardContent>
         </Card>

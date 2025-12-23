@@ -292,7 +292,7 @@ const WorkflowStep = ({ onNext, onBack }: WorkflowStepProps) => {
               <h4 className="font-medium">Response Times</h4>
               <ul className="text-sm text-muted-foreground space-y-1">
                 <li>• Respond to messages within your set timeframe</li>
-                <li>• Accept/decline offers within 48 hours</li>
+                
                 <li>• Communicate any delays proactively</li>
               </ul>
             </div>
@@ -301,7 +301,7 @@ const WorkflowStep = ({ onNext, onBack }: WorkflowStepProps) => {
               <ul className="text-sm text-muted-foreground space-y-1">
                 <li>• Meet agreed deadlines</li>
                 <li>• Follow brand guidelines exactly</li>
-                <li>• Allow one round of revisions</li>
+                
               </ul>
             </div>
           </div>

@@ -4,11 +4,29 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { HelpCircle, Search, Star } from "lucide-react";
+import { HelpCircle, Instagram, Search, Star } from "lucide-react";
 import { apiClient } from "@/lib/apiClient";
 import { SkeletonCard } from "@/components/SkeletoCard";
 import { industriesNiches } from "@/constants/niches";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { FaXTwitter } from "react-icons/fa6";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  FaBlog,
+  FaFacebook,
+  FaLinkedin,
+  FaPodcast,
+  FaTiktok,
+  FaTwitter,
+  FaWhatsapp,
+  FaYoutube,
+} from "react-icons/fa";
 
 const PAGE_SIZE = 10;
 
@@ -32,6 +50,12 @@ interface InfluencerProfile {
   instagram_handle?: string;
   tiktok_handle?: string;
   youtube_handle?: string;
+  podcast_handle?: string;
+  linkedin_handle?: string;
+  facebook_handle?: string;
+  blog_handle?: string;
+  whatsapp_handle?: string;
+  twitter_handle?:string;
   insta_follower?: number;
   facebook_follower?: number;
   tiktok_follower?: number;
@@ -43,7 +67,7 @@ interface InfluencerProfile {
 interface InfluencerUser {
   first_name?: string;
   last_name?: string;
-  id?:string;
+  id?: string;
 }
 
 interface InfluencerRecord {
@@ -71,15 +95,15 @@ const sanitizeImageSrc = (src?: string | null) => {
 // --- Helper to calculate total followers ---
 const calculateFollowers = (inf: InfluencerProfile | undefined | null) => {
   if (!inf) return 0;
-  
-  const total = 
+
+  const total =
     Number(inf.insta_follower || 0) +
     Number(inf.facebook_follower || 0) +
     Number(inf.tiktok_follower || 0) +
     Number(inf.linkedin_follower || 0) +
     Number(inf.youtube_follower || 0) +
     Number(inf.blog_follower || 0);
-    
+
   return total;
 };
 
@@ -87,13 +111,12 @@ function MicroInfluencersPageContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
- 
+
   // URL page sync
   const urlPage = Number(searchParams.get("page") ?? "1");
   const currentPage = urlPage >= 1 ? urlPage : 1;
-  const filter_by_self=searchParams.get("review")=== "true";
+  const filter_by_self = searchParams.get("review") === "true";
   console.log(filter_by_self);
-  
 
   const setPage = (page: number) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -102,9 +125,9 @@ function MicroInfluencersPageContent() {
   };
 
   // UI state
-  const [tempSearch, setTempSearch] = useState(""); 
-  const [searchTerm, setSearchTerm] = useState(""); 
-  
+  const [tempSearch, setTempSearch] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+
   const [filters, setFilters] = useState({
     contentNiches: "",
     budgetRange: "",
@@ -119,41 +142,44 @@ function MicroInfluencersPageContent() {
   const [hasNextPage, setHasNextPage] = useState(false);
 
   const timeZones = [
-  {
-    value: "America/New_York",
-    label: "Eastern Standard Time – EST (UTC−5) / Eastern Daylight Time – EDT (UTC−4)",
-  },
-  {
-    value: "America/Chicago",
-    label: "Central Standard Time – CST (UTC−6) / Central Daylight Time – CDT (UTC−5)",
-  },
-  {
-    value: "America/Denver",
-    label: "Mountain Standard Time – MST (UTC−7) / Mountain Daylight Time – MDT (UTC−6)",
-  },
-  {
-    value: "America/Phoenix",
-    label: "Mountain Standard Time – MST (UTC−7) – no DST",
-  },
-  {
-    value: "America/Los_Angeles",
-    label: "Pacific Standard Time – PST (UTC−8) / Pacific Daylight Time – PDT (UTC−7)",
-  },
-  {
-    value: "America/Anchorage",
-    label: "Alaska Standard Time – AKST (UTC−9) / Alaska Daylight Time – AKDT (UTC−8)",
-  },
-  {
-    value: "Pacific/Honolulu",
-    label: "Hawaii Standard Time – HST (UTC−10)",
-  },
-];
-
+    {
+      value: "America/New_York",
+      label:
+        "Eastern Standard Time – EST (UTC−5) / Eastern Daylight Time – EDT (UTC−4)",
+    },
+    {
+      value: "America/Chicago",
+      label:
+        "Central Standard Time – CST (UTC−6) / Central Daylight Time – CDT (UTC−5)",
+    },
+    {
+      value: "America/Denver",
+      label:
+        "Mountain Standard Time – MST (UTC−7) / Mountain Daylight Time – MDT (UTC−6)",
+    },
+    {
+      value: "America/Phoenix",
+      label: "Mountain Standard Time – MST (UTC−7) – no DST",
+    },
+    {
+      value: "America/Los_Angeles",
+      label:
+        "Pacific Standard Time – PST (UTC−8) / Pacific Daylight Time – PDT (UTC−7)",
+    },
+    {
+      value: "America/Anchorage",
+      label:
+        "Alaska Standard Time – AKST (UTC−9) / Alaska Daylight Time – AKDT (UTC−8)",
+    },
+    {
+      value: "Pacific/Honolulu",
+      label: "Hawaii Standard Time – HST (UTC−10)",
+    },
+  ];
 
   // Check if any filters are active (using actual searchTerm)
   const hasActiveFilters =
-    searchTerm ||
-    Object.values(filters).some((f) => f && f !== "");
+    searchTerm || Object.values(filters).some((f) => f && f !== "");
 
   // 3. Handle Manual Search Trigger
   const handleSearchTrigger = () => {
@@ -171,22 +197,21 @@ function MicroInfluencersPageContent() {
     }
   };
 
-    const isSwitchingToReview = useRef(false);
-
+  const isSwitchingToReview = useRef(false);
 
   const handleReviewMatches = () => {
-        isSwitchingToReview.current = true;
+    isSwitchingToReview.current = true;
 
     // Clear other filters visually
     setTempSearch("");
     setSearchTerm("");
     setFilters({
-        contentNiches: "",
-        budgetRange: "",
-        platforms: "",
-        timeZone: "",
-        followers: "",
-        gender: "",
+      contentNiches: "",
+      budgetRange: "",
+      platforms: "",
+      timeZone: "",
+      followers: "",
+      gender: "",
     });
 
     // Set URL param ?review=true
@@ -207,19 +232,18 @@ function MicroInfluencersPageContent() {
         // CASE 1: Review Matches (filter_by_self is present)
         if (filter_by_self) {
           isSwitchingToReview.current = false;
-            console.log("Fetching Review Matches...");
-            
-            const filterPayload = {
-                filter_by_self: true, 
-                
-            };
+          console.log("Fetching Review Matches...");
 
-            res = await apiClient("user_service/filter_influencers/", {
-                method: "POST",
-                auth:true,
-                body: JSON.stringify(filterPayload),
-            });
-            const list: InfluencerRecord[] = Array.isArray(res.data)
+          const filterPayload = {
+            filter_by_self: true,
+          };
+
+          res = await apiClient("user_service/filter_influencers/", {
+            method: "POST",
+            auth: true,
+            body: JSON.stringify(filterPayload),
+          });
+          const list: InfluencerRecord[] = Array.isArray(res.data)
             ? res.data
             : [];
 
@@ -231,6 +255,12 @@ function MicroInfluencersPageContent() {
             if (inf.instagram_handle) platforms.push("instagram");
             if (inf.tiktok_handle) platforms.push("tiktok");
             if (inf.youtube_handle) platforms.push("youtube");
+            if (inf.facebook_handle) platforms.push("facebook");
+            if (inf.linkedin_handle) platforms.push("linkedin");
+            if (inf.podcast_handle) platforms.push("podcast");
+            if (inf.blog_handle) platforms.push("blog");
+            if (inf.whatsapp_handle) platforms.push("whatsapp");
+            if (inf.twitter_handle) platforms.push("twitter");
 
             const total = calculateFollowers(item.influencer_profile);
 
@@ -242,7 +272,8 @@ function MicroInfluencersPageContent() {
                 "Unknown",
               profileImage: sanitizeImageSrc(inf.profile_picture),
               // totalFollowers=inf.insta_follower + inf.facebook_follower + inf.facebook_follower + inf.tiktok_follower + inf?.linkedin_follower + inf?.youtube_follower + inf?.blog_follower ??0,
-              followers: total > 0 ? `${(total / 1000).toFixed(1)}K` : "New Talent",
+              followers:
+                total > 0 ? `${(total / 1000).toFixed(1)}K` : "New Talent",
               socialLinks: platforms,
               niche: inf.content_niches?.[0] || "Unknown",
               timeZone: inf.timezone || "Unknown",
@@ -252,7 +283,6 @@ function MicroInfluencersPageContent() {
           setInfluencers(normalized);
           setTotalCount(normalized.length);
           setHasNextPage(false);
-            
         }
 
         // If filters are active, use filter endpoint
@@ -260,17 +290,17 @@ function MicroInfluencersPageContent() {
           isSwitchingToReview.current = false;
           const filterPayload = {
             search: searchTerm.trim(),
-            "Platforms": filters.platforms,
+            Platforms: filters.platforms,
             "Budget Range": filters.budgetRange,
             "Time Zone": filters.timeZone,
-            "Gender": filters.gender,
+            Gender: filters.gender,
             "Audience Reach": filters.followers,
             "content niches": filters.contentNiches,
           };
 
           res = await apiClient("user_service/filter_influencers/", {
             method: "POST",
-            auth:true,
+            auth: true,
             body: JSON.stringify(filterPayload),
           });
 
@@ -287,6 +317,11 @@ function MicroInfluencersPageContent() {
             if (inf.instagram_handle) platforms.push("instagram");
             if (inf.tiktok_handle) platforms.push("tiktok");
             if (inf.youtube_handle) platforms.push("youtube");
+            if (inf.facebook_handle) platforms.push("facebook");
+            if (inf.linkedin_handle) platforms.push("linkedin");
+            if (inf.podcast_handle) platforms.push("podcast");
+            if (inf.blog_handle) platforms.push("blog");
+            if (inf.whatsapp_handle) platforms.push("whatsapp");
 
             const total = calculateFollowers(item.influencer_profile);
 
@@ -297,7 +332,8 @@ function MicroInfluencersPageContent() {
                 `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
                 "Unknown",
               profileImage: sanitizeImageSrc(inf.profile_picture),
-              followers: total > 0 ? `${(total / 1000).toFixed(1)}K` : "New Talent",
+              followers:
+                total > 0 ? `${(total / 1000).toFixed(1)}K` : "New Talent",
               socialLinks: platforms,
               niche: inf.content_niches?.[0] || "Unknown",
               timeZone: inf.timezone || "Unknown",
@@ -309,7 +345,7 @@ function MicroInfluencersPageContent() {
           setHasNextPage(false);
         } else {
           if (isSwitchingToReview.current) {
-            return; 
+            return;
           }
           // No filters - use pagination endpoint
           const queryParams = new URLSearchParams();
@@ -333,6 +369,11 @@ function MicroInfluencersPageContent() {
             if (inf.instagram_handle) platforms.push("instagram");
             if (inf.tiktok_handle) platforms.push("tiktok");
             if (inf.youtube_handle) platforms.push("youtube");
+            if (inf.facebook_handle) platforms.push("facebook");
+            if (inf.linkedin_handle) platforms.push("linkedin");
+            if (inf.podcast_handle) platforms.push("podcast");
+            if (inf.blog_handle) platforms.push("blog");
+            if (inf.whatsapp_handle) platforms.push("whatsapp");
 
             const total = calculateFollowers(item.influencer_profile);
 
@@ -344,7 +385,8 @@ function MicroInfluencersPageContent() {
                 `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
                 "Unknown",
               profileImage: sanitizeImageSrc(inf.profile_picture),
-              followers: total > 0 ? `${(total / 1000).toFixed(1)}K` : "New Talent",
+              followers:
+                total > 0 ? `${(total / 1000).toFixed(1)}K` : "New Talent",
               socialLinks: platforms,
               niche: inf.content_niches?.[0] || "Unknown",
               timeZone: inf.timezone || "Unknown",
@@ -364,7 +406,7 @@ function MicroInfluencersPageContent() {
     };
 
     fetchInfluencers();
-  }, [currentPage, searchTerm, filters, hasActiveFilters,filter_by_self]);
+  }, [currentPage, searchTerm, filters, hasActiveFilters, filter_by_self]);
 
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
@@ -385,9 +427,9 @@ function MicroInfluencersPageContent() {
     router.push(`${pathname}?${params.toString()}`);
   };
 
- const handleFilterChange = (key: string, value: string) => {
+  const handleFilterChange = (key: string, value: string) => {
     const newValue = value === "all" ? "" : value;
-    setFilters(prev => ({ ...prev, [key]: newValue }));
+    setFilters((prev) => ({ ...prev, [key]: newValue }));
     setPage(1);
   };
 
@@ -417,7 +459,7 @@ function MicroInfluencersPageContent() {
               />
             </div>
             <button
-              onClick={handleSearchTrigger} 
+              onClick={handleSearchTrigger}
               className="px-6 md:px-8 py-3 bg-secondary text-white rounded-xl hover:bg-[var(--secondaryhover)] transition-colors font-medium flex items-center gap-2 justify-center shadow-sm"
             >
               <Search className="w-4 h-4" />
@@ -428,12 +470,14 @@ function MicroInfluencersPageContent() {
             <button
               onClick={handleReviewMatches}
               className={`px-6 md:px-8 py-3 cursor-pointer rounded-xl transition-colors font-medium flex items-center gap-2 justify-center shadow-sm border ${
-                filter_by_self 
-                  ? " text-secondary border-secondary" 
+                filter_by_self
+                  ? " text-secondary border-secondary"
                   : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
               }`}
             >
-              <Star className={`w-4 h-4 ${filter_by_self ? "fill-secondary" : ""}`} />
+              <Star
+                className={`w-4 h-4 ${filter_by_self ? "fill-secondary" : ""}`}
+              />
               Review Matches
             </button>
           </div>
@@ -441,8 +485,8 @@ function MicroInfluencersPageContent() {
           {/* Filters */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             <button
-    onClick={clearFilters}
-    className="
+              onClick={clearFilters}
+              className="
       w-full py-1 cursor-pointer
       bg-white border border-gray-200 rounded-lg
       px-4 text-base 
@@ -450,12 +494,12 @@ function MicroInfluencersPageContent() {
       focus:ring-2 focus:ring-secondary/20
       transition-all
     "
-  >
-    All
-  </button>
+            >
+              All
+            </button>
             {/* Content Niches */}
-            <Select 
-              value={filters.contentNiches || "all"} 
+            <Select
+              value={filters.contentNiches || "all"}
               onValueChange={(val) => handleFilterChange("contentNiches", val)}
             >
               <SelectTrigger className="w-full h-12 bg-white border-gray-200 rounded-lg px-4 text-base focus:ring-2 focus:ring-secondary/20 transition-all hover:border-gray-300">
@@ -464,7 +508,11 @@ function MicroInfluencersPageContent() {
               <SelectContent className="max-h-[300px]">
                 <SelectItem value="all">All Content Niches</SelectItem>
                 {industriesNiches.map((niche) => (
-                  <SelectItem key={niche} value={niche} className="cursor-pointer">
+                  <SelectItem
+                    key={niche}
+                    value={niche}
+                    className="cursor-pointer"
+                  >
                     {niche}
                   </SelectItem>
                 ))}
@@ -472,8 +520,8 @@ function MicroInfluencersPageContent() {
             </Select>
 
             {/* Budget */}
-            <Select 
-              value={filters.budgetRange || "all"} 
+            <Select
+              value={filters.budgetRange || "all"}
               onValueChange={(val) => handleFilterChange("budgetRange", val)}
             >
               <SelectTrigger className="w-full h-12 bg-white border-gray-200 rounded-lg px-4 text-base focus:ring-2 focus:ring-secondary/20 transition-all hover:border-gray-300">
@@ -488,8 +536,8 @@ function MicroInfluencersPageContent() {
             </Select>
 
             {/* Platforms */}
-            <Select 
-              value={filters.platforms || "all"} 
+            <Select
+              value={filters.platforms || "all"}
               onValueChange={(val) => handleFilterChange("platforms", val)}
             >
               <SelectTrigger className="w-full h-12 bg-white border-gray-200 rounded-lg px-4 text-base focus:ring-2 focus:ring-secondary/20 transition-all hover:border-gray-300">
@@ -503,6 +551,8 @@ function MicroInfluencersPageContent() {
                 <SelectItem value="youtube">Facebook</SelectItem>
                 <SelectItem value="youtube">LinkedIn</SelectItem>
                 <SelectItem value="youtube">Blog</SelectItem>
+                <SelectItem value="youtube">Whatsapp</SelectItem>
+                <SelectItem value="youtube">Podcast</SelectItem>
               </SelectContent>
             </Select>
 
@@ -526,31 +576,31 @@ function MicroInfluencersPageContent() {
 
             {/* Followers */}
             <div className="relative">
-                <Select 
-                  value={filters.followers || "all"} 
-                  onValueChange={(val) => handleFilterChange("followers", val)}
-                >
-                  <SelectTrigger className="w-full h-12 bg-white border-gray-200 rounded-lg px-4 text-base focus:ring-2 focus:ring-secondary/20 transition-all hover:border-gray-300">
-                    <SelectValue placeholder="Audience Reach" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Audience Sizes</SelectItem>
-                    <SelectItem value="0-1000">0 – 1K</SelectItem>
-                    <SelectItem value="1001-5000">1K – 5K</SelectItem>
-                    <SelectItem value="5001-10000">5K – 10K</SelectItem>
-                    <SelectItem value="10001-50000">10K – 50K</SelectItem>
-                    <SelectItem value="50000+">50K+</SelectItem>
-                  </SelectContent>
-                </Select>
-                {/* Micro-interaction Helper Icon */}
-                <div className="absolute -top-2 -right-2 z-10 pointer-events-none">
-                   {/* Optional: Add a small badge or icon if filter is active */}
-                </div>
+              <Select
+                value={filters.followers || "all"}
+                onValueChange={(val) => handleFilterChange("followers", val)}
+              >
+                <SelectTrigger className="w-full h-12 bg-white border-gray-200 rounded-lg px-4 text-base focus:ring-2 focus:ring-secondary/20 transition-all hover:border-gray-300">
+                  <SelectValue placeholder="Audience Reach" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Audience Sizes</SelectItem>
+                  <SelectItem value="0-1000">0 – 1K</SelectItem>
+                  <SelectItem value="1001-5000">1K – 5K</SelectItem>
+                  <SelectItem value="5001-10000">5K – 10K</SelectItem>
+                  <SelectItem value="10001-50000">10K – 50K</SelectItem>
+                  <SelectItem value="50000+">50K+</SelectItem>
+                </SelectContent>
+              </Select>
+              {/* Micro-interaction Helper Icon */}
+              <div className="absolute -top-2 -right-2 z-10 pointer-events-none">
+                {/* Optional: Add a small badge or icon if filter is active */}
+              </div>
             </div>
 
             {/* Gender */}
-            <Select 
-              value={filters.gender || "all"} 
+            <Select
+              value={filters.gender || "all"}
               onValueChange={(val) => handleFilterChange("gender", val)}
             >
               <SelectTrigger className="w-full h-12 bg-white border-gray-200 rounded-lg px-4 text-base focus:ring-2 focus:ring-secondary/20 transition-all hover:border-gray-300">
@@ -652,20 +702,59 @@ function MicroInfluencersPageContent() {
                       {creator.followers}
                     </p>
                   </div>
-                  <div>
-                    
-                  </div>
+                  <div></div>
 
                   {/* Social Icons (Condensed for brevity) */}
                   <div className="flex justify-center gap-2 mb-4">
                     {creator.socialLinks.includes("instagram") && (
-                      <div className="w-8 h-8 bg-gradient-to-tr from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-                        <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.073-1.689-.073-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" /></svg>
+                      <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                        <Instagram color="#E4405F" />
                       </div>
                     )}
+
                     {creator.socialLinks.includes("tiktok") && (
-                      <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center">
-                        <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.042-3.441.219-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 01.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.888-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.357-.631-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24c6.624 0 11.99-5.367 11.99-11.988C24.007 5.367 18.641.001.012.001z" /></svg>
+                      <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                        <FaTiktok color="#000000" />
+                      </div>
+                    )}
+
+                    {creator.socialLinks.includes("youtube") && (
+                      <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                        <FaYoutube color="#FF0000" />
+                      </div>
+                    )}
+
+                    {creator.socialLinks.includes("facebook") && (
+                      <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                        <FaFacebook color="#1877F2" />
+                      </div>
+                    )}
+
+                    {creator.socialLinks.includes("linkedin") && (
+                      <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                        <FaLinkedin color="#0A66C2" />
+                      </div>
+                    )}
+
+                    {creator.socialLinks.includes("blog") && (
+                      <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                        <FaBlog color="#F57C00" />
+                      </div>
+                    )}
+
+                    {creator.socialLinks.includes("podcast") && (
+                      <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                        <FaPodcast color="#9146FF" />
+                      </div>
+                    )}
+                    {creator.socialLinks.includes("whatsapp") && (
+                      <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                        <FaWhatsapp color="#25D366" />
+                      </div>
+                    )}
+                    {creator.socialLinks.includes("twitter") && (
+                      <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                        <FaXTwitter color="#000000" />
                       </div>
                     )}
                   </div>
@@ -682,7 +771,9 @@ function MicroInfluencersPageContent() {
                     </Link>
                     <button
                       onClick={() =>
-                        router.push(`/brand-dashboard/messages?id=${creator.userId}`)
+                        router.push(
+                          `/brand-dashboard/messages?id=${creator.userId}`
+                        )
                       }
                       className="flex-1 px-4 py-2 bg-secondary text-primary rounded-lg hover:bg-[var(--secondaryhover)] transition-colors text-sm font-medium"
                     >

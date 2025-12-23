@@ -252,7 +252,7 @@ const Header = () => {
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex md:items-center md:space-x-8">
+            <nav className="hidden md:flex md:items-center md:gap-4">
               {navigationLinks.map((link, index) =>{ 
                 const isActive = pathName === link.href;
 
