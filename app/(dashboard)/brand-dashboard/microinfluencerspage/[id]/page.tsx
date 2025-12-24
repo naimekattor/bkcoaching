@@ -404,15 +404,15 @@ export default function BrandProfilePage() {
                   <div className="text-sm text-gray-600">Avg Rating</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-600 mb-1">
+                  <div className="text-2xl font-bold text-primary mb-1">
                     $
                     {(
                       (influencer.campaigns?.totalInvested ?? 0) / 1000
                     ).toFixed(0)}
-                    K
+                    
                   </div>
                   <div className="text-sm text-gray-600">
-                    Previous Engagements
+                    Total Earnings
                   </div>
                 </div>
               </div>
