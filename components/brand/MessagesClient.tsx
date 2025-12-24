@@ -374,7 +374,7 @@ export default function MessagesClient() {
         }
 
         // Build WebSocket URL using existing room
-        const wsUrl = `wss://exhaust-minute-picked-reservations.trycloudflare.com/chat_handshake/ws/chat/${
+        const wsUrl = `${process.env.NEXT_PUBLIC_WEBSOCKET_URL}${
           selectedRoom.room_id
         }/?token=${encodeURIComponent(token)}`;
 
@@ -402,9 +402,9 @@ export default function MessagesClient() {
               isOwn: Number(payload.sender_id) == userId,
             });
             if (isOwn) return;
-            const isCurrentRoom = payload.room_id === selectedRoom?.room_id;
+            // const isCurrentRoom = payload.room_id === selectedRoom?.room_id;
 
-            if (!isOwn && !isCurrentRoom) {
+            if (!isOwn) {
               useNotificationStore.getState().add({
                 kind: "message",
                 title: "New Message",

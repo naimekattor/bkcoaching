@@ -17,9 +17,9 @@ export function AnalyticsCards({ allCampaigns,previousHirings}) {
   return (
     <div>
       <h3 className="text-2xl font-semibold text-slate-800 mb-4">Analytics</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {analyticsData.map((item, index) => (
-          <div key={index} className="bg-slate-200 rounded-lg p-6 text-center">
+          <div key={index} className="bg-slate-200/50 rounded-lg p-6 text-center">
             <div
               className="text-3xl text-secondary font-bold mb-2"
               

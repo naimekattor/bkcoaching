@@ -9,11 +9,16 @@ import { ChevronDown, LogOut, RefreshCw } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { ArrowRightLeft, Briefcase, Sparkles } from "lucide-react";
+import { useNotificationStore } from "@/stores/useNotificationStore";
 const DashboardTopHeader = () => {
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
   const router = useRouter();
   const pathname = usePathname();
+    const noti = useNotificationStore((s) => s.notifications);
+    console.log("dashboard to header",noti);
+    
+  
 
   // --- UI States ---
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
@@ -47,7 +52,7 @@ const DashboardTopHeader = () => {
     console.log("🔄 Attempting to connect WebSocket...");
 
     const ws = new WebSocket(
-      `wss://exhaust-minute-picked-reservations.trycloudflare.com/chat_handshake/ws/notification/?token=${token}`
+      `${process.env.NEXT_PUBLIC_WEBSOCKET_NOTI_URL}?token=${token}`
     );
 
     ws.onopen = () => {
@@ -177,12 +182,30 @@ setShowNotifDropdown(nextState);
 }));
 
       console.log("🧠 Mapped notifications:", mapped);
-
+let combinedNotifications = [...mapped];
       // 🔥 Replace state (not append)
-      setNotifications((prev) => [...mapped, ...prev]);
+      // setNotifications((prev) => [...mapped, ...prev]);
 
-      // 🔥 Set exact unread count
-      setNotificationCount(mapped.length);
+      // // 🔥 Set exact unread count
+      // setNotificationCount(mapped.length);
+      if (noti) {
+        const messageNoti=noti.map((n)=>({
+        id:n.id,
+        message:n.message,
+      }));
+
+
+      // setNotifications((prev) => [...messageNoti, ...prev]);
+
+      // // 🔥 Set exact unread count
+      // setNotificationCount(messageNoti.length);
+      combinedNotifications = [...messageNoti, ...combinedNotifications];
+      }
+      setNotifications(combinedNotifications);
+setNotificationCount(combinedNotifications.length);
+
+      
+
 
       console.log("🔔 Unread count:", mapped.length);
     } catch (err) {

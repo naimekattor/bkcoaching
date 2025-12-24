@@ -136,7 +136,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
               <div className="space-y-4 flex-1">
   {/* Display Name */}
   <div className="space-y-2">
-    <Label htmlFor="displayName">Display Name *</Label>
+    <Label htmlFor="displayName">Display Name </Label>
     <Input
       id="displayName"
       value={onboardingDataInfluencer.display_name}
@@ -466,7 +466,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
         <Label htmlFor="whatsapp_handle">Average Status Views / Group Size</Label>
         <Input
           id="twitter_follower"
-          value={onboardingDataInfluencer.twitter_follower}
+          value={onboardingDataInfluencer.whatsapp_follower}
           onChange={(e) =>
             setOnboardingDataInfluencer((prev) => ({
               ...prev,

@@ -86,7 +86,8 @@ export default function Page() {
   const setUser = useAuthStore((state) => state.setUser);
   console.log(user);
   const unread = useNotificationStore((s) => s.unreadCount);
-  console.log(unread);
+  const noti = useNotificationStore((s) => s.notifications);
+  console.log(unread,"message notification",noti);
 
   // const store = useAuthStore.getState();
 
@@ -295,7 +296,7 @@ export default function Page() {
         textColor: "text-green-700",
       },
       {
-        value: "0",
+        value: unread,
         label: "New Messages",
         icon: "✉️",
         bgColor: "bg-[#fefce9]",

@@ -169,13 +169,14 @@ export default function VerifyEmailPage() {
                   />
                 ))}
 
-                <Button
+                {/* <Button
                   type="button"
                   onClick={handleResendCode}
                   className="bg-secondary cursor-pointer hover:bg-[var(--secondaryhover)] text-slate-800 font-semibold px-4 py-2 rounded-lg text-sm"
                 >
                   Resend
-                </Button>
+                </Button> */}
+                
               </div>
 
               {error && (
@@ -188,6 +189,16 @@ export default function VerifyEmailPage() {
               >
                 Verify
               </Button>
+              <div className="text-center">
+               <span className="text-white/55"> Didn't receive any verification OTP? </span>
+                <span
+                  
+                  onClick={handleResendCode}
+                  className="text-secondary cursor-pointer font-semibold"
+                >
+                  Resend code
+                </span>
+              </div>
 
               <div className="text-center">
                 <Button
