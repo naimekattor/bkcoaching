@@ -54,6 +54,8 @@ const CollaborationPreferencesStep = ({
     { id: "whatsappStatus", label: "WhatsApp Status Post", icon: Image },
     { id: "socialPost", label: "Whatsapp Group Post", icon: Image },
     { id: "repost", label: "Repost", icon: Repeat },
+    { id: "twitterPost", label: "Twitter/X Post", icon: FileText },
+    { id: "linked", label: "LinkedIn Post", icon: FileText },
   ];
 
   const paymentTypes = [

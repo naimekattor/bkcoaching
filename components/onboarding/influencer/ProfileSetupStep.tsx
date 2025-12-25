@@ -101,7 +101,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
             <div className="flex flex-col md:flex-row gap-6">
               {/* Profile Photo Upload */}
               <div className="space-y-2 ">
-                <Label>Profile Photo *</Label>
+                <Label>Profile Photo </Label>
                 <label
                   htmlFor="profilePhoto"
                   className="aspect-square w-32 mx-auto md:mx-0 border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors overflow-hidden"
@@ -136,7 +136,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
               <div className="space-y-4 flex-1">
   {/* Display Name */}
   <div className="space-y-2">
-    <Label htmlFor="displayName">Display Name </Label>
+    <Label htmlFor="displayName">Display Name *</Label>
     <Input
       id="displayName"
       value={onboardingDataInfluencer.display_name}
