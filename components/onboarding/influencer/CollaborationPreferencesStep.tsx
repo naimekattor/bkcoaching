@@ -55,7 +55,7 @@ const CollaborationPreferencesStep = ({
     { id: "socialPost", label: "Whatsapp Group Post", icon: Image },
     { id: "repost", label: "Repost", icon: Repeat },
     { id: "twitterPost", label: "Twitter/X Post", icon: FileText },
-    { id: "linked", label: "LinkedIn Post", icon: FileText },
+    { id: "linkedinPost", label: "LinkedIn Post", icon: FileText },
   ];
 
   const paymentTypes = [
@@ -114,6 +114,8 @@ const CollaborationPreferencesStep = ({
     liveStream: "rate_range_for_live_stream",
     userGeneratedContent: "rate_range_for_ugc_creation",
     whatsappStatus: "rate_range_for_whatsapp_status_post",
+    linkedinPost: "rate_range_for_linkedin_post",
+    twitterPost: "rate_range_for_twitter_post",
   };
 
   const predefinedValues = ["free", "0-100", "101-499", "500+"];

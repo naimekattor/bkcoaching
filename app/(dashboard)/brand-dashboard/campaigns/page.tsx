@@ -780,7 +780,7 @@ export default function CampaignDashboard() {
                         Budget
                       </p>
                       <p className="text-lg font-bold text-gray-900">
-                        ${campaign.budget}
+                        {campaign.budget}
                       </p>
                     </div>
                   </div>

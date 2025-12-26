@@ -223,9 +223,10 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
 </div>
 
             <div className="space-y-2">
-              <Label htmlFor="bio">Short Bio</Label>
+              <Label htmlFor="bio">Short Bio (250 characters)</Label>
               <Textarea
                 id="bio"
+                maxLength={250}
                 value={onboardingData.bio}
                 onChange={(e) =>
                   setOnboardingData((prev) => ({
@@ -236,6 +237,17 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
                 placeholder="Brief description of your business and what you do..."
                 rows={4}
               />
+              <div className="flex justify-end mt-1">
+                  <span
+                    className={`text-xs ${
+                      onboardingData.bio.length >= 250
+                        ? "text-red-500 font-semibold" 
+                        : "text-gray-400" 
+                    }`}
+                  >
+                    {onboardingData.bio.length}/250 characters
+                  </span>
+                </div>
             </div>
 
             {/* Logo Upload */}

@@ -134,9 +134,9 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
   };
 
   
-
   useEffect(() => {
       const  token  = localStorage.getItem("access_token");
+      const effectiveToken = token || useAuthStore.getState().token;
 
     const submitOnboardingData = async () => {
       const storedData = localStorage.getItem("InfluencerOnboardingData");
@@ -148,13 +148,18 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
 
         const apiPayload = transformInfluencerDataForAPI(onboardingData);
 
-        await apiClient("user_service/update_user_profile/", {
+       const res= await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}user_service/update_user_profile/`, {
           method: "PATCH",
-          auth: true,
+          headers: {
+            Authorization: `Bearer ${effectiveToken}`,
+          },
           body: JSON.stringify(apiPayload),
         });
+        if (res) {
+          toast( "Profile Saved!");
+        }
 
-        toast( "Profile Saved!");
+        
         
       } catch (error) {
         console.error("Failed to submit influencer onboarding data:", error);
@@ -162,9 +167,9 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
       }
     };
 
-    if (token) {
+  
       submitOnboardingData();
-    }
+    
   }, []);
 
   return (

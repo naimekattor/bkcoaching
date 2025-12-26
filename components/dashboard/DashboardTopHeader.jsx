@@ -10,15 +10,17 @@ import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { ArrowRightLeft, Briefcase, Sparkles } from "lucide-react";
 import { useNotificationStore } from "@/stores/useNotificationStore";
+import Cookies from "js-cookie";
+
 const DashboardTopHeader = () => {
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
+  const setToken = useAuthStore((state) => state.setToken);
+  const setUser = useAuthStore((state) => state.setUser);
   const router = useRouter();
   const pathname = usePathname();
-    const noti = useNotificationStore((s) => s.notifications);
-    console.log("dashboard to header",noti);
-    
-  
+  const noti = useNotificationStore((s) => s.notifications);
+  console.log("dashboard to header", noti);
 
   // --- UI States ---
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
@@ -35,7 +37,7 @@ const DashboardTopHeader = () => {
 
   const isBrandDashboard = pathname.startsWith("/brand-dashboard");
   const isInfluencerDashboard = pathname.startsWith("/influencer-dashboard");
-  const { data: session, status: sessionStatus } = useSession(); 
+  const { data: session, status: sessionStatus } = useSession();
 
   // --- 1. WebSocket Connection Logic ---
   const connectWebSocket = () => {
@@ -122,171 +124,193 @@ const DashboardTopHeader = () => {
     setShowProfileDropdown(false);
   };
 
-  const handleNotificationClick = async() => {
+  const handleNotificationClick = async () => {
     // setShowNotifDropdown(!showNotifDropdown);
     // setShowProfileDropdown(false);
     const nextState = !showNotifDropdown;
-setShowNotifDropdown(nextState);
+    setShowNotifDropdown(nextState);
 
     if (!showNotifDropdown && notificationCount > 0) {
-      
       try {
-        const token = session?.accessToken || localStorage.getItem("access_token");
-    if (!token) return;
-    const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}chat_service/noti_seen_all/`,
-        {
-          method:"POST",
-          headers: { Authorization: `Bearer ${token}` },
-          
+        const token =
+          session?.accessToken || localStorage.getItem("access_token");
+        if (!token) return;
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}chat_service/noti_seen_all/`,
+          {
+            method: "POST",
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        const data = await res.json();
+        if (data) {
+          setNotificationCount(0);
         }
-      );
-      const data=await  res.json();
-      if (data) {
-        setNotificationCount(0);
-      }
-        
       } catch (error) {
         console.log(error);
-        
       }
     }
   };
-
 
   useEffect(() => {
-  const fetchUnreadNotifications = async () => {
-    const token = session?.accessToken || localStorage.getItem("access_token");
-    if (!token) return;
+    const fetchUnreadNotifications = async () => {
+      const token =
+        session?.accessToken || localStorage.getItem("access_token");
+      if (!token) return;
 
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}chat_service/get_unread_noti/`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}chat_service/get_unread_noti/`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        if (!res.ok) {
+          console.error("Failed to fetch unread notifications");
+          return;
         }
-      );
 
-      if (!res.ok) {
-        console.error("Failed to fetch unread notifications");
-        return;
+        const json = await res.json();
+
+        console.log("📦 Backend unread notifications:", json.data);
+
+        const mapped = json.data.map((n) => ({
+          id: n.id,
+          message: n.payload.message,
+        }));
+
+        console.log("🧠 Mapped notifications:", mapped);
+        let combinedNotifications = [...mapped];
+        // 🔥 Replace state (not append)
+        // setNotifications((prev) => [...mapped, ...prev]);
+
+        // // 🔥 Set exact unread count
+        // setNotificationCount(mapped.length);
+        if (noti) {
+          const messageNoti = noti.map((n) => ({
+            id: n.id,
+            message: n.message,
+          }));
+
+          // setNotifications((prev) => [...messageNoti, ...prev]);
+
+          // // 🔥 Set exact unread count
+          // setNotificationCount(messageNoti.length);
+          combinedNotifications = [...messageNoti, ...combinedNotifications];
+        }
+        setNotifications(combinedNotifications);
+        setNotificationCount(combinedNotifications.length);
+
+        console.log("🔔 Unread count:", mapped.length);
+      } catch (err) {
+        console.error("Notification fetch error:", err);
       }
+    };
 
-      const json = await res.json();
-
-      console.log("📦 Backend unread notifications:", json.data);
-
-      const mapped = json.data.map((n) => ({
-    id: n.id,
-    message: n.payload.message
-}));
-
-      console.log("🧠 Mapped notifications:", mapped);
-let combinedNotifications = [...mapped];
-      // 🔥 Replace state (not append)
-      // setNotifications((prev) => [...mapped, ...prev]);
-
-      // // 🔥 Set exact unread count
-      // setNotificationCount(mapped.length);
-      if (noti) {
-        const messageNoti=noti.map((n)=>({
-        id:n.id,
-        message:n.message,
-      }));
+    fetchUnreadNotifications();
+  }, []);
 
 
-      // setNotifications((prev) => [...messageNoti, ...prev]);
 
-      // // 🔥 Set exact unread count
-      // setNotificationCount(messageNoti.length);
-      combinedNotifications = [...messageNoti, ...combinedNotifications];
-      }
-      setNotifications(combinedNotifications);
-setNotificationCount(combinedNotifications.length);
+// const handleLogout = async () => {
+//   try {
+//     localStorage.removeItem("access_token");
+//     localStorage.removeItem("user");
 
-      
+//     Cookies.remove("access_token", {
+//       path: "/",       
+//     });
 
+    
 
-      console.log("🔔 Unread count:", mapped.length);
-    } catch (err) {
-      console.error("Notification fetch error:", err);
-    }
+//     logout(); 
+//     setToken(null);
+//     setUser(null);
+
+//     await signOut({
+//       callbackUrl: "/",
+//     });
+//   } catch (err) {
+//     console.error("Logout error:", err);
+//   }
+// };
+const handleLogout =async () => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("user"); 
+    document.cookie = "access_token=; path=/; max-age=0;";
+    await signOut({
+    redirect: true,
+    callbackUrl: "/",
+  });
   };
-
-  fetchUnreadNotifications();
-}, []);
-
-
 
   return (
     <div className="bg-white px-4 sm:px-8 py-5 border-b border-gray-100">
       <div className="flex items-center justify-between">
         {/* --- CONTEXT SWITCHER (DESKTOP) --- */}
-<div className="mr-6 hidden md:flex items-center">
-  <Link
-    href={
-      pathname.startsWith("/brand-dashboard")
-        ? "/influencer-dashboard"
-        : "/brand-dashboard"
-    }
-    className="
+        <div className="mr-6 hidden md:flex items-center">
+          <Link
+            href={
+              pathname.startsWith("/brand-dashboard")
+                ? "/influencer-dashboard"
+                : "/brand-dashboard"
+            }
+            className="
       group flex items-center gap-2
       px-3 py-2 rounded-lg
       text-sm font-medium text-primary
       hover:bg-primary/5 transition
       whitespace-nowrap
     "
-    title={
-      pathname.startsWith("/brand-dashboard")
-        ? "Currently logged in as Brand"
-        : "Currently logged in as Influencer"
-    }
-  >
-    {pathname.startsWith("/brand-dashboard") ? (
-      <Briefcase size={16} className="opacity-70" />
-    ) : (
-      <Sparkles size={16} className="opacity-70" />
-    )}
+            title={
+              pathname.startsWith("/brand-dashboard")
+                ? "Currently logged in as Brand"
+                : "Currently logged in as Influencer"
+            }
+          >
+            {pathname.startsWith("/brand-dashboard") ? (
+              <Briefcase size={16} className="opacity-70" />
+            ) : (
+              <Sparkles size={16} className="opacity-70" />
+            )}
 
-    <span>
-      {pathname.startsWith("/brand-dashboard")
-        ? "Brand Account"
-        : "Influencer Account"}
-    </span>
+            <span>
+              {pathname.startsWith("/brand-dashboard")
+                ? "Brand Account"
+                : "Influencer Account"}
+            </span>
 
-    <ArrowRightLeft
-      size={14}
-      className="ml-1 opacity-50 group-hover:opacity-80 transition"
-    />
-  </Link>
-</div>
-{/* --- CONTEXT SWITCHER (MOBILE) --- */}
-<div className="md:hidden flex justify-center">
-  <button
-    className="
+            <ArrowRightLeft
+              size={14}
+              className="ml-1 opacity-50 group-hover:opacity-80 transition"
+            />
+          </Link>
+        </div>
+        {/* --- CONTEXT SWITCHER (MOBILE) --- */}
+        <div className="md:hidden flex justify-center">
+          <button
+            className="
       flex items-center gap-2
       px-3 py-1.5 rounded-md
       bg-primary/5 text-primary
       text-xs font-medium
       whitespace-nowrap
     "
-  >
-    {pathname.startsWith("/brand-dashboard") ? (
-      <Briefcase size={14} className="opacity-70" />
-    ) : (
-      <Sparkles size={14} className="opacity-70" />
-    )}
+          >
+            {pathname.startsWith("/brand-dashboard") ? (
+              <Briefcase size={14} className="opacity-70" />
+            ) : (
+              <Sparkles size={14} className="opacity-70" />
+            )}
 
-    {pathname.startsWith("/brand-dashboard")
-      ? "Brand Account"
-      : "Influencer Account"}
-  </button>
-</div>
-
+            {pathname.startsWith("/brand-dashboard")
+              ? "Brand Account"
+              : "Influencer Account"}
+          </button>
+        </div>
 
         <div className="flex items-center gap-4">
-          
-
           {/* --- NOTIFICATIONS --- */}
           <div className="relative">
             <button
@@ -412,11 +436,7 @@ setNotificationCount(combinedNotifications.length);
                       </button>
                     )}
                     <button
-                      onClick={() => {
-                        logout();
-                        signOut({ callbackUrl: "/" });
-                        router.push("/auth/login");
-                      }}
+                      onClick={handleLogout}
                       className="w-full px-4 py-3 text-left hover:bg-red-50 text-red-600 flex items-center gap-3 transition"
                     >
                       <LogOut size={16} />

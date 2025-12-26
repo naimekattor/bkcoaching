@@ -88,6 +88,8 @@ const contentFormats = [
   { id: "liveStream", label: "Live Stream", icon: Video },
   { id: "userGeneratedContent", label: "UGC Creation", icon: Video },
   { id: "whatsappStatus", label: "WhatsApp Status Post", icon: Image },
+  { id: "linkedinPost", label: "LinkedIn Post", icon: FileText },
+  { id: "twitterPost", label: "Twitter/X Post", icon: FileText },
 ];
 
 const rateRanges = [
@@ -112,6 +114,9 @@ const fieldMap: Record<string, string> = {
   userGeneratedContent: "rate_range_for_ugc_creation",
   whatsappStatus: "rate_range_for_whatsapp_status_post",
   facebookPost: "rate_range_for_facebook_post",
+  linkedinPost: "rate_range_for_linkedin_post",
+    twitterPost: "rate_range_for_twitter_post",
+
 };
 
 export default function ProfilePage() {

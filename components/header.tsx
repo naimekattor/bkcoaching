@@ -17,6 +17,7 @@ import Link from "next/link";
 import { X, LogOut, LayoutDashboard, Loader2 } from "lucide-react";
 import { apiClient } from "@/lib/apiClient"; 
 import {  usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
 
 const navigationLinks = [
   { name: "Home", href: "/" },
@@ -80,12 +81,16 @@ const Header = () => {
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout =async () => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("user"); 
     setToken(null);
     setUserData(null);
-    window.location.href = "/";
+    document.cookie = "access_token=; path=/; max-age=0;";
+    await signOut({
+    redirect: true,
+    callbackUrl: "/",
+  });
   };
 
   const getDashboardLink = () => {

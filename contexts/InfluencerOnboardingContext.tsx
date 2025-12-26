@@ -41,6 +41,8 @@ interface InfluencerOnboardingData {
   rate_range_for_ugc_creation: string;
   rate_range_for_whatsapp_status_post: string;
   rate_range_for_affiliate_marketing_percent: string;
+  rate_range_for_twitter_post:string;
+  rate_range_for_linkedin_post:string;
 
   // From Communication & payment
   response_time: string;
@@ -109,6 +111,8 @@ const initialState: InfluencerOnboardingData = {
   rate_range_for_ugc_creation: "",
   rate_range_for_whatsapp_status_post: "",
   rate_range_for_affiliate_marketing_percent: "",
+  rate_range_for_twitter_post:"",
+  rate_range_for_linkedin_post:"",
   response_time: "",
   notifications: {
     email: true,
