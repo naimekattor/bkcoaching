@@ -112,14 +112,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
     },
   ];
 
-  const copyReferralCode = () => {
-    navigator.clipboard.writeText(referralCode);
-    toast({
-      title: "Referral code copied!",
-      description: "Share with other brands to earn rewards",
-    });
-  };
-
+  
   const { token } = useAuthStore();
   console.log("CompletionStep rendered, token:", token);
 

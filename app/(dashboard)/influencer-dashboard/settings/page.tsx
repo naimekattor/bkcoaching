@@ -115,7 +115,7 @@ const fieldMap: Record<string, string> = {
   whatsappStatus: "rate_range_for_whatsapp_status_post",
   facebookPost: "rate_range_for_facebook_post",
   linkedinPost: "rate_range_for_linkedin_post",
-    twitterPost: "rate_range_for_twitter_post",
+  twitterPost: "rate_range_for_twitter_post",
 
 };
 
@@ -177,7 +177,7 @@ export default function ProfilePage() {
       twitter: p.twitter_handle || "",
       linkedin: p.linkedin_handle || "",
       whatsapp: p.whatsapp_handle || "",
-      blog:p.blog_url || "",
+      blog:p.blog_handle || "",
     },
     followers: {
     instagram: p.insta_follower || "",
@@ -275,6 +275,7 @@ export default function ProfilePage() {
         linkedin_handle: formData.socialLinks.linkedin || null,
         whatsapp_handle: formData.socialLinks.whatsapp || null,
         facebook_handle: formData.socialLinks.facebook || null,
+        blog_handle: formData.socialLinks.blog || null,
         content_niches: selectedNiches.length ? selectedNiches.join(", ") : null,
         content_formats: selectedFormats.length ? selectedFormats.join(", ") : null,
         payment_preferences: Object.entries(paymentModels)

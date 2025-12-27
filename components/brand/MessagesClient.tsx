@@ -401,16 +401,16 @@ export default function MessagesClient() {
               current_user: userId,
               isOwn: Number(payload.sender_id) == userId,
             });
-            if (isOwn) return;
+            // if (isOwn) return;
             // const isCurrentRoom = payload.room_id === selectedRoom?.room_id;
 
-            if (!isOwn) {
-              useNotificationStore.getState().add({
-                kind: "message",
-                title: "New Message",
-                message: payload.message,
-              });
-            }
+            // if (!isOwn) {
+            //   useNotificationStore.getState().add({
+            //     kind: "message",
+            //     title: "New Message",
+            //     message: payload.message,
+            //   });
+            // }
 
             let incomingMessage = payload.message ?? "";
             let fileUrl: string | undefined = payload.file ?? undefined;

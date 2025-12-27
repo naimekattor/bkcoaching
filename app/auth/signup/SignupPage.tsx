@@ -82,7 +82,11 @@ export default function SignupPage() {
         signed_up_as: result ?? undefined,
         state: result ?? undefined,
       });
+      if (typeof window !== "undefined") {
+      localStorage.setItem("access_token", res.data.access_token);
+    }
       setAuthFromResponse(res);
+      
 
       if (res.status === "Success") {
         router.push(`/auth/verify-email?returnTo=${returnTo}`);

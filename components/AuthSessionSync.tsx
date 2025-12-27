@@ -28,13 +28,13 @@ export default function AuthSessionSync() {
   console.log("🔐 AuthSessionSync - Status:", status, "Has accessToken:", !!session?.accessToken);
 
   useEffect(() => {
-     if (status === "unauthenticated") {
-    console.log("Clearing Zustand auth state (unauthenticated)");
-    setToken(null);
-    setRefreshToken(null);
-    setUser(null);
-    return;
-  }
+  //    if (status === "unauthenticated") {
+  //   console.log("Clearing Zustand auth state (unauthenticated)");
+  //   setToken(null);
+  //   setRefreshToken(null);
+  //   setUser(null);
+  //   return;
+  // }
     // Check if the session is authenticated and has the access token
     if (status === "authenticated" && session?.accessToken) {
       // Sync only if the Zustand token is not already set, to avoid loops

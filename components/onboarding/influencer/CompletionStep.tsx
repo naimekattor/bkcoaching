@@ -8,6 +8,7 @@ import { apiClient } from "@/lib/apiClient";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useInfluencerOnboarding } from "@/contexts/InfluencerOnboardingContext";
 import { toast } from "react-toastify";
+import { useSession } from "next-auth/react";
 
 interface CompletionStepProps {
   onComplete: () => void;
@@ -111,6 +112,8 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
   const [referralCode] = useState("CREATOR-XYZ789");
   const { onboardingDataInfluencer, setOnboardingDataInfluencer } =
     useInfluencerOnboarding();
+      const { data: session, status: sessionStatus } = useSession(); 
+    
   const nextSteps = [
     {
       icon: Search,
@@ -128,49 +131,96 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
     },
   ];
 
-  const copyReferralCode = () => {
-    navigator.clipboard.writeText(referralCode);
-    toast("Referral code copied!");
-  };
+ 
 
   
-  useEffect(() => {
-      const  token  = localStorage.getItem("access_token");
-      const effectiveToken = token || useAuthStore.getState().token;
+//   useEffect(() => {
+//       const  token  = localStorage.getItem("access_token");
+//       const effectiveToken = token || useAuthStore.getState().token || session?.accessToken;
+// if (effectiveToken) {
+//   return;
+// }
+//     const submitOnboardingData = async () => {
+//       const storedData = localStorage.getItem("InfluencerOnboardingData");
+//       if (!storedData) return;
 
-    const submitOnboardingData = async () => {
-      const storedData = localStorage.getItem("InfluencerOnboardingData");
-      if (!storedData) return;
+//       try {
+//         const onboardingData = JSON.parse(storedData) as InfluencerOnboardingData;
+//         console.log("profile_picture:", onboardingData.profile_picture);
 
-      try {
-        const onboardingData = JSON.parse(storedData) as InfluencerOnboardingData;
-        console.log("profile_picture:", onboardingData.profile_picture);
+//         const apiPayload = transformInfluencerDataForAPI(onboardingData);
 
-        const apiPayload = transformInfluencerDataForAPI(onboardingData);
+//        const res= await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}user_service/update_user_profile/`, {
+//           method: "PATCH",
+//           headers: {
+//             Authorization: `Bearer ${effectiveToken}`,
+//           },
+//           body: JSON.stringify(apiPayload),
+//         });
+//         if (res) {
+//           toast( "Profile Saved!");
+//         }
 
-       const res= await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}user_service/update_user_profile/`, {
+        
+        
+//       } catch (error) {
+//         console.error("Failed to submit influencer onboarding data:", error);
+//         toast("Error Saving Profile");
+//       }
+//     };
+
+  
+//       submitOnboardingData();
+    
+//   }, []);
+useEffect(() => {
+  const tokenFromLS = localStorage.getItem("access_token");
+  const tokenFromStore = useAuthStore.getState().token;
+  const tokenFromSession = session?.accessToken;
+
+  const effectiveToken =
+    tokenFromStore || tokenFromSession || tokenFromLS;
+
+  // 🚫 Stop if no token
+  if (!effectiveToken) {
+    console.warn("No auth token available, skipping onboarding submit");
+    return;
+  }
+
+  const submitOnboardingData = async () => {
+    const storedData = localStorage.getItem("InfluencerOnboardingData");
+    if (!storedData) return;
+
+    try {
+      const onboardingData = JSON.parse(storedData) as InfluencerOnboardingData;
+      const apiPayload = transformInfluencerDataForAPI(onboardingData);
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}user_service/update_user_profile/`,
+        {
           method: "PATCH",
           headers: {
             Authorization: `Bearer ${effectiveToken}`,
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(apiPayload),
-        });
-        if (res) {
-          toast( "Profile Saved!");
         }
+      );
 
-        
-        
-      } catch (error) {
-        console.error("Failed to submit influencer onboarding data:", error);
-        toast("Error Saving Profile");
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`${res.status} - ${text}`);
       }
-    };
 
-  
-      submitOnboardingData();
-    
-  }, []);
+      toast("Profile Saved!");
+    } catch (error) {
+      console.error("Failed to submit influencer onboarding data:", error);
+      toast("Error Saving Profile");
+    }
+  };
+
+  submitOnboardingData();
+}, [session?.accessToken]);
 
   return (
     <div className="text-center space-y-8">
@@ -243,87 +293,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
         </div>
       </div>
 
-      {/* Referral Program */}
-      {/* <Card>
-        <CardContent className="p-6 space-y-4">
-          <div className="flex items-center justify-center gap-2">
-            <Gift className="w-5 h-5 text-secondary" />
-            <h3 className="font-semibold">
-              Earn $10 for Each micro-influencer Referral
-            </h3>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            Invite other micro-influencers to join The Social Market and earn
-            $10 when they complete their first campaign. They&apos;ll get
-            priority matching for their first month too!
-          </p>
-          <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
-            <code className="flex-1 text-center font-mono text-sm bg-background px-3 py-2 rounded">
-              {referralCode}
-            </code>
-            <Button size="sm" variant="outline" onClick={copyReferralCode}>
-              <Copy className="w-4 h-4 mr-2" />
-              Copy
-            </Button>
-          </div>
-          Social Share Buttons
-          <div className="pt-4 flex flex-wrap justify-center gap-3">
-            <Button
-              size="sm"
-              variant="outline"
-              className="bg-primary text-white"
-              onClick={() =>
-                window.open(
-                  `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-                    window.location.href
-                  )}&quote=Use my referral code ${referralCode}!`,
-                  "_blank"
-                )
-              }
-            >
-              Facebook
-            </Button>
-
-            <Button
-              size="sm"
-              className="bg-primary text-white"
-              variant="outline"
-              onClick={() =>
-                window.open(`https://www.instagram.com/`, "_blank")
-              }
-            >
-              Instagram
-            </Button>
-
-            <Button
-              size="sm"
-              className="bg-primary text-white"
-              variant="outline"
-              onClick={() =>
-                window.open(
-                  `https://api.whatsapp.com/send?text=${encodeURIComponent(
-                    `Join The Social Market using my referral code ${referralCode}! ${window.location.href}`
-                  )}`,
-                  "_blank"
-                )
-              }
-            >
-              WhatsApp
-            </Button>
-
-            <Button
-              size="sm"
-              className="bg-primary text-white"
-              variant="outline"
-              onClick={() =>
-                (window.location.href = `mailto:?subject=Join The Social Market&body=Use my referral code ${referralCode} to sign up: ${window.location.href}`)
-              }
-            >
-              Email
-            </Button>
-          </div>
-        </CardContent>
-      </Card> */}
+      
 
       {/* Pro Tips */}
       <Card className="bg-muted/30">
@@ -355,9 +325,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
         <Button variant="hero" size="lg" onClick={onComplete} className="cursor-pointer">
           Go to Dashboard
         </Button>
-        {/* <Button variant="outline" size="lg">
-          <Link href={"/influencer-dashboard/campaigns"}>Browse Campaigns</Link>
-        </Button> */}
+        
       </div>
     </div>
   );
