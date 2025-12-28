@@ -27,64 +27,80 @@ console.log("Final accessToken:", accessToken);
     return NextResponse.redirect(url);
   }
 
-  // try {
-  //   const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}subscription_service/get_user_subscription_information/`;
-  //   const res = await fetch(apiUrl, {
-  //     headers: {
-  //       Authorization: `Bearer ${accessToken}`,
-  //     },
-  //   });
+  try {
+    const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}subscription_service/get_user_subscription_information/`;
+    const res = await fetch(apiUrl, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
 
-  //   if (!res.ok) {
-  //     console.error(`Subscription API failed with status: ${res.status}`);
-  //     url.pathname = "/";
-  // return NextResponse.redirect(url);
-  //   }
+    if (!res.ok) {
+      console.error(`Subscription API failed with status: ${res.status}`);
+      url.pathname = "/subscription-required";
+       url.searchParams.set("message", "Unable to verify subscription status");
+    return NextResponse.redirect(url);
+    }
 
-  //   const subRes = await res.json();
+    const subRes = await res.json();
+    const planName = subRes?.data?.plan_name;
+    const isActive = subRes?.data?.status === "active";
+    const isFailure = subRes?.status === "failure";
 
-  //   const planName = subRes?.data?.plan_name;
-  //   const isActive = subRes?.data?.status === "active";
-  //   const status =subRes?.status === "failure";
+    console.log(`Subscription check - Plan: ${planName}, Active: ${isActive}`);
 
-  //   console.log(`Subscription check - Plan: ${planName}, Active: ${isActive}`);
+    /* ---------------- BRAND DASHBOARD ---------------- */
+     if (isFailure) {
+    url.pathname = "/subscription-required";
+    url.searchParams.set("message", "No active subscription found");
+    return NextResponse.redirect(url);
+  }
+    if (pathname.startsWith("/brand-dashboard")) {
+      const hasValidBrandPlan = isActive && (planName === "Businesses" || planName === "Both");
 
-  //   /* ---------------- BRAND DASHBOARD ---------------- */
-  //   if (status) {
-  //     url.pathname = "/";
-  //       return NextResponse.redirect(url);
-  //   }
-  //   if (pathname.startsWith("/brand-dashboard")) {
-  //     const hasValidBrandPlan = isActive && (planName === "Businesses" || planName === "Both");
-
-  //     if (!hasValidBrandPlan  ) {
-  //       url.pathname = "/";
-  //       return NextResponse.redirect(url);
-  //     }
+       if (!hasValidBrandPlan) {
+      url.pathname = "/brand-subscription-required";
+      if (!isActive) {
+        url.searchParams.set("reason", "subscription_inactive");
+      } else if (planName === "Micro-Influencer") {
+        url.searchParams.set("reason", "wrong_plan_type");
+      } else {
+        url.searchParams.set("reason", "no_subscription");
+      }
+      return NextResponse.redirect(url);
+    }
 
       
-  //   }
+    }
 
-  //   /* ------------- INFLUENCER DASHBOARD -------------- */
-  //   if (pathname.startsWith("/influencer-dashboard")) {
+    /* ------------- INFLUENCER DASHBOARD -------------- */
+    if (pathname.startsWith("/influencer-dashboard")) {
       
     
-  //     const hasValidInfluencerPlan = isActive && (planName === "Micro-Influencer" || planName === "Both");
+      const hasValidInfluencerPlan = isActive && (planName === "Micro-Influencer" || planName === "Both");
 
-  //     if (!hasValidInfluencerPlan ) {
-  //       url.pathname = "/";
-  //       return NextResponse.redirect(url);
-  //     }
+      if (!hasValidInfluencerPlan) {
+      url.pathname = "/influencer-subscription-required";
+      if (!isActive) {
+        url.searchParams.set("reason", "subscription_inactive");
+      } else if (planName === "Businesses") {
+        url.searchParams.set("reason", "wrong_plan_type");
+      } else {
+        url.searchParams.set("reason", "no_subscription");
+      }
+      return NextResponse.redirect(url);
+    }
+    
+    return NextResponse.next();
+    }
 
-      
-  //     return NextResponse.next();
-  //   }
-
-  //   return NextResponse.next();
-  // } catch (error) {
-  //   console.error("Middleware error:", error);
-  //   return NextResponse.next();
-  // }
+    return NextResponse.next();
+  } catch (error) {
+    console.error("Middleware error:", error);
+    url.pathname = "/subscription-error";
+  url.searchParams.set("message", "System error checking subscription");
+    return NextResponse.next();
+  }
 }
 
 export const config = {

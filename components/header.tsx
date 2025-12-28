@@ -17,7 +17,7 @@ import Link from "next/link";
 import { X, LogOut, LayoutDashboard, Loader2 } from "lucide-react";
 import { apiClient } from "@/lib/apiClient"; 
 import {  usePathname } from "next/navigation";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 const navigationLinks = [
   { name: "Home", href: "/" },
@@ -42,11 +42,14 @@ const Header = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
   const pathName=usePathname();
+  const {data:session}=useSession();
   const fetchUser = async () => {
     const accessToken = localStorage.getItem("access_token");
-    setToken(accessToken);
+    const sessionToken=session?.accessToken;
+    const token=(accessToken || sessionToken) ?? null;
+    setToken(token);
 
-    if (!accessToken) {
+    if (!token) {
       setLoading(false);
       return;
     }

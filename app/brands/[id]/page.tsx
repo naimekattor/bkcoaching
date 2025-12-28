@@ -77,7 +77,7 @@ export default function BrandProfilePage() {
 
         // ---- Normalise API → Brand ----
         const raw =
-          (res.data as BrandResponse | undefined)?.brand_profile ?? {};
+          (res?.data?.data as BrandResponse | undefined)?.brand_profile ?? {};
           console.log(res);
           
 
