@@ -147,12 +147,17 @@ const Header = () => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button className="focus:outline-none">
-            <Avatar className="h-10 w-10 cursor-pointer ring-2 ring-offset-2 ring-primary transition-all hover:ring-accent">
-              <AvatarImage src={getProfilePic() || undefined} alt={getDisplayName()} />
-              <AvatarFallback className="bg-primary text-white font-semibold">
-                {getDisplayName().charAt(0).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
+            <Avatar className="h-12 w-12 cursor-pointer rounded-full overflow-hidden border-white border-[1px]">
+  <AvatarImage
+    src={getProfilePic() || undefined}
+    alt={getDisplayName()}
+    className="h-full w-full object-cover"
+  />
+  <AvatarFallback className="bg-primary text-white font-semibold">
+    {getDisplayName().charAt(0).toUpperCase()}
+  </AvatarFallback>
+</Avatar>
+
           </button>
         </DropdownMenuTrigger>
 
@@ -203,12 +208,17 @@ const Header = () => {
     return (
       <div className="flex flex-col space-y-6">
         <div className="flex items-center space-x-4 px-6">
-          <Avatar className="h-16 w-16">
-            <AvatarImage src={getProfilePic() || undefined} />
-            <AvatarFallback className="text-2xl bg-primary text-white">
-              {getDisplayName().charAt(0).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
+          <Avatar className="h-12 w-12 cursor-pointer rounded-full overflow-hidden border-white border-[1px]">
+  <AvatarImage
+    src={getProfilePic() || undefined}
+    alt={getDisplayName()}
+    className="h-full w-full object-cover"
+  />
+  <AvatarFallback className="bg-primary text-white font-semibold">
+    {getDisplayName().charAt(0).toUpperCase()}
+  </AvatarFallback>
+</Avatar>
+
           <div>
             <p className="text-lg font-semibold text-primary">{getDisplayName()}</p>
             <p className="text-sm text-primary">{userData.user.email}</p>

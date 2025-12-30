@@ -22,7 +22,7 @@ export default function InfluencerSubscriptionRequired() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow">
         <div className="text-center">
-          <FaUserGroup className="mx-auto h-12 w-12 text-purple-600" />
+          <FaUserGroup className="mx-auto h-12 w-12 text-primary" />
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
             Influencer Dashboard Access Required
           </h2>
@@ -31,9 +31,9 @@ export default function InfluencerSubscriptionRequired() {
           </p>
         </div>
         
-        <div className="bg-purple-50 p-4 rounded-md">
-          <h3 className="text-sm font-medium text-purple-800">Available Plans for Influencers:</h3>
-          <ul className="mt-2 text-sm text-purple-700 space-y-1">
+        <div className="bg-primary/10 p-4 rounded-md">
+          <h3 className="text-sm font-medium text-primary">Available Plans for Influencers:</h3>
+          <ul className="mt-2 text-sm text-primary space-y-1">
             <li>✓ <strong>Micro-Influencer Plan</strong> - Full influencer features</li>
             <li>✓ <strong>Both Plan</strong> - Influencer + Brand access</li>
           </ul>

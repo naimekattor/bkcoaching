@@ -17,6 +17,7 @@ interface CompletionStepProps {
 interface InfluencerOnboardingData {
   display_name?: string;
   short_bio?: string;
+  gender?:string;
   profile_picture?: string;
   instagram_handle?: string;
   tiktok_handle?: string | null;
@@ -50,6 +51,10 @@ interface InfluencerOnboardingData {
   account_number?: string | number;
   bank_name?: string;
   paypal_email?: string;
+  notifications:{
+    email?:boolean,
+    push?:boolean,
+  }
 }
 
 const transformInfluencerDataForAPI = (data: InfluencerOnboardingData) => {
@@ -59,6 +64,7 @@ const transformInfluencerDataForAPI = (data: InfluencerOnboardingData) => {
     influencer_profile: {
       display_name: data.display_name,
       short_bio: data.short_bio,
+      gender:data.gender,
       profile_picture: data.profile_picture,
       instagram_handle: data.instagram_handle,
       tiktok_handle: data.tiktok_handle === "null" ? "" : data.tiktok_handle,
@@ -103,15 +109,14 @@ const transformInfluencerDataForAPI = (data: InfluencerOnboardingData) => {
       account_number: data.account_number ? String(data.account_number) : "",
       bank_name: data.bank_name,
       paypal_email: data.paypal_email,
+      notifications_email:data.notifications.email,
+      notifications_push:data.notifications.push,
     },
   };
   return payload;
 };
 
 const CompletionStep = ({ onComplete }: CompletionStepProps) => {
-  const [referralCode] = useState("CREATOR-XYZ789");
-  const { onboardingDataInfluencer, setOnboardingDataInfluencer } =
-    useInfluencerOnboarding();
       const { data: session, status: sessionStatus } = useSession(); 
     
   const nextSteps = [

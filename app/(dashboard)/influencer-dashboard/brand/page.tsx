@@ -337,15 +337,16 @@ export default function BrandPage() {
                 className="bg-white rounded-lg border border-gray-200 p-6 text-center"
               >
                 {/* Logo */}
-                <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center overflow-hidden rounded-full bg-gray-100">
-                  <Image
-                    width={64}
-                    height={64}
-                    src={brand.logo || "/images/placeholder.jpg"}
-                    alt={brand.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+                <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center overflow-hidden rounded-full bg-gray-100 flex-shrink-0">
+  <Image
+    width={64}
+    height={64}
+    src={brand.logo || "/images/placeholder.jpg"}
+    alt={brand.name}
+    className="w-full h-full object-cover"
+    unoptimized // Add this if images are from external sources
+  />
+</div>
 
                 {/* Name */}
                 <h3 className="font-semibold text-[17px] text-[#242524] mb-1">

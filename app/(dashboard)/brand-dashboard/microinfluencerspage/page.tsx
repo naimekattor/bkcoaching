@@ -531,7 +531,7 @@ function MicroInfluencersPageContent() {
                 <SelectItem value="all">All Budget Ranges</SelectItem>
                 <SelectItem value="0-100">$0 – $100</SelectItem>
                 <SelectItem value="100-499">$101 – $499</SelectItem>
-                <SelectItem value="500+">$500+</SelectItem>
+                <SelectItem value="500-1000000000">$500+</SelectItem>
               </SelectContent>
             </Select>
 
@@ -589,7 +589,7 @@ function MicroInfluencersPageContent() {
                   <SelectItem value="1001-5000">1K – 5K</SelectItem>
                   <SelectItem value="5001-10000">5K – 10K</SelectItem>
                   <SelectItem value="10001-50000">10K – 50K</SelectItem>
-                  <SelectItem value="50000+">50K+</SelectItem>
+                  <SelectItem value="50000-1000000000">50K+</SelectItem>
                 </SelectContent>
               </Select>
               {/* Micro-interaction Helper Icon */}

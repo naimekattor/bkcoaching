@@ -4,7 +4,7 @@ import type React from "react";
 import Cookies from "js-cookie";
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Check, Eye, EyeOff, X } from "lucide-react";
+import { Check, Eye, EyeOff, Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -238,9 +238,11 @@ const handleGoogleSignUp = async () => {
                 )}
               </div>
 
-               {/* PASSWORD STRENGTH INDICATOR */}
+              {/* PASSWORD STRENGTH INDICATOR */}
               <div className="bg-slate-700/50 p-3 rounded-lg space-y-2">
-                <p className="text-xs text-slate-300 font-medium">Password must contain:</p>
+                <p className="text-xs text-slate-300 font-medium">
+                  Password must contain:
+                </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {passwordRequirements.map((req) => (
                     <div key={req.id} className="flex items-center space-x-2">
@@ -249,14 +251,18 @@ const handleGoogleSignUp = async () => {
                       ) : (
                         <X className="w-3 h-3 text-red-400" />
                       )}
-                      <span className={`text-xs ${req.met ? "text-green-400" : "text-slate-400"}`}>
+                      <span
+                        className={`text-xs ${
+                          req.met ? "text-green-400" : "text-slate-400"
+                        }`}
+                      >
                         {req.label}
                       </span>
                     </div>
                   ))}
                 </div>
               </div>
-              
+
               {errors.password && (
                 <p className="text-red-400 text-sm mt-1">{errors.password}</p>
               )}
@@ -325,9 +331,17 @@ const handleGoogleSignUp = async () => {
 
               <Button
                 type="submit"
-                className="w-full bg-secondary hover:bg-secondary text-slate-800 font-semibold py-3 rounded-lg"
+                disabled={loading}
+                className="w-full cursor-pointer bg-secondary hover:bg-secondary text-slate-800 font-semibold py-3 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Create account
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Creating account...
+                  </>
+                ) : (
+                  "Create account"
+                )}
               </Button>
 
               <div className="text-center">

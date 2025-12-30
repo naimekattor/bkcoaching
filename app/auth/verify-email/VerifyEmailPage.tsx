@@ -9,6 +9,7 @@ import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { apiClient } from "@/lib/apiClient";
 import { toast } from "react-toastify";
+import { Loader2 } from "lucide-react";
 
 export default function VerifyEmailPage() {
   const router = useRouter();
@@ -19,6 +20,8 @@ export default function VerifyEmailPage() {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [userEmail, setUserEmail] = useState("");
   const [otpSent, setOtpSent] = useState(false);
+  const[loading,setLoading]=useState(false);
+  const [isVerified, setIsVerified] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -70,6 +73,7 @@ export default function VerifyEmailPage() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    setLoading(true);
     e.preventDefault();
     const verificationCode = code.join("");
 
@@ -88,20 +92,28 @@ export default function VerifyEmailPage() {
 
       if (res.code === 200) {
         localStorage.setItem("emailVerified", "true");
-        console.log("✅ Email verified successfully");
+        setIsVerified(true);
+        toast.success("🎉 Account verified successfully! Redirecting...", {
+        position: "top-center",
+        autoClose: 2000,
+      });
 
-        // Redirect to correct onboarding
+        setTimeout(() => {
         if (returnTo) {
           router.push(returnTo);
         } else {
           router.push("/brand-dashboard");
         }
+      }, 2000);
+
+        
       } else {
         setError("Invalid verification code. Please try again.");
       }
     } catch (error) {
       console.error("❌ Verification Error:", error);
       setError("Verification failed. Please try again.");
+      setLoading(false);
     }
   };
 
@@ -169,13 +181,7 @@ export default function VerifyEmailPage() {
                   />
                 ))}
 
-                {/* <Button
-                  type="button"
-                  onClick={handleResendCode}
-                  className="bg-secondary cursor-pointer hover:bg-[var(--secondaryhover)] text-slate-800 font-semibold px-4 py-2 rounded-lg text-sm"
-                >
-                  Resend
-                </Button> */}
+                
                 
               </div>
 
@@ -183,12 +189,20 @@ export default function VerifyEmailPage() {
                 <p className="text-red-400 text-center text-sm">{error}</p>
               )}
 
-              <Button
-                type="submit"
-                className="w-full bg-secondary hover:bg-[var(--secondaryhover)] text-slate-800 font-semibold py-3 rounded-lg"
-              >
-                Verify
-              </Button>
+              <button
+                  onClick={handleSubmit}
+                  disabled={loading || isVerified}
+                  className="w-full bg-secondary cursor-pointer text-slate-900 font-semibold py-3 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      <span>Verifying...</span>
+                    </>
+                  ) : (
+                    "Verify Email"
+                  )}
+                </button>
               <div className="text-center">
                <span className="text-white/55"> Didn't receive any verification OTP? </span>
                 <span
