@@ -90,6 +90,32 @@ const transformCampaignDataForAPI = (data: OnboardingData) => {
   return campaignPayload;
 };
 
+const isEmptyObject = (obj: Record<string, any> | null | undefined) => {
+  if (!obj) return true;
+  return Object.values(obj).every(
+    (value) =>
+      value === undefined ||
+      value === null ||
+      value === "" ||
+      (Array.isArray(value) && value.length === 0)
+  );
+};
+
+const hasCampaignData = (campaignPayload: ReturnType<typeof transformCampaignDataForAPI>) => {
+  return !!(
+    campaignPayload.campaign_name ||
+    campaignPayload.campaign_objective ||
+    campaignPayload.budget_range ||
+    campaignPayload.budget_type ||
+    campaignPayload.payment_preference ||
+    campaignPayload.campaign_description ||
+    campaignPayload.content_deliverables ||
+    campaignPayload.campaign_timeline ||
+    campaignPayload.campaign_poster
+  );
+};
+
+
 const CompletionStep = ({ onComplete }: CompletionStepProps) => {
   const [referralCode] = useState("BRAND-ABC123");
 
@@ -149,15 +175,22 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
 
         // Submit campaign data to campaign_service
         console.log("Submitting campaign data...");
+        
         const campaignPayload = transformCampaignDataForAPI(onboardingData);
         console.log("Campaign payload:", campaignPayload);
 
-        await apiClient("campaign_service/create_campaign/", {
+        if (hasCampaignData(campaignPayload)) {
+          await apiClient("campaign_service/create_campaign/", {
           method: "POST",
           auth: true,
           body: JSON.stringify(campaignPayload),
         });
         console.log("Campaign data submitted successfully");
+        } else {
+          console.log("No campaign data found, skipping campaign creation");
+        }
+       localStorage.removeItem("brandOnBoardingData");
+        
 
         toast({
           title: "Profile Saved!",

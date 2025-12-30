@@ -5,7 +5,15 @@ import { useEffect, useState } from "react";
 import { SkeletonCard } from "./SkeletoCard";
 import { usePathname } from "next/navigation";
 import { toast } from "react-toastify";
-
+import { useAuthStore } from "@/stores/useAuthStore";
+import { useSession } from "next-auth/react";
+interface UserData {
+  id: number;
+  user: { email: string; first_name: string; last_name: string };
+  signed_up_as: "influencer" | "brand";
+  influencer_profile?: { profile_picture?: string; display_name?: string };
+  brand_profile?: { logo?: string; display_name?: string };
+}
 // --- Interfaces based on your API Response ---
 interface Price {
   price_id: string;
@@ -41,11 +49,61 @@ export function PricingSection({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [plans, setPlans] = useState<Plan[]>(initialData?.data || []);
+  const [token, setToken] = useState<string | null>(null);
+    const [userData, setUserData] = useState<UserData | null>(null);
 
   // --- Logic to determine Dashboard Context ---
   // Using includes() handles sub-paths like /influencer-dashboard/subscription
   const isInfluencerDashboard = pathname?.includes("/influencer-dashboard");
   const isBrandDashboard = pathname?.includes("/brand-dashboard");
+  const { data: session, status: sessionStatus } = useSession(); 
+
+  const fetchUser = async () => {
+    const accessToken = localStorage.getItem("access_token");
+    const sessionToken=session?.accessToken;
+    const token=(accessToken || sessionToken) ?? null;
+    setToken(token);
+
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const res = await apiClient("user_service/get_user_info/", {
+        method: "GET",
+        auth: true,
+      });
+
+      if (res.status === "success") {
+        setUserData(res.data);
+        console.log(res.data);
+        
+      } else {
+        // Token might be invalid → clear it
+        localStorage.removeItem("access_token");
+        setToken(null);
+      }
+    } catch (err) {
+      console.error("Failed to fetch user:", err);
+      localStorage.removeItem("access_token");
+      setToken(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUser();
+
+    const handleStorageChange = () => fetchUser();
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
+
+  
+  
 
   useEffect(() => {
     if (initialData?.data && initialData.data.length > 0) {
@@ -59,26 +117,24 @@ export function PricingSection({
 
   // --- Filtering & Sorting Logic ---
   const filteredPlans = plans
-    .filter((plan) => {
-      // 1. Influencer Dashboard: Show "Micro-Influencer" + "Both"
-      if (isInfluencerDashboard) {
-        return plan.name === "Micro-Influencer" || plan.name === "Both";
-      }
+  .filter((plan) => {
+    if (userData?.signed_up_as === "influencer") {
+      return plan.name === "Micro-Influencer" || plan.name === "Both";
+    }
 
-      // 2. Brand Dashboard: Show "Businesses" + "Both"
-      if (isBrandDashboard) {
-        return plan.name === "Businesses" || plan.name === "Both";
-      }
+    if (userData?.signed_up_as === "brand") {
+      return plan.name === "Businesses" || plan.name === "Both";
+    }
 
-      // 3. Fallback: Show all 3 if path doesn't match (e.g. public pricing page)
-      return true;
-    })
-    .sort((a, b) => {
-      // Optional: Sort so "Both" always appears last (on the right)
-      if (a.name === "Both") return 1;
-      if (b.name === "Both") return -1;
-      return 0;
-    });
+    // fallback (public pricing or unknown plan)
+    return true;
+  })
+  .sort((a, b) => {
+    if (a.name === "Both") return 1;
+    if (b.name === "Both") return -1;
+    return 0;
+  });
+
 
   // --- Helper Functions ---
   const getPriceForInterval = (prices: Price[]) => {
@@ -186,7 +242,7 @@ export function PricingSection({
         </div>
 
         {/* Pricing Cards Grid */}
-        <div className="grid md:grid-cols-3 grid-cols-1 gap-8 max-w-5xl mx-auto">
+        <div className={`${userData?"md:grid-cols-2 w-2xl": "md:grid-cols-3"} grid  grid-cols-1 gap-8 max-w-5xl mx-auto`}>
           {filteredPlans.map((plan) => {
             const price = getPriceForInterval(plan.prices);
             const savings = isYearly ? calculateSavings(plan.prices) : null;

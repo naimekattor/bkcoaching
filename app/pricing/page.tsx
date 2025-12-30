@@ -10,6 +10,7 @@ async function getPlans() {
 }
 const page = async() => {
     const data = await getPlans();
+    
   return (
     <div>
       <PricingSection initialData={data} planName="Your Plan"/>
