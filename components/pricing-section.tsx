@@ -51,6 +51,7 @@ export function PricingSection({
   const [plans, setPlans] = useState<Plan[]>(initialData?.data || []);
   const [token, setToken] = useState<string | null>(null);
     const [userData, setUserData] = useState<UserData | null>(null);
+    const[currPlanName,setCurrPlanName]=useState();
 
   // --- Logic to determine Dashboard Context ---
   // Using includes() handles sub-paths like /influencer-dashboard/subscription
@@ -91,6 +92,16 @@ export function PricingSection({
     } finally {
       setLoading(false);
     }
+    try {
+      const res = await apiClient("subscription_service/get_user_subscription_information/", {
+        method: "GET",
+        auth: true,
+      });
+      setCurrPlanName(res?.data?.plan_name)
+    } catch (error) {
+      console.log("error",error);
+      
+    }
   };
 
   useEffect(() => {
@@ -118,6 +129,19 @@ export function PricingSection({
   // --- Filtering & Sorting Logic ---
   const filteredPlans = plans
   .filter((plan) => {
+    // If user already has a plan, apply upgrade logic
+    if (currPlanName) {
+      // If user has "Businesses" or "Micro-Influencer", show only "Both" plan
+      if (currPlanName === "Businesses" || currPlanName === "Micro-Influencer") {
+        return plan.name === "Both";
+      }
+      // If user has "Both", show all plans (existing logic)
+      if (currPlanName === "Both") {
+        return true;
+      }
+    }
+
+    // If no existing plan (signup flow), filter by user type
     if (userData?.signed_up_as === "influencer") {
       return plan.name === "Micro-Influencer" || plan.name === "Both";
     }
