@@ -17,6 +17,7 @@ import { apiClient } from "@/lib/apiClient";
 import { uploadToCloudinary } from "@/lib/fileUpload";
 import { toast } from "react-toastify";
 import { useNotificationStore } from "@/stores/useNotificationStore";
+import { formatLocalTime, timeAgo } from "@/lib/date";
 
 interface Room {
   room_id: string;
@@ -699,9 +700,12 @@ export default function MessagesClient() {
                           className="w-12 h-12 rounded-full overflow-hidden"
                         />
                       ) : (
-                        <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold">
-                          {room.name?.[0] || room.other_user_id?.[0]}
-                        </div>
+                        <span className="rounded-full overflow-hidden flex items-center justify-center text-white font-semibold text-xs flex-shrink-0">
+                      {selectedRoom?.name?.[0] ||
+                        otherUserProfile?.influencer_profile
+                          ?.display_name?.[0] ||
+                        "U"}
+                    </span>
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -749,7 +753,7 @@ export default function MessagesClient() {
                   <MoreHorizontal className="h-5 w-5" />
                 </button>
                 <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold">
-                  {selectedRoom?.profile_picture ? (
+                  
                     <Image
                       src={getSafeImageSrc(selectedRoom.profile_picture)}
                       alt="Profile picture"
@@ -757,14 +761,7 @@ export default function MessagesClient() {
                       height={48}
                       className="w-[48px] h-[48px] rounded-full"
                     />
-                  ) : (
-                    <span className="rounded-full overflow-hidden flex items-center justify-center text-white font-semibold text-xs flex-shrink-0">
-                      {selectedRoom?.name?.[0] ||
-                        otherUserProfile?.influencer_profile
-                          ?.display_name?.[0] ||
-                        "U"}
-                    </span>
-                  )}
+                  
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="font-bold text-gray-900 truncate">
@@ -772,7 +769,10 @@ export default function MessagesClient() {
                       otherUserProfile?.brand_profile?.business_name ||
                       otherUserProfile?.influencer_profile?.display_name}
                   </p>
-                  {/* <p className="text-sm text-gray-500">Active now</p> */}
+                  <span className="text-sm text-gray-500">
+  {timeAgo(selectedRoom.timestamp)} • {formatLocalTime(selectedRoom.timestamp)}
+</span>
+
                 </div>
               </div>
               {pathName.startsWith("/brand-dashboard") && (

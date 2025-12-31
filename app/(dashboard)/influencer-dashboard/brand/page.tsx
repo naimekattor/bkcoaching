@@ -380,7 +380,7 @@ export default function BrandPage() {
                 {/* Buttons */}
                 <div className="flex justify-center items-center  gap-3">
                   <Link
-                    href={`/influencer-dashboard/brand/${brand.id}`}
+                    href={`/influencer-dashboard/brand/${brand.userId}`}
                     className="border border-secondary text-primary px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                   >
                     View Profile

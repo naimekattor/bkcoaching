@@ -335,9 +335,9 @@ export default function BrandSetupPage() {
                         className="rounded-lg border border-gray-200 object-contain bg-white p-1"
                       />
                       <Button
-                        variant="destructive"
+                        
                         size="icon"
-                        className="absolute -top-2 -right-2 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute bg-red-400 -top-2 -right-2 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
                         onClick={() => handleInputChange("logo", null)}
                       >
                         <X className="h-4 w-4" />
@@ -350,7 +350,7 @@ export default function BrandSetupPage() {
                     >
                       <Paperclip className="mx-auto h-10 w-10 text-gray-400 mb-2" />
                       <p className="text-sm font-medium text-gray-700">Click to upload logo</p>
-                      <p className="text-xs text-gray-500">PNG, JPG, SVG</p>
+                      <p className="text-xs text-gray-500">PNG, JPG</p>
                     </div>
                   )}
                 </div>

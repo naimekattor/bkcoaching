@@ -608,7 +608,7 @@ export default function ProfilePage() {
                     {n}
                     <button
                       onClick={() => setSelectedNiches(selectedNiches.filter((x) => x !== n))}
-                      className="hover:bg-gray-100 p-0.5 rounded-full text-gray-400 hover:text-red-500 transition-colors"
+                      className="hover:bg-gray-100 p-0.5 rounded-full text-gray-400 hover:text-red-500/80 transition-colors"
                     >
                       <X className="h-3.5 w-3.5" />
                     </button>

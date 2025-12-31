@@ -145,14 +145,26 @@ export function PricingSection({
   };
 
   const calculateSavings = (prices: Price[]) => {
-    const monthly = prices.find((p) => p.interval === "month");
-    const yearly = prices.find((p) => p.interval === "year");
-    if (!monthly || !yearly) return null;
+  const monthly = prices.find((p) => p.interval === "month");
+  const yearly = prices.find((p) => p.interval === "year");
 
-    const monthlyTotal = monthly.amount * 12;
-    const savings = ((monthlyTotal - yearly.amount) / monthlyTotal) * 100;
-    return savings > 0 ? `Save ${savings.toFixed(0)}%` : null;
-  };
+  if (!monthly || !yearly) return null;
+
+  const monthlyTotal = monthly.amount * 12;
+  const rawSavings =
+    ((monthlyTotal - yearly.amount) / monthlyTotal) * 100;
+
+  if (rawSavings <= 0) return null;
+
+  const floored = Math.floor(rawSavings);
+
+  const marketingFriendly = Math.floor(floored / 5) * 5;
+
+  if (marketingFriendly < 5) return null;
+
+  return `Save over ${marketingFriendly}%`;
+};
+
 
   const handleCheckout = async (priceId: string) => {
     try {

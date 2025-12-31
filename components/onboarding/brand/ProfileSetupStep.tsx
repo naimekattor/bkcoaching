@@ -24,62 +24,92 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
 
   const targetAudiences = [
     {
-      label: "Women 18–24",
-      tooltip: "Gen Z – digital natives, heavy TikTok/IG use.",
-    },
-    {
-      label: "Men 18–24",
-      tooltip: "Gen Z – early adopters, trend-driven.",
-    },
-    {
-      label: "Women 25–34",
-      tooltip: "Millennials – young professionals / family-forming stage.",
-    },
-    
-    {
-      label: "Men 25–34",
-      tooltip: "Millennials – tech-savvy, lifestyle & career focused.",
-    },
-    {
-      label: "Women 35–44",
-      tooltip: "Older Millennials / Gen X – career stability & young families.",
-    },
-    
-    {
-      label: "Men 35–44",
-      tooltip: "Older Millennials / Gen X – higher disposable income.",
-    },
-    {
-      label: "Women 45+",
-      tooltip: "Gen X / Boomers – loyalty and financial stability.",
-    },
-    {
-      label: "Men 45+",
-      tooltip: "Gen X / Boomers – loyalty and financial stability.",
+      label: "Kids",
+      tooltip: "Ages 6–12 – purchasing decisions influenced by parents, education, entertainment, and brand familiarity.",
     },
     {
       label: "Teens",
       tooltip: "Ages 13–17 – highly influenced by social media trends, peers, and short-form video content.",
     },
     {
-      label: "Kids",
-      tooltip: "Ages 6–12 – purchasing decisions influenced by parents, education, entertainment, and brand familiarity.",
+      label: "Men 18–24",
+      tooltip: "Gen Z – early adopters, trend-driven.",
     },
+    {
+      label: "Women 18–24",
+      tooltip: "Gen Z – digital natives, heavy TikTok/IG use.",
+    },
+    {
+      label: "Men 25–34",
+      tooltip: "Millennials – tech-savvy, lifestyle & career focused.",
+    },
+    
+    {
+      label: "Women 25–34",
+      tooltip: "Millennials – young professionals / family-forming stage.",
+    },
+    
+     {
+      label: "Men 35–44",
+      tooltip: "Older Millennials / Gen X – higher disposable income.",
+    },
+    {
+      label: "Women 35–44",
+      tooltip: "Older Millennials / Gen X – career stability & young families.",
+    },
+    
+   {
+      label: "Men 45+",
+      tooltip: "Gen X / Boomers – loyalty and financial stability.",
+    },
+    {
+      label: "Women 45+",
+      tooltip: "Gen X / Boomers – loyalty and financial stability.",
+    },
+    
+    
+    
     
   ];
 
   const brandValues = [
-    "Relatable",
-    "Authentic",
-    "Funny",
-    "High-Energy",
-    "Educational",
-    "Bold",
-    "Uplifting",
-    "Honest",
-    "Motivational",
-    "Creative",
-  ];
+  // CORE from your original list (Prioritized)
+  "Relatable",
+  "Authentic",
+  "Honest",
+  "Funny",
+  "High-Energy",
+  "Vibrant",
+  "Playful",
+  "Bold",
+  "Creative",
+  "Expressive",
+  "Educational",
+  "Informative",
+  "Motivational",
+  "Uplifting",
+  "Empowering",
+
+  // AESTHETIC & FEEL (Elevating the presentation)
+  "Polished",
+  "Chic",
+  "Clean",
+  "Modern",
+  "Contemporary",
+
+  // CHARACTER & APPROACH (Deepening the persona)
+  "Confident",
+  "Approachable",
+  "Supportive",
+  "Trustworthy",
+  "Heartfelt",
+
+  // ASPIRATION & IMPACT (The higher-purpose layer)
+  "Aspirational",
+  "Innovative",
+  "Purpose-Driven",
+  "Visionary"
+];
 
   const handleArrayChange = (
     field: keyof typeof onboardingData,
@@ -203,7 +233,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
             </CardContent>
           </Card>
 
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="">
             
 
             {/* Brand Values */}
@@ -215,7 +245,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 gap-3 max-h-64 overflow-y-auto">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {brandValues.map((value) => (
                     <div key={value} className="flex items-center space-x-2">
                       <Checkbox

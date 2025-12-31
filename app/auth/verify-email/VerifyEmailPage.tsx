@@ -93,10 +93,10 @@ export default function VerifyEmailPage() {
       if (res.code === 200) {
         localStorage.setItem("emailVerified", "true");
         setIsVerified(true);
-        toast.success("🎉 Account verified successfully! Redirecting...", {
-        position: "top-center",
-        autoClose: 2000,
-      });
+      //   toast.success("🎉 Account verified successfully! Redirecting...", {
+      //   position: "top-center",
+      //   autoClose: 2000,
+      // });
 
         setTimeout(() => {
         if (returnTo) {

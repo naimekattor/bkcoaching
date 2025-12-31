@@ -103,7 +103,7 @@ if (effectiveToken) {
     <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50">
       {error ? (
         <div className="text-center">
-          <p className="text-red-500 mb-4">{error}</p>
+          <p className="text-red-500/80 mb-4">{error}</p>
           <Link
             href="/auth/login"
             className="text-white bg-primary px-4 py-2 rounded cursor-pointer transition"

@@ -90,30 +90,9 @@ const transformCampaignDataForAPI = (data: OnboardingData) => {
   return campaignPayload;
 };
 
-const isEmptyObject = (obj: Record<string, any> | null | undefined) => {
-  if (!obj) return true;
-  return Object.values(obj).every(
-    (value) =>
-      value === undefined ||
-      value === null ||
-      value === "" ||
-      (Array.isArray(value) && value.length === 0)
-  );
-};
 
-const hasCampaignData = (campaignPayload: ReturnType<typeof transformCampaignDataForAPI>) => {
-  return !!(
-    campaignPayload.campaign_name ||
-    campaignPayload.campaign_objective ||
-    campaignPayload.budget_range ||
-    campaignPayload.budget_type ||
-    campaignPayload.payment_preference ||
-    campaignPayload.campaign_description ||
-    campaignPayload.content_deliverables ||
-    campaignPayload.campaign_timeline ||
-    campaignPayload.campaign_poster
-  );
-};
+
+
 
 
 const CompletionStep = ({ onComplete }: CompletionStepProps) => {
@@ -179,7 +158,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
         const campaignPayload = transformCampaignDataForAPI(onboardingData);
         console.log("Campaign payload:", campaignPayload);
 
-        if (hasCampaignData(campaignPayload)) {
+        if (onboardingData?.campaignName) {
           await apiClient("campaign_service/create_campaign/", {
           method: "POST",
           auth: true,
@@ -192,10 +171,10 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
        localStorage.removeItem("brandOnBoardingData");
         
 
-        toast({
-          title: "Profile Saved!",
-          description: "Your brand profile and campaign are now live.",
-        });
+        // toast({
+        //   title: "Profile Saved!",
+        //   description: "Your brand profile and campaign are now live.",
+        // });
         
         console.log("Onboarding data removed from localStorage");
       } catch (error) {

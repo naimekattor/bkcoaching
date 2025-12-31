@@ -217,7 +217,7 @@ useEffect(() => {
         throw new Error(`${res.status} - ${text}`);
       }
 
-      toast("Profile Saved!");
+      // toast("Profile Saved!");
     } catch (error) {
       console.error("Failed to submit influencer onboarding data:", error);
       toast("Error Saving Profile");
@@ -254,7 +254,7 @@ useEffect(() => {
             Your profile is live and visible to brands. Start browsing campaigns
             or wait for brands to discover you!
           </p>
-          <div className="flex items-center justify-center gap-6 text-sm">
+          {/* <div className="flex items-center justify-center gap-6 text-sm">
             <div className="text-center">
               <div className="font-semibold text-secondary">85%</div>
               <div className="text-muted-foreground">Your Earnings</div>
@@ -267,7 +267,7 @@ useEffect(() => {
               <div className="font-semibold text-secondary">24/7</div>
               <div className="text-muted-foreground">Support</div>
             </div>
-          </div>
+          </div> */}
         </CardContent>
       </Card>
 
