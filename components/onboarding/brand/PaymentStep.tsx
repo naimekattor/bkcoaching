@@ -39,10 +39,10 @@ const PaymentStep = ({ onNext, onBack }: PaymentStepProps) => {
       savings: "",
     },
     {
-      title: "I'm Both",
+      title: "I'm (Brand + Influencer)",
       price: 180,
       description:
-        "Bundle Both and Save: Perfect for anyone growing their own business and also open to helping others grow (and getting paid!)",
+        "Bundle (Brand + Influencer) and Save: Perfect for anyone growing their own business and also open to helping others grow (and getting paid!)",
       savings: "Save over 15%",
     },
   ];
@@ -59,10 +59,10 @@ const PaymentStep = ({ onNext, onBack }: PaymentStepProps) => {
       description: "Perfect for Growing Businesses",
     },
     {
-      title: "I'm Both",
+      title: "I'm (Brand + Influencer)",
       price: 20,
       description:
-        "Bundle Both and Save: Perfect for anyone growing their own business and also open to helping others grow (and getting paid!)",
+        "Bundle (Brand + Influencer) and Save: Perfect for anyone growing their own business and also open to helping others grow (and getting paid!)",
       savings: "Save over 15%",
     },
   ];

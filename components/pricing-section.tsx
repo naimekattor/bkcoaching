@@ -263,7 +263,7 @@ export function PricingSection({
             const titleMap: Record<string, string> = {
               "Micro-Influencer": "I'm a Micro-Influencer",
               Businesses: "I'm a Brand",
-              Both: "I'm Both",
+              Both: "I'm (Brand + Influencer)",
             };
 
             return (

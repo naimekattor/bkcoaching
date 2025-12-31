@@ -11,7 +11,7 @@ export default function BrandSubscriptionRequired() {
       case 'subscription_inactive':
         return 'Your subscription is not active. Please renew your subscription.';
       case 'wrong_plan_type':
-        return 'Your current plan is for influencers. Upgrade to a Business or Both plan to access the Brand Dashboard.';
+        return 'Your current plan is for influencers. Upgrade to a Business or (Brand + Influencer Access) plan to access the Brand Dashboard.';
       default:
         return 'You need a Business subscription to access the Brand Dashboard.';
     }
@@ -34,7 +34,8 @@ export default function BrandSubscriptionRequired() {
           <h3 className="text-sm font-medium text-primary">Available Plans for Brands:</h3>
           <ul className="mt-2 text-sm text-primary space-y-1">
             <li>✓ <strong>Business Plan</strong> - Full brand features</li>
-            <li>✓ <strong>Both Plan</strong> - Brand + Influencer access</li>
+            <li>✓ <strong>Brand + Influencer Access</strong> – Access to both Brand and Influencer dashboards</li>
+
           </ul>
         </div>
 

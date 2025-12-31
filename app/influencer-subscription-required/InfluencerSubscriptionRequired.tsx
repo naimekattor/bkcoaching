@@ -12,7 +12,7 @@ export default function InfluencerSubscriptionRequired() {
       case 'subscription_inactive':
         return 'Your subscription is not active. Please renew your subscription.';
       case 'wrong_plan_type':
-        return 'Your current plan is for brands. Switch to a Micro-Influencer or Both plan to access the Influencer Dashboard.';
+        return 'Your current plan is for brands. Switch to a Micro-Influencer or (Brand + Influencer) plan to access the Influencer Dashboard.';
       default:
         return 'You need an Influencer subscription to access the Influencer Dashboard.';
     }
@@ -35,7 +35,8 @@ export default function InfluencerSubscriptionRequired() {
           <h3 className="text-sm font-medium text-primary">Available Plans for Influencers:</h3>
           <ul className="mt-2 text-sm text-primary space-y-1">
             <li>✓ <strong>Micro-Influencer Plan</strong> - Full influencer features</li>
-            <li>✓ <strong>Both Plan</strong> - Influencer + Brand access</li>
+            <li>✓ <strong>Brand + Influencer Access</strong> – Access to both Brand and Influencer dashboards</li>
+
           </ul>
         </div>
 

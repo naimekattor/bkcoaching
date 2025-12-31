@@ -10,6 +10,7 @@ import { X, Calendar, Paperclip, CheckCircle, XCircle } from "lucide-react";
 import { toast } from "react-toastify";
 import { usePathname } from "next/navigation";
 import { useNotificationStore } from "@/stores/useNotificationStore";
+import Swal from "sweetalert2";
 
 // --- Interfaces ---
 interface Attachment {
@@ -171,7 +172,7 @@ export default function Page() {
     return `${s} - ${e}`;
   };
 
-  // --- Action Handler (Accept Offer) ---
+  // --- Action Handler (Accept/Reject Offer) ---
   const handleCampaignAction = async (
     campaignId: number,
     action: "accept" | "reject"
@@ -205,17 +206,62 @@ export default function Page() {
         console.error("Accept Error:", error);
         toast("Failed to accept the offer. Please try again.");
       }
-    } else {
-      // Logic for Reject (Placeholder)
-      const confirmReject = confirm(
-        "Are you sure you want to reject this campaign?"
-      );
-      if (confirmReject) {
-        toast("Offer rejected locally.");
-        // Ideally call a reject API here
-        setCampaigns((prev) => prev.filter((c) => c.id !== campaignId));
-        setSelectedCampaign(null);
-      }
+    } else if (action === "reject") {
+      Swal.fire({
+        title: "Reject Campaign?",
+        text: "Are you sure you want to reject this campaign? This action cannot be undone.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d32f2f",
+        cancelButtonColor: "#6b7280",
+        confirmButtonText: "Yes, Reject",
+        cancelButtonText: "Cancel",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            // Call reject API
+            const res = await apiClient(
+              `campaign_service/reject_offer/${campaignId}/`,
+              {
+                method: "PATCH",
+                auth: true,
+              }
+            );
+
+            // Handle Success
+            if (res?.code === 200 || res?.status === "success") {
+              // Remove rejected campaign from local state
+              setCampaigns((prev) => prev.filter((c) => c.id !== campaignId));
+              
+              // Show success sweetalert
+              Swal.fire({
+                title: "Campaign Rejected!",
+                text: res.data?.message || "Campaign has been rejected successfully.",
+                icon: "success",
+                confirmButtonColor: "#10b981",
+                confirmButtonText: "OK",
+              });
+              
+              setSelectedCampaign(null); // Close modal
+            } else {
+              Swal.fire({
+                title: "Error",
+                text: "Something went wrong. Please try again.",
+                icon: "error",
+                confirmButtonColor: "#d32f2f",
+              });
+            }
+          } catch (error) {
+            console.error("Reject Error:", error);
+            Swal.fire({
+              title: "Error",
+              text: "Failed to reject the offer. Please try again.",
+              icon: "error",
+              confirmButtonColor: "#d32f2f",
+            });
+          }
+        }
+      });
     }
   };
 
@@ -713,7 +759,7 @@ export default function Page() {
                 </div>
               ) : (
                 <>
-                  {/* <button
+                  <button
                     onClick={() =>
                       handleCampaignAction(selectedCampaign.id, "reject")
                     }
@@ -721,7 +767,7 @@ export default function Page() {
                   >
                     <XCircle className="w-5 h-5" />
                     Reject
-                  </button> */}
+                  </button>
                   <button
                     onClick={() =>
                       handleCampaignAction(selectedCampaign.id, "accept")
