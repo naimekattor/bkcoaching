@@ -278,7 +278,7 @@ export function PricingSection({
         </div>
 
         {/* Pricing Cards Grid */}
-        <div className={`${userData?"md:grid-cols-2 w-2xl": "md:grid-cols-3"} grid  grid-cols-1 gap-8 max-w-5xl mx-auto`}>
+        <div className={`${userData?"md:grid-cols-2": "md:grid-cols-3"} grid  grid-cols-1 gap-8 max-w-5xl mx-auto`}>
           {filteredPlans.map((plan) => {
             const price = getPriceForInterval(plan.prices);
             const savings = isYearly ? calculateSavings(plan.prices) : null;
