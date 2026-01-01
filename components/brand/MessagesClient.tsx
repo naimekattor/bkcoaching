@@ -10,6 +10,7 @@ import {
   Bell,
   ArrowLeft,
   Loader,
+  Dot,
 } from "lucide-react";
 import Image from "next/image";
 import { useAuthStore } from "@/stores/useAuthStore";
@@ -27,6 +28,7 @@ interface Room {
   name?: string;
   other_user_avatar?: string;
   profile_picture?: string;
+  seen:boolean;
 }
 
 interface OtherUserProfile {
@@ -112,7 +114,7 @@ const getSafeImageSrc = (src?: string) => {
     src === "null" ||
     src === "undefined"
   ) {
-    return "/images/person.jpg";
+    return null;
   }
 
   if (src.startsWith("http://") || src.startsWith("https://")) {
@@ -120,10 +122,10 @@ const getSafeImageSrc = (src?: string) => {
   }
 
   if (src.startsWith("/")) {
-    return "/images/person.jpg";
+    return null;
   }
 
-  return "/images/person.jpg";
+  return null;
 };
 
 export default function MessagesClient() {
@@ -179,6 +181,7 @@ export default function MessagesClient() {
                 last_message: "",
                 timestamp: new Date().toISOString(),
                 name: matchedRoom?.name,
+                seen: matchedRoom?.seen ?? false,
                 profile_picture: matchedRoom?.profile_picture,
               }
         );
@@ -642,12 +645,7 @@ export default function MessagesClient() {
               </button>
               <h1 className="text-xl font-bold text-primary">Messages</h1>
             </div>
-            {/* <div className="flex items-center gap-2">
-              <button className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all duration-200">
-                <Bell className="h-5 w-5" />
-                <span className="absolute -top-1 -right-1 w-3 h-3 bg-secondary rounded-full"></span>
-              </button>
-            </div> */}
+            
           </div>
 
           <div className="relative">
@@ -690,38 +688,51 @@ export default function MessagesClient() {
                   onClick={() => handleRoomSelect(room)}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="relative flex-shrink-0">
-                      {profilePicture ? (
-                        <Image
-                          src={profilePicture}
-                          alt="name"
-                          width={48}
-                          height={48}
-                          className="w-12 h-12 rounded-full overflow-hidden"
-                        />
-                      ) : (
-                        <span className="rounded-full overflow-hidden flex items-center justify-center text-white font-semibold text-xs flex-shrink-0">
-                      {selectedRoom?.name?.[0] ||
-                        otherUserProfile?.influencer_profile
-                          ?.display_name?.[0] ||
-                        "U"}
-                    </span>
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <p className="font-semibold text-sm truncate text-gray-900">
-                          {room?.name || room?.other_user_id}
-                        </p>
-                        <span className="text-xs text-gray-400 ml-2">
-                          {time}
-                        </span>
-                      </div>
-                      <p className="text-xs text-gray-500 truncate mt-1">
-                        {message}
-                      </p>
-                    </div>
-                  </div>
+  {/* Unread Dot */}
+  <div className="flex-shrink-0 w-2 h-2">
+    {!room.seen && <Dot color="#00F7FF" />}
+  </div>
+
+  {/* Profile */}
+  <div className="relative flex-shrink-0">
+    {profilePicture ? (
+      <Image
+        src={profilePicture}
+        alt="name"
+        width={48}
+        height={48}
+        className="w-12 h-12 rounded-full object-cover"
+      />
+    ) : (
+      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold text-xs">
+        {room?.name?.[0] ||
+         otherUserProfile?.brand_profile?.business_name?.[0] ||
+         otherUserProfile?.influencer_profile?.display_name?.[0] ||
+         "U"}
+      </div>
+    )}
+  </div>
+
+  {/* Message content */}
+  <div className="flex-1 min-w-0">
+    <div className="flex items-center justify-between">
+      <p className="font-semibold text-sm truncate text-gray-700">
+        {room?.name || room?.other_user_id}
+      </p>
+      <span className="text-xs text-gray-400 ml-2">
+        {time}
+      </span>
+    </div>
+    <p
+      className={`text-xs truncate mt-1 ${
+        !room.seen ? "font-bold text-black" : "text-gray-500"
+      }`}
+    >
+      {message}
+    </p>
+  </div>
+</div>
+
                 </div>
               );
             })
@@ -752,17 +763,27 @@ export default function MessagesClient() {
                 >
                   <MoreHorizontal className="h-5 w-5" />
                 </button>
-                <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold">
-                  
+              <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold">
+                {(() => {
+                  const imageSrc = getSafeImageSrc(selectedRoom.profile_picture);
+                  return imageSrc ? (
                     <Image
-                      src={getSafeImageSrc(selectedRoom.profile_picture)}
+                      src={imageSrc}
                       alt="Profile picture"
                       width={48}
                       height={48}
                       className="w-[48px] h-[48px] rounded-full"
                     />
-                  
-                </div>
+                  ) : (
+                    <span className="text-white font-semibold text-sm">
+                      {selectedRoom?.name?.[0] ||
+                        otherUserProfile?.brand_profile?.business_name?.[0] ||
+                        otherUserProfile?.influencer_profile?.display_name?.[0] ||
+                        "U"}
+                    </span>
+                  );
+                })()}
+              </div>
                 <div className="min-w-0 flex-1">
                   <p className="font-bold text-gray-900 truncate">
                     {selectedRoom.name ||

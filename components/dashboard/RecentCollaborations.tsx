@@ -87,7 +87,7 @@ export function RecentCollaborations({ rawCampaigns }: { rawCampaigns: Campaign[
               return {
                 campaignId: campaign.id,
                 influencerId: campaign.hired_influencer_id!,
-                username: profile?.display_name || `User ${campaign.hired_influencer_id}`,
+                username: profile?.display_name || userRes.data?.user?.first_name,
                 avatar: profile?.profile_picture || "/images/person.jpg",
                 rating: campaign.rating > 0 ? campaign.rating : 5.0,
                 followers: total > 0 ? `${(total / 1000).toFixed(1)}K` : "N/A",

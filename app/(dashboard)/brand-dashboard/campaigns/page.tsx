@@ -142,7 +142,13 @@ const PLATFORM_CONFIG: PlatformConfig[] = [
   },
 ];
 
-const getPlatformConfig = (deliverable: string) => {
+const getPlatformConfig = (deliverable?: string | null) => {
+  if (!deliverable || typeof deliverable !== "string") {
+    return {
+      icon: <FaQuestionCircle className="w-4 h-4" />,
+      className: "text-gray-400",
+    };
+  }
   return (
     PLATFORM_CONFIG.find((c) =>
       deliverable.toLowerCase().includes(c.match)
@@ -171,6 +177,7 @@ export default function CampaignDashboard() {
   const [ratingValue, setRatingValue] = useState<number>(0);
   const [modalHirings, setModalHirings] = useState<HiringCampaign[]>([]);
   const [archieveStatus, setArchieveStatus] = useState<CampaignApiResponse | null>(null);
+  const [showArchived, setShowArchived] = useState(false);
 
   /* ---------- Stats (no type errors) ---------- */
   const stats = [
@@ -207,19 +214,29 @@ export default function CampaignDashboard() {
 
   /* ---------- Filters ---------- */
   const filteredCampaigns = allCampaigns.filter((campaign) => {
-    const matchesSearch = campaign.title
+    // Exclude archived campaigns from main view
+    if ((campaign.status || "").toLowerCase() === "archive") {
+      return false;
+    }
+
+    const matchesSearch = (campaign.title || "")
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
 
     const matchesStatus =
-      statusFilter === "all" || campaign.status.toLowerCase() === statusFilter;
+      statusFilter === "all" || (campaign.status || "").toLowerCase() === statusFilter;
 
     const matchesPlatform =
       platformFilter === "all" ||
-      campaign.platforms.some((p) => p.toLowerCase() === platformFilter);
+      (campaign.platforms || []).some((p) => p.toLowerCase() === platformFilter);
 
     return matchesSearch && matchesStatus && matchesPlatform;
   });
+
+  // Get archived campaigns for display
+  const archivedCampaigns = allCampaigns.filter((campaign) =>
+    (campaign.status || "").toLowerCase() === "archive"
+  );
 
   const openCampaignModal = (campaign: Campaign) => {
     setSelectedCampaign(campaign);
@@ -422,8 +439,49 @@ export default function CampaignDashboard() {
     }
   };
 
-  const handleCampaignCreated = (newCampaign: Campaign) => {
-    setAllCampaigns((prev) => [newCampaign, ...prev]);
+  const handleCampaignCreated = (rawCampaignData: any) => {
+    // Transform the API response to Campaign format (same as fetchAllCampaigns)
+    const transformed: Campaign = {
+      id: rawCampaignData.id,
+      title: rawCampaignData.campaign_name || "Untitled Campaign",
+      description: rawCampaignData.campaign_description || "",
+      image: rawCampaignData.campaign_poster || "/images/placeholder-image.png",
+      status: (rawCampaignData.campaign_status || "active") as
+        | "active"
+        | "paused"
+        | "completed",
+
+      budget: rawCampaignData.budget_range ? `$${rawCampaignData.budget_range}` : "$0",
+      budgetType: rawCampaignData.budget_type || "total",
+      targetReach: "200K",
+      timeLeft: rawCampaignData.campaign_timeline || "N/A",
+      progress: 0,
+
+      platforms: [],
+      assignedCreators: [],
+
+      objective: rawCampaignData.campaign_objective || "",
+      timeline: rawCampaignData.campaign_timeline || "",
+
+      deliverables: rawCampaignData.content_deliverables
+        ? rawCampaignData.content_deliverables.split(",").map((d: string) => d.trim())
+        : [],
+
+      paymentPreferences: rawCampaignData.payment_preference
+        ? rawCampaignData.payment_preference.split(",").map((p: string) => p.trim())
+        : [],
+
+      keywords: rawCampaignData.keywords_and_hashtags
+        ? rawCampaignData.keywords_and_hashtags.split(",").map((k: string) => k.trim())
+        : [],
+
+      targetAudience: rawCampaignData.target_audience || "",
+      approvalRequired: !!rawCampaignData.content_approval_required,
+      autoMatch: !!rawCampaignData.auto_match_micro_influencers,
+      campaignOwner: rawCampaignData.campaign_owner,
+    };
+
+    setAllCampaigns((prev) => [transformed, ...prev]);
     setShowModal(false);
   };
 
@@ -497,7 +555,7 @@ export default function CampaignDashboard() {
   };
 
   // handle archieve
-  const handleArchieve = async (status: string, id:string) => {
+  const handleArchieve = async (status: string, id: string) => {
     try {
       const res = await apiClient(`campaign_service/update_a_campaign/${id}/`, {
         method: "PATCH",
@@ -506,18 +564,29 @@ export default function CampaignDashboard() {
       });
       console.log(res);
       if (res.code == 200) {
-        setArchieveStatus(res?.data);
-      }
+        // Update the local campaigns list with the new status
+        setAllCampaigns((prev) =>
+          prev.map((c) =>
+            c.id === id
+              ? { ...c, status: status as "active" | "paused" | "completed" }
+              : c
+          )
+        );
 
-      // setAllCampaigns((prev) =>
-      //   prev.map((c) =>
-      //     c.id === campaign.id
-      //       ? { ...c, status: newStatus as "active" | "paused" }
-      //       : c
-      //   )
-      // );
+        setArchieveStatus(res?.data);
+
+        // Show success message
+        if (status === "archive") {
+          toast.success("Campaign archived successfully!");
+          // Close modal after a short delay
+          setTimeout(() => closeCampaignModal(), 500);
+        } else {
+          toast.success("Campaign restored successfully!");
+        }
+      }
     } catch (err) {
-      console.error("Pause/Resume failed", err);
+      console.error("Archive failed", err);
+      toast.error("Failed to update campaign status");
     }
   };
 
@@ -701,7 +770,7 @@ export default function CampaignDashboard() {
                     <DropdownMenuItem
                       onSelect={(event) => handlePauseResume(event, campaign)}
                     >
-                      {campaign.status.toLowerCase() === "active" ? (
+                      {(campaign.status || "").toLowerCase() === "active" ? (
                         <>
                           <Pause className="mr-2 h-4 w-4" /> Pause
                         </>
@@ -729,21 +798,23 @@ export default function CampaignDashboard() {
                 </p>
 
                 <div className="flex items-center gap-2 mb-4">
-                  {campaign.deliverables.map((item, idx) => {
-                    const { icon, className } = getPlatformConfig(item);
-                    return (
-                      <div
-                        key={idx}
-                        className={`w-4 h-4 rounded flex items-center justify-center ${className}`}
-                      >
-                        {icon}
-                      </div>
-                    );
-                  })}
+                  {Array.isArray(campaign.deliverables) && campaign.deliverables.length > 0
+                    ? campaign.deliverables.filter(Boolean).map((item, idx) => {
+                        const { icon, className } = getPlatformConfig(item);
+                        return (
+                          <div
+                            key={idx}
+                            className={`w-4 h-4 rounded flex items-center justify-center ${className}`}
+                          >
+                            {icon}
+                          </div>
+                        );
+                      })
+                    : null}
 
                   {/* Assigned creators avatars */}
                   <div className="flex -space-x-2 ml-2">
-                    {campaign.assignedCreators
+                    {(campaign.assignedCreators || [])
                       .slice(0, 3)
                       .map((creator, idx) => (
                         <div
@@ -759,10 +830,10 @@ export default function CampaignDashboard() {
                           />
                         </div>
                       ))}
-                    {campaign.assignedCreators.length > 3 && (
+                    {(campaign.assignedCreators || []).length > 3 && (
                       <div className="w-6 h-6 bg-gray-200 rounded-full border-2 border-white flex items-center justify-center">
                         <span className="text-xs">
-                          +{campaign.assignedCreators.length - 3}
+                          +{(campaign.assignedCreators || []).length - 3}
                         </span>
                       </div>
                     )}
@@ -835,6 +906,113 @@ export default function CampaignDashboard() {
             Load More Campaigns
           </button>
         </div> */}
+
+        {/* Archived Campaigns Section */}
+        {archivedCampaigns.length > 0 && (
+          <div className="mt-12">
+            <button
+              onClick={() => setShowArchived(!showArchived)}
+              className="flex items-center gap-3 text-lg font-semibold text-gray-900 mb-6 hover:text-primary transition-colors"
+            >
+              <ChevronDown
+                className={`w-5 h-5 transition-transform ${
+                  showArchived ? "rotate-180" : ""
+                }`}
+              />
+              Archived Campaigns ({archivedCampaigns.length})
+            </button>
+
+            {showArchived && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                {archivedCampaigns.map((campaign) => (
+                  <div
+                    key={campaign.id}
+                    className="bg-gray-50 rounded-lg shadow-sm cursor-pointer hover:shadow-lg border border-gray-300 transform transition-transform duration-300 hover:scale-102 opacity-75"
+                  >
+                    <div className="relative">
+                      <Image
+                        width={600}
+                        height={192}
+                        src={campaign.image}
+                        alt={campaign.title}
+                        className="w-full h-48 rounded-t-lg"
+                      />
+                      <span className="absolute top-3 left-3 px-2 py-1 rounded-full text-xs font-medium bg-gray-400 text-white">
+                        Archived
+                      </span>
+
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button className="absolute top-3 right-3 p-2 bg-white/80 hover:bg-white rounded-md transition-colors">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </button>
+                        </DropdownMenuTrigger>
+
+                        <DropdownMenuContent align="end" className="w-40">
+                          <DropdownMenuItem
+                            onSelect={(event) => {
+                              event.preventDefault();
+                              event.stopPropagation();
+                              handleArchieve("active", campaign.id);
+                            }}
+                          >
+                            <Play className="mr-2 h-4 w-4" /> Restore
+                          </DropdownMenuItem>
+
+                          <DropdownMenuItem
+                            className="text-red-600"
+                            onSelect={(event) => handleDelete(event, campaign)}
+                          >
+                            <Trash className="mr-2 h-4 w-4" /> Delete Permanently
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+
+                    <div className="p-4">
+                      <h3 className="font-semibold text-lg mb-2 text-gray-600">
+                        {campaign.title}
+                      </h3>
+                      <p className="text-sm text-gray-500 mb-4">
+                        {campaign.description}
+                      </p>
+
+                      <div className="mt-6 grid grid-cols-2 gap-6">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2.5 bg-gray-200 rounded-xl">
+                            <DollarSign className="w-5 h-5 text-gray-400" />
+                          </div>
+                          <div>
+                            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Budget
+                            </p>
+                            <p className="text-lg font-bold text-gray-900">
+                              {campaign.budget}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                          <div className="p-2.5 bg-gray-200 rounded-xl">
+                            <Clock className="w-5 h-5 text-gray-400" />
+                          </div>
+                          <div>
+                            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Timeline
+                            </p>
+                            <p className="text-lg font-bold text-gray-900">
+                              {campaign.timeLeft}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Detail Modal */}

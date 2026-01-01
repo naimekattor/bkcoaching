@@ -28,6 +28,19 @@ interface OtherUserData{
   hires_data:number;
   campaigns:number;
 }
+
+interface CollaborationData {
+  campaigns?: number;
+  hires_data?: number;
+  total_invested?: number;
+  campaigns_data?: Array<{
+    id: string | number;
+    campaign_name: string;
+    campaign_status: string;
+    campaign_description: string;
+    campaign_timeline: string;
+  }>;
+}
 interface BrandProfileResponse {
   id?: string | number;
   business_name?: string;
@@ -70,6 +83,7 @@ export default function BrandProfilePage() {
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const[userOtherData,setUserOtherData]=useState<OtherUserData>({ hires_data: 0, campaigns: 0 });
+  const[collaboration,setCollaboration]=useState<CollaborationData>({});
 
   // -------------------------------------------------
   // 1. FETCH brand by id
@@ -96,9 +110,9 @@ export default function BrandProfilePage() {
           : [];
 
         const normalised: Brand = {
-          id: String(raw.id ?? id),
+          id: raw?.id ,
           userId: res?.data?.data?.user?.id ? String(res?.data?.data?.user?.id) : undefined,
-          name: raw.business_name ?? "Unnamed Brand",
+          name: raw.business_name || res?.data?.data?.user?.first_name || "No Name",
           description: raw.short_bio ?? "",
           logo: raw.logo ?? undefined,
           verified: raw.is_verified ?? false,
@@ -119,18 +133,9 @@ export default function BrandProfilePage() {
             name: raw.business_name ?? "",
             title: raw.contact_person_title ?? "",
           },
-          // ---- Campaign stats (fallback to 0) ----
-          // campaigns: {
-          //   total: userOtherData?.campaigns_total ?? 0,
-          //   creators: userOtherData?.campaigns_creators ?? 0,
-          //   avgRating: userOtherData?.campaigns_avg_rating ?? 0,
-          //   totalInvested: userOtherData?.campaigns_total_invested ?? 0,
-          // },
-          // ---- Active campaigns (you may store them in a separate endpoint) ----
+          
           activeCampaigns: raw.active_campaigns ?? [],
-          // ---- Reviews (fallback to empty) ----
           reviews: raw.reviews ?? [],
-          // ---- Resources (fallback to empty) ----
           resources: raw.resources ?? [],
         };
 
@@ -157,14 +162,19 @@ export default function BrandProfilePage() {
     if (id) fetchBrand();
   }, [id]);
 
-  // -------------------------------------------------
-  // 2. Copy-link handler
-  // -------------------------------------------------
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+
+  useEffect(()=>{
+    const fetchData=async()=>{
+      if (!id || !brand?.id) return;
+      const data=await apiClient(`campaign_service/${id}/${brand?.id}/hires_and_campaigns/`,{
+            method:"GET"
+          });
+          setCollaboration(data);
+    }
+    fetchData();
+          
+  },[id, brand?.id]);
+  
 
   // -------------------------------------------------
   // 3. Loading / Not-found UI
@@ -244,12 +254,7 @@ export default function BrandProfilePage() {
                       </a>
                     </div>
                   )}
-                  {/* {brand.location && (
-                    <div className="flex items-center gap-1">
-                      <MapPin className="w-4 h-4" />
-                      {brand.location}
-                    </div>
-                  )} */}
+                  
                 </div>
               </div>
             </div>
@@ -261,10 +266,7 @@ export default function BrandProfilePage() {
                 Message
               </button>
               </Link>
-              {/* <button className="border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2">
-                <Bookmark className="w-4 h-4" />
-                Save
-              </button> */}
+              
             </div>
           </div>
         </div>
@@ -299,21 +301,21 @@ export default function BrandProfilePage() {
               <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-primary mb-1">
-                    {userOtherData?.campaigns ?? 0}
+                    {collaboration?.campaigns ?? 0}
                   </div>
                   <div className="text-sm text-gray-600">Total Campaigns</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-primary mb-1">
-                    {userOtherData?.hires_data ?? 0}
+                    {collaboration?.hires_data ?? 0}
                   </div>
                   <div className="text-sm text-gray-600">micro-influencers</div>
                 </div>
                 
                 <div className="text-center">
                   <div className="text-2xl font-bold text-primary mb-1">
-                    ${((brand.campaigns?.totalInvested ?? 0) / 1000).toFixed(0)}
-                    K
+                    ${collaboration?.total_invested ?? 0}
+                    
                   </div>
                   <div className="text-sm text-gray-600">Total Invested</div>
                 </div>
@@ -321,40 +323,28 @@ export default function BrandProfilePage() {
             </div>
 
             {/* Active Campaigns */}
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <div className="bg-white rounded-lg border border-gray-200 p-6 h-[400px] overflow-y-scroll">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 Active Campaigns
               </h2>
-              {brand.activeCampaigns?.length ? (
+              {collaboration.campaigns_data?.length ? (
                 <div className="space-y-4">
-                  {brand.activeCampaigns.map((c) => (
+                  {collaboration.campaigns_data.map((c) => (
                     <div
                       key={c.id}
                       className="border border-gray-200 rounded-lg p-4"
                     >
                       <div className="flex items-start justify-between mb-2">
-                        <h3 className="font-medium text-gray-900">{c.title}</h3>
+                        <h3 className="font-medium text-gray-900">{c.campaign_name}</h3>
                         <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-medium">
-                          {c.status}
+                          {c.campaign_status}
                         </span>
                       </div>
                       <p className="text-gray-600 text-sm mb-3">
-                        {c.description}
+                        {c.campaign_description}
                       </p>
                       <div className="flex items-center justify-between text-sm text-gray-500">
-                        <span>Deadline: {c.deadline}</span>
-                        <div className="flex items-center gap-4">
-                          <span>
-                            {c.creatorsNeeded} micro-influencers needed
-                          </span>
-                          <div className="flex -space-x-2">
-                            <div className="w-6 h-6 bg-gray-300 rounded-full border-2 border-white"></div>
-                            <div className="w-6 h-6 bg-gray-300 rounded-full border-2 border-white"></div>
-                            <div className="w-6 h-6 bg-gray-300 rounded-full border-2 border-white flex items-center justify-center text-xs">
-                              +2
-                            </div>
-                          </div>
-                        </div>
+                        <span>Deadline: {c.campaign_timeline}</span>
                       </div>
                     </div>
                   ))}

@@ -8,6 +8,7 @@ import { BusinessAssets } from "./BusinessAssets";
 import { useEffect, useState } from "react";
 import { apiClient } from "@/lib/apiClient";
 import { useAuthStore } from "@/stores/useAuthStore";
+import SentProposal from "../SentProposal";
 
 // --- 1. Define Interface for Raw API Response (Backend Data) ---
 interface RawCampaignResponse {
@@ -159,6 +160,7 @@ export default function BDashboard() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
               <BusinessBio />
+              <SentProposal/>
               <CampaignsSection allCampaigns={allCampaigns} />
             </div>
             <div className="space-y-6">

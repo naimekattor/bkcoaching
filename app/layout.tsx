@@ -18,6 +18,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "The Social Market ",
   description: "Collabs are just easier here. ",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({

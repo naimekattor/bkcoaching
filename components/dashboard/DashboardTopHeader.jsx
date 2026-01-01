@@ -385,14 +385,24 @@ const handleLogout =async () => {
               }}
               className="flex items-center gap-2 hover:bg-gray-50 rounded-full p-1 pr-3 transition"
             >
-              {user && (
+              {user?.brand_profile?.logo || user?.influencer_profile?.profile_picture ? (
                 <Image
-                  src={user?.brand_profile?.logo || "/images/person.jpg"}
+                  src={user?.brand_profile?.logo || user?.influencer_profile?.profile_picture}
                   width={44}
                   height={44}
                   alt="Profile"
                   className="w-11 h-11 rounded-full object-cover ring-2 ring-gray-200"
                 />
+              ):(
+                <div className="w-11 h-11 rounded-full bg-primary text-secondary flex items-center justify-center font-semibold uppercase">
+  {(
+    user?.brand_profile?.business_name ||
+    user?.influencer_profile?.display_name ||
+    user?.user?.first_name ||
+    "Name"
+  ).charAt(0).toUpperCase()}
+</div>
+
               )}
               <ChevronDown
                 size={18}
