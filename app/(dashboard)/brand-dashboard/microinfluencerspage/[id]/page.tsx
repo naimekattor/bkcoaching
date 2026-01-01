@@ -117,6 +117,7 @@ export default function BrandProfilePage() {
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const router = useRouter();
+  const[collaboration,setCollaboration]=useState(null);
 
   // -------------------------------------------------
   // 1. FETCH influencerby id
@@ -311,15 +312,18 @@ export default function BrandProfilePage() {
     fetchInfluencer();
   }, [id]);
 
-  // -------------------------------------------------
-  // 2. Copy-link handler
-  // -------------------------------------------------
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
+ 
+useEffect(()=>{
+    const fetchData=async()=>{
+      if (!id ) return;
+      const data=await apiClient(`campaign_service/${id}/brand_earnings_and_hires/`,{
+            method:"GET"
+          });
+          setCollaboration(data);
+    }
+    fetchData();
+          
+  },[id]);
   // -------------------------------------------------
   // 3. Loading / Not-found UI
   // -------------------------------------------------
@@ -539,131 +543,135 @@ export default function BrandProfilePage() {
             </div>
 
             {/* Campaign Stats */}
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                Collaboration Performance
-              </h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary mb-1">
-                    {influencer.campaigns?.total ?? 0}
-                  </div>
-                  <div className="text-sm text-gray-600">Total Campaigns</div>
-                </div>
-                {/* <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600 mb-1">
-                    {influencer.campaigns?.creators ?? 0}
-                  </div>
-                  <div className="text-sm text-gray-600">Engagement Rate</div>
-                </div> */}
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-secondary mb-1">
-                    {influencer.campaigns?.avgRating ?? 0}
-                  </div>
-                  <div className="text-sm text-gray-600">Avg Rating</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary mb-1">
-                    $
-                    {(
-                      (influencer.campaigns?.totalInvested ?? 0) / 1000
-                    ).toFixed(0)}
-                  </div>
-                  <div className="text-sm text-gray-600">Total Earnings</div>
-                </div>
-              </div>
-            </div>
+            <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
+  <h2 className="text-xl font-semibold text-gray-900 mb-6">
+    Collaboration Performance
+  </h2>
+  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+    {/* Total Campaigns */}
+    <div className="text-center bg-gradient-to-br from-[#0d2f4f]/5 to-[#0d2f4f]/10 rounded-lg p-5 border border-[#0d2f4f]/10">
+      <div className="w-12 h-12 bg-[#0d2f4f]/10 rounded-lg flex items-center justify-center mx-auto mb-3">
+        <svg className="w-6 h-6 text-[#0d2f4f]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+        </svg>
+      </div>
+      <div className="text-3xl font-bold text-[#0d2f4f] mb-2">
+        {collaboration?.hires ?? 0}
+      </div>
+      <div className="text-sm font-medium text-gray-600">Total Campaigns</div>
+    </div>
+
+    {/* Avg Rating */}
+    <div className="text-center bg-gradient-to-br from-[#ffc006]/5 to-[#ffc006]/10 rounded-lg p-5 border border-[#ffc006]/20">
+      <div className="w-12 h-12 bg-[#ffc006]/20 rounded-lg flex items-center justify-center mx-auto mb-3">
+        <svg className="w-6 h-6 text-[#ffc006]" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.958a1 1 0 00.95.69h4.172c.969 0 1.371 1.24.588 1.81l-3.376 2.455a1 1 0 00-.364 1.118l1.287 3.958c.3.921-.755 1.688-1.54 1.118l-3.376-2.455a1 1 0 00-1.176 0l-3.376 2.455c-.784.57-1.838-.197-1.539-1.118l1.286-3.958a1 1 0 00-.364-1.118L2.047 9.385c-.784-.57-.38-1.81.588-1.81h4.172a1 1 0 00.95-.69l1.286-3.958z" />
+        </svg>
+      </div>
+      
+      {collaboration?.total_rating === 0 || collaboration?.total_rating == null ? (
+        <>
+          <div className="text-2xl font-bold text-gray-400 mb-1">—</div>
+          <div className="inline-flex items-center gap-1 bg-[#ffc006]/20 text-[#0d2f4f] px-3 py-1 rounded-full text-xs font-semibold mb-2">
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            New Talent
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="text-3xl font-bold text-[#0d2f4f] mb-2">
+            {collaboration.total_rating.toFixed(1)}
+          </div>
+          <div className="flex justify-center items-center gap-0.5 mb-1">
+            {[...Array(5)].map((_, i) => (
+              <svg
+                key={i}
+                className={`w-4 h-4 ${
+                  i < Math.round(collaboration.total_rating)
+                    ? "text-[#ffc006] fill-[#ffc006]"
+                    : "text-gray-300 fill-gray-300"
+                }`}
+                viewBox="0 0 20 20"
+              >
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.958a1 1 0 00.95.69h4.172c.969 0 1.371 1.24.588 1.81l-3.376 2.455a1 1 0 00-.364 1.118l1.287 3.958c.3.921-.755 1.688-1.54 1.118l-3.376-2.455a1 1 0 00-1.176 0l-3.376 2.455c-.784.57-1.838-.197-1.539-1.118l1.286-3.958a1 1 0 00-.364-1.118L2.047 9.385c-.784-.57-.38-1.81.588-1.81h4.172a1 1 0 00.95-.69l1.286-3.958z" />
+              </svg>
+            ))}
+          </div>
+        </>
+      )}
+      <div className="text-sm font-medium text-gray-600">Avg Rating</div>
+    </div>
+
+    {/* Total Earnings */}
+    <div className="text-center bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-5 border border-green-100">
+      <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+        <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <div className="text-3xl font-bold text-green-600 mb-2">
+        ${collaboration?.total_earned?.toLocaleString() ?? 0}
+      </div>
+      <div className="text-sm font-medium text-gray-600">Total Earnings</div>
+    </div>
+  </div>
+</div>
 
             {/* Active Campaigns */}
             <div className="bg-white rounded-lg border border-gray-200 p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 Active Campaigns
               </h2>
-              {influencer.activeCampaigns?.length ? (
-                <div className="space-y-4">
-                  {influencer.activeCampaigns.map((c) => (
-                    <div
-                      key={c.id}
-                      className="border border-gray-200 rounded-lg p-4"
-                    >
-                      <div className="flex items-start justify-between mb-2">
-                        <h3 className="font-medium text-gray-900">{c.title}</h3>
-                        <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-medium">
-                          {c.status}
-                        </span>
-                      </div>
-                      <p className="text-gray-600 text-sm mb-3">
-                        {c.description}
-                      </p>
-                      <div className="flex items-center justify-between text-sm text-gray-500">
-                        <span>Deadline: {c.deadline}</span>
-                        <div className="flex items-center gap-4">
-                          <span>
-                            {c.creatorsNeeded} micro-influencers needed
-                          </span>
-                          <div className="flex -space-x-2">
-                            <div className="w-6 h-6 bg-gray-300 rounded-full border-2 border-white"></div>
-                            <div className="w-6 h-6 bg-gray-300 rounded-full border-2 border-white"></div>
-                            <div className="w-6 h-6 bg-gray-300 rounded-full border-2 border-white flex items-center justify-center text-xs">
-                              +2
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-gray-500">
-                  No active campaigns at the moment.
-                </p>
-              )}
-            </div>
+              {collaboration.campaigns_data?.length ? (
+  <div className="space-y-4">
+    {collaboration.campaigns_data.map((c) => (
+      <div
+        key={c.id}
+        className="border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow duration-200"
+      >
+        <div className="flex items-start justify-between mb-2">
+          <h3 className="font-medium text-gray-900">{c.campaign_name || "Untitled Campaign"}</h3>
+          <span
+            className={`px-2 py-1 rounded-full text-xs font-medium ${
+              c.campaign_status === "active"
+                ? "bg-green-100 text-green-700"
+                : c.campaign_status === "completed"
+                ? "bg-blue-100 text-blue-700"
+                : "bg-gray-100 text-gray-700"
+            }`}
+          >
+            {c.campaign_status || "Pending"}
+          </span>
+        </div>
 
-            
+        {c.campaign_description ? (
+          <p className="text-gray-600 text-sm mb-3">{c.campaign_description}</p>
+        ) : (
+          <p className="text-gray-400 italic text-sm mb-3">No description provided.</p>
+        )}
+
+        <div className="flex items-center justify-between text-sm text-gray-500">
+          <span>Timeline: {c.campaign_timeline || "N/A"}</span>
+
+          
+        </div>
+      </div>
+    ))}
+  </div>
+) : (
+  <p className="text-gray-500 text-center italic">
+    No active campaigns at the moment.
+  </p>
+)}
+
+            </div>
           </div>
 
           {/* RIGHT COLUMN */}
           <div className="space-y-6">
             
-
-            {/* Resources */}
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                Campaign Info
-              </h2>
-              {influencer.resources?.length ? (
-                <div className="space-y-3">
-                  {influencer.resources.map((res, idx) => (
-                    <a
-                      key={idx}
-                      href={res.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50"
-                    >
-                      <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
-                        {res.type.includes("Video") ? (
-                          <Video className="w-4 h-4 text-white" />
-                        ) : res.type.includes("Media") ? (
-                          <ImageIcon className="w-4 h-4 text-white" />
-                        ) : (
-                          <FileText className="w-4 h-4 text-white" />
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <div className="font-medium text-gray-900 text-sm">
-                          {res.type}
-                        </div>
-                        <div className="text-xs text-gray-600">{res.title}</div>
-                      </div>
-                    </a>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-gray-500">No resources available.</p>
-              )}
-            </div>
 
             <div className="bg-white rounded-lg border border-gray-200 p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
@@ -787,9 +795,7 @@ export default function BrandProfilePage() {
                   )}
                   {influencer.pricing.socialPost && (
                     <div className="flex items-center justify-between py-2 border-b border-gray-100">
-                      <span className="text-sm text-gray-600">
-                        Social Post
-                      </span>
+                      <span className="text-sm text-gray-600">Social Post</span>
                       <span className="text-sm font-semibold text-gray-900">
                         ${influencer.pricing.socialPost}
                       </span>
@@ -865,9 +871,7 @@ export default function BrandProfilePage() {
                   )}
                   {influencer.pricing.liveStream && (
                     <div className="flex items-center justify-between py-2 border-b border-gray-100">
-                      <span className="text-sm text-gray-600">
-                        Live Stream
-                      </span>
+                      <span className="text-sm text-gray-600">Live Stream</span>
                       <span className="text-sm font-semibold text-gray-900">
                         ${influencer.pricing.liveStream}
                       </span>
@@ -875,9 +879,7 @@ export default function BrandProfilePage() {
                   )}
                   {influencer.pricing.repost && (
                     <div className="flex items-center justify-between py-2 border-b border-gray-100">
-                      <span className="text-sm text-gray-600">
-                        Repost
-                      </span>
+                      <span className="text-sm text-gray-600">Repost</span>
                       <span className="text-sm font-semibold text-gray-900">
                         ${influencer.pricing.repost}
                       </span>
@@ -955,8 +957,6 @@ export default function BrandProfilePage() {
                 </div>
               )}
             </div>
-
-            
           </div>
         </div>
       </div>

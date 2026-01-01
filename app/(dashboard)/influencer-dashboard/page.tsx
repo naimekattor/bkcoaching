@@ -57,27 +57,17 @@ interface RoomData {
   unread_count?: number;
   is_online?: boolean;
   profile_picture?: string;
+  seen?:boolean;
 }
 const getSafeImageSrc = (src?: string) => {
-  if (
-    !src ||
-    src === "profile_picture" ||
-    src === "null" ||
-    src === "undefined"
-  ) {
-    return "/images/person.jpg";
+  if (!src || src === "profile_picture" || src === "null" || src === "undefined") {
+    return ""; 
   }
-
-  if (src.startsWith("http://") || src.startsWith("https://")) {
-    return src;
-  }
-
-  if (src.startsWith("/")) {
-    return src;
-  }
-
+  if (src.startsWith("http://") || src.startsWith("https://")) return src;
+  if (src.startsWith("/")) return src;
   return `/${src}`;
 };
+
 
 export default function Page() {
   const [influencerProfile, setInfluencerProfile] =
@@ -273,6 +263,8 @@ export default function Page() {
     }
   };
 
+  const unReadMessage=roomData.filter((room)=>room.seen==false);
+
   console.log(campaigns);
 
   const acceptedCampaign=campaigns.filter((campaign)=>campaign.is_accepted_by_influencer==true);
@@ -357,7 +349,7 @@ export default function Page() {
         textColor: "text-green-700",
       },
       {
-        value: unread,
+        value: unReadMessage.length,
         label: "New Messages",
         icon: "✉️",
         bgColor: "bg-[#fefce9]",
@@ -484,13 +476,19 @@ export default function Page() {
                       
                       className="flex items-start space-x-4 py-4 border-b border-gray-100 last:border-0"
                     >
-                      <Image
-                        width={40}
-                        height={40}
-                        className="h-10 w-10 rounded-full object-cover flex-shrink-0"
-                        src={profile_picture}
-                        alt={name}
-                      />
+                      {profile_picture ? (
+          <Image
+            width={40}
+            height={40}
+            className="h-10 w-10 rounded-full object-cover flex-shrink-0"
+            src={profile_picture}
+            alt={name}
+          />
+        ) : (
+          <div className="h-11 w-11 rounded-full bg-primary flex items-center justify-center text-white font-medium text-lg flex-shrink-0">
+            {name.charAt(0).toUpperCase()}
+          </div>
+        )}
                       <div className="flex-grow min-w-0">
                         <div className="flex justify-between items-center mb-1">
                           <span className="font-semibold text-gray-900 truncate">
