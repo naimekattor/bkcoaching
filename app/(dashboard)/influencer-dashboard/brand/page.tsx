@@ -26,6 +26,7 @@ interface BrandApiResponse {
   brand_profile?: BrandProfileResponse | null;
   user?: {
     id?: string | number;
+    first_name?: string;
   };
 }
 
@@ -120,7 +121,7 @@ export default function BrandPage() {
           return {
             id: String(raw.id ?? ""),
             userId: raw.user?.id ? String(raw.user.id) : undefined,
-            name: bp.business_name ?? "Unnamed Brand",
+            name: bp.business_name || raw?.user?.first_name || "Unnamed Brand",
             description: bp.short_bio ?? "",
             timeZone:bp.timezone??"Others",
             logo: bp.logo ?? undefined,
@@ -378,20 +379,22 @@ export default function BrandPage() {
                 </div>
 
                 {/* Buttons */}
-                <div className="flex justify-center items-center  gap-3">
-                  <Link
-                    href={`/influencer-dashboard/brand/${brand.userId}`}
-                    className="border border-secondary text-primary px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-                  >
-                    View Profile
-                  </Link>
-                  <Link
-                    href={`/influencer-dashboard/messages?id=${brand.userId}`}
-                    className="bg-secondary hover:bg-[var(--secondaryhover)] text-primary px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-                  >
-                    Message
-                  </Link>
-                </div>
+                <div className="flex items-stretch gap-3">
+  <Link
+    href={`/influencer-dashboard/brand/${brand.userId}`}
+    className="flex flex-1 items-center justify-center border border-secondary text-primary px-4 py-2 rounded-lg text-sm font-medium transition-colors text-center"
+  >
+    View Profile
+  </Link>
+
+  <Link
+    href={`/influencer-dashboard/messages?id=${brand.userId}`}
+    className="flex flex-1 items-center justify-center bg-secondary hover:bg-[var(--secondaryhover)] text-primary px-4 py-2 rounded-lg text-sm font-medium transition-colors text-center"
+  >
+    Message
+  </Link>
+</div>
+
               </div>
             ))}
           </div>

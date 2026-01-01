@@ -69,6 +69,7 @@ export default function ProposalsPage() {
   const params = useParams<{ id: string }>();
   const profileId = params.id;
   console.log(profileId);
+  const router=useRouter();
 
   const handleInputChange = (field: keyof ProposalForm, value: string) => {
     setFormData((prev) => ({
@@ -160,6 +161,8 @@ export default function ProposalsPage() {
         console.log("Proposal sent successfully:", data.data);
         setShowReviewModal(false);
         setShowSuccessModal(true);
+        
+        
       } else {
         console.error("Failed to send proposal:", data.error);
         toast("Failed to send proposal. Please try again.");
@@ -176,22 +179,12 @@ export default function ProposalsPage() {
     }
   };
 
-  // const handleSaveAsDraft = () => {
-  //   console.log("Saved as draft:", formData);
-  //   setShowReviewModal(false);
-  // };
+  
 
   const handleCloseSuccess = () => {
     setShowSuccessModal(false);
-    // setFormData({
-    //   proposalMessage: "",
-    //   startDate: "",
-    //   endDate: "",
-    //   campaignBrief: null,
-    //   productPhotos: null,
-    //   deliverables: [],
-    //   budget: "",
-    // });
+    router.push("/brand-dashboard");
+   
   };
 
   useEffect(() => {

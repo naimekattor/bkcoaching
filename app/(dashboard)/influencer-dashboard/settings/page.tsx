@@ -188,6 +188,7 @@ export default function ProfilePage() {
     blog: p.blog_follower || "",
     whatsapp:p.whatsapp_follower || "", 
     podcast:p.podcast_follower || "", 
+    twitter:p.twitter_follower || "", 
   }
   });
 
@@ -197,64 +198,10 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
   
   
-// Validation Patterns
-  // const validateSocials = () => {
-  //   const { instagram, tiktok, youtube, twitter, linkedin, whatsapp,facebook } = formData.socialLinks;
-    
-  //   // Helper regex
-  //   const isHandle = (str: string) => /^@[a-zA-Z0-9_.]+$/.test(str);
-  //   const isUrl = (str: string, domain: string) => {
-  //       try {
-  //           const url = new URL(str.startsWith('http') ? str : `https://${str}`);
-  //           return url.hostname.includes(domain);
-  //       } catch {
-  //           return false;
-  //       }
-  //   };
-  //   const isPhone = (str: string) => /^\+?[0-9\s-]{7,15}$/.test(str); // Basic phone validation
-  //   const isWaLink = (str: string) => str.includes('wa.me');
 
-  //   const errors: string[] = [];
-
-  //   // 1. Instagram, TikTok, Twitter: Allow @handle OR full URL
-  //   if (instagram && !isHandle(instagram) && !isUrl(instagram, 'instagram.com')) {
-  //       errors.push("Instagram must be  a valid URL.");
-  //   }
-  //   if (facebook && !isHandle(facebook) && !isUrl(facebook, 'facebook.com')) {
-  //       errors.push("Facebook must be  a valid URL.");
-  //   }
-  //   if (tiktok && !isHandle(tiktok) && !isUrl(tiktok, 'tiktok.com')) {
-  //       errors.push("TikTok must be  a valid URL.");
-  //   }
-  //   if (twitter && !isHandle(twitter) && !isUrl(twitter, 'twitter.com') && !isUrl(twitter, 'x.com')) {
-  //       errors.push("Twitter/X must be  or a valid URL.");
-  //   }
-
-  //   // 2. YouTube, LinkedIn: Require Full URL
-  //   if (youtube && !isUrl(youtube, 'youtube.com')) {
-  //       errors.push("YouTube must be a valid channel URL (youtube.com/...)");
-  //   }
-  //   if (linkedin && !isUrl(linkedin, 'linkedin.com')) {
-  //       errors.push("LinkedIn must be a valid profile URL (linkedin.com/in/...)");
-  //   }
-
-  //   // 3. WhatsApp: Phone number or wa.me link
-  //   if (whatsapp && !isPhone(whatsapp) && !isWaLink(whatsapp)) {
-  //       errors.push("WhatsApp must be a  wa.me link.");
-  //   }
-
-  //   return errors;
-  // };
   const handleSubmit = async () => {
 
-    // const validationErrors = validateSocials();
     
-    // if (validationErrors.length > 0) {
-    //     // Show the first error via toast
-    //     toast.error(validationErrors[0]); 
-    //     // Or show all (optional): validationErrors.forEach(err => toast.error(err));
-    //     return; // STOP execution
-    // }
     setSaving(true);
 
     const ratePayload: Record<string, string> = {};
@@ -302,6 +249,7 @@ export default function ProfilePage() {
     blog_follower: formData.followers.blog || 0,
     whatsapp_follower: formData.followers.whatsapp || 0,
     podcast_follower: formData.followers.podcast || 0,
+    twitter_follower: formData.followers.twitter || 0,
       
         },
     };

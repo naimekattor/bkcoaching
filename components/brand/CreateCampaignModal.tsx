@@ -417,6 +417,7 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }:Creat
       });
       if (res) {
         toast("Campaign created successfully");
+        onSuccess(res.data);
         onClose();
         console.log(res);
       }

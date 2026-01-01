@@ -26,7 +26,9 @@ const businessType=user?.brand_profile?.business_type?.split("–")[0];
           />
         ) : (
           <span className="text-gray-500 font-bold text-xl">
-            {user?.brand_profile?.business_name?.[0] || "B"}
+            {user?.brand_profile?.business_name?.[0]?.toUpperCase() 
+  || user?.user?.first_name?.[0]?.toUpperCase()}
+
           </span>
         )}
       </div>
@@ -34,7 +36,7 @@ const businessType=user?.brand_profile?.business_type?.split("–")[0];
       {/* Brand Info */}
       <div className="flex flex-col">
         <h2 className="text-lg sm:text-xl font-semibold text-gray-900 truncate max-w-[200px]">
-          {user?.brand_profile?.business_name || "Brand Name"}
+          {user?.brand_profile?.business_name || user?.user?.first_name}
         </h2>
         <span className="text-gray-500 text-sm sm:text-base">
           {businessType || "Industry / Category"}

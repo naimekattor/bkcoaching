@@ -45,4 +45,35 @@ export interface MicroInfluencer {
   }>;
   content_niches?: string[];
   response_time?:string;
+  totalAudience?: number;
+  audienceBreakdown?: {
+    instagram?: number;
+    facebook?: number;
+    tiktok?: number;
+    youtube?: number;
+    linkedin?: number;
+    twitter?: number;
+    podcast?: number;
+    blog?: number;
+    whatsapp?: number;
+  };
+  pricing?: {
+    instagramStory?: string;
+    instagramReel?: string;
+    facebookPost?: string;
+    tiktokVideo?: string;
+    youtubeVideo?: string;
+    youtubeShort?: string;
+    podcastMention?: string;
+    blogPost?: string;
+    socialPost?: string;
+    ugcCreation?: string;
+    liveStream?: string;
+    repost?: string;
+    whatsappStatus?: string;
+    affiliateMarketing?: string;
+  };
+  paymentPreferences?: string[];
+  response_time?: string;
+
 }

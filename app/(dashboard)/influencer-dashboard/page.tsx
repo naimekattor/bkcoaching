@@ -13,6 +13,14 @@ import { useNotificationStore } from "@/stores/useNotificationStore";
 import Swal from "sweetalert2";
 
 // --- Interfaces ---
+interface User {
+  influencer_profile?: InfluencerProfileInfo | null;
+  user?: {
+    first_name?: string;
+    last_name?: string;
+  };
+}
+
 interface Attachment {
   id: number;
   link: string;
@@ -85,7 +93,7 @@ export default function Page() {
 
   const user = useAuthStore((state) => state.user);
   const setUser = useAuthStore((state) => state.setUser);
-  console.log(user);
+  console.log(user,"name",user?.user?.first_name);
   const unread = useNotificationStore((s) => s.unreadCount);
   const noti = useNotificationStore((s) => s.notifications);
   console.log(unread,"message notification",noti);
@@ -281,7 +289,7 @@ export default function Page() {
     typeof user?.influencer_profile?.display_name === "string" &&
     user.influencer_profile.display_name !== ""
       ? user.influencer_profile.display_name
-      : "User Avatar";
+      : String(user?.user?.first_name);
 
   return (
     <div className="relative">
@@ -294,18 +302,25 @@ export default function Page() {
     {/* Greeting + Profile */}
     <div className="flex items-center gap-4">
       <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center flex-shrink-0">
-        <Image
-          src={profileSrc}
-          width={64}
-          height={64}
-          alt={profileName}
-          className="object-cover w-full h-full"
-        />
+        {profileSrc && profileSrc !== "/images/person.jpg" ? (
+          <Image
+            src={profileSrc}
+            width={64}
+            height={64}
+            alt={profileName}
+            className="object-cover w-full h-full"
+          />
+        ) : (
+          <div className="w-16 h-16 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold text-lg flex-shrink-0">
+            {(typeof user?.influencer_profile?.display_name === "string" ? user.influencer_profile.display_name[0] : undefined) ||
+              (typeof user?.user?.first_name === "string" ? (user.user.first_name[0]).toUpperCase() : undefined)}
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col">
         <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
-          Welcome back, {String(user?.influencer_profile?.display_name) || "User"}! 👋
+          Welcome back, {(user?.influencer_profile?.display_name || user?.user?.first_name || "Friend") as string}! 👋
         </h2>
         <p className="text-gray-500 text-sm sm:text-base">
           Ready to grow your influence today?
@@ -458,9 +473,7 @@ export default function Page() {
                   </div>
                 ) : (
                   roomData.slice(0, 2).map((room, index) => {
-                    const profile_picture=getSafeImageSrc(room.profile_picture ||
-                          room.brand_logo ||
-                          "/images/person.jpg")
+                    const profile_picture=getSafeImageSrc(room.profile_picture);
                           const name=room.name || "Avatar"
                           const otherUserId=room?.other_user_id;
                           
@@ -500,86 +513,13 @@ export default function Page() {
               </div>
             </div>
 
-            {/* Media Kit */}
-            {/* <div className="border-[#E5E7EB] shadow border-[1px] rounded p-6 flex flex-col items-center text-center h-[420px]">
-              <div className="flex items-center space-x-2 mb-4 self-start">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 text-gray-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8 7v4a2 2 0 002 2h4a2 2 0 002-2V7m-4 10h4m-4 0v-4m0 4h.01M12 14v4m0 0h.01M12 14h.01M12 14v.01"
-                  />
-                </svg>
-                <h2 className="text-xl font-bold text-gray-900">Media Kit</h2>
-              </div>
-              <div className="flex-grow flex flex-col items-center justify-center p-4 border-2 border-dashed bg-[#f9fafb] rounded-xl w-full mb-4">
-                <Image
-                  width={48}
-                  height={48}
-                  src="https://placehold.co/60x80/e5e7eb/6b7280?text=PDF"
-                  alt="PDF icon"
-                  className="w-12 h-16 mb-2"
-                />
-                <p className="text-gray-500 text-sm">Your media kit preview</p>
-              </div>
-              <div className="w-full space-y-2">
-                <button className="w-full bg-secondary text-gray-800 font-semibold py-3 rounded shadow hover:bg-[var(--secondaryhover)] transition-colors">
-                  View Media Kit
-                </button>
-                <button className="w-full bg-[#f3f4f6] text-gray-800 font-semibold py-3 rounded shadow transition-colors">
-                  Edit Media Kit
-                </button>
-              </div>
-            </div> */}
+            
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             
 
-            {/* Earnings */}
-            {/* <div className="border-[#E5E7EB] shadow border-[1px] rounded p-6 flex flex-col items-center text-center lg:col-span-1">
-              <div className="flex items-center space-x-2 mb-4 self-start">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 text-gray-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 8c-1.657 0-3 1.343-3 3v2a3 3 0 006 0v-2c0-1.657-1.343-3-3-3zM7 13h10"
-                  />
-                </svg>
-                <h2 className="text-xl font-bold text-gray-900">Earnings</h2>
-              </div>
-              <div className="bg-green-100 rounded-xl p-4 w-full flex flex-col items-center justify-center space-y-2 mb-4">
-                <span className="text-sm text-gray-600">Total Earnings</span>
-                <span className="text-3xl font-bold text-green-600">
-                  {`$${totalEarnings}`}
-                </span>
-                <span className="text-xs text-green-600 font-medium">
-                  +15% this month
-                </span>
-              </div>
-              <div className="w-full space-y-2">
-                <button className="w-full bg-secondary text-gray-800 font-semibold py-3 rounded-xl shadow-md hover:bg-[var(--secondaryhover)] transition-colors">
-                  Withdraw
-                </button>
-                <button className="w-full bg-secondary text-gray-800 font-semibold py-3 rounded-xl shadow-md hover:bg-[var(--secondaryhover)] transition-colors">
-                  Payment Methods
-                </button>
-              </div>
-            </div> */}
+            
           </div>
 
           {/* Content Niche */}

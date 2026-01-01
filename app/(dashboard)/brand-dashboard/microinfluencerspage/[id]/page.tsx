@@ -76,11 +76,39 @@ interface InfluencerProfileResponse {
   reviews?: ReviewRecord[];
   resources?: ResourceRecord[];
   content_niches?: string;
+  // Audience counts
+  insta_follower?: number;
+  facebook_follower?: number;
+  tiktok_follower?: number;
+  youtube_follower?: number;
+  linkedin_follower?: number;
+  twitter_follower?: number;
+  podcast_follower?: number;
+  blog_follower?: number;
+  whatsapp_follower?: number;
+  // Pricing fields
+  rate_range_for_instagram_story?: string;
+  rate_range_for_instagram_reel?: string;
+  rate_range_for_facebook_post?: string | null;
+  rate_range_for_tiktok_video?: string;
+  rate_range_for_youtube_video?: string;
+  rate_range_for_youtube_short?: string;
+  rate_range_for_podcast_mention?: string;
+  rate_range_for_blog_post?: string;
+  rate_range_for_social_post?: string;
+  rate_range_for_ugc_creation?: string;
+  rate_range_for_live_stream?: string;
+  rate_range_for_repost?: string;
+  rate_range_for_whatsapp_status_post?: string;
+  rate_range_for_affiliate_marketing_percent?: string;
+
+  // Payment preferences
+  payment_preferences?: string;
+  response_time?: string;
 }
 
 interface ApiResponse {
   influencer_profile?: InfluencerProfileResponse;
-  
 }
 
 export default function BrandProfilePage() {
@@ -88,7 +116,7 @@ export default function BrandProfilePage() {
   const [influencer, SetInfluencer] = useState<MicroInfluencer | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
-  const router=useRouter();
+  const router = useRouter();
 
   // -------------------------------------------------
   // 1. FETCH influencerby id
@@ -104,9 +132,9 @@ export default function BrandProfilePage() {
           method: "GET",
         });
         console.log(res);
-        
 
-        const profile = (res.data as ApiResponse | undefined)?.influencer_profile;
+        const profile = (res.data as ApiResponse | undefined)
+          ?.influencer_profile;
 
         if (!profile) {
           throw new Error("Influencer profile not found");
@@ -126,13 +154,22 @@ export default function BrandProfilePage() {
         const num = (value: unknown, fallback = 0): number =>
           typeof value === "number" ? value : fallback;
 
-        
+        const totalAudience =
+          num(profile.insta_follower) +
+          num(profile.facebook_follower) +
+          num(profile.tiktok_follower) +
+          num(profile.youtube_follower) +
+          num(profile.linkedin_follower) +
+          num(profile.twitter_follower) +
+          num(profile.podcast_follower) +
+          num(profile.blog_follower) +
+          num(profile.whatsapp_follower);
 
         // Map ONLY influencer_profile → MicroInfluencer
         const normalised: MicroInfluencer = {
           id: String(profile.id ?? id),
           userId: res?.data?.user?.id ? String(res?.data?.user?.id) : undefined,
-          name: str(profile.display_name, "Unnamed Influencer"),
+          name: str(profile.display_name, res?.data?.user?.first_name),
           description: str(profile.short_bio, ""),
           logo:
             profile.profile_picture && profile.profile_picture !== "null"
@@ -145,7 +182,7 @@ export default function BrandProfilePage() {
           phone: str(profile.phone),
 
           socialLinks: {
-            instagram: profile?.instagram_handle ,
+            instagram: profile?.instagram_handle,
             tiktok: profile?.tiktok_handle,
             youtube: profile?.youtube_handle,
             linkedin: profile?.linkedin_handle,
@@ -208,6 +245,47 @@ export default function BrandProfilePage() {
 
             return tags.length > 0 ? tags : undefined;
           })(),
+          totalAudience,
+          audienceBreakdown: {
+            instagram: num(profile.insta_follower),
+            facebook: num(profile.facebook_follower),
+            tiktok: num(profile.tiktok_follower),
+            youtube: num(profile.youtube_follower),
+            linkedin: num(profile.linkedin_follower),
+            twitter: num(profile.twitter_follower),
+            podcast: num(profile.podcast_follower),
+            blog: num(profile.blog_follower),
+            whatsapp: num(profile.whatsapp_follower),
+          },
+
+          pricing: {
+            instagramStory: str(profile.rate_range_for_instagram_story, ""),
+            instagramReel: str(profile.rate_range_for_instagram_reel, ""),
+            facebookPost: str(profile.rate_range_for_facebook_post, ""),
+            tiktokVideo: str(profile.rate_range_for_tiktok_video, ""),
+            youtubeVideo: str(profile.rate_range_for_youtube_video, ""),
+            youtubeShort: str(profile.rate_range_for_youtube_short, ""),
+            podcastMention: str(profile.rate_range_for_podcast_mention, ""),
+            blogPost: str(profile.rate_range_for_blog_post, ""),
+            socialPost: str(profile.rate_range_for_social_post, ""),
+            ugcCreation: str(profile.rate_range_for_ugc_creation, ""),
+            liveStream: str(profile.rate_range_for_live_stream, ""),
+            repost: str(profile.rate_range_for_repost, ""),
+            whatsappStatus: str(
+              profile.rate_range_for_whatsapp_status_post,
+              ""
+            ),
+            affiliateMarketing: str(
+              profile.rate_range_for_affiliate_marketing_percent,
+              ""
+            ),
+          },
+
+          paymentPreferences: profile.payment_preferences
+            ? profile.payment_preferences.split(",").map((p) => p.trim())
+            : [],
+
+          response_time: str(profile.response_time, ""),
         };
 
         SetInfluencer(normalised);
@@ -248,7 +326,10 @@ export default function BrandProfilePage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-12 w-12 animate-spin text-primary" strokeWidth={2.5} />
+        <Loader2
+          className="h-12 w-12 animate-spin text-primary"
+          strokeWidth={2.5}
+        />
       </div>
     );
   }
@@ -277,59 +358,137 @@ export default function BrandProfilePage() {
         {/* influencerHeader Card */}
         <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
-            <div className="flex items-center gap-4">
+            <div className="flex items-start gap-4">
               {influencer.logo ? (
-                <Image
-                  src={influencer.logo}
-                  alt={influencer.name}
-                  width={64}
-                  height={64}
-                  className="w-16 h-16 rounded-lg object-cover"
-                />
+                <div className="relative flex-shrink-0">
+                  <Image
+                    src={influencer.logo}
+                    alt={influencer.name}
+                    width={80}
+                    height={80}
+                    className="w-20 h-20 rounded-xl object-cover ring-2 ring-gray-100"
+                  />
+                  {influencer.verified && (
+                    <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center border-2 border-white shadow-sm">
+                      <svg
+                        className="w-3.5 h-3.5 text-white"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                  )}
+                </div>
               ) : (
-                <div className="w-16 h-16 bg-primary rounded-lg flex items-center justify-center text-white text-2xl font-bold">
+                <div className="w-20 h-20 bg-gradient-to-br from-[#0d2f4f] to-[#1a4d7a] rounded-xl flex items-center justify-center text-white text-3xl font-bold shadow-md flex-shrink-0">
                   {influencer.name.charAt(0)}
                 </div>
               )}
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <h1 className="text-2xl font-bold text-gray-900">
+
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                  <h1 className="text-2xl font-bold text-gray-900 truncate">
                     {influencer.name}
                   </h1>
                   {influencer.verified && (
-                    <div className="flex items-center gap-1 bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-medium">
-                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span className="inline-flex items-center gap-1.5 bg-green-50 text-green-700 px-2.5 py-1 rounded-full text-xs font-semibold border border-green-200">
+                      <svg
+                        className="w-3 h-3"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
                       Verified
-                    </div>
+                    </span>
                   )}
                 </div>
-                <p className="text-gray-600 mb-2">{influencer.description}</p>
-                {/* <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
-                  {influencer.website && (
-                    <div className="flex items-center gap-1">
-                      <Globe className="w-4 h-4" />
-                      <a
-                        href={influencer.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
+
+                <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                  {influencer.description}
+                </p>
+
+                {/* Audience Reach Badge - Using your brand colors */}
+                {influencer.totalAudience && influencer.totalAudience > 0 ? (
+                  <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#0d2f4f]/10 to-[#0d2f4f]/5 px-4 py-2 rounded-lg border border-[#0d2f4f]/20">
+                    <div className="w-8 h-8 bg-[#0d2f4f]/20 rounded-lg flex items-center justify-center">
+                      <svg
+                        className="w-4 h-4 text-[#0d2f4f]"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
                       >
-                        {influencer.website.replace(/^https?:\/\//, "")}
-                      </a>
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                        />
+                      </svg>
                     </div>
-                  )}
-                  {influencer.location && (
-                    <div className="flex items-center gap-1">
-                      <MapPin className="w-4 h-4" />
-                      {influencer.location}
+                    <div>
+                      <div className="text-xs font-medium text-gray-600">
+                        Total Audience Reach
+                      </div>
+                      <div className="text-lg font-bold text-[#0d2f4f]">
+                        {influencer.totalAudience >= 1000000
+                          ? `${(influencer.totalAudience / 1000000).toFixed(
+                              1
+                            )}M`
+                          : influencer.totalAudience >= 1000
+                          ? `${(influencer.totalAudience / 1000).toFixed(1)}K`
+                          : influencer.totalAudience.toLocaleString()}
+                      </div>
                     </div>
-                  )}
-                </div> */}
+                  </div>
+                ) : (
+                  <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#ffc006]/20 to-[#ffc006]/10 px-4 py-2 rounded-lg border border-[#ffc006]/30">
+                    <div className="w-8 h-8 bg-[#ffc006]/30 rounded-lg flex items-center justify-center">
+                      <svg
+                        className="w-4 h-4 text-[#ffc006]"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M13 10V3L4 14h7v7l9-11h-7z"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="text-xs font-medium text-[#0d2f4f]/70">
+                        Rising Star
+                      </div>
+                      <div className="text-sm font-bold text-[#0d2f4f]">
+                        New Talent
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
             <div className="flex gap-3">
-              <button className="bg-yellow-500 hover:bg-[var(--secondaryhover)] text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2"
-              onClick={()=>router.push(`/brand-dashboard/messages?id=${influencer?.userId}`)}>
+              <button
+                className="bg-yellow-500 hover:bg-[var(--secondaryhover)] text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2"
+                onClick={() =>
+                  router.push(
+                    `/brand-dashboard/messages?id=${influencer?.userId}`
+                  )
+                }
+              >
                 <MessageCircle className="w-4 h-4" />
                 Message
               </button>
@@ -347,7 +506,7 @@ export default function BrandProfilePage() {
             {/* About */}
             <div className="bg-white rounded-lg border border-gray-200 p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                About 
+                About
               </h2>
               <p className="text-gray-600 mb-6">{influencer.description}</p>
 
@@ -409,11 +568,8 @@ export default function BrandProfilePage() {
                     {(
                       (influencer.campaigns?.totalInvested ?? 0) / 1000
                     ).toFixed(0)}
-                    
                   </div>
-                  <div className="text-sm text-gray-600">
-                    Total Earnings
-                  </div>
+                  <div className="text-sm text-gray-600">Total Earnings</div>
                 </div>
               </div>
             </div>
@@ -464,106 +620,12 @@ export default function BrandProfilePage() {
               )}
             </div>
 
-            {/* Reviews */}
-            {/* <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                Reviews & Testimonials
-              </h2>
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-2xl font-bold text-gray-900">
-                  {influencer.campaigns?.avgRating ?? 0}
-                </span>
-                <div className="flex">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`w-5 h-5 ${
-                        i < Math.floor(influencer.campaigns?.avgRating ?? 0)
-                          ? "text-yellow-400 fill-current"
-                          : "text-gray-300"
-                      }`}
-                    />
-                  ))}
-                </div>
-                <span className="text-sm text-gray-600">
-                  Based on {influencer.reviews?.length ?? 0}+ reviews
-                </span>
-              </div>
-
-              {influencer.reviews?.length ? (
-                <div className="space-y-4">
-                  {influencer.reviews.map((r) => (
-                    <div
-                      key={r.id}
-                      className="border-l-4 border-green-500 pl-4"
-                    >
-                      <p className="text-gray-700 mb-2">
-                        &quot;{r.comment}&quot;
-                      </p>
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <div className="w-6 h-6 bg-gray-300 rounded-full"></div>
-                        <span className="font-medium">{r.reviewer}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-gray-500">No reviews yet.</p>
-              )}
-            </div> */}
+            
           </div>
 
           {/* RIGHT COLUMN */}
           <div className="space-y-6">
-            {/* Contact */}
-            {/* <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                Contact Information
-              </h2>
-              <div className="space-y-4">
-                <div>
-                  <div className="font-medium text-gray-900 mb-1">
-                    {influencer.contactPerson?.name ?? "—"}
-                  </div>
-                  <div className="text-sm text-gray-600">
-                    {influencer.contactPerson?.title ?? "—"}
-                  </div>
-                </div>
-               
-                <div className="flex gap-2">
-                  {influencer.socialLinks?.linkedin && (
-                    <a
-                      href={influencer.socialLinks.linkedin}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 bg-primary rounded flex items-center justify-center"
-                    >
-                      <Linkedin className="w-4 h-4 text-white" />
-                    </a>
-                  )}
-                  {influencer.socialLinks?.twitter && (
-                    <a
-                      href={influencer.socialLinks.twitter}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 bg-primary rounded flex items-center justify-center"
-                    >
-                      <Twitter className="w-4 h-4 text-white" />
-                    </a>
-                  )}
-                  {influencer.socialLinks?.instagram && (
-                    <a
-                      href={influencer.socialLinks.instagram}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 bg-primary rounded flex items-center justify-center"
-                    >
-                      <Instagram className="w-4 h-4 text-white" />
-                    </a>
-                  )}
-                </div>
-              </div>
-            </div> */}
+            
 
             {/* Resources */}
             <div className="bg-white rounded-lg border border-gray-200 p-6">
@@ -623,43 +685,278 @@ export default function BrandProfilePage() {
                 <p className="text-gray-500">No niches available.</p>
               )}
             </div>
+            {/* Total Audience */}
             <div className="bg-white rounded-lg border border-gray-200 p-6">
-  <h2 className="text-lg font-semibold text-gray-900 mb-4">
-    Average Response Time
-  </h2>
-  
-  {influencer.response_time ? (
-    <div className="flex items-center">
-      <span className="text-2xl font-bold text-gray-900">
-        {influencer.response_time}
-      </span>
-      <span className="ml-2 text-sm text-gray-500">
-        hours
-      </span>
-    </div>
-  ) : (
-    <div className="text-center py-4">
-      <p className="text-gray-500 italic">
-        Response time not specified
-      </p>
-      <p className="text-sm text-gray-400 mt-1">
-        Contact influencer for details
-      </p>
-    </div>
-  )}
-</div>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                Total Audience Reach
+              </h2>
 
-            {/* Share */}
-            {/* <div className="bg-primary rounded p-6 text-white">
-              <h2 className="text-lg font-semibold mb-4">Share Profile</h2>
-              <button
-                onClick={handleCopyLink}
-                className="w-full bg-white/20 hover:bg-white/30 text-white py-3 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors"
-              >
-                <Copy className="w-4 h-4" />
-                {copied ? "Copied!" : "Copy Link"}
-              </button>
-            </div> */}
+              <div className="text-center mb-6">
+                <div className="text-4xl font-bold text-primary mb-2">
+                  {influencer.totalAudience?.toLocaleString() || "0"}
+                </div>
+                <div className="text-sm text-gray-600">Total Followers</div>
+              </div>
+
+              {influencer.audienceBreakdown && (
+                <div className="space-y-3">
+                  {Object.entries(influencer.audienceBreakdown)
+                    .filter(([_, count]) => count && count > 0)
+                    .sort(([, a], [, b]) => (b || 0) - (a || 0))
+                    .map(([platform, count]) => (
+                      <div
+                        key={platform}
+                        className="flex items-center justify-between"
+                      >
+                        <div className="flex items-center gap-2">
+                          {platform === "instagram" && (
+                            <Instagram className="w-4 h-4 text-pink-600" />
+                          )}
+                          {platform === "facebook" && (
+                            <span className="w-4 h-4 text-blue-600">📘</span>
+                          )}
+                          {platform === "tiktok" && (
+                            <span className="w-4 h-4">🎵</span>
+                          )}
+                          {platform === "youtube" && (
+                            <span className="w-4 h-4 text-red-600">▶️</span>
+                          )}
+                          {platform === "linkedin" && (
+                            <Linkedin className="w-4 h-4 text-blue-700" />
+                          )}
+                          {platform === "twitter" && (
+                            <Twitter className="w-4 h-4 text-blue-400" />
+                          )}
+                          {platform === "podcast" && (
+                            <span className="w-4 h-4">🎙️</span>
+                          )}
+                          {platform === "blog" && (
+                            <FileText className="w-4 h-4 text-gray-600" />
+                          )}
+                          {platform === "whatsapp" && (
+                            <Phone className="w-4 h-4 text-green-600" />
+                          )}
+                          <span className="text-sm font-medium text-gray-700 capitalize">
+                            {platform}
+                          </span>
+                        </div>
+                        <span className="text-sm font-semibold text-gray-900">
+                          {count?.toLocaleString()}
+                        </span>
+                      </div>
+                    ))}
+                </div>
+              )}
+
+              {(!influencer.totalAudience ||
+                influencer.totalAudience === 0) && (
+                <p className="text-gray-500 text-center text-sm">
+                  No audience data available
+                </p>
+              )}
+            </div>
+
+            {/* Pricing */}
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                Pricing & Rates
+              </h2>
+
+              {influencer.pricing &&
+              Object.values(influencer.pricing).some((rate) => rate) ? (
+                <div className="space-y-3">
+                  {influencer.pricing.instagramStory && (
+                    <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                      <span className="text-sm text-gray-600">
+                        Instagram Story
+                      </span>
+                      <span className="text-sm font-semibold text-gray-900">
+                        ${influencer.pricing.instagramStory}
+                      </span>
+                    </div>
+                  )}
+                  {influencer.pricing.instagramReel && (
+                    <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                      <span className="text-sm text-gray-600">
+                        Instagram Reel
+                      </span>
+                      <span className="text-sm font-semibold text-gray-900">
+                        ${influencer.pricing.instagramReel}
+                      </span>
+                    </div>
+                  )}
+                  {influencer.pricing.socialPost && (
+                    <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                      <span className="text-sm text-gray-600">
+                        Social Post
+                      </span>
+                      <span className="text-sm font-semibold text-gray-900">
+                        ${influencer.pricing.socialPost}
+                      </span>
+                    </div>
+                  )}
+                  {influencer.pricing.facebookPost && (
+                    <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                      <span className="text-sm text-gray-600">
+                        Facebook Post
+                      </span>
+                      <span className="text-sm font-semibold text-gray-900">
+                        ${influencer.pricing.facebookPost}
+                      </span>
+                    </div>
+                  )}
+                  {influencer.pricing.tiktokVideo && (
+                    <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                      <span className="text-sm text-gray-600">
+                        TikTok Video
+                      </span>
+                      <span className="text-sm font-semibold text-gray-900">
+                        ${influencer.pricing.tiktokVideo}
+                      </span>
+                    </div>
+                  )}
+                  {influencer.pricing.youtubeVideo && (
+                    <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                      <span className="text-sm text-gray-600">
+                        YouTube Video
+                      </span>
+                      <span className="text-sm font-semibold text-gray-900">
+                        ${influencer.pricing.youtubeVideo}
+                      </span>
+                    </div>
+                  )}
+                  {influencer.pricing.youtubeShort && (
+                    <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                      <span className="text-sm text-gray-600">
+                        YouTube Short
+                      </span>
+                      <span className="text-sm font-semibold text-gray-900">
+                        ${influencer.pricing.youtubeShort}
+                      </span>
+                    </div>
+                  )}
+                  {influencer.pricing.podcastMention && (
+                    <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                      <span className="text-sm text-gray-600">
+                        Podcast Mention
+                      </span>
+                      <span className="text-sm font-semibold text-gray-900">
+                        ${influencer.pricing.podcastMention}
+                      </span>
+                    </div>
+                  )}
+                  {influencer.pricing.blogPost && (
+                    <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                      <span className="text-sm text-gray-600">Blog Post</span>
+                      <span className="text-sm font-semibold text-gray-900">
+                        ${influencer.pricing.blogPost}
+                      </span>
+                    </div>
+                  )}
+                  {influencer.pricing.ugcCreation && (
+                    <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                      <span className="text-sm text-gray-600">
+                        UGC Creation
+                      </span>
+                      <span className="text-sm font-semibold text-gray-900">
+                        ${influencer.pricing.ugcCreation}
+                      </span>
+                    </div>
+                  )}
+                  {influencer.pricing.liveStream && (
+                    <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                      <span className="text-sm text-gray-600">
+                        Live Stream
+                      </span>
+                      <span className="text-sm font-semibold text-gray-900">
+                        ${influencer.pricing.liveStream}
+                      </span>
+                    </div>
+                  )}
+                  {influencer.pricing.repost && (
+                    <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                      <span className="text-sm text-gray-600">
+                        Repost
+                      </span>
+                      <span className="text-sm font-semibold text-gray-900">
+                        ${influencer.pricing.repost}
+                      </span>
+                    </div>
+                  )}
+                  {influencer.pricing.whatsappStatus && (
+                    <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                      <span className="text-sm text-gray-600">
+                        WhatsApp Status
+                      </span>
+                      <span className="text-sm font-semibold text-gray-900">
+                        ${influencer.pricing.whatsappStatus}
+                      </span>
+                    </div>
+                  )}
+                  {influencer.pricing.affiliateMarketing && (
+                    <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                      <span className="text-sm text-gray-600">
+                        Affiliate Marketing
+                      </span>
+                      <span className="text-sm font-semibold text-gray-900">
+                        {influencer.pricing.affiliateMarketing}%
+                      </span>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-center py-4">
+                  <p className="text-gray-500 italic">Pricing not specified</p>
+                  <p className="text-sm text-gray-400 mt-1">
+                    Contact for custom quote
+                  </p>
+                </div>
+              )}
+
+              {influencer.paymentPreferences &&
+                influencer.paymentPreferences.length > 0 && (
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <h3 className="text-sm font-medium text-gray-700 mb-2">
+                      Payment Options
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {influencer.paymentPreferences.map((pref, idx) => (
+                        <span
+                          key={idx}
+                          className="inline-block px-2 py-1 text-xs font-medium text-primary bg-primary/10 rounded-full capitalize"
+                        >
+                          {pref}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+            </div>
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                Average Response Time
+              </h2>
+
+              {influencer.response_time ? (
+                <div className="flex items-center">
+                  <span className="text-2xl font-bold text-gray-900">
+                    {influencer.response_time}
+                  </span>
+                  <span className="ml-2 text-sm text-gray-500">hours</span>
+                </div>
+              ) : (
+                <div className="text-center py-4">
+                  <p className="text-gray-500 italic">
+                    Response time not specified
+                  </p>
+                  <p className="text-sm text-gray-400 mt-1">
+                    Contact influencer for details
+                  </p>
+                </div>
+              )}
+            </div>
+
+            
           </div>
         </div>
       </div>
