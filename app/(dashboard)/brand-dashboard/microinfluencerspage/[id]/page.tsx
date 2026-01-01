@@ -24,15 +24,35 @@ import Link from "next/link";
 import { notFound, useParams, useRouter } from "next/navigation";
 import { apiClient } from "@/lib/apiClient";
 import { MicroInfluencer } from "@/types/micro-influencer";
-
-interface ActiveCampaignRecord {
-  id?: string | number;
-  title?: string;
-  status?: string;
-  description?: string;
-  deadline?: string;
-  creators_needed?: number;
+interface Collaboration {
+  hires: number;
+  total_earned: number;
+  total_rating: number;
+  campaigns_data: ActiveCampaignRecord[];
 }
+
+export interface ActiveCampaignRecord {
+  id: number; // usually id is required
+  campaign_owner?: number;
+  campaign_poster?: string;
+  campaign_name: string;
+  campaign_objective?: string;
+  campaign_description?: string;
+  budget_type?: string;
+  budget_range?: string;
+  payment_preference?: string;
+  content_deliverables?: string; // comma-separated string, e.g. "instagramStory,youtubeVideo"
+  campaign_timeline?: string;
+  content_approval_required?: boolean;
+  auto_match_micro_influencers?: boolean;
+  target_audience?: string;
+  keywords_and_hashtags?: string;
+  campaign_status?: "active" | "completed" | "pending"; // restrict to known statuses
+  timestamp?: string; // ISO string
+  creators_needed?: number; // optional, for display in your UI
+  deadline?: string; // optional, if you compute deadline from timestamp
+}
+
 
 interface ReviewRecord {
   id?: string | number;
@@ -117,7 +137,7 @@ export default function BrandProfilePage() {
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const router = useRouter();
-  const[collaboration,setCollaboration]=useState(null);
+  const[collaboration,setCollaboration]=useState<Collaboration | null>(null);
 
   // -------------------------------------------------
   // 1. FETCH influencerby id
@@ -207,16 +227,16 @@ export default function BrandProfilePage() {
             totalInvested: num(profile.campaigns_total_invested),
           },
 
-          activeCampaigns: Array.isArray(profile.active_campaigns)
-            ? profile.active_campaigns.map((c) => ({
-                id: String(c.id ?? ""),
-                title: str(c.title),
-                status: str(c.status, "Active"),
-                description: str(c.description),
-                deadline: str(c.deadline),
-                creatorsNeeded: num(c.creators_needed),
-              }))
-            : [],
+          // activeCampaigns: Array.isArray(profile.active_campaigns)
+          //   ? profile.active_campaigns.map((c) => ({
+          //       id: String(c.id ?? ""),
+          //       title: str(c.title),
+          //       status: str(c.status, "Active"),
+          //       description: str(c.description),
+          //       deadline: str(c.deadline),
+          //       creatorsNeeded: num(c.creators_needed),
+          //     }))
+          //   : [],
 
           reviews: Array.isArray(profile.reviews)
             ? profile.reviews.map((r) => ({

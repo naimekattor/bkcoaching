@@ -75,5 +75,5 @@ export interface MicroInfluencer {
   };
   paymentPreferences?: string[];
   response_time?: string;
-
+activeCampaigns: ActiveCampaignRecord[];
 }
