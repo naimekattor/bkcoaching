@@ -720,22 +720,13 @@ export default function CampaignDashboard() {
             </SelectContent>
           </Select>
 
-          {/* <Select value={platformFilter} onValueChange={setPlatformFilter}>
-            <SelectTrigger className="w-[160px]">
-              <SelectValue placeholder="All Platforms" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Platforms</SelectItem>
-              <SelectItem value="instagram">Instagram</SelectItem>
-              <SelectItem value="tiktok">TikTok</SelectItem>
-              <SelectItem value="youtube">YouTube</SelectItem>
-              <SelectItem value="facebook">Facebook</SelectItem>
-            </SelectContent>
-          </Select> */}
+          
         </div>
 
         {/* Campaign Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        {
+          filteredCampaigns.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {filteredCampaigns.map((campaign) => (
             <div
               key={campaign.id}
@@ -899,13 +890,15 @@ export default function CampaignDashboard() {
             </div>
           ))}
         </div>
+          ):(
+            <div className="text-center text-gray-500 py-12">
+      No campaigns found.
+    </div>
+          )
+        }
+        
 
-        {/* Load more */}
-        {/* <div className="text-center">
-          <button className="px-8 py-2 border border-gray-300 rounded-md bg-secondary text-primary font-semibold hover:bg-[var(--secondaryhover)] transition-colors">
-            Load More Campaigns
-          </button>
-        </div> */}
+        
 
         {/* Archived Campaigns Section */}
         {archivedCampaigns.length > 0 && (
