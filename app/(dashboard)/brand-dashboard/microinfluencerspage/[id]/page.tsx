@@ -24,15 +24,8 @@ import Link from "next/link";
 import { notFound, useParams, useRouter } from "next/navigation";
 import { apiClient } from "@/lib/apiClient";
 import { MicroInfluencer } from "@/types/micro-influencer";
-interface Collaboration {
-  hires: number;
-  total_earned: number;
-  total_rating: number;
-  campaigns_data: ActiveCampaignRecord[];
-}
-
-export interface ActiveCampaignRecord {
-  id: number; // usually id is required
+ interface Campaign {
+  id: number;
   campaign_owner?: number;
   campaign_poster?: string;
   campaign_name: string;
@@ -41,18 +34,30 @@ export interface ActiveCampaignRecord {
   budget_type?: string;
   budget_range?: string;
   payment_preference?: string;
-  content_deliverables?: string; // comma-separated string, e.g. "instagramStory,youtubeVideo"
+  content_deliverables?: string;
   campaign_timeline?: string;
   content_approval_required?: boolean;
   auto_match_micro_influencers?: boolean;
   target_audience?: string;
   keywords_and_hashtags?: string;
-  campaign_status?: "active" | "completed" | "pending"; // restrict to known statuses
-  timestamp?: string; // ISO string
-  creators_needed?: number; // optional, for display in your UI
-  deadline?: string; // optional, if you compute deadline from timestamp
+  campaign_status?: "active" | "completed" | "pending";
+  timestamp?: string;
 }
 
+ interface Collaboration {
+  hires: number;
+  total_earned: number;
+  total_rating: number;
+  campaigns_data?: Campaign[];
+}
+interface ActiveCampaignRecord {
+  id?: string | number;
+  title?: string;
+  status?: string;
+  description?: string;
+  deadline?: string;
+  creators_needed?: number;
+}
 
 interface ReviewRecord {
   id?: string | number;
@@ -137,7 +142,7 @@ export default function BrandProfilePage() {
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const router = useRouter();
-  const[collaboration,setCollaboration]=useState<Collaboration | null>(null);
+const [collaboration, setCollaboration] = useState<Collaboration | null>(null);
 
   // -------------------------------------------------
   // 1. FETCH influencerby id
@@ -227,16 +232,16 @@ export default function BrandProfilePage() {
             totalInvested: num(profile.campaigns_total_invested),
           },
 
-          // activeCampaigns: Array.isArray(profile.active_campaigns)
-          //   ? profile.active_campaigns.map((c) => ({
-          //       id: String(c.id ?? ""),
-          //       title: str(c.title),
-          //       status: str(c.status, "Active"),
-          //       description: str(c.description),
-          //       deadline: str(c.deadline),
-          //       creatorsNeeded: num(c.creators_needed),
-          //     }))
-          //   : [],
+          activeCampaigns: Array.isArray(profile.active_campaigns)
+            ? profile.active_campaigns.map((c) => ({
+                id: String(c.id ?? ""),
+                title: str(c.title),
+                status: str(c.status, "Active"),
+                description: str(c.description),
+                deadline: str(c.deadline),
+                creatorsNeeded: num(c.creators_needed),
+              }))
+            : [],
 
           reviews: Array.isArray(profile.reviews)
             ? profile.reviews.map((r) => ({
@@ -644,9 +649,9 @@ useEffect(()=>{
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 Active Campaigns
               </h2>
-              {collaboration.campaigns_data?.length ? (
+              {collaboration?.campaigns_data?.length ? (
   <div className="space-y-4">
-    {collaboration.campaigns_data.map((c) => (
+    {collaboration.campaigns_data!.map((c) => (
       <div
         key={c.id}
         className="border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow duration-200"
@@ -674,8 +679,6 @@ useEffect(()=>{
 
         <div className="flex items-center justify-between text-sm text-gray-500">
           <span>Timeline: {c.campaign_timeline || "N/A"}</span>
-
-          
         </div>
       </div>
     ))}
