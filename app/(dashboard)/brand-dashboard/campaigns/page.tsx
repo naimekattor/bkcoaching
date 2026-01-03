@@ -53,7 +53,10 @@ import { toast } from "react-toastify";
 /* -------------------------------------------------
    Types
 ------------------------------------------------- */
-
+interface Hiring {
+  
+  // add more fields if needed
+}
 interface PlatformConfig {
   match: string;
   icon: React.ReactNode;
@@ -178,6 +181,7 @@ export default function CampaignDashboard() {
   const [modalHirings, setModalHirings] = useState<HiringCampaign[]>([]);
   const [archieveStatus, setArchieveStatus] = useState<CampaignApiResponse | null>(null);
   const [showArchived, setShowArchived] = useState(false);
+  const[uniqueInfluencer,setUniqueInfluencer]=useState<HiringCampaign[]>([]);
 
   /* ---------- Stats (no type errors) ---------- */
   const stats = [
@@ -197,7 +201,7 @@ export default function CampaignDashboard() {
     },
     {
       title: "Influencers Hired",
-      value: previousHirings.length,
+      value: uniqueInfluencer.length,
       subtitle: "Unique influencers in your network",
       icon: <Users className="w-8 h-8 text-primary" />,
       color: "bg-purple-50",
@@ -221,7 +225,7 @@ export default function CampaignDashboard() {
 
     const matchesSearch = (campaign.title || "")
       .toLowerCase()
-      .includes(searchQuery.toLowerCase());
+      .includes(searchQuery.toLowerCase()) ;
 
     const matchesStatus =
       statusFilter === "all" || (campaign.status || "").toLowerCase() === statusFilter;
@@ -318,11 +322,21 @@ export default function CampaignDashboard() {
             auth: true,
           }
         );
+const data: HiringCampaign[] = hiringsRes.data;
 
-        if (hiringsRes.data && Array.isArray(hiringsRes.data)) {
-          setPreviousHirings(hiringsRes.data);
-          console.log(hiringsRes.data);
-        }
+
+        if (data && Array.isArray(data)) {
+  setPreviousHirings(data);
+
+  const uniqueByInfluencer: HiringCampaign[] = Array.from(
+    new Map(
+      data.map((item: HiringCampaign) => [item.hired_influencer_id, item])
+    ).values()
+  );
+
+  setUniqueInfluencer(uniqueByInfluencer);
+}
+
       } catch (error) {
         console.log(error);
       }

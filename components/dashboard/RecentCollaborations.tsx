@@ -29,29 +29,39 @@ interface CollabData {
   avatar: string;
   rating: number;
   followers: string;
-  insta_follower:string;
-  facebook_follower:string;
-  tiktok_follower:string;
-  linkedin_follower:string;
-  youtube_follower:string;
-  blog_follower:string;
+  insta_follower: string;
+  facebook_follower: string;
+  tiktok_follower: string;
+  linkedin_follower: string;
+  youtube_follower: string;
+  blog_follower: string;
+  podcast_follower: string;
+  whatsapp_follower: string;
+  twitter_follower: string;
 }
 
 /// --- Helper to calculate total followers ---
 const calculateFollowers = (inf: CollabData | undefined | null) => {
   if (!inf) return 0;
-  
-  const total = 
+
+  const total =
     Number(inf.insta_follower || 0) +
     Number(inf.facebook_follower || 0) +
     Number(inf.tiktok_follower || 0) +
     Number(inf.linkedin_follower || 0) +
     Number(inf.youtube_follower || 0) +
+    Number(inf.twitter_follower || 0)+
+    Number(inf.whatsapp_follower || 0)+
+    Number(inf.podcast_follower || 0)+
     Number(inf.blog_follower || 0);
-    
+
   return total;
 };
-export function RecentCollaborations({ rawCampaigns }: { rawCampaigns: Campaign[] }) {
+export function RecentCollaborations({
+  rawCampaigns,
+}: {
+  rawCampaigns: Campaign[];
+}) {
   const [collaborations, setCollaborations] = useState<CollabData[]>([]);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -82,24 +92,34 @@ export function RecentCollaborations({ rawCampaigns }: { rawCampaigns: Campaign[
               );
 
               const profile = userRes.data?.influencer_profile;
-              const total = calculateFollowers(userRes.data?.influencer_profile);
+              console.log("Recent Collaborations",userRes);
+              
+              const total = calculateFollowers(
+                userRes.data?.influencer_profile
+              );
 
               return {
                 campaignId: campaign.id,
                 influencerId: campaign.hired_influencer_id!,
-                username: profile?.display_name || userRes.data?.user?.first_name,
-                avatar: profile?.profile_picture || "/images/person.jpg",
+                username:
+                  profile?.display_name || userRes.data?.user?.first_name,
+                avatar: profile?.profile_picture,
                 rating: campaign.rating > 0 ? campaign.rating : 5.0,
                 followers: total > 0 ? `${(total / 1000).toFixed(1)}K` : "N/A",
               };
             } catch (err) {
-              console.error(`Failed to fetch user ${campaign.hired_influencer_id}`, err);
+              console.error(
+                `Failed to fetch user ${campaign.hired_influencer_id}`,
+                err
+              );
               return null;
             }
           })
         );
 
-        setCollaborations(detailedCollabs.filter((c): c is CollabData => c !== null));
+        setCollaborations(
+          detailedCollabs.filter((c): c is CollabData => c !== null)
+        );
       } catch (error) {
         console.error("Error fetching collaboration details:", error);
       } finally {
@@ -108,7 +128,7 @@ export function RecentCollaborations({ rawCampaigns }: { rawCampaigns: Campaign[
     };
 
     fetchUserDetails();
-  }, [rawCampaigns]); // ✅ Re-run whenever parent updates the data
+  }, [rawCampaigns]); 
 
   const handleCardClick = (influencerId: number) => {
     router.push(`/brand-dashboard/microinfluencerspage/${influencerId}`);
@@ -138,13 +158,21 @@ export function RecentCollaborations({ rawCampaigns }: { rawCampaigns: Campaign[
             >
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 border border-gray-100">
-                  <Image
-                    width={40}
-                    height={40}
-                    src={collab.avatar}
-                    alt={collab.username}
-                    className="w-full h-full object-cover"
-                  />
+                  {collab.avatar ? (
+                    <Image
+                      width={40}
+                      height={40}
+                      src={collab.avatar}
+                      alt={collab.username}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-primary/10 to-primary/20 flex items-center justify-center uppercase">
+                      <span className="text-sm font-bold text-primary">
+                        {collab?.username?.charAt(0) || "U"}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <div>
                   <p className="font-medium text-slate-800 text-sm truncate max-w-[120px]">

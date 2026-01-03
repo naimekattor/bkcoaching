@@ -309,7 +309,7 @@ export default function BrandProfilePage() {
                   <div className="text-2xl font-bold text-primary mb-1">
                     {collaboration?.hires_data ?? 0}
                   </div>
-                  <div className="text-sm text-gray-600">micro-influencers</div>
+                  <div className="text-sm text-gray-600">Micro-influencers</div>
                 </div>
                 
                 <div className="text-center">

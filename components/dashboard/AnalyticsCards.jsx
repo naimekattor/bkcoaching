@@ -1,11 +1,11 @@
 
-export function AnalyticsCards({ allCampaigns,previousHirings}) {
-  const numOfInfluencers=previousHirings.length;
+export function AnalyticsCards({ allCampaigns,previousHirings,uniqueInfluencer}) {
+  
+  const numOfInfluencers=uniqueInfluencer.length;
   const totalInvested=previousHirings.reduce((acc,hiring)=>acc+hiring.budget,0);
   const analyticsData = [
     { value: allCampaigns.length, label: "Total Campaigns", color: "#BC8D03" },
-    { value: numOfInfluencers, label: "micro-influencers", color: "#BC8D03" },
-    // { value: "4.8", label: "Avg Rating", color: "#BC8D03" },
+    { value: numOfInfluencers, label: "Micro-influencers", color: "#BC8D03" },
     { 
   value: `$${Number(totalInvested).toLocaleString()}`, 
   label: "Total Invested", 

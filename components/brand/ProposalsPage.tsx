@@ -165,7 +165,7 @@ export default function ProposalsPage() {
         
       } else {
         console.error("Failed to send proposal:", data.error);
-        toast("Failed to send proposal. Please try again.");
+        toast(data.error);
       }
     } catch (error) {
       console.error("Error sending proposal:", error);

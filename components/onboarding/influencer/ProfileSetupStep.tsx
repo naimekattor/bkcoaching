@@ -175,22 +175,22 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
 
   {/* Short Bio */}
   <div className="space-y-2">
-    <Label htmlFor="bio">Short Bio (160 characters) *</Label>
+    <Label htmlFor="bio">Short Bio (200 characters) *</Label>
     <Textarea
       id="bio"
       value={onboardingDataInfluencer.short_bio}
       onChange={(e) =>
         setOnboardingDataInfluencer((prev) => ({
           ...prev,
-          short_bio: e.target.value.slice(0, 160), // Enforce limit
+          short_bio: e.target.value.slice(0, 200), 
         }))
       }
       placeholder="Tell brands what makes you unique..."
       rows={3}
-      maxLength={160}
+      maxLength={200}
     />
     <p className="text-xs text-muted-foreground text-right">
-      {onboardingDataInfluencer.short_bio.length}/160 characters
+      {onboardingDataInfluencer.short_bio.length}/200 characters
     </p>
   </div>
 </div>

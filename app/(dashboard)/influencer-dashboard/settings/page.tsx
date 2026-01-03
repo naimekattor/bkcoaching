@@ -56,21 +56,21 @@ const placeholders: Record<string, string> = {
 };
 
 const contentNiches = [
-  "Beauty & Skincare Brands",
-  "Fashion & Apparel",
-  "Jewelry & Accessories",
-  "Health & Wellness",
-  "Food & Beverage",
-  "Hospitality & Travel",
-  "Events & Experiences",
-  "E-commerce Stores",
-  "Local Service Providers",
-  "Tech & Gadgets",
-  "Education & Coaching",
-  "Parenting & Family Brands",
-  "Home & Lifestyle",
-  "Financial & Professional Services",
-  "Nonprofits & Causes",
+  "Beauty & Skincare Brands – makeup, skincare, haircare",
+  "Fashion & Apparel – clothing lines, modest fashion brands, boutique shops",
+  "Jewelry & Accessories – watches, handbags, eyewear",
+  "Health & Wellness – supplements, fitness programs, healthy living",
+  "Food & Beverage – restaurants, cafes, packaged foods, specialty drinks",
+  "Hospitality & Travel – hotels, resorts, Airbnb hosts, travel agencies",
+  "Events & Experiences – retreats, workshops, conferences",
+  "E-commerce Stores – online boutiques, curated shops, niche product sellers",
+  "Local Service Providers – gyms, salons, spas, personal trainers",
+  "Tech & Gadgets – phone accessories, smart devices, apps",
+  "Education & Coaching – online courses, coaches, masterminds",
+  "Parenting & Family Brands – baby products, toys, household goods",
+  "Home & Lifestyle – decor, furniture, kitchenware, cleaning products",
+  "Financial & Professional Services – investment apps, insurance, credit repair",
+  "Nonprofits & Causes – charities, community organizations, social impact campaigns",
   "Other",
 ];
 
@@ -325,12 +325,13 @@ export default function ProfilePage() {
                 <Textarea
                   id="bio"
                   value={formData.bio}
-                  onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, bio: e.target.value.slice(0,200) })}
                   className="min-h-[140px] resize-none"
                   placeholder="Tell brands about your audience, style, and past collaborations..."
+                  maxLength={200}
                 />
                 <p className="text-xs text-muted-foreground text-right">
-                  {formData.bio.length} characters
+                  {formData.bio.length} /200 characters
                 </p>
               </div>
             </div>

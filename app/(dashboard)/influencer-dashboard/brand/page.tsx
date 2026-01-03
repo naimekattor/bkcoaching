@@ -8,7 +8,13 @@ import { FaInstagram } from "react-icons/fa";
 import { MdInsertEmoticon } from "react-icons/md";
 import { apiClient } from "@/lib/apiClient";
 import type { Brand } from "@/types/brand";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 
 interface BrandProfileResponse {
@@ -39,42 +45,46 @@ export default function BrandPage() {
   const [timeZone, setTimeZone] = useState("");
   const [loading, setLoading] = useState(true);
   const [appliedSearch, setAppliedSearch] = useState("");
- const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   // ────── Data ──────
   const [allBrands, setAllBrands] = useState<Brand[]>([]);
 
   // ────── Constants ──────
   const timeZones = [
-  {
-    value: "America/New_York",
-    label: "Eastern Standard Time – EST (UTC−5) / Eastern Daylight Time – EDT (UTC−4)",
-  },
-  {
-    value: "America/Chicago",
-    label: "Central Standard Time – CST (UTC−6) / Central Daylight Time – CDT (UTC−5)",
-  },
-  {
-    value: "America/Denver",
-    label: "Mountain Standard Time – MST (UTC−7) / Mountain Daylight Time – MDT (UTC−6)",
-  },
-  {
-    value: "America/Phoenix",
-    label: "Mountain Standard Time – MST (UTC−7) – no DST",
-  },
-  {
-    value: "America/Los_Angeles",
-    label: "Pacific Standard Time – PST (UTC−8) / Pacific Daylight Time – PDT (UTC−7)",
-  },
-  {
-    value: "America/Anchorage",
-    label: "Alaska Standard Time – AKST (UTC−9) / Alaska Daylight Time – AKDT (UTC−8)",
-  },
-  {
-    value: "Pacific/Honolulu",
-    label: "Hawaii Standard Time – HST (UTC−10)",
-  },
-];
-
+    {
+      value: "America/New_York",
+      label:
+        "Eastern Standard Time – EST (UTC−5) / Eastern Daylight Time – EDT (UTC−4)",
+    },
+    {
+      value: "America/Chicago",
+      label:
+        "Central Standard Time – CST (UTC−6) / Central Daylight Time – CDT (UTC−5)",
+    },
+    {
+      value: "America/Denver",
+      label:
+        "Mountain Standard Time – MST (UTC−7) / Mountain Daylight Time – MDT (UTC−6)",
+    },
+    {
+      value: "America/Phoenix",
+      label: "Mountain Standard Time – MST (UTC−7) – no DST",
+    },
+    {
+      value: "America/Los_Angeles",
+      label:
+        "Pacific Standard Time – PST (UTC−8) / Pacific Daylight Time – PDT (UTC−7)",
+    },
+    {
+      value: "America/Anchorage",
+      label:
+        "Alaska Standard Time – AKST (UTC−9) / Alaska Daylight Time – AKDT (UTC−8)",
+    },
+    {
+      value: "Pacific/Honolulu",
+      label: "Hawaii Standard Time – HST (UTC−10)",
+    },
+  ];
 
   const businessTypes = [
     "Beauty & Skincare Brands – makeup, skincare, haircare",
@@ -123,7 +133,7 @@ export default function BrandPage() {
             userId: raw.user?.id ? String(raw.user.id) : undefined,
             name: bp.business_name || raw?.user?.first_name || "Unnamed Brand",
             description: bp.short_bio ?? "",
-            timeZone:bp.timezone??"Others",
+            timeZone: bp.timezone ?? "Others",
             logo: bp.logo ?? undefined,
             businessType: getCleanCategory(bp.business_type) ?? undefined,
             website: bp.website ?? undefined,
@@ -137,7 +147,6 @@ export default function BrandPage() {
 
         setAllBrands(normalised);
         console.log(normalised);
-        
       } catch (err) {
         console.error("Failed to load brands", err);
       } finally {
@@ -160,21 +169,22 @@ export default function BrandPage() {
 
     // 2. Business type
     if (businessType) {
-      if (businessType==="All") {
+      if (businessType === "All") {
         return list;
       }
-      list = list.filter((b) => b.businessType === getCleanCategory(businessType));
+      list = list.filter(
+        (b) => b.businessType === getCleanCategory(businessType)
+      );
     }
 
     // 3. Time-zone
     if (timeZone) {
-      if (timeZone==="All") {
+      if (timeZone === "All") {
         return list;
       }
-      
+
       list = list.filter((b) => b.timeZone === timeZone);
       console.log(list);
-      
     }
 
     return list;
@@ -183,7 +193,7 @@ export default function BrandPage() {
     setAppliedSearch(searchQuery);
   };
 
-   // ────── Pagination Logic ──────
+  // ────── Pagination Logic ──────
   // Reset page when filters change
   useEffect(() => {
     setCurrentPage(1);
@@ -194,9 +204,6 @@ export default function BrandPage() {
     (currentPage - 1) * PAGE_SIZE,
     currentPage * PAGE_SIZE
   );
-
-  
-
 
   const clearFilters = () => {
     setAppliedSearch(searchQuery);
@@ -248,23 +255,20 @@ export default function BrandPage() {
 
         {/* Filter row */}
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-          <button onClick={clearFilters} className="border-1 px-2 py-1 rounded-md cursor-pointer">
-            All
-          </button>
-          
           {/* Business Type Select */}
           <div className="relative w-full">
-            <Select 
-              value={businessType} 
-              onValueChange={setBusinessType}
-            >
+            <Select value={businessType} onValueChange={setBusinessType}>
               <SelectTrigger className="w-full h-[50px] bg-white border border-gray-300 rounded-lg px-4 text-base focus:ring-2 focus:ring-primary/40 transition-all hover:bg-gray-50 hover:border-gray-400">
                 <SelectValue placeholder="All Business Types" />
               </SelectTrigger>
               <SelectContent className="max-h-[300px]">
                 <SelectItem value="All">All Business Types</SelectItem>
                 {businessTypes.map((t) => (
-                  <SelectItem key={t} value={t} className="cursor-pointer py-2.5">
+                  <SelectItem
+                    key={t}
+                    value={t}
+                    className="cursor-pointer py-2.5"
+                  >
                     {t}
                   </SelectItem>
                 ))}
@@ -274,21 +278,24 @@ export default function BrandPage() {
 
           {/* Time Zone Select */}
           <div className="relative w-full">
-            <Select 
-              value={timeZone} 
-              onValueChange={setTimeZone}
-            >
+            <Select value={timeZone} onValueChange={setTimeZone}>
               <SelectTrigger className="w-full h-[50px] bg-white border border-gray-300 rounded-lg px-4 text-base focus:ring-2 focus:ring-primary/40 transition-all hover:bg-gray-50 hover:border-gray-400">
                 <SelectValue placeholder="All Time Zones" />
               </SelectTrigger>
               <SelectContent className="max-h-[300px]">
                 <SelectItem value="All">All Time Zones</SelectItem>
                 {timeZones.map((tz) => (
-                  <SelectItem key={tz.value} value={tz.value} className="cursor-pointer py-2.5">
+                  <SelectItem
+                    key={tz.value}
+                    value={tz.value}
+                    className="cursor-pointer py-2.5"
+                  >
                     {tz.label}
                   </SelectItem>
                 ))}
-                <SelectItem value="Others" className="cursor-pointer py-2.5">Others</SelectItem>
+                <SelectItem value="Others" className="cursor-pointer py-2.5">
+                  Others
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -317,6 +324,13 @@ export default function BrandPage() {
               Clear Filters
             </button>
           </div>
+
+          <button
+            onClick={clearFilters}
+            className="border-1 px-2 py-1 rounded-md cursor-pointer"
+          >
+            All
+          </button>
         </div>
       </div>
 
@@ -338,16 +352,22 @@ export default function BrandPage() {
                 className="bg-white rounded-lg border border-gray-200 p-6 text-center"
               >
                 {/* Logo */}
-                <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center overflow-hidden rounded-full bg-gray-100 flex-shrink-0">
-  <Image
-    width={64}
-    height={64}
-    src={brand.logo || "/images/placeholder.jpg"}
-    alt={brand.name}
-    className="w-full h-full object-cover"
-    unoptimized // Add this if images are from external sources
-  />
-</div>
+                <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-primary/5 to-primary/10 border-2 border-white shadow-sm flex-shrink-0">
+                  {brand.logo ? (
+                    <Image
+                      width={64}
+                      height={64}
+                      src={brand.logo}
+                      alt={brand.name}
+                      className="w-full h-full object-cover"
+                      unoptimized
+                    />
+                  ) : (
+                    <div className="w-full h-full rounded-full flex items-center justify-center text-2xl font-bold text-primary">
+                      {brand?.name?.charAt(0) || "N"}
+                    </div>
+                  )}
+                </div>
 
                 {/* Name */}
                 <h3 className="font-semibold text-[17px] text-[#242524] mb-1">
@@ -380,21 +400,20 @@ export default function BrandPage() {
 
                 {/* Buttons */}
                 <div className="flex items-stretch gap-3">
-  <Link
-    href={`/influencer-dashboard/brand/${brand.userId}`}
-    className="flex flex-1 items-center justify-center border border-secondary text-primary px-4 py-2 rounded-lg text-sm font-medium transition-colors text-center"
-  >
-    View Profile
-  </Link>
+                  <Link
+                    href={`/influencer-dashboard/brand/${brand.userId}`}
+                    className="flex flex-1 items-center justify-center border border-secondary text-primary px-4 py-2 rounded-lg text-sm font-medium transition-colors text-center"
+                  >
+                    View Profile
+                  </Link>
 
-  <Link
-    href={`/influencer-dashboard/messages?id=${brand.userId}`}
-    className="flex flex-1 items-center justify-center bg-secondary hover:bg-[var(--secondaryhover)] text-primary px-4 py-2 rounded-lg text-sm font-medium transition-colors text-center"
-  >
-    Message
-  </Link>
-</div>
-
+                  <Link
+                    href={`/influencer-dashboard/messages?id=${brand.userId}`}
+                    className="flex flex-1 items-center justify-center bg-secondary hover:bg-[var(--secondaryhover)] text-primary px-4 py-2 rounded-lg text-sm font-medium transition-colors text-center"
+                  >
+                    Message
+                  </Link>
+                </div>
               </div>
             ))}
           </div>

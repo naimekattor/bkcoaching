@@ -2,7 +2,7 @@
 import { apiClient } from "@/lib/apiClient";
 import Image from "next/image";
 import Link from "next/link";
-import { FaEdit, FaPlus } from 'react-icons/fa';
+import { FaEdit, FaPlus } from "react-icons/fa";
 import { TbMessageCircleFilled } from "react-icons/tb";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/stores/useAuthStore";
@@ -28,6 +28,7 @@ interface Attachment {
 
 interface Campaign {
   id: number;
+  campaign_id: number;
   owner_id: number;
   hired_influencer_id: number;
   start_date: string;
@@ -35,9 +36,12 @@ interface Campaign {
   proposal_message: string;
   campaign_deliverables: string | null;
   attachments: Attachment[] | null;
-  // We add this optional field to handle the UI state after acceptance
   is_accepted_by_influencer?: boolean;
   budget: number;
+  campaign: {
+    campaign_name: string;
+    id: number;
+  };
 }
 
 interface InfluencerProfileInfo {
@@ -57,17 +61,21 @@ interface RoomData {
   unread_count?: number;
   is_online?: boolean;
   profile_picture?: string;
-  seen?:boolean;
+  seen?: boolean;
 }
 const getSafeImageSrc = (src?: string) => {
-  if (!src || src === "profile_picture" || src === "null" || src === "undefined") {
-    return ""; 
+  if (
+    !src ||
+    src === "profile_picture" ||
+    src === "null" ||
+    src === "undefined"
+  ) {
+    return "";
   }
   if (src.startsWith("http://") || src.startsWith("https://")) return src;
   if (src.startsWith("/")) return src;
   return `/${src}`;
 };
-
 
 export default function Page() {
   const [influencerProfile, setInfluencerProfile] =
@@ -83,10 +91,10 @@ export default function Page() {
 
   const user = useAuthStore((state) => state.user);
   const setUser = useAuthStore((state) => state.setUser);
-  console.log(user,"name",user?.user?.first_name);
+  console.log(user, "name", user?.user?.first_name);
   const unread = useNotificationStore((s) => s.unreadCount);
   const noti = useNotificationStore((s) => s.notifications);
-  console.log(unread,"message notification",noti);
+  console.log(unread, "message notification", noti);
 
   // const store = useAuthStore.getState();
 
@@ -230,16 +238,18 @@ export default function Page() {
             if (res?.code === 200 || res?.status === "success") {
               // Remove rejected campaign from local state
               setCampaigns((prev) => prev.filter((c) => c.id !== campaignId));
-              
+
               // Show success sweetalert
               Swal.fire({
                 title: "Campaign Rejected!",
-                text: res.data?.message || "Campaign has been rejected successfully.",
+                text:
+                  res.data?.message ||
+                  "Campaign has been rejected successfully.",
                 icon: "success",
                 confirmButtonColor: "#10b981",
                 confirmButtonText: "OK",
               });
-              
+
               setSelectedCampaign(null); // Close modal
             } else {
               Swal.fire({
@@ -263,14 +273,18 @@ export default function Page() {
     }
   };
 
-  const unReadMessage=roomData.filter((room)=>room.seen==false);
+  const unReadMessage = roomData.filter((room) => room.seen == false);
 
   console.log(campaigns);
 
-  const acceptedCampaign=campaigns.filter((campaign)=>campaign.is_accepted_by_influencer==true);
-  
+  const acceptedCampaign = campaigns.filter(
+    (campaign) => campaign.is_accepted_by_influencer == true
+  );
 
-  const totalEarnings = acceptedCampaign.reduce((acc, curr) => acc + curr.budget, 0);
+  const totalEarnings = acceptedCampaign.reduce(
+    (acc, curr) => acc + curr.budget,
+    0
+  );
   const profileSrc: string =
     typeof user?.influencer_profile?.profile_picture === "string" &&
     user.influencer_profile.profile_picture !== ""
@@ -287,88 +301,99 @@ export default function Page() {
     <div className="relative">
       <div className="flex-1">
         <div className="bg-white rounded-xl shadow-md border border-gray-200 p-5 sm:p-6 transition-shadow hover:shadow-lg">
-  
-  {/* --- Top Row: Greeting + Action --- */}
-  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-    
-    {/* Greeting + Profile */}
-    <div className="flex items-center gap-4">
-      <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center flex-shrink-0">
-        {profileSrc && profileSrc !== "/images/person.jpg" ? (
-          <Image
-            src={profileSrc}
-            width={64}
-            height={64}
-            alt={profileName}
-            className="object-cover w-full h-full"
-          />
-        ) : (
-          <div className="w-16 h-16 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold text-lg flex-shrink-0">
-            {(typeof user?.influencer_profile?.display_name === "string" ? user.influencer_profile.display_name[0] : undefined) ||
-              (typeof user?.user?.first_name === "string" ? (user.user.first_name[0]).toUpperCase() : undefined)}
+          {/* --- Top Row: Greeting + Action --- */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            {/* Greeting + Profile */}
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center flex-shrink-0">
+                {profileSrc && profileSrc !== "/images/person.jpg" ? (
+                  <Image
+                    src={profileSrc}
+                    width={64}
+                    height={64}
+                    alt={profileName}
+                    className="object-cover w-full h-full"
+                  />
+                ) : (
+                  <div className="w-16 h-16 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold text-lg flex-shrink-0">
+                    {(typeof user?.influencer_profile?.display_name === "string"
+                      ? user.influencer_profile.display_name[0]
+                      : undefined) ||
+                      (typeof user?.user?.first_name === "string"
+                        ? user.user.first_name[0].toUpperCase()
+                        : undefined)}
+                  </div>
+                )}
+              </div>
+
+              <div className="flex flex-col">
+                <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
+                  Welcome back,{" "}
+                  {
+                    (user?.influencer_profile?.display_name ||
+                      user?.user?.first_name ||
+                      "Friend") as string
+                  }
+                  ! 👋
+                </h2>
+                <p className="text-gray-500 text-sm sm:text-base">
+                  Ready to grow your influence today?
+                </p>
+              </div>
+            </div>
+
+            {/* Action Button */}
+            <div className="flex gap-2">
+              <Link
+                href="/influencer-dashboard/settings"
+                className="flex items-center gap-2 px-4 py-2 text-sm sm:text-base font-medium rounded-lg bg-secondary  text-primary transition"
+              >
+                <FaEdit /> Edit Profile
+              </Link>
+            </div>
           </div>
-        )}
-      </div>
 
-      <div className="flex flex-col">
-        <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
-          Welcome back, {(user?.influencer_profile?.display_name || user?.user?.first_name || "Friend") as string}! 👋
-        </h2>
-        <p className="text-gray-500 text-sm sm:text-base">
-          Ready to grow your influence today?
-        </p>
-      </div>
-    </div>
-
-    {/* Action Button */}
-    <div className="flex gap-2">
-      <Link
-        href="/influencer-dashboard/settings"
-        className="flex items-center gap-2 px-4 py-2 text-sm sm:text-base font-medium rounded-lg bg-secondary  text-primary transition"
-      >
-        <FaEdit /> Edit Profile
-      </Link>
-    </div>
-  </div>
-
-  {/* --- Stats Cards --- */}
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-    {[
-      {
-        value: campaigns.length,
-        label: "Total Campaigns",
-        icon: "📊",
-        bgColor: "bg-secondary",
-        textColor: "text-primary",
-      },
-      {
-        value: `$${totalEarnings}`,
-        label: "Earnings",
-        icon: "💰",
-        bgColor: "bg-green-100",
-        textColor: "text-green-700",
-      },
-      {
-        value: unReadMessage.length,
-        label: "New Messages",
-        icon: "✉️",
-        bgColor: "bg-[#fefce9]",
-        textColor: "text-primary",
-      },
-    ].map((item, index) => (
-      <div
-        key={index}
-        className={`rounded-xl p-5 flex flex-col items-center justify-center gap-2 ${item.bgColor}`}
-      >
-        <div className={`text-3xl font-bold ${item.textColor}`}>{item.value}</div>
-        <div className={`text-sm font-medium ${item.textColor} flex items-center gap-1`}>
-          <span>{item.icon}</span> {item.label}
+          {/* --- Stats Cards --- */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+            {[
+              {
+                value: campaigns.length,
+                label: "Total Campaigns",
+                icon: "📊",
+                bgColor: "bg-secondary",
+                textColor: "text-primary",
+              },
+              {
+                value: `$${totalEarnings}`,
+                label: "Earnings",
+                icon: "💰",
+                bgColor: "bg-green-100",
+                textColor: "text-green-700",
+              },
+              {
+                value: unReadMessage.length,
+                label: "New Messages",
+                icon: "✉️",
+                bgColor: "bg-[#fefce9]",
+                textColor: "text-primary",
+              },
+            ].map((item, index) => (
+              <div
+                key={index}
+                className={`rounded-xl p-5 flex flex-col items-center justify-center gap-2 ${item.bgColor}`}
+              >
+                <div className={`text-3xl font-bold ${item.textColor}`}>
+                  {item.value}
+                </div>
+                <div
+                  className={`text-sm font-medium ${item.textColor} flex items-center gap-1`}
+                >
+                  <span>{item.icon}</span> {item.label}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-    ))}
-  </div>
-</div>
-
 
         <div className="pt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
@@ -419,12 +444,16 @@ export default function Page() {
                       }`}
                     >
                       <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-gray-800 group-hover:text-primary transition-colors">
-                          Campaign #{campaign.id}
-                        </h3>
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="text-lg font-semibold text-gray-800 group-hover:text-primary transition-colors line-clamp-1">
+                            {campaign.campaign?.campaign_name}
+                          </h3>
+                          <span className="text-xs text-primary bg-primary/10 px-2 py-0.5 rounded">
+                            #{campaign.campaign_id}
+                          </span>
+                        </div>
                         <p className="text-sm text-gray-500 line-clamp-1">
-                          {campaign.proposal_message ||
-                            "No description provided"}
+                          {campaign.proposal_message || "No Message provided"}
                         </p>
                         <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
                           <Calendar className="w-3 h-3" />
@@ -465,85 +494,116 @@ export default function Page() {
                   </div>
                 ) : (
                   roomData.slice(0, 2).map((room, index) => {
-                    const profile_picture=getSafeImageSrc(room.profile_picture);
-                          const name=room.name || "Avatar"
-                          const otherUserId=room?.other_user_id;
-                          
+                    const profile_picture = getSafeImageSrc(
+                      room.profile_picture
+                    );
+                    const name = room.name || "Avatar";
+                    const otherUserId = room?.other_user_id;
 
-                          return (
-                            <Link href={`/influencer-dashboard/messages?id=${otherUserId}`} key={room.room_id || index}>
-                            <div
-                      
-                      className="flex items-start space-x-4 py-4 border-b border-gray-100 last:border-0"
-                    >
-                      {profile_picture ? (
-          <Image
-            width={40}
-            height={40}
-            className="h-10 w-10 rounded-full object-cover flex-shrink-0"
-            src={profile_picture}
-            alt={name}
-          />
-        ) : (
-          <div className="h-11 w-11 rounded-full bg-primary flex items-center justify-center text-white font-medium text-lg flex-shrink-0">
-            {name.charAt(0).toUpperCase()}
-          </div>
-        )}
-                      <div className="flex-grow min-w-0">
-                        <div className="flex justify-between items-center mb-1">
-                          <span className="font-semibold text-gray-900 truncate">
-                            {room.name || room.other_user_id || "Unknown User"}
-                          </span>
-                          <span className="text-xs text-gray-400 flex-shrink-0 ml-2">
-                            {formatTime(room.timestamp)}
-                          </span>
+                    return (
+                      <Link
+                        href={`/influencer-dashboard/messages?id=${otherUserId}`}
+                        key={room.room_id || index}
+                      >
+                        <div className="flex items-start space-x-4 py-4 border-b border-gray-100 last:border-0">
+                          {profile_picture ? (
+                            <Image
+                              width={40}
+                              height={40}
+                              className="h-10 w-10 rounded-full object-cover flex-shrink-0"
+                              src={profile_picture}
+                              alt={name}
+                            />
+                          ) : (
+                            <div className="h-11 w-11 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-medium text-lg flex-shrink-0">
+                              {name.charAt(0).toUpperCase()}
+                            </div>
+                          )}
+                          <div className="flex-grow min-w-0">
+                            <div className="flex justify-between items-center mb-1">
+                              <span className="font-semibold text-gray-900 truncate">
+                                {room.name ||
+                                  room.other_user_id ||
+                                  "Unknown User"}
+                              </span>
+                              <span className="text-xs text-gray-400 flex-shrink-0 ml-2">
+                                {formatTime(room.timestamp)}
+                              </span>
+                            </div>
+                            <p className="text-gray-600 text-sm line-clamp-2">
+                              {room.last_message || "No messages yet"}
+                            </p>
+                          </div>
                         </div>
-                        <p className="text-gray-600 text-sm line-clamp-2">
-                          {room.last_message || "No messages yet"}
-                        </p>
-                      </div>
-                    </div>
-                    </Link>
-                          )
-                    }
-                  )
+                      </Link>
+                    );
+                  })
                 )}
               </div>
             </div>
-
-            
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            
-
-            
-          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6"></div>
 
           {/* Content Niche */}
           <div className="w-full">
             <div className="border-[#E5E7EB] shadow border-[1px] mt-4 rounded p-6 ">
               <div className="flex items-center space-x-2 mb-4">
-                <span className="text-secondary"><FaPlus/></span>
+                <span className="text-secondary">
+                  <FaPlus />
+                </span>
                 <h2 className="text-xl font-bold text-gray-900">
                   Content Niche
                 </h2>
               </div>
               <div className="flex flex-wrap gap-2">
-                {influencerProfile?.content_niches ? (
-                  influencerProfile.content_niches.split(",").map((tag) => (
-                    <span
-                      key={tag.trim()}
-                      className="bg-secondary text-primary rounded-full px-4 py-2 text-sm font-medium"
-                    >
-                      {tag.trim()}
-                    </span>
-                  ))
-                ) : (
-                  <span className="text-center text-gray-500">
-                    No Niches Added
-                  </span>
-                )}
+                {(() => {
+                  const niches = user?.influencer_profile?.content_niches;
+
+                  // Check if niches exists and is a string
+                  if (!niches || typeof niches !== "string") {
+                    return (
+                      <span className="text-center text-gray-500">
+                        No Niches Added
+                      </span>
+                    );
+                  }
+
+                  // Check if string is not empty
+                  if (niches.trim() === "") {
+                    return (
+                      <span className="text-center text-gray-500">
+                        No Niches Added
+                      </span>
+                    );
+                  }
+
+                  // Parse and display niches
+                  const nicheLines = niches
+                    .split("\n")
+                    .filter((line) => line.trim().length > 0);
+
+                  if (nicheLines.length === 0) {
+                    return (
+                      <span className="text-center text-gray-500">
+                        No Niches Added
+                      </span>
+                    );
+                  }
+
+                  return (
+                    <div className="space-y-2">
+                      {nicheLines.map((niche, index) => (
+                        <div
+                          key={`niche-${index}`}
+                          className="text-center text-gray-500"
+                        >
+                          {niche.trim()}
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()}
               </div>
             </div>
           </div>
@@ -556,13 +616,33 @@ export default function Page() {
           <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl transform transition-all scale-100 flex flex-col max-h-[90vh]">
             {/* Modal Header */}
             <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">
-              <div>
-                <h3 className="text-xl font-bold text-gray-900">
-                  Campaign Details
-                </h3>
-                <p className="text-sm text-gray-500">
-                  ID: #{selectedCampaign.id}
-                </p>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <div className="h-5 w-1 bg-primary rounded-full"></div>
+                  <h3 className="text-xl font-bold text-gray-900">
+                    Campaign Details
+                  </h3>
+                </div>
+
+                <div className="space-y-2.5 pl-3">
+                  <div className="flex flex-wrap items-baseline gap-1">
+                    <span className="text-sm font-semibold text-primary min-w-[100px]">
+                      Campaign ID:
+                    </span>
+                    <span className="text-sm font-medium text-gray-800 bg-blue-50 px-2 py-0.5 rounded">
+                      #{selectedCampaign?.campaign?.id}
+                    </span>
+                  </div>
+
+                  <div className="flex flex-wrap items-baseline gap-1">
+                    <span className="text-sm font-semibold text-primary min-w-[100px]">
+                      Campaign Title:
+                    </span>
+                    <span className="text-sm text-gray-700">
+                      {selectedCampaign?.campaign?.campaign_name}
+                    </span>
+                  </div>
+                </div>
               </div>
               <button
                 onClick={() => setSelectedCampaign(null)}
@@ -642,7 +722,7 @@ export default function Page() {
                     Proposal Message
                   </h4>
                   <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-gray-700 text-sm leading-relaxed whitespace-pre-wrap">
-                    {selectedCampaign.proposal_message}
+                    {selectedCampaign.proposal_message || "No Message"}
                   </div>
                 </div>
 
