@@ -42,6 +42,9 @@ interface OtherUserProfile {
     display_name: string;
     profile_picture: string;
   };
+  user:{
+    first_name: string;
+  }
 }
 
 interface HistoryMessage {
@@ -233,7 +236,7 @@ export default function MessagesClient() {
       }
     };
     fetchOtherUserProfile();
-  }, [otherUserId, selectedRoom]);
+  }, [otherUserId, selectedRoom?.other_user_id]);
 
   // Fetch rooms for sidebar
   useEffect(() => {
@@ -358,7 +361,7 @@ export default function MessagesClient() {
 
   // Initialize WebSocket
   useEffect(() => {
-    if (!selectedRoom || !currentUserId) {
+    if (!selectedRoom?.room_id || !currentUserId) {
       console.log(
         "Waiting for room or currentUserId. Room:",
         selectedRoom,
@@ -488,7 +491,7 @@ export default function MessagesClient() {
         wsRef.current = null;
       }
     };
-  }, [selectedRoom, currentUserId]);
+  }, [selectedRoom?.room_id, currentUserId]);
 
   const handleSendMessage = async () => {
     if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) return;
@@ -707,7 +710,7 @@ export default function MessagesClient() {
       <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold text-xs">
         {room?.name?.[0] ||
          otherUserProfile?.brand_profile?.business_name?.[0] ||
-         otherUserProfile?.influencer_profile?.display_name?.[0] ||
+         otherUserProfile?.influencer_profile?.display_name?.[0] || otherUserProfile?.user?.first_name ||
          "U"}
       </div>
     )}
@@ -778,7 +781,7 @@ export default function MessagesClient() {
                     <span className="text-white font-semibold text-sm">
                       {selectedRoom?.name?.[0] ||
                         otherUserProfile?.brand_profile?.business_name?.[0] ||
-                        otherUserProfile?.influencer_profile?.display_name?.[0] ||
+                        otherUserProfile?.influencer_profile?.display_name?.[0] || otherUserProfile?.user?.first_name ||
                         "U"}
                     </span>
                   );
