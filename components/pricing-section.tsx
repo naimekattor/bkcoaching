@@ -285,9 +285,9 @@ export function PricingSection({
 
             // UI Title Mapping
             const titleMap: Record<string, string> = {
-              "Micro-Influencer": "I'm a Micro-Influencer",
-              Businesses: "I'm a Brand",
-              Both: "I'm (Brand + Influencer)",
+              "Micro-Influencer": "Continue as an Influencer",
+              Businesses: "Continue as a Brand",
+              Both: "Influencer + Brand Account",
             };
 
             return (

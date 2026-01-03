@@ -394,7 +394,7 @@ const handleLogout =async () => {
                   className="w-11 h-11 rounded-full object-cover ring-2 ring-gray-200"
                 />
               ):(
-                <div className="w-11 h-11 rounded-full bg-primary text-secondary flex items-center justify-center font-semibold uppercase">
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-primary to-secondary text-white flex items-center justify-center font-semibold uppercase">
   {(
     user?.brand_profile?.business_name ||
     user?.influencer_profile?.display_name ||

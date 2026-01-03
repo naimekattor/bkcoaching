@@ -12,11 +12,5 @@ export const demographics = [
   
   
   
-  // "High-Income / Affluent",
-  // "Budget-Conscious Shoppers",
-  // "Health & Wellness Focused",
-  // "Trend & Style Seekers",
-  // "Family-Oriented",
-  // "Homeowners / New Home Buyers",
-  // "Tech-Savvy Consumers",
+ 
 ];
