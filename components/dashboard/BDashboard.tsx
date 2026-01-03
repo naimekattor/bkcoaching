@@ -74,6 +74,7 @@ export default function BDashboard() {
   const [brandProfile, setBrandProfile] = useState<BrandProfile | null>(null);
   const [allCampaigns, setAllCampaigns] = useState<DashboardCampaign[]>([]);
   const [previousHirings, setPreviousHirings] = useState<HiringCampaign[]>([]);
+  const[uniqueInfluencer,setUniqueInfluencer]=useState<HiringCampaign[]>([]);
 
   const store = useAuthStore.getState();
 
@@ -137,9 +138,17 @@ export default function BDashboard() {
           method: "GET",
           auth: true,
         });
+const data: HiringCampaign[] = hiringsRes.data;
 
-        if (hiringsRes.data && Array.isArray(hiringsRes.data)) {
+        if (data && Array.isArray(data)) {
           setPreviousHirings(hiringsRes.data);
+          const uniqueByInfluencer: HiringCampaign[] = Array.from(
+    new Map(
+      data.map((item: HiringCampaign) => [item.hired_influencer_id, item])
+    ).values()
+  );
+
+  setUniqueInfluencer(uniqueByInfluencer);
         }
 
       } catch (error) {
@@ -155,7 +164,7 @@ export default function BDashboard() {
       <div className="flex-1">
         <DashboardHeader />
         <div className="mt-6 space-y-6">
-          <AnalyticsCards allCampaigns={allCampaigns} previousHirings={previousHirings} />
+          <AnalyticsCards allCampaigns={allCampaigns} previousHirings={previousHirings} uniqueInfluencer={uniqueInfluencer} />
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">

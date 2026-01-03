@@ -20,6 +20,9 @@ export interface Proposal {
   is_completed_marked_by_brand: boolean;
   budget: number;
   rating: number;
+  campaign:{
+    campaign_name:string;
+  }
 }
 
 export type ProposalStatus = "Accepted" | "Rejected" | "Pending";
@@ -60,7 +63,7 @@ const SentProposal = () => {
   }
 
   if (proposals.length === 0) {
-    return <p>No proposals sent yet.</p>;
+    return <p className="bg-white shadow p-4">No proposals sent yet.</p>;
   }
 
   return (
@@ -73,6 +76,9 @@ const SentProposal = () => {
           <div>
             <p className="font-medium">
               Campaign ID: {proposal.campaign_id}
+            </p>
+            <p className="">
+              <span className="font-medium">Campaign Title : </span><span className="text-black">{proposal?.campaign?.campaign_name}</span> 
             </p>
             <p className="text-sm text-gray-600">
               Budget: ${proposal.budget}

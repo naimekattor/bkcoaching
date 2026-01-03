@@ -28,6 +28,7 @@ interface Attachment {
 
 interface Campaign {
   id: number;
+  campaign_id:number;
   owner_id: number;
   hired_influencer_id: number;
   start_date: string;
@@ -38,6 +39,10 @@ interface Campaign {
   // We add this optional field to handle the UI state after acceptance
   is_accepted_by_influencer?: boolean;
   budget: number;
+  campaign:{
+    campaign_name:string;
+    id:number;
+  }
 }
 
 interface InfluencerProfileInfo {
@@ -409,45 +414,49 @@ export default function Page() {
                   </div>
                 ) : (
                   campaigns.map((campaign) => (
-                    <div
-                      key={campaign.id}
-                      onClick={() => setSelectedCampaign(campaign)}
-                      className={`flex justify-between items-center p-4 border rounded-xl cursor-pointer transition-colors group ${
-                        campaign.is_accepted_by_influencer
-                          ? "bg-green-50 border-green-200"
-                          : "border-gray-100 hover:bg-gray-50"
-                      }`}
-                    >
-                      <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-gray-800 group-hover:text-primary transition-colors">
-                          Campaign #{campaign.id}
-                        </h3>
-                        <p className="text-sm text-gray-500 line-clamp-1">
-                          {campaign.proposal_message ||
-                            "No description provided"}
-                        </p>
-                        <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
-                          <Calendar className="w-3 h-3" />
-                          {formatDateRange(
-                            campaign.start_date,
-                            campaign.end_date
-                          )}
-                        </p>
-                      </div>
-                      <div className="flex flex-col items-end">
-                        {campaign.is_accepted_by_influencer ? (
-                          <span className="flex items-center gap-1 text-xs font-bold text-green-700 bg-green-200 rounded-full px-3 py-1">
-                            <CheckCircle className="w-3 h-3" />
-                            Accepted
-                          </span>
-                        ) : (
-                          <span className="text-xs font-medium text-primary bg-secondary rounded px-4 py-2">
-                            View Offer
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  ))
+  <div
+    key={campaign.id}
+    onClick={() => setSelectedCampaign(campaign)}
+    className={`flex justify-between items-center p-4 border rounded-xl cursor-pointer transition-colors group ${
+      campaign.is_accepted_by_influencer
+        ? "bg-green-50 border-green-200"
+        : "border-gray-100 hover:bg-gray-50"
+    }`}
+  >
+    <div className="flex-1">
+      <div className="flex items-center gap-2 mb-1">
+  <h3 className="text-lg font-semibold text-gray-800 group-hover:text-primary transition-colors line-clamp-1">
+    {campaign.campaign?.campaign_name}
+  </h3>
+  <span className="text-xs text-primary bg-primary/10 px-2 py-0.5 rounded">
+    #{campaign.campaign_id}
+  </span>
+</div>
+<p className="text-sm text-gray-500 line-clamp-1">
+  {campaign.proposal_message || "No Message provided"}
+</p>
+      <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
+        <Calendar className="w-3 h-3" />
+        {formatDateRange(
+          campaign.start_date,
+          campaign.end_date
+        )}
+      </p>
+    </div>
+    <div className="flex flex-col items-end">
+      {campaign.is_accepted_by_influencer ? (
+        <span className="flex items-center gap-1 text-xs font-bold text-green-700 bg-green-200 rounded-full px-3 py-1">
+          <CheckCircle className="w-3 h-3" />
+          Accepted
+        </span>
+      ) : (
+        <span className="text-xs font-medium text-primary bg-secondary rounded px-4 py-2">
+          View Offer
+        </span>
+      )}
+    </div>
+  </div>
+))
                 )}
               </div>
             </div>
@@ -556,14 +565,30 @@ export default function Page() {
           <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl transform transition-all scale-100 flex flex-col max-h-[90vh]">
             {/* Modal Header */}
             <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">
-              <div>
-                <h3 className="text-xl font-bold text-gray-900">
-                  Campaign Details
-                </h3>
-                <p className="text-sm text-gray-500">
-                  ID: #{selectedCampaign.id}
-                </p>
-              </div>
+              <div className="space-y-3">
+  <div className="flex items-center gap-2">
+    <div className="h-5 w-1 bg-primary rounded-full"></div>
+    <h3 className="text-xl font-bold text-gray-900">
+      Campaign Details
+    </h3>
+  </div>
+  
+  <div className="space-y-2.5 pl-3">
+    <div className="flex flex-wrap items-baseline gap-1">
+      <span className="text-sm font-semibold text-primary min-w-[100px]">Campaign ID:</span>
+      <span className="text-sm font-medium text-gray-800 bg-blue-50 px-2 py-0.5 rounded">
+        #{selectedCampaign?.campaign?.id}
+      </span>
+    </div>
+    
+    <div className="flex flex-wrap items-baseline gap-1">
+      <span className="text-sm font-semibold text-primary min-w-[100px]">Campaign Title:</span>
+      <span className="text-sm text-gray-700">
+        {selectedCampaign?.campaign?.campaign_name}
+      </span>
+    </div>
+  </div>
+</div>
               <button
                 onClick={() => setSelectedCampaign(null)}
                 className="p-2 hover:bg-gray-200 rounded-full transition-colors text-gray-500"
@@ -642,7 +667,7 @@ export default function Page() {
                     Proposal Message
                   </h4>
                   <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-gray-700 text-sm leading-relaxed whitespace-pre-wrap">
-                    {selectedCampaign.proposal_message}
+                    {selectedCampaign.proposal_message || "No Message"}
                   </div>
                 </div>
 

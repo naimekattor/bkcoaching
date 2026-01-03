@@ -325,12 +325,13 @@ export default function ProfilePage() {
                 <Textarea
                   id="bio"
                   value={formData.bio}
-                  onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, bio: e.target.value.slice(0,200) })}
                   className="min-h-[140px] resize-none"
                   placeholder="Tell brands about your audience, style, and past collaborations..."
+                  maxLength={200}
                 />
                 <p className="text-xs text-muted-foreground text-right">
-                  {formData.bio.length} characters
+                  {formData.bio.length} /200 characters
                 </p>
               </div>
             </div>

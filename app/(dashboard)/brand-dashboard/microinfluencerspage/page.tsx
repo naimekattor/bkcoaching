@@ -83,13 +83,12 @@ interface ApiResponse {
   results: InfluencerRecord[];
 }
 
-const DEFAULT_AVATAR = "/images/person.jpg";
 const sanitizeImageSrc = (src?: string | null) => {
-  if (!src) return DEFAULT_AVATAR;
+  if (!src) return "";
   const value = src.trim();
   if (value.startsWith("/")) return value;
   if (/^https?:\/\//i.test(value)) return value;
-  return DEFAULT_AVATAR;
+  return "";
 };
 
 // --- Helper to calculate total followers ---
@@ -483,20 +482,8 @@ function MicroInfluencersPageContent() {
           </div>
 
           {/* Filters */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-            <button
-              onClick={clearFilters}
-              className="
-      w-full py-1 cursor-pointer
-      bg-white border border-gray-200 rounded-lg
-      px-4 text-base 
-      hover:border-gray-300 hover:bg-gray-50
-      focus:ring-2 focus:ring-secondary/20
-      transition-all
-    "
-            >
-              All
-            </button>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 xl:grid-cols-6 gap-4">
+            
             {/* Content Niches */}
             <Select
               value={filters.contentNiches || "all"}
@@ -556,23 +543,7 @@ function MicroInfluencersPageContent() {
               </SelectContent>
             </Select>
 
-            {/* Time Zone */}
-            {/* <select
-              value={filters.timeZone}
-              onChange={(e) => {
-                setFilters({ ...filters, timeZone: e.target.value });
-                setPage(1);
-              }}
-              className="px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition"
-            >
-              <option value="">All Time Zones</option>
-              {timeZones.map((tz) => (
-                <option key={tz.value} value={tz.value}>
-                  {tz.label}
-                </option>
-              ))}
-              <option value="Others">Others</option>
-            </select> */}
+            
 
             {/* Followers */}
             <div className="relative">
@@ -613,6 +584,19 @@ function MicroInfluencersPageContent() {
                 <SelectItem value="non-binary">No preference</SelectItem>
               </SelectContent>
             </Select>
+            <button
+              onClick={clearFilters}
+              className="
+      w-full py-1 cursor-pointer
+      bg-white border border-gray-200 rounded-lg
+      px-4 text-base 
+      hover:border-gray-300 hover:bg-gray-50
+      focus:ring-2 focus:ring-secondary/20
+      transition-all
+    "
+            >
+              All
+            </button>
           </div>
 
           {/* Clear Filters */}
@@ -671,13 +655,17 @@ function MicroInfluencersPageContent() {
                 >
                   {/* Avatar */}
                   <div className="flex justify-center mb-4">
-                    <Image
+                    {creator.profileImage ? <Image
                       width={80}
                       height={80}
                       src={creator.profileImage}
                       alt={creator.name}
                       className="w-20 h-20 rounded-full object-cover border-2 border-white shadow"
                     />
+                  :
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/10 to-primary/10 border-3 border-white shadow-md uppercase flex items-center justify-center text-3xl font-bold text-primary">
+  {creator?.name?.charAt(0) || "N"}
+</div>}
                   </div>
 
                   {/* Name & Followers */}
