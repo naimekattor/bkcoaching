@@ -71,8 +71,8 @@ const DashboardTopHeader = () => {
         console.log("🔔 Notification Received:", data);
 
         // Update UI
-        setNotificationCount((prev) => prev + 1);
-        setNotifications((prev) => [data, ...prev]);
+        // setNotificationCount((prev) => prev + 1);
+        // setNotifications((prev) => [data, ...prev]);
       } catch (error) {
         console.error("Error parsing WS message:", error);
       }
@@ -211,38 +211,34 @@ const DashboardTopHeader = () => {
     fetchUnreadNotifications();
   }, []);
 
+  // const handleLogout = async () => {
+  //   try {
+  //     localStorage.removeItem("access_token");
+  //     localStorage.removeItem("user");
 
+  //     Cookies.remove("access_token", {
+  //       path: "/",
+  //     });
 
-// const handleLogout = async () => {
-//   try {
-//     localStorage.removeItem("access_token");
-//     localStorage.removeItem("user");
+  //     logout();
+  //     setToken(null);
+  //     setUser(null);
 
-//     Cookies.remove("access_token", {
-//       path: "/",       
-//     });
-
-    
-
-//     logout(); 
-//     setToken(null);
-//     setUser(null);
-
-//     await signOut({
-//       callbackUrl: "/",
-//     });
-//   } catch (err) {
-//     console.error("Logout error:", err);
-//   }
-// };
-const handleLogout =async () => {
+  //     await signOut({
+  //       callbackUrl: "/",
+  //     });
+  //   } catch (err) {
+  //     console.error("Logout error:", err);
+  //   }
+  // };
+  const handleLogout = async () => {
     localStorage.removeItem("access_token");
-    localStorage.removeItem("user"); 
+    localStorage.removeItem("user");
     document.cookie = "access_token=; path=/; max-age=0;";
     await signOut({
-    redirect: true,
-    callbackUrl: "/",
-  });
+      redirect: true,
+      callbackUrl: "/",
+    });
   };
 
   return (
@@ -385,24 +381,29 @@ const handleLogout =async () => {
               }}
               className="flex items-center gap-2 hover:bg-gray-50 rounded-full p-1 pr-3 transition"
             >
-              {user?.brand_profile?.logo || user?.influencer_profile?.profile_picture ? (
+              {user?.brand_profile?.logo ||
+              user?.influencer_profile?.profile_picture ? (
                 <Image
-                  src={user?.brand_profile?.logo || user?.influencer_profile?.profile_picture}
+                  src={
+                    user?.brand_profile?.logo ||
+                    user?.influencer_profile?.profile_picture
+                  }
                   width={44}
                   height={44}
                   alt="Profile"
                   className="w-11 h-11 rounded-full object-cover ring-2 ring-gray-200"
                 />
-              ):(
+              ) : (
                 <div className="w-11 h-11 rounded-full bg-gradient-to-br from-primary to-secondary text-white flex items-center justify-center font-semibold uppercase">
-  {(
-    user?.brand_profile?.business_name ||
-    user?.influencer_profile?.display_name ||
-    user?.user?.first_name ||
-    "Name"
-  ).charAt(0).toUpperCase()}
-</div>
-
+                  {(
+                    user?.brand_profile?.business_name ||
+                    user?.influencer_profile?.display_name ||
+                    user?.user?.first_name ||
+                    "Name"
+                  )
+                    .charAt(0)
+                    .toUpperCase()}
+                </div>
               )}
               <ChevronDown
                 size={18}
