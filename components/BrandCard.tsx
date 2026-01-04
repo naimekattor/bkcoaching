@@ -14,6 +14,7 @@ type Brand = {
   description: string;
   image: string;
   logo: string;
+  userId:number,
 };
 
 export default function BrandCard({
@@ -26,7 +27,7 @@ export default function BrandCard({
   description,
   image,
   logo,
-  id
+  userId
 }: Brand) {
   return (
     <div
@@ -96,7 +97,7 @@ export default function BrandCard({
 
         <div className="text-center lg:text-left mt-4">
           <button  className="bg-primary text-white font-semibold py-3 px-8 inline-block rounded-lg shadow-md hover:shadow-lg hover:border-2 hover:border-[#001F3F] hover:bg-white hover:text-[#001F3F] transition-all duration-300 cursor-pointer">
-           <Link href={`/brands/${id}`}> Explore Brand</Link>
+           <Link href={`/brands/${userId}`}> Explore Brand</Link>
           </button>
         </div>
       </div>

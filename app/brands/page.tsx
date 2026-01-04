@@ -30,6 +30,10 @@ interface BrandApiResponse {
   id: number;
   brand_profile: BrandProfile;
   brand: Brand;
+  user?:{
+    id:number,
+    first_name:string;
+  }
 }
 
 export default async function BrandsPage() {
@@ -43,10 +47,11 @@ export default async function BrandsPage() {
 
       return items.map((brand: BrandApiResponse) => ({
         id: brand?.id,
+        userId:brand?.user?.id?? 0,
         name:
           brand?.brand_profile?.display_name ||
-          brand?.brand_profile?.business_name ||
-          "Unnamed",
+          brand?.brand_profile?.business_name 
+          || brand?.user?.first_name || "Unnamed",
         location: brand?.brand_profile?.timezone || "Location not specified",
         category: brand?.brand_profile?.business_type
           ? brand.brand_profile.business_type.split("–")[0].trim()
@@ -65,6 +70,8 @@ export default async function BrandsPage() {
   }
 
   const brands = await fetchBrands();
+  console.log(brands);
+  
 
   // We pass the data to the client component, which now handles the full layout
   return <BrandListWithSearch brands={brands} />;

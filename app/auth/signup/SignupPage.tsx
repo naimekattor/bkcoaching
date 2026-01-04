@@ -48,7 +48,14 @@ export default function SignupPage() {
 
   const isPasswordValid = passwordRequirements.every((req) => req.met);
   // --- PASSWORD VALIDATION LOGIC END ---
-
+const isFormValid =
+  formData.first_name.trim() !== "" &&
+  formData.last_name.trim() !== "" &&
+  formData.email.trim() !== "" &&
+  formData.password !== "" &&
+  isPasswordValid &&
+  formData.password === formData.confirmPassword &&
+  formData.agreeToTerms;
 
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -74,6 +81,8 @@ export default function SignupPage() {
 
     setErrors(newErrors);
     setLoading(true);
+    
+
     if (formData.first_name && formData.last_name && formData.email && formData.password && formData.password === formData.confirmPassword && formData.agreeToTerms) {
       try {
       const res = await signup({
@@ -331,7 +340,8 @@ const handleGoogleSignUp = async () => {
 
               <Button
                 type="submit"
-                disabled={loading}
+                disabled={!isFormValid || loading}
+                title={!isFormValid ? "Please complete all required fields" : ""}
                 className="w-full cursor-pointer bg-secondary hover:bg-secondary text-slate-800 font-semibold py-3 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (

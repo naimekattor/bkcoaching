@@ -16,6 +16,9 @@ type BrandData = {
   service: string;
   rating: number;
   reviews: number;
+  userId:number
+  
+  
 };
 
 export default function BrandListWithSearch({ brands }: { brands: BrandData[] }) {

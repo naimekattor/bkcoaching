@@ -41,7 +41,7 @@ export default function AuthWelcomePage() {
             Already a user?{" "}
             <button
               onClick={() => router.push("/auth/login")}
-              className="text-primary hover:underline"
+              className="text-primary hover:underline cursor-pointer"
             >
               Click here
             </button>

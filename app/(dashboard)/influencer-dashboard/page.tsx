@@ -6,7 +6,14 @@ import { FaEdit, FaPlus } from "react-icons/fa";
 import { TbMessageCircleFilled } from "react-icons/tb";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { X, Calendar, Paperclip, CheckCircle, XCircle } from "lucide-react";
+import {
+  X,
+  Calendar,
+  Paperclip,
+  CheckCircle,
+  XCircle,
+  Loader2,
+} from "lucide-react";
 import { toast } from "react-toastify";
 import { usePathname } from "next/navigation";
 import { useNotificationStore } from "@/stores/useNotificationStore";
@@ -91,6 +98,10 @@ export default function Page() {
 
   const user = useAuthStore((state) => state.user);
   const setUser = useAuthStore((state) => state.setUser);
+  const [campaignActionLoading, setCampaignActionLoading] = useState<{
+    id: number | null;
+    action: "accept" | "reject" | null;
+  }>({ id: null, action: null });
   console.log(user, "name", user?.user?.first_name);
   const unread = useNotificationStore((s) => s.unreadCount);
   const noti = useNotificationStore((s) => s.notifications);
@@ -184,6 +195,7 @@ export default function Page() {
     action: "accept" | "reject"
   ) => {
     if (action === "accept") {
+      setCampaignActionLoading({ id: campaignId, action: "accept" });
       try {
         // 1. Call API
         const res = await apiClient(
@@ -199,18 +211,22 @@ export default function Page() {
           // 3. Update Local State: Mark this campaign as Accepted (do not remove it)
           setCampaigns((prevCampaigns) =>
             prevCampaigns.map((camp) =>
-              camp.id === campaignId ? { ...camp, is_accepted: true } : camp
+              camp.id === campaignId
+                ? { ...camp, is_accepted_by_influencer: true }
+                : camp
             )
           );
 
           toast(res.data?.message || "Successfully Accepted the offer! 🎉");
-          setSelectedCampaign(null); // Close modal
+          setSelectedCampaign(null);
         } else {
           toast("Something went wrong. Please try again.");
         }
       } catch (error) {
         console.error("Accept Error:", error);
         toast("Failed to accept the offer. Please try again.");
+      } finally {
+        setCampaignActionLoading({ id: null, action: null });
       }
     } else if (action === "reject") {
       Swal.fire({
@@ -224,6 +240,7 @@ export default function Page() {
         cancelButtonText: "Cancel",
       }).then(async (result) => {
         if (result.isConfirmed) {
+          setCampaignActionLoading({ id: campaignId, action: "reject" });
           try {
             // Call reject API
             const res = await apiClient(
@@ -267,6 +284,8 @@ export default function Page() {
               icon: "error",
               confirmButtonColor: "#d32f2f",
             });
+          } finally {
+            setCampaignActionLoading({ id: null, action: null });
           }
         }
       });
@@ -778,22 +797,49 @@ export default function Page() {
               ) : (
                 <>
                   <button
+                    disabled={
+                      campaignActionLoading.id === selectedCampaign.id &&
+                      campaignActionLoading.action === "reject"
+                    }
                     onClick={() =>
                       handleCampaignAction(selectedCampaign.id, "reject")
                     }
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-red-200 text-red-700 bg-white hover:bg-red-50 rounded-xl font-semibold transition-colors"
+                    className="flex-1 cursor-pointer flex items-center justify-center gap-2 px-4 py-3 border border-red-200 text-red-700 bg-white hover:bg-red-50 rounded-xl font-semibold transition-colors"
                   >
                     <XCircle className="w-5 h-5" />
-                    Reject
+                    {campaignActionLoading.id === selectedCampaign.id &&
+                    campaignActionLoading.action === "reject" ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Rejecting…
+                      </>
+                    ) : (
+                      <>
+                        
+                        Reject
+                      </>
+                    )}
                   </button>
                   <button
+                    disabled={campaignActionLoading.id === selectedCampaign.id}
                     onClick={() =>
                       handleCampaignAction(selectedCampaign.id, "accept")
                     }
                     className="flex-1 flex items-center cursor-pointer justify-center gap-2 px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold shadow-md transition-colors"
                   >
                     <CheckCircle className="w-5 h-5" />
-                    Accept Campaign
+                    {campaignActionLoading.id === selectedCampaign.id &&
+                    campaignActionLoading.action === "accept" ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Accepting…
+                      </>
+                    ) : (
+                      <>
+                       
+                        Accept Campaign
+                      </>
+                    )}
                   </button>
                 </>
               )}

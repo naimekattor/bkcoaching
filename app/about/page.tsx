@@ -1,15 +1,45 @@
 "use client";
+import { Input } from "@/components/ui/input";
+import { apiClient } from "@/lib/apiClient";
 import Image from "next/image";
 import { useState } from "react";
 export default function AboutPage() {
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [feedback, setFeedback] = useState("");
+  const [successMessage,setSuccessMessage]=useState(false);
+  const[loading,setLoading]=useState(false);
 
-  const handleFeedbackSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleFeedbackSubmit =async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    alert(`Feedback submitted: ${feedback}`);
-    setFeedback("");
+    const form = e.currentTarget;
+    const formData = new FormData(e.currentTarget);
+      const payload = {
+    email: formData.get("email") as string,
+    subject: formData.get("subject") as string,
+    feedback: formData.get("message") as string,
+  };
+  setLoading(true);
+    try {
+      
+
+
+      const res= await apiClient("user_service/feedback/",{
+        method:"POST",
+        body:JSON.stringify(payload)
+      });
+      if (res?.success) {
+        setSuccessMessage(true);
+        form.reset(); 
     setIsFeedbackOpen(false);
+      }
+      
+      
+    } catch (error) {
+      console.error("Feedback submit failed", error);
+    }finally{
+      setLoading(false);
+    }
+    
   };
 
   return (
@@ -182,10 +212,28 @@ export default function AboutPage() {
               onSubmit={handleFeedbackSubmit}
               className="flex flex-col gap-4"
             >
+              <label className="text-white font-normal text-sm">
+                Enter Your Email
+              </label>
+              <Input type="email"
+              className="w-full  text-white placeholder:text-white/50"
+    name="email"
+    placeholder="Enter Your Email"
+    required/>
+              <label className="text-white font-normal text-sm">
+                Subject
+              </label>
+              <Input type="text"
+    name="subject"
+    className="w-full  text-white placeholder:text-white/50"
+    placeholder="Enter Your Subject"
+    required/>
               <textarea
+              name="message"
                 value={feedback}
+                placeholder="Write Your Message"
                 onChange={(e) => setFeedback(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded resize-none text-white"
+                className="w-full p-3 border border-gray-300 rounded resize-none text-white placeholder:text-white/50"
                 rows={5}
                 required
               />
@@ -198,16 +246,62 @@ export default function AboutPage() {
                   Cancel
                 </button>
                 <button
+                disabled={loading}
                   type="submit"
                   className="px-4 py-2 bg-secondary text-primary cursor-pointer rounded-lg hover:bg-[var(--secondaryhover)] font-semibold transition"
                 >
-                  Submit
+                  {loading?
+                  "Submitting...":"Submit"}
                 </button>
               </div>
             </form>
           </div>
         </div>
       )}
+
+      {successMessage && (
+  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 animate-in fade-in duration-200">
+    <div className="bg-white w-full max-w-md mx-4 rounded-xl shadow-2xl relative animate-in zoom-in-95 duration-300">
+      {/* Close button */}
+      <button
+        onClick={() => setSuccessMessage(false)}
+        className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      {/* Success Icon */}
+      <div className="flex flex-col items-center text-center p-8">
+        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4 animate-in zoom-in duration-500 delay-150">
+          <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+
+        {/* Success Message */}
+        <h3 className="text-2xl font-bold text-gray-900 mb-2">
+          Message Sent Successfully!
+        </h3>
+        <p className="text-gray-600 text-sm mb-6">
+          Your message has been delivered. The Social Market will be notified and can respond to you shortly.
+        </p>
+
+        {/* Action Buttons */}
+        <div className="flex gap-3 w-full">
+          <button
+            onClick={() => setSuccessMessage(false)}
+            className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2.5 rounded-lg font-medium transition-colors"
+          >
+            Close
+          </button>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 }
