@@ -111,6 +111,8 @@ const businessTypes = [
 
 export default function BrandSetupPage() {
   const { user } = useAuthStore();
+  console.log(user);
+  
   const profile = (user?.brand_profile as BrandProfile | undefined) ?? {};
   const fileInputRef = useRef<HTMLInputElement>(null);
 

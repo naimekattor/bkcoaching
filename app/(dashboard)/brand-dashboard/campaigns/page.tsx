@@ -18,6 +18,7 @@ import {
   Clock,
   Target,
   ArrowRight,
+  Loader2,
 } from "lucide-react";
 import {
   Select,
@@ -54,7 +55,6 @@ import { toast } from "react-toastify";
    Types
 ------------------------------------------------- */
 interface Hiring {
-  
   // add more fields if needed
 }
 interface PlatformConfig {
@@ -97,6 +97,7 @@ interface HiringCampaign {
   status?: string;
   // We will attach the fetched profile here for display
   influencer_details?: InfluencerProfile;
+  influencer_name: string;
 }
 
 /* -------------------------------------------------
@@ -177,11 +178,16 @@ export default function CampaignDashboard() {
   const [previousHirings, setPreviousHirings] = useState<HiringCampaign[]>([]);
   // State for rating input
   const [hoverRating, setHoverRating] = useState<number>(0);
-  const [ratingValue, setRatingValue] = useState<number>(0);
+  const [ratingValue, setRatingValue] = useState<Record<number, number>>({});
+  const [ratingLoading, setRatingLoading] = useState<number | null>(null);
   const [modalHirings, setModalHirings] = useState<HiringCampaign[]>([]);
-  const [archieveStatus, setArchieveStatus] = useState<CampaignApiResponse | null>(null);
+  const [archieveLoading, setArchieveLoading] = useState<string | null>(null);
+
   const [showArchived, setShowArchived] = useState(false);
-  const[uniqueInfluencer,setUniqueInfluencer]=useState<HiringCampaign[]>([]);
+  const [uniqueInfluencer, setUniqueInfluencer] = useState<HiringCampaign[]>(
+    []
+  );
+  const [completeLoading, setCompleteLoading] = useState<number | null>(null);
 
   /* ---------- Stats (no type errors) ---------- */
   const stats = [
@@ -225,21 +231,24 @@ export default function CampaignDashboard() {
 
     const matchesSearch = (campaign.title || "")
       .toLowerCase()
-      .includes(searchQuery.toLowerCase()) ;
+      .includes(searchQuery.toLowerCase());
 
     const matchesStatus =
-      statusFilter === "all" || (campaign.status || "").toLowerCase() === statusFilter;
+      statusFilter === "all" ||
+      (campaign.status || "").toLowerCase() === statusFilter;
 
     const matchesPlatform =
       platformFilter === "all" ||
-      (campaign.platforms || []).some((p) => p.toLowerCase() === platformFilter);
+      (campaign.platforms || []).some(
+        (p) => p.toLowerCase() === platformFilter
+      );
 
     return matchesSearch && matchesStatus && matchesPlatform;
   });
 
   // Get archived campaigns for display
-  const archivedCampaigns = allCampaigns.filter((campaign) =>
-    (campaign.status || "").toLowerCase() === "archive"
+  const archivedCampaigns = allCampaigns.filter(
+    (campaign) => (campaign.status || "").toLowerCase() === "archive"
   );
 
   const openCampaignModal = (campaign: Campaign) => {
@@ -322,21 +331,24 @@ export default function CampaignDashboard() {
             auth: true,
           }
         );
-const data: HiringCampaign[] = hiringsRes.data;
-
+        const data: HiringCampaign[] = hiringsRes.data;
 
         if (data && Array.isArray(data)) {
-  setPreviousHirings(data);
+          console.log(data);
 
-  const uniqueByInfluencer: HiringCampaign[] = Array.from(
-    new Map(
-      data.map((item: HiringCampaign) => [item.hired_influencer_id, item])
-    ).values()
-  );
+          setPreviousHirings(data);
 
-  setUniqueInfluencer(uniqueByInfluencer);
-}
+          const uniqueByInfluencer: HiringCampaign[] = Array.from(
+            new Map(
+              data.map((item: HiringCampaign) => [
+                item.hired_influencer_id,
+                item,
+              ])
+            ).values()
+          );
 
+          setUniqueInfluencer(uniqueByInfluencer);
+        }
       } catch (error) {
         console.log(error);
       }
@@ -368,6 +380,9 @@ const data: HiringCampaign[] = hiringsRes.data;
             return {
               ...hiring,
               influencer_details: res.data?.influencer_profile || null,
+              influencer_name:
+                res.data?.influencer_profile?.display_name ||
+                res.data?.user?.first_name,
             };
           } catch (error) {
             console.error("Error fetching influencer:", error);
@@ -465,7 +480,9 @@ const data: HiringCampaign[] = hiringsRes.data;
         | "paused"
         | "completed",
 
-      budget: rawCampaignData.budget_range ? `$${rawCampaignData.budget_range}` : "$0",
+      budget: rawCampaignData.budget_range
+        ? `$${rawCampaignData.budget_range}`
+        : "$0",
       budgetType: rawCampaignData.budget_type || "total",
       targetReach: "200K",
       timeLeft: rawCampaignData.campaign_timeline || "N/A",
@@ -478,15 +495,21 @@ const data: HiringCampaign[] = hiringsRes.data;
       timeline: rawCampaignData.campaign_timeline || "",
 
       deliverables: rawCampaignData.content_deliverables
-        ? rawCampaignData.content_deliverables.split(",").map((d: string) => d.trim())
+        ? rawCampaignData.content_deliverables
+            .split(",")
+            .map((d: string) => d.trim())
         : [],
 
       paymentPreferences: rawCampaignData.payment_preference
-        ? rawCampaignData.payment_preference.split(",").map((p: string) => p.trim())
+        ? rawCampaignData.payment_preference
+            .split(",")
+            .map((p: string) => p.trim())
         : [],
 
       keywords: rawCampaignData.keywords_and_hashtags
-        ? rawCampaignData.keywords_and_hashtags.split(",").map((k: string) => k.trim())
+        ? rawCampaignData.keywords_and_hashtags
+            .split(",")
+            .map((k: string) => k.trim())
         : [],
 
       targetAudience: rawCampaignData.target_audience || "",
@@ -516,6 +539,7 @@ const data: HiringCampaign[] = hiringsRes.data;
   };
 
   const handleComplete = async (hiringId: number) => {
+    setCompleteLoading(hiringId);
     try {
       const res = await apiClient(
         `campaign_service/complete_offer/${hiringId}/`,
@@ -544,10 +568,13 @@ const data: HiringCampaign[] = hiringsRes.data;
     } catch (error) {
       console.error("Error marking complete:", error);
       toast.error("Failed to mark as complete.");
+    } finally {
+      setCompleteLoading(null);
     }
   };
 
   const handleSubmitRating = async (hiringId: number, rating: number) => {
+    setRatingLoading(hiringId);
     try {
       const res = await apiClient(`campaign_service/give_rating/${hiringId}/`, {
         method: "POST",
@@ -565,11 +592,14 @@ const data: HiringCampaign[] = hiringsRes.data;
       }
     } catch (error) {
       toast.error("Failed to submit rating.");
+    } finally {
+      setRatingLoading(null);
     }
   };
 
   // handle archieve
   const handleArchieve = async (status: string, id: string) => {
+    setArchieveLoading(id);
     try {
       const res = await apiClient(`campaign_service/update_a_campaign/${id}/`, {
         method: "PATCH",
@@ -587,7 +617,13 @@ const data: HiringCampaign[] = hiringsRes.data;
           )
         );
 
-        setArchieveStatus(res?.data);
+        // Update selectedCampaign if it's the same campaign being archived/restored
+        if (selectedCampaign && selectedCampaign.id === id) {
+          setSelectedCampaign({
+            ...selectedCampaign,
+            status: status as "active" | "paused" | "completed",
+          });
+        }
 
         // Show success message
         if (status === "archive") {
@@ -601,6 +637,8 @@ const data: HiringCampaign[] = hiringsRes.data;
     } catch (err) {
       console.error("Archive failed", err);
       toast.error("Failed to update campaign status");
+    } finally {
+      setArchieveLoading(null);
     }
   };
 
@@ -733,186 +771,184 @@ const data: HiringCampaign[] = hiringsRes.data;
               </SelectItem>
             </SelectContent>
           </Select>
-
-          
         </div>
 
         {/* Campaign Grid */}
-        {
-          filteredCampaigns.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {filteredCampaigns.map((campaign) => (
-            <div
-              key={campaign.id}
-              className="bg-white rounded-lg shadow-sm cursor-pointer hover:shadow-lg border border-gray-200 transform transition-transform duration-300 hover:scale-102"
-            >
-              <div className="relative">
-                <Image
-                  width={600}
-                  height={192}
-                  src={campaign.image}
-                  alt={campaign.title}
-                  className="w-full h-48  rounded-t-lg"
-                />
-                <span
-                  className={`absolute top-3 left-3 px-2 py-1 rounded-full text-xs font-medium ${
-                    campaign.status === "active"
-                      ? "bg-green-100 text-green-800"
-                      : "bg-gray-100 text-gray-800"
-                  }`}
-                >
-                  {campaign.status}
-                </span>
+        {filteredCampaigns.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {filteredCampaigns.map((campaign) => (
+              <div
+                key={campaign.id}
+                className="bg-white rounded-lg shadow-sm cursor-pointer hover:shadow-lg border border-gray-200 transform transition-transform duration-300 hover:scale-102"
+              >
+                <div className="relative">
+                  <Image
+                    width={600}
+                    height={192}
+                    src={campaign.image}
+                    alt={campaign.title}
+                    className="w-full h-48  rounded-t-lg"
+                  />
+                  <span
+                    className={`absolute top-3 left-3 px-2 py-1 rounded-full text-xs font-medium ${
+                      campaign.status === "active"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-gray-100 text-gray-800"
+                    }`}
+                  >
+                    {campaign.status}
+                  </span>
 
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button className="absolute top-3 right-3 p-2 bg-white/80 hover:bg-white rounded-md transition-colors">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </button>
-                  </DropdownMenuTrigger>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="absolute top-3 right-3 p-2 bg-white/80 hover:bg-white rounded-md transition-colors">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </button>
+                    </DropdownMenuTrigger>
 
-                  <DropdownMenuContent align="end" className="w-40">
-                    <DropdownMenuItem
-                      onSelect={(event) => handlePauseResume(event, campaign)}
-                    >
-                      {(campaign.status || "").toLowerCase() === "active" ? (
-                        <>
-                          <Pause className="mr-2 h-4 w-4" /> Pause
-                        </>
-                      ) : (
-                        <>
-                          <Play className="mr-2 h-4 w-4" /> Resume
-                        </>
-                      )}
-                    </DropdownMenuItem>
+                    <DropdownMenuContent align="end" className="w-40">
+                      <DropdownMenuItem
+                        onSelect={(event) => handlePauseResume(event, campaign)}
+                      >
+                        {(campaign.status || "").toLowerCase() === "active" ? (
+                          <>
+                            <Pause className="mr-2 h-4 w-4" /> Pause
+                          </>
+                        ) : (
+                          <>
+                            <Play className="mr-2 h-4 w-4" /> Resume
+                          </>
+                        )}
+                      </DropdownMenuItem>
 
-                    <DropdownMenuItem
-                      className="text-red-600"
-                      onSelect={(event) => handleDelete(event, campaign)}
-                    >
-                      <Trash className="mr-2 h-4 w-4" /> Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
+                      <DropdownMenuItem
+                        className="text-red-600"
+                        onSelect={(event) => handleDelete(event, campaign)}
+                      >
+                        <Trash className="mr-2 h-4 w-4" /> Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
 
-              <div className="p-4">
-                <h3 className="font-semibold text-lg mb-2">{campaign.title}</h3>
-                <p className="text-sm text-gray-600 mb-4">
-                  {campaign.description}
-                </p>
+                <div className="p-4">
+                  <h3 className="font-semibold text-lg mb-2">
+                    {campaign.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-4">
+                    {campaign.description}
+                  </p>
 
-                <div className="flex items-center gap-2 mb-4">
-                  {Array.isArray(campaign.deliverables) && campaign.deliverables.length > 0
-                    ? campaign.deliverables.filter(Boolean).map((item, idx) => {
-                        const { icon, className } = getPlatformConfig(item);
-                        return (
+                  <div className="flex items-center gap-2 mb-4">
+                    {Array.isArray(campaign.deliverables) &&
+                    campaign.deliverables.length > 0
+                      ? campaign.deliverables
+                          .filter(Boolean)
+                          .map((item, idx) => {
+                            const { icon, className } = getPlatformConfig(item);
+                            return (
+                              <div
+                                key={idx}
+                                className={`w-4 h-4 rounded flex items-center justify-center ${className}`}
+                              >
+                                {icon}
+                              </div>
+                            );
+                          })
+                      : null}
+
+                    {/* Assigned creators avatars */}
+                    <div className="flex -space-x-2 ml-2">
+                      {(campaign.assignedCreators || [])
+                        .slice(0, 3)
+                        .map((creator, idx) => (
                           <div
                             key={idx}
-                            className={`w-4 h-4 rounded flex items-center justify-center ${className}`}
+                            className="w-6 h-6 rounded-full border-2 border-white overflow-hidden bg-gray-300"
                           >
-                            {icon}
+                            <Image
+                              width={600}
+                              height={600}
+                              src={creator.avatar || "/placeholder.svg"}
+                              alt={creator.name}
+                              className="w-full h-full object-cover"
+                            />
                           </div>
-                        );
-                      })
-                    : null}
-
-                  {/* Assigned creators avatars */}
-                  <div className="flex -space-x-2 ml-2">
-                    {(campaign.assignedCreators || [])
-                      .slice(0, 3)
-                      .map((creator, idx) => (
-                        <div
-                          key={idx}
-                          className="w-6 h-6 rounded-full border-2 border-white overflow-hidden bg-gray-300"
-                        >
-                          <Image
-                            width={600}
-                            height={600}
-                            src={creator.avatar || "/placeholder.svg"}
-                            alt={creator.name}
-                            className="w-full h-full object-cover"
-                          />
+                        ))}
+                      {(campaign.assignedCreators || []).length > 3 && (
+                        <div className="w-6 h-6 bg-gray-200 rounded-full border-2 border-white flex items-center justify-center">
+                          <span className="text-xs">
+                            +{(campaign.assignedCreators || []).length - 3}
+                          </span>
                         </div>
-                      ))}
-                    {(campaign.assignedCreators || []).length > 3 && (
-                      <div className="w-6 h-6 bg-gray-200 rounded-full border-2 border-white flex items-center justify-center">
-                        <span className="text-xs">
-                          +{(campaign.assignedCreators || []).length - 3}
-                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="mt-6 grid grid-cols-2 gap-6">
+                    {/* Budget */}
+                    <div className="flex items-center gap-3">
+                      <div className="p-2.5 bg-[#0d2f4f]/10 rounded-xl">
+                        <DollarSign className="w-5 h-5 text-[#0d2f4f]" />
                       </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="mt-6 grid grid-cols-2 gap-6">
-                  {/* Budget */}
-                  <div className="flex items-center gap-3">
-                    <div className="p-2.5 bg-[#0d2f4f]/10 rounded-xl">
-                      <DollarSign className="w-5 h-5 text-[#0d2f4f]" />
+                      <div>
+                        <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Budget
+                        </p>
+                        <p className="text-lg font-bold text-gray-900">
+                          {campaign.budget}
+                        </p>
+                      </div>
                     </div>
-                    <div>
+
+                    {/* Timeline */}
+                    <div className="flex items-center gap-3">
+                      <div className="p-2.5 bg-[#0d2f4f]/10 rounded-xl">
+                        <Clock className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Timeline
+                        </p>
+                        <p className="text-lg font-bold text-gray-900">
+                          {campaign.timeLeft}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Objective */}
+                  <div className="mt-6 flex items-start gap-3">
+                    <div className="p-2.5 bg-[#0d2f4f]/10 rounded-xl flex-shrink-0">
+                      <Target className="w-5 h-5 text-primary" />
+                    </div>
+                    <div className="flex-1">
                       <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Budget
+                        Objective
                       </p>
-                      <p className="text-lg font-bold text-gray-900">
-                        {campaign.budget}
+                      <p className="text-base font-semibold text-primary mt-1">
+                        {campaign.objective}
                       </p>
                     </div>
                   </div>
 
-                  {/* Timeline */}
-                  <div className="flex items-center gap-3">
-                    <div className="p-2.5 bg-[#0d2f4f]/10 rounded-xl">
-                      <Clock className="w-5 h-5 text-primary" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Timeline
-                      </p>
-                      <p className="text-lg font-bold text-gray-900">
-                        {campaign.timeLeft}
-                      </p>
-                    </div>
+                  <div className="mt-6 pt-6 border-t border-gray-100">
+                    <button
+                      onClick={() => openCampaignModal(campaign)}
+                      className="group flex w-full items-center justify-between rounded-xl bg-secondary px-5 py-3 text-primary cursor-pointer font-semibold shadow-md hover:shadow-lg hover:from-[#0a2640] hover:to-[#0d2f4f] transition-all duration-200"
+                    >
+                      <span>View Campaign Details</span>
+                      <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                    </button>
                   </div>
-                </div>
-                {/* Objective */}
-                <div className="mt-6 flex items-start gap-3">
-                  <div className="p-2.5 bg-[#0d2f4f]/10 rounded-xl flex-shrink-0">
-                    <Target className="w-5 h-5 text-primary" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Objective
-                    </p>
-                    <p className="text-base font-semibold text-primary mt-1">
-                      {campaign.objective}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-6 pt-6 border-t border-gray-100">
-                  <button
-                    onClick={() => openCampaignModal(campaign)}
-                    className="group flex w-full items-center justify-between rounded-xl bg-secondary px-5 py-3 text-primary cursor-pointer font-semibold shadow-md hover:shadow-lg hover:from-[#0a2640] hover:to-[#0d2f4f] transition-all duration-200"
-                  >
-                    <span>View Campaign Details</span>
-                    <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                  </button>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-          ):(
-            <div className="text-center text-gray-500 py-12">
-      No campaigns found.
-    </div>
-          )
-        }
-        
-
-        
+            ))}
+          </div>
+        ) : (
+          <div className="text-center text-gray-500 py-12">
+            No campaigns found.
+          </div>
+        )}
 
         {/* Archived Campaigns Section */}
         {archivedCampaigns.length > 0 && (
@@ -970,7 +1006,8 @@ const data: HiringCampaign[] = hiringsRes.data;
                             className="text-red-600"
                             onSelect={(event) => handleDelete(event, campaign)}
                           >
-                            <Trash className="mr-2 h-4 w-4" /> Delete Permanently
+                            <Trash className="mr-2 h-4 w-4" /> Delete
+                            Permanently
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -1025,16 +1062,15 @@ const data: HiringCampaign[] = hiringsRes.data;
       {/* Detail Modal */}
       {selectedCampaign && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg max-w-lg w-full max-h-[90vh] overflow-y-auto">
             {/* Modal Header Image */}
             <div className="relative">
-              <div className="w-full h-48 bg-gray-100 flex items-center justify-center rounded-t-lg overflow-hidden">
+              <div className=" h-56 mb-6 w-full p-4">
                 <Image
-                  width={600}
-                  height={192}
+                  fill
                   src={selectedCampaign.image}
                   alt={selectedCampaign.title}
-                  className="w-full h-full object-contain"
+                  className="object-cover rounded-xl shadow-sm p-4"
                 />
               </div>
               <button
@@ -1078,16 +1114,21 @@ const data: HiringCampaign[] = hiringsRes.data;
                         <div className="flex items-center justify-between mb-4">
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200">
-                              <Image
-                                width={40}
-                                height={40}
-                                src={
-                                  hiring.influencer_details?.profile_picture ||
-                                  "/images/person.jpg"
-                                }
-                                alt="avatar"
-                                className="w-full h-full object-cover"
-                              />
+                              {hiring.influencer_details?.profile_picture ? (
+                                <Image
+                                  width={40}
+                                  height={40}
+                                  src={
+                                    hiring.influencer_details?.profile_picture
+                                  }
+                                  alt="avatar"
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <div className="uppercase w-10 h-10 flex justify-center items-center">
+                                  {hiring?.influencer_name?.charAt(0)}
+                                </div>
+                              )}
                             </div>
                             <div>
                               <p className="font-medium text-sm">
@@ -1103,16 +1144,26 @@ const data: HiringCampaign[] = hiringsRes.data;
                           {/* ACTION BUTTON: Mark Complete */}
                           <button
                             onClick={() => handleComplete(hiring.id)}
-                            disabled={hiring.is_completed_marked_by_brand}
+                            disabled={
+                              hiring.is_completed_marked_by_brand ||
+                              completeLoading === hiring.id
+                            }
                             className={`px-4 py-2 text-sm font-semibold rounded-md transition-colors ${
                               hiring.is_completed_marked_by_brand
                                 ? "bg-green-100 text-green-700 cursor-default"
                                 : "bg-secondary text-primary hover:bg-[var(--secondaryhover)] cursor-pointer"
                             }`}
                           >
-                            {hiring.is_completed_marked_by_brand
-                              ? "✓ Completed"
-                              : "Mark as Complete"}
+                            {completeLoading === hiring.id ? (
+                              <div className="flex gap-1">
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                                Completing…
+                              </div>
+                            ) : hiring.is_completed_marked_by_brand ? (
+                              "✓ Completed"
+                            ) : (
+                              "Mark as Complete"
+                            )}
                           </button>
                         </div>
 
@@ -1123,34 +1174,64 @@ const data: HiringCampaign[] = hiringsRes.data;
                               Rate Experience
                             </p>
                             <div className="flex items-center gap-1">
-                              {[1, 2, 3, 4, 5].map((star) => (
-                                <button
-                                  key={star}
-                                  type="button"
-                                  disabled={hiring.rating > 0} // Disable if already rated
-                                  onClick={() => {
-                                    setRatingValue(star);
-                                    handleSubmitRating(hiring.id, star);
-                                  }}
-                                  onMouseEnter={() => setHoverRating(star)}
-                                  onMouseLeave={() => setHoverRating(0)}
-                                  className="focus:outline-none transition-transform hover:scale-110 disabled:cursor-default"
-                                >
-                                  <Star
-                                    className={`w-6 h-6 ${
-                                      star <= (hiring.rating || hoverRating)
-                                        ? "fill-yellow-400 text-yellow-400"
-                                        : "fill-gray-100 text-gray-300"
-                                    }`}
-                                  />
-                                </button>
-                              ))}
+                              {[1, 2, 3, 4, 5].map((star) => {
+                                const activeRating =
+                                  hoverRating ||
+                                  ratingValue[hiring.id] ||
+                                  hiring.rating ||
+                                  0;
+                                return (
+                                  <button
+                                    key={star}
+                                    type="button"
+                                    disabled={hiring.rating > 0}
+                                    onClick={() =>
+                                      setRatingValue((prev) => ({
+                                        ...prev,
+                                        [hiring.id]: star,
+                                      }))
+                                    }
+                                    onMouseEnter={() => setHoverRating(star)}
+                                    onMouseLeave={() => setHoverRating(0)}
+                                    className="focus:outline-none transition-transform hover:scale-110 disabled:cursor-default"
+                                  >
+                                    <Star
+                                      className={`w-6 h-6 transition-colors ${
+                                        star <= activeRating
+                                          ? "fill-yellow-400 text-yellow-400"
+                                          : "fill-gray-100 text-gray-300"
+                                      }`}
+                                    />
+                                  </button>
+                                );
+                              })}
                               {hiring.rating > 0 && (
                                 <span className="ml-2 text-xs text-green-600 font-medium">
                                   Thanks for rating!
                                 </span>
                               )}
                             </div>
+                            {hiring.rating === 0 && ratingValue[hiring.id] && (
+                              <button
+                                onClick={() =>
+                                  handleSubmitRating(
+                                    hiring.id,
+                                    ratingValue[hiring.id]
+                                  )
+                                }
+                                disabled={ratingLoading === hiring.id}
+                                className="mt-2 px-3 py-1.5 cursor-pointer text-xs font-semibold rounded-md bg-secondary text-primary hover:bg-[var(--secondaryhover)] flex items-center gap-2"
+                              >
+                                {ratingLoading === hiring.id ? (
+                                  <>
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                    Submitting…
+                                  </>
+                                ) : (
+                                  "Submit Rating"
+                                )}
+                              </button>
+                            )}
                           </div>
                         )}
                       </div>
@@ -1161,9 +1242,13 @@ const data: HiringCampaign[] = hiringsRes.data;
               {/* Mark as Archieve button */}
               <div className="flex justify-center items-center">
                 <button
+                  disabled={
+                    (selectedCampaign.status || "").toLowerCase() === "archive" ||
+                    archieveLoading === selectedCampaign.id
+                  }
                   onClick={() => {
                     const nextStatus =
-                      archieveStatus?.campaign_status === "archive"
+                      (selectedCampaign.status || "").toLowerCase() === "archive"
                         ? "active"
                         : "archive";
 
@@ -1172,15 +1257,22 @@ const data: HiringCampaign[] = hiringsRes.data;
                   className={`px-8 py-3 text-sm font-semibold rounded-md transition-all
       cursor-pointer
       ${
-        archieveStatus?.campaign_status === "archive"
+        (selectedCampaign.status || "").toLowerCase() === "archive"
           ? "bg-slate-200 text-slate-600 hover:bg-gray-300 cursor-not-allowed"
           : "bg-secondary text-primary hover:bg-[var(--secondaryhover)]"
       }
     `}
                 >
-                  {archieveStatus?.campaign_status === "archive"
-                    ? "Archived"
-                    : "Mark as Archive"}
+                  {archieveLoading === selectedCampaign.id ? (
+                    <div className="flex gap-1">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Processing…
+                    </div>
+                  ) : (selectedCampaign.status || "").toLowerCase() === "archive" ? (
+                    "Archived"
+                  ) : (
+                    "Mark as Archive"
+                  )}
                 </button>
               </div>
             </div>

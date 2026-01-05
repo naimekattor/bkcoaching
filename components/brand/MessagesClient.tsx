@@ -19,6 +19,8 @@ import { uploadToCloudinary } from "@/lib/fileUpload";
 import { toast } from "react-toastify";
 import { useNotificationStore } from "@/stores/useNotificationStore";
 import { formatLocalTime, timeAgo } from "@/lib/date";
+import { Virtuoso } from "react-virtuoso";
+import MessageBubble from "@/components/MessageBubble";
 
 interface Room {
   room_id: string;
@@ -140,11 +142,14 @@ export default function MessagesClient() {
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingHistory, setLoadingHistory] = useState<boolean>(false);
+  const [loadingOlderMessages, setLoadingOlderMessages] = useState<boolean>(false);
+  const [hasMoreMessages, setHasMoreMessages] = useState<boolean>(true);
   const [attachedFile, setAttachedFile] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [otherUserProfile, setOtherUserProfile] =
     useState<OtherUserProfile | null>(null);
+    const[otherUserName,setOtherUserName]=useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { user } = useAuthStore();
   const currentUserId = user?.user?.id;
@@ -155,7 +160,7 @@ export default function MessagesClient() {
   const otherUserId = searchParams.get("id");
 
   const wsRef = useRef<WebSocket | null>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const virtuosoRef = useRef<any>(null);
 
   useEffect(() => {
     const createRoom = async () => {
@@ -183,7 +188,7 @@ export default function MessagesClient() {
                 other_user_id: otherUserId,
                 last_message: "",
                 timestamp: new Date().toISOString(),
-                name: matchedRoom?.name,
+                name: matchedRoom?.name || otherUserName,
                 seen: matchedRoom?.seen ?? false,
                 profile_picture: matchedRoom?.profile_picture,
               }
@@ -225,12 +230,13 @@ export default function MessagesClient() {
       if (!targetId) return;
       try {
         const response = await apiClient(
-          `user_service/get_a_brand/${targetId}/`,
+          `user_service/get_a_influencer/${targetId}/`,
           {
             method: "GET",
           }
         );
         setOtherUserProfile(response?.data);
+        setOtherUserName(response?.data?.user?.first_name);
       } catch (error) {
         console.log("error", error);
       }
@@ -275,12 +281,82 @@ export default function MessagesClient() {
     return () => clearInterval(interval);
   }, []);
 
+  // Load older messages (for pagination)
+  const loadOlderMessages = async () => {
+    if (!selectedRoom || loadingOlderMessages || !hasMoreMessages) return;
+
+    setLoadingOlderMessages(true);
+    try {
+      const token = localStorage.getItem("access_token");
+      if (!token) {
+        router.push("/login");
+        return;
+      }
+
+      // Get the oldest message ID to fetch messages before it
+      const oldestMessage = messages[0];
+      const oldestMessageId = oldestMessage?.id;
+
+      const response = await apiClient(
+        `chat_service/get_room_history/${selectedRoom.room_id}/?before=${oldestMessageId || ""}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response?.data && Array.isArray(response.data)) {
+        if (response.data.length === 0) {
+          setHasMoreMessages(false);
+          return;
+        }
+
+        // Transform API response to Message format
+        const formattedMessages: MessageWithRawTimestamp[] =
+          response.data.map((msg: HistoryMessage) => ({
+            id: msg.id,
+            senderId: msg.sender_id,
+            senderName: msg.is_me ? "You" : selectedRoom?.name || "User",
+            content: msg.message,
+            fileUrl: msg.file,
+            timestamp: new Date(msg.timestamp).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+            isOwn: msg.is_me,
+            rawTimestamp: new Date(msg.timestamp),
+          }));
+
+        // Sort messages by timestamp (oldest first)
+        const sortedMessages = formattedMessages.sort(
+          (a, b) => a.rawTimestamp.getTime() - b.rawTimestamp.getTime()
+        );
+
+        // Remove rawTimestamp before storing
+        const cleanedMessages: Message[] = sortedMessages.map((msg) => {
+          const { rawTimestamp, ...rest } = msg;
+          return rest;
+        });
+
+        // Prepend older messages to the beginning
+        setMessages((prev) => [...cleanedMessages, ...prev]);
+      }
+    } catch (err) {
+      console.error("Failed to fetch older messages:", err);
+    } finally {
+      setLoadingOlderMessages(false);
+    }
+  };
+
   // Load chat history when room changes
   useEffect(() => {
     const loadChatHistory = async () => {
       if (!selectedRoom) return;
 
       setLoadingHistory(true);
+      setHasMoreMessages(true);
       try {
         const token = localStorage.getItem("access_token");
         if (!token) {
@@ -340,24 +416,18 @@ export default function MessagesClient() {
     loadChatHistory();
   }, [selectedRoom?.room_id, router]);
 
+  // Scroll to bottom when new messages arrive
   useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "end",
-        inline: "nearest",
-      });
-
-      const timeout = setTimeout(() => {
-        messagesEndRef.current?.scrollIntoView({
+    if (virtuosoRef.current && messages.length > 0) {
+      // Scroll to the last message (newest)
+      setTimeout(() => {
+        virtuosoRef.current?.scrollToIndex({
+          index: messages.length - 1,
           behavior: "smooth",
-          block: "end",
         });
-      }, 200);
-
-      return () => clearTimeout(timeout);
+      }, 100);
     }
-  }, [messages]);
+  }, [messages.length]);
 
   // Initialize WebSocket
   useEffect(() => {
@@ -459,7 +529,10 @@ export default function MessagesClient() {
 
               // Scroll to bottom
               setTimeout(() => {
-                messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+                virtuosoRef.current?.scrollToIndex({
+                  index: messages.length,
+                  behavior: "smooth",
+                });
               }, 100);
             }
           } catch (error) {
@@ -558,10 +631,12 @@ export default function MessagesClient() {
     setAttachedFile(null);
     setFilePreview(null);
 
-    setTimeout(
-      () => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }),
-      100
-    );
+    setTimeout(() => {
+      virtuosoRef.current?.scrollToIndex({
+        index: messages.length,
+        behavior: "smooth",
+      });
+    }, 100);
   };
 
   const handleRoomSelect = (room: Room) => {
@@ -778,10 +853,10 @@ export default function MessagesClient() {
                       className="w-[48px] h-[48px] rounded-full"
                     />
                   ) : (
-                    <span className="text-white font-semibold text-sm">
+                    <span className="text-white font-semibold text-sm uppercase">
                       {selectedRoom?.name?.[0] ||
                         otherUserProfile?.brand_profile?.business_name?.[0] ||
-                        otherUserProfile?.influencer_profile?.display_name?.[0] || otherUserProfile?.user?.first_name ||
+                        otherUserProfile?.influencer_profile?.display_name?.[0] || otherUserProfile?.user?.first_name?.[0] ||
                         "U"}
                     </span>
                   );
@@ -790,8 +865,7 @@ export default function MessagesClient() {
                 <div className="min-w-0 flex-1">
                   <p className="font-bold text-gray-900 truncate">
                     {selectedRoom.name ||
-                      otherUserProfile?.brand_profile?.business_name ||
-                      otherUserProfile?.influencer_profile?.display_name}
+                       otherUserName}
                   </p>
                   <span className="text-sm text-gray-500">
   {timeAgo(selectedRoom.timestamp)} • {formatLocalTime(selectedRoom.timestamp)}
@@ -815,7 +889,7 @@ export default function MessagesClient() {
           </div>
 
           {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+          <div className="flex-1 bg-gray-50">
             {loadingHistory ? (
               <div className="flex items-center justify-center h-full">
                 <Loader className="h-6 w-6 animate-spin text-primary" />
@@ -827,70 +901,35 @@ export default function MessagesClient() {
                 </p>
               </div>
             ) : (
-              messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex ${
-                    message.isOwn ? "justify-end" : "justify-start"
-                  }`}
-                >
-                  <div className="flex items-end gap-2 max-w-[85%] sm:max-w-xs lg:max-w-md">
-                    {!message.isOwn && (
-                      <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold text-xs flex-shrink-0">
-                        {selectedRoom?.name?.[0] ||
-                          selectedRoom?.other_user_id?.[0]}
-                      </div>
-                    )}
-                    <div
-                      className={`px-4 py-3 rounded-2xl shadow-sm ${
-                        message.isOwn
-                          ? "bg-gradient-to-r from-primary to-primary text-white rounded-br-md"
-                          : "bg-white text-gray-900 rounded-bl-md border border-gray-200"
-                      }`}
-                    >
-                      {/* Show image/video/file */}
-                      {message.fileUrl && (
-                        <div className="mb-2 rounded-lg overflow-hidden bg-black/5">
-                          {message.fileType?.startsWith("image/") ? (
-                            <img
-                              src={message.fileUrl}
-                              alt="sent attachment"
-                              className="w-full h-full object-contain"
-                            />
-                          ) : message.fileType?.startsWith("video/") ? (
-                            <video
-                              src={message.fileUrl}
-                              controls
-                              className="w-full h-full object-contain"
-                            />
-                          ) : (
-                            <Image
-                              src={message.fileUrl}
-                              alt={message.fileUrl}
-                              width={320}
-                              height={320}
-                              className="w-full h-full object-contain"
-                            />
-                          )}
-                        </div>
-                      )}
-
-                      {message.content && (
-                        <p className="text-sm break-words">{message.content}</p>
-                      )}
-                      <p
-                        className={`text-xs mt-1 ${
-                          message.isOwn ? "text-blue-100" : "text-gray-400"
-                        }`}
-                      >
-                        {message.timestamp}
-                      </p>
-                    </div>
+              <Virtuoso
+                ref={virtuosoRef}
+                data={messages}
+                initialTopMostItemIndex={messages.length - 1}
+                followOutput="smooth"
+                startReached={() => {
+                  if (hasMoreMessages && !loadingOlderMessages) {
+                    // loadOlderMessages();
+                  }
+                }}
+                itemContent={(index, message) => (
+                  <div className="px-4">
+                    <MessageBubble
+                      message={message}
+                      selectedRoomName={selectedRoom?.name}
+                      selectedRoomOtherUserId={selectedRoom?.other_user_id}
+                    />
                   </div>
-                </div>
-              ))
+                )}
+                components={{
+                  Header: () =>
+                    loadingOlderMessages ? (
+                      <div className="flex items-center justify-center p-4">
+                        <Loader className="h-5 w-5 animate-spin text-primary" />
+                      </div>
+                    ) : null,
+                }}
+              />
             )}
-            <div ref={messagesEndRef} />
           </div>
 
           <div className="bg-white border-t border-gray-200 p-4 sticky bottom-0">
