@@ -161,6 +161,7 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }:Creat
 
   const [dragActive, setDragActive] = useState(false);
   const [uploadError, setUploadError] = useState("");
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   // Generic field updater for top-level fields
   const handleInputChange = (field:keyof CampaignFormData, value: unknown) => {
@@ -246,20 +247,34 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }:Creat
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Validate file before upload
+    if (!validateFile(file)) {
+      return;
+    }
+
+    setUploadingImage(true);
+    setUploadError("");
+
     try {
       const res = await uploadToCloudinary(file);
       // Assuming uploadToCloudinary returns { url: string }
       if (res?.url) {
         setFormData((prev) => ({
           ...prev,
-          campaign_poster: res.url?? null,
+          campaign_poster: res.url ?? null,
           posterFile: file,
           posterPreview: URL.createObjectURL(file), // Local preview for speed
         }));
+        toast.success("Image uploaded successfully");
+      } else {
+        setUploadError("Upload failed - no URL returned");
       }
     } catch (err) {
       console.error("Upload failed", err);
-      setUploadError("Upload failed");
+      setUploadError("Upload failed. Please try again.");
+      toast.error("Failed to upload image");
+    } finally {
+      setUploadingImage(false);
     }
   };
 
@@ -271,7 +286,7 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }:Creat
     if (e.type === "dragleave") setDragActive(false);
   };
 
-  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
+  const handleDrop = async (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
@@ -279,19 +294,32 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }:Creat
     const files = e.dataTransfer.files;
     if (files.length > 0) {
       const file = files[0];
-      if (validateFile(file)) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          const result = event.target?.result;
-          if (typeof result === "string") {
-    setFormData((prev) => ({
-      ...prev,
-      posterFile: file,
-      posterPreview: result,
-    }));
-  }
-        };
-        reader.readAsDataURL(file);
+      if (!validateFile(file)) {
+        return;
+      }
+
+      setUploadingImage(true);
+      setUploadError("");
+
+      try {
+        const res = await uploadToCloudinary(file);
+        if (res?.url) {
+          setFormData((prev) => ({
+            ...prev,
+            campaign_poster: res.url ?? null,
+            posterFile: file,
+            posterPreview: URL.createObjectURL(file),
+          }));
+          toast.success("Image uploaded successfully");
+        } else {
+          setUploadError("Upload failed - no URL returned");
+        }
+      } catch (err) {
+        console.error("Upload failed", err);
+        setUploadError("Upload failed. Please try again.");
+        toast.error("Failed to upload image");
+      } finally {
+        setUploadingImage(false);
       }
     }
   };
