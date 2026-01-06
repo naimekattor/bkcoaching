@@ -69,6 +69,11 @@ function LoginPageContent() {
       callbackUrl: `/home_dashboard`,
     });
   };
+  const handleAppleLogin = async () => {
+    signIn("apple", {
+      callbackUrl: `/home_dashboard`,
+    });
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
@@ -212,7 +217,8 @@ function LoginPageContent() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => signIn('apple')}
+                
+                onClick={handleAppleLogin}
                 className="w-full cursor-pointer border-slate-600 text-white hover:bg-primary hover:text-white py-3 rounded-lg bg-transparent"
               >
                 <svg
