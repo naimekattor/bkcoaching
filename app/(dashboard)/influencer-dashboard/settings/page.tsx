@@ -120,10 +120,22 @@ const fieldMap: Record<string, string> = {
 };
 
 export default function ProfilePage() {
-  const { user } = useAuthStore();
+  const { user,setUser } = useAuthStore();
+  console.log(user);
+  
   const p: StoredInfluencerProfile =
     (user?.influencer_profile as StoredInfluencerProfile | undefined) ?? {};
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const normalizePaymentPref = (pref?: string | null) => {
+    if (!pref) return null;
+    const val = pref.toLowerCase();
+    if (val.includes("gifted")) return "gifted";
+    if (val.includes("paid")) return "paid";
+    if (val.includes("affiliate")) return "affiliate";
+    if (val.includes("ambassador")) return "ambassador";
+    return null;
+  };
 
   const initialNiches = p.content_niches
     ? p.content_niches.split(",").map((s: string) => s.trim())
@@ -132,7 +144,10 @@ export default function ProfilePage() {
     ? p.content_formats.split(",").map((s: string) => s.trim())
     : [];
   const paymentPrefs = p.payment_preferences
-    ? p.payment_preferences.split(",").map((s: string) => s.trim().toLowerCase())
+    ? p.payment_preferences
+        .split(",")
+        .map((s: string) => normalizePaymentPref(s.trim()))
+        .filter(Boolean) as string[]
     : [];
 
   const [selectedNiches, setSelectedNiches] = useState<string[]>(initialNiches);
@@ -261,6 +276,7 @@ export default function ProfilePage() {
         body: JSON.stringify(payload),
       });
       if (res.code == 200) {
+        setUser(res?.data);
         toast.success("Profile updated successfully!");
       } else {
         toast.error("Update failed");

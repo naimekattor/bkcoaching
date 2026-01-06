@@ -967,7 +967,7 @@ useEffect(()=>{
                   <span className="text-2xl font-bold text-gray-900">
                     {influencer.response_time}
                   </span>
-                  <span className="ml-2 text-sm text-gray-500">hours</span>
+                  {/* <span className="ml-2 text-sm text-gray-500">hours</span> */}
                 </div>
               ) : (
                 <div className="text-center py-4">

@@ -2,6 +2,7 @@ import NextAuth, { NextAuthOptions, Session } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { JWT } from "next-auth/jwt";
 import { cookies } from "next/headers";
+import AppleProvider from "next-auth/providers/apple";
 
 // Extend NextAuth types
 declare module "next-auth" {
@@ -21,6 +22,7 @@ declare module "next-auth/jwt" {
     backendAccessToken?: string;
     backendRefreshToken?: string;
     role?: string;
+    provider?: string; 
   }
 }
 
@@ -33,25 +35,56 @@ export const authOptions: NextAuthOptions = {
         timeout: 10000,
       },
     }),
+    AppleProvider({
+    clientId: process.env.APPLE_CLIENT_ID!, 
+    clientSecret: process.env.APPLE_CLIENT_SECRET!,
+    authorization: {
+        params: {
+          scope: "name email",
+          response_mode: "form_post", 
+        },
+      },
+  }),
   ],
   session: { strategy: "jwt" },
   secret: process.env.NEXTAUTH_SECRET,
   debug: true,
 
   callbacks: {
-    async jwt({ token, account, profile }) {
-      if (account && profile && account.provider === "google") {
+    async jwt({ token, account, profile,user  }) {
+      if (account && (account.provider === "google" || account.provider === "apple")) {
         try {
           const cookieStore = await cookies();
           const role = cookieStore.get("signup_role")?.value || "influencer";
           const googleProfile = profile as any;
+          token.provider = account.provider;
 
-          const payload = {
-            first_name: googleProfile.given_name ?? googleProfile.name?.split(" ")[0] ?? "",
-            last_name: googleProfile.family_name ?? googleProfile.name?.split(" ")[1] ?? "",
-            email: googleProfile.email,
+          // const payload = {
+          //   first_name: googleProfile.given_name ?? googleProfile.name?.split(" ")[0] ?? "",
+          //   last_name: googleProfile.family_name ?? googleProfile.name?.split(" ")[1] ?? "",
+          //   email: googleProfile.email,
+          //   signed_up_as: role,
+          // };
+          let payload: any = {
+            email: user?.email || token.email,
             signed_up_as: role,
+            provider: account.provider,
           };
+          
+          // Handle Google (has name in profile)
+          if (account.provider === "google" && profile) {
+            const googleProfile = profile as any;
+            payload.first_name = googleProfile.given_name || googleProfile.name?.split(" ")[0] || "";
+            payload.last_name = googleProfile.family_name || googleProfile.name?.split(" ")[1] || "";
+          }
+          // Handle Apple (name might be in user object)
+          else if (account.provider === "apple") {
+            // Apple only returns name on first login
+            const nameParts = user?.name?.split(" ") || [];
+            payload.first_name = nameParts[0] || "";
+            payload.last_name = nameParts.slice(1).join(" ") || "";
+            payload.apple_id = profile?.sub || token.sub; // Apple's user ID
+          }
 
           console.log("🚀 Payload sending to Backend:", JSON.stringify(payload, null, 2));
 

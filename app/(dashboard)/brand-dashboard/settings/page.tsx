@@ -110,7 +110,7 @@ const businessTypes = [
 ];
 
 export default function BrandSetupPage() {
-  const { user } = useAuthStore();
+  const { user,setUser } = useAuthStore();
   console.log(user);
   
   const profile = (user?.brand_profile as BrandProfile | undefined) ?? {};
@@ -209,12 +209,16 @@ export default function BrandSetupPage() {
     };
 
     try {
-      await apiClient("user_service/update_user_profile/", {
+    const res=  await apiClient("user_service/update_user_profile/", {
         method: "PATCH",
         auth: true,
         body: JSON.stringify(payload),
       });
-      toast.success("Brand profile updated!");
+      if (res.code==200) {
+        setUser(res?.data);
+        toast.success("Brand profile updated!");
+      }
+      
     } catch (err) {
       toast.error("Update failed");
       console.error(err);

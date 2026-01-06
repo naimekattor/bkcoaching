@@ -265,6 +265,7 @@ function MicroInfluencersPageContent() {
 
             return {
               id: String(item.id),
+              userId: item.user?.id ? String(item.user.id) : undefined,
               name:
                 inf.display_name ||
                 `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
@@ -326,6 +327,7 @@ function MicroInfluencersPageContent() {
 
             return {
               id: String(item.id),
+              userId: item.user?.id ? String(item.user.id) : undefined,
               name:
                 inf.display_name ||
                 `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
@@ -750,7 +752,7 @@ function MicroInfluencersPageContent() {
                   {/* Buttons */}
                   <div className="flex gap-2">
                     <Link
-                      href={`/brand-dashboard/microinfluencerspage/${creator.userId}`}
+                      href={`/brand-dashboard/microinfluencerspage/${creator?.userId}`}
                       className="flex-1"
                     >
                       <button className="w-full px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
