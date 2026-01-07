@@ -26,6 +26,7 @@ import {
   Repeat,
   Upload,
   X,
+  Loader2,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
@@ -50,6 +51,7 @@ const CampaignStep = ({ onBack,onNext }: CampaignStepProps) => {
     const token =localStorage.getItem("access_token");
     const [dragActive, setDragActive] = useState(false);
   const [uploadError, setUploadError] = useState("");
+  const [uploadingImage, setUploadingImage] = useState(false);
 
 
   const { onboardingData, setOnboardingData } = useBrandOnBoarding();
@@ -198,6 +200,8 @@ const CampaignStep = ({ onBack,onNext }: CampaignStepProps) => {
       if (!validateFile(file)) return;
 
       try {
+        setUploadingImage(true);
+        setUploadError("");
         const res = await uploadToCloudinary(file);
         // Only update state if upload was successful and has a URL
         if (res?.url) {
@@ -213,6 +217,8 @@ const CampaignStep = ({ onBack,onNext }: CampaignStepProps) => {
       } catch (err) {
         console.error("Upload failed", err);
         setUploadError("Upload failed");
+      } finally {
+        setUploadingImage(false);
       }
     };
   
@@ -224,7 +230,7 @@ const CampaignStep = ({ onBack,onNext }: CampaignStepProps) => {
       if (e.type === "dragleave") setDragActive(false);
     };
   
-    const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
       e.preventDefault();
       e.stopPropagation();
       setDragActive(false);
@@ -232,19 +238,27 @@ const CampaignStep = ({ onBack,onNext }: CampaignStepProps) => {
       const files = e.dataTransfer.files;
       if (files.length > 0) {
         const file = files[0];
-        if (validateFile(file)) {
-          const reader = new FileReader();
-          reader.onload = (event) => {
-            const result = event.target?.result;
-            if (typeof result === "string") {
-              setOnboardingData((prev) => ({
-                ...prev,
-                posterFile: file,
-                posterPreview: result,
-              }));
-            }
-          };
-          reader.readAsDataURL(file);
+        if (!validateFile(file)) return;
+
+        try {
+          setUploadingImage(true);
+          setUploadError("");
+          const res = await uploadToCloudinary(file);
+          if (res?.url) {
+            setOnboardingData((prev) => ({
+              ...prev,
+              campaign_poster: res.url,
+              posterFile: file,
+              posterPreview: URL.createObjectURL(file),
+            }));
+          } else {
+            setUploadError("Upload failed - no URL returned");
+          }
+        } catch (err) {
+          console.error("Upload failed", err);
+          setUploadError("Upload failed");
+        } finally {
+          setUploadingImage(false);
         }
       }
     };
@@ -383,6 +397,7 @@ const CampaignStep = ({ onBack,onNext }: CampaignStepProps) => {
                       onChange={handleImageChange}
                       className="hidden"
                       id="poster-input"
+                      disabled={uploadingImage}
                     />
                     <label htmlFor="poster-input">
                       <Button
@@ -390,10 +405,17 @@ const CampaignStep = ({ onBack,onNext }: CampaignStepProps) => {
                         variant="outline"
                         asChild
                         className="cursor-pointer"
+                        disabled={uploadingImage}
                       >
-                        <span>Choose File</span>
+                        <span>{uploadingImage ? "Uploading..." : "Choose File"}</span>
                       </Button>
                     </label>
+                    {uploadingImage && (
+                      <div className="mt-3 flex items-center justify-center gap-2 text-sm text-gray-600">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <span>Uploading...</span>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="relative rounded-lg overflow-hidden border border-gray-200">
@@ -408,6 +430,12 @@ const CampaignStep = ({ onBack,onNext }: CampaignStepProps) => {
                     >
                       <X className="h-4 w-4" />
                     </button>
+                    {uploadingImage && (
+                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center text-white text-sm gap-2">
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        <span>Uploading...</span>
+                      </div>
+                    )}
                   </div>
                 )}
                 {uploadError && (
@@ -784,28 +812,77 @@ const CampaignStep = ({ onBack,onNext }: CampaignStepProps) => {
                 <CardTitle>Target Audience</CardTitle>
               </CardHeader>
               <CardContent>
-                          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                            {demographics.map((demo) => (
-                              <div key={demo} className="flex items-center space-x-2">
-                                <Checkbox
-                                  id={demo}
-                                  checked={onboardingData.targetAudience.includes(
-                                    demo
-                                  )}
-                                  onCheckedChange={(checked) =>
-                                    handleArrayChange(
-                                      "targetAudience",
-                                      demo,
-                                      checked as boolean
-                                    )
-                                  }
-                                />
-                                <Label htmlFor={demo} className="text-sm font-normal">
-                                  {demo}
-                                </Label>
-                              </div>
-                            ))}
-                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+  {/* Men */}
+  <div className="space-y-3">
+    <h4 className="text-sm font-medium text-gray-700">Men</h4>
+    {demographics.men.map((demo) => (
+      <div key={demo} className="flex items-center space-x-2">
+        <Checkbox
+          id={demo}
+          checked={onboardingData.targetAudience.includes(demo)}
+          onCheckedChange={(checked) =>
+            handleArrayChange(
+              "targetAudience",
+              demo,
+              checked as boolean
+            )
+          }
+        />
+        <Label htmlFor={demo} className="text-sm font-normal">
+          {demo}
+        </Label>
+      </div>
+    ))}
+  </div>
+
+  {/* Women */}
+  <div className="space-y-3">
+    <h4 className="text-sm font-medium text-gray-700">Women</h4>
+    {demographics.women.map((demo) => (
+      <div key={demo} className="flex items-center space-x-2">
+        <Checkbox
+          id={demo}
+          checked={onboardingData.targetAudience.includes(demo)}
+          onCheckedChange={(checked) =>
+            handleArrayChange(
+              "targetAudience",
+              demo,
+              checked as boolean
+            )
+          }
+        />
+        <Label htmlFor={demo} className="text-sm font-normal">
+          {demo}
+        </Label>
+      </div>
+    ))}
+  </div>
+
+  {/* Kids / Teens */}
+  <div className="space-y-3">
+    <h4 className="text-sm font-medium text-gray-700">Kids & Teens</h4>
+    {demographics.youth.map((demo) => (
+      <div key={demo} className="flex items-center space-x-2">
+        <Checkbox
+          id={demo}
+          checked={onboardingData.targetAudience.includes(demo)}
+          onCheckedChange={(checked) =>
+            handleArrayChange(
+              "targetAudience",
+              demo,
+              checked as boolean
+            )
+          }
+        />
+        <Label htmlFor={demo} className="text-sm font-normal">
+          {demo}
+        </Label>
+      </div>
+    ))}
+  </div>
+</div>
+
                         </CardContent>
               
             </Card>

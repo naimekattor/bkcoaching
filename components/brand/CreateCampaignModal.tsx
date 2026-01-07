@@ -892,22 +892,62 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }:Creat
               </CardHeader>
 
               <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {demographics.map((demo) => (
-                    <div key={demo} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={demo}
-                        checked={(formData.target_audience || []).includes(demo)}
-                        onCheckedChange={(checked) =>
-                          handleArrayChange("target_audience", demo, !!checked)
-                        }
-                      />
-                      <Label htmlFor={demo} className="text-sm font-normal">
-                        {demo}
-                      </Label>
-                    </div>
-                  ))}
-                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+  {/* Men */}
+  <div className="space-y-3">
+    {demographics.men.map((demo) => (
+      <div key={demo} className="flex items-center space-x-2">
+        <Checkbox
+          id={demo}
+          checked={(formData.target_audience || []).includes(demo)}
+          onCheckedChange={(checked) =>
+            handleArrayChange("target_audience", demo, !!checked)
+          }
+        />
+        <Label htmlFor={demo} className="text-sm font-normal">
+          {demo}
+        </Label>
+      </div>
+    ))}
+  </div>
+
+  {/* Women */}
+  <div className="space-y-3">
+    {demographics.women.map((demo) => (
+      <div key={demo} className="flex items-center space-x-2">
+        <Checkbox
+          id={demo}
+          checked={(formData.target_audience || []).includes(demo)}
+          onCheckedChange={(checked) =>
+            handleArrayChange("target_audience", demo, !!checked)
+          }
+        />
+        <Label htmlFor={demo} className="text-sm font-normal">
+          {demo}
+        </Label>
+      </div>
+    ))}
+  </div>
+
+  {/* Kids / Teens */}
+  <div className="space-y-3">
+    {demographics.youth.map((demo) => (
+      <div key={demo} className="flex items-center space-x-2">
+        <Checkbox
+          id={demo}
+          checked={(formData.target_audience || []).includes(demo)}
+          onCheckedChange={(checked) =>
+            handleArrayChange("target_audience", demo, !!checked)
+          }
+        />
+        <Label htmlFor={demo} className="text-sm font-normal">
+          {demo}
+        </Label>
+      </div>
+    ))}
+  </div>
+</div>
+
               </CardContent>
             </Card>
 

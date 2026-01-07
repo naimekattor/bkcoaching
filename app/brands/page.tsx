@@ -69,10 +69,24 @@ export default async function BrandsPage() {
     }
   }
 
+
+  const fetchPlan=async()=>
+  {
+    try {
+      const res = await apiClient("user_service/get_featured_brands/", {
+        method: "GET",
+      });
+      return res?.data?.plan_name;
+    } catch (error) {
+      
+    }
+  }
+
   const brands = await fetchBrands();
   console.log(brands);
+  const planName=await fetchPlan();
   
 
   // We pass the data to the client component, which now handles the full layout
-  return <BrandListWithSearch brands={brands} />;
+  return <BrandListWithSearch brands={brands} planName={planName}/>;
 }

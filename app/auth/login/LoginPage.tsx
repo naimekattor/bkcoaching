@@ -147,7 +147,7 @@ function LoginPageContent() {
               </div>
 
               <div className="flex items-center justify-between">
-                <label className="flex items-center">
+                {/* <label className="flex items-center">
                   <input
                     type="checkbox"
                     checked={formData.rememberMe}
@@ -157,7 +157,7 @@ function LoginPageContent() {
                     className="mr-2"
                   />
                   <span className="text-white text-sm">Remember me</span>
-                </label>
+                </label> */}
                 <Link
                   href="/auth/forgot-password"
                   className="text-slate-300 text-sm hover:text-white"

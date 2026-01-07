@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image"; // Moved Image import here
+import Image from "next/image"; 
 import BrandCard from "./BrandCard";
 import { FaSearch } from "react-icons/fa";
 
@@ -20,8 +20,12 @@ type BrandData = {
   
   
 };
+interface BrandListWithSearchProps {
+  brands: BrandData[];
+  planName: string;
+}
 
-export default function BrandListWithSearch({ brands }: { brands: BrandData[] }) {
+export default function BrandListWithSearch({ brands, planName }: BrandListWithSearchProps) {
   const [searchTerm, setSearchTerm] = useState("");
 
   // Filter logic
@@ -94,7 +98,7 @@ export default function BrandListWithSearch({ brands }: { brands: BrandData[] })
         <div className="space-y-12">
           {filteredBrands.length > 0 ? (
             filteredBrands.map((brand) => (
-              <BrandCard key={brand.id} {...brand} />
+              <BrandCard key={brand.id} {...brand} planName={planName}/>
             ))
           ) : (
             <div className="text-center py-20 bg-gray-50 rounded-2xl border border-dashed border-gray-200">

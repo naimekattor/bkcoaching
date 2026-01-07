@@ -29,16 +29,18 @@ interface NotificationItem {
   description: string;
 }
 export default function SettingsPage() {
-
+const { user,setUser } = useAuthStore();
   const [notifications, setNotifications] = useState<
     Record<NotificationKeys, boolean>
   >({
-    email: false,
-    push: false,
+    email: !!user?.brand_profile?.notifications_email,
+    push: !!user?.brand_profile?.notifications_push,
     sms: false,
     marketing: true,
   });
-  const user=useAuthStore((state)=>state.user);
+  
+  console.log(user);
+  
 
 
   const supportItems = [
@@ -95,6 +97,7 @@ export default function SettingsPage() {
           }
         );
         if (res.status=='success') {
+          setUser(res?.data);
           toast("Settings saved ✅");
         }
   

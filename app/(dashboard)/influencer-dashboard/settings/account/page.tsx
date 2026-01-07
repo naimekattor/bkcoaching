@@ -31,12 +31,13 @@ interface NotificationItem {
 }
 export default function SettingsPage() {
   
-
+  const {user,setUser}=useAuthStore();
+  console.log(user);
   const [notifications, setNotifications] = useState<
     Record<NotificationKeys, boolean>
   >({
-    email: false,
-    push: false,
+    email: !!user?.influencer_profile?.notifications_email,    
+  push: !!user?.influencer_profile?.notifications_push,
     sms: false,
     marketing: true,
   });
@@ -95,14 +96,14 @@ export default function SettingsPage() {
         }
       );
       if (res.status=='success') {
+        setUser(res?.data);
         toast("Settings saved ✅");
       }
 
     
   };
 
-  const user=useAuthStore((state)=>state.user);
-  console.log(user);
+
   
 
 

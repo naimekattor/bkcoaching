@@ -679,7 +679,7 @@ export default function Page() {
                   <Calendar className="w-5 h-5 text-primary mt-0.5" />
                   <div>
                     <p className="text-sm font-semibold text-primary">
-                      Campaign Timeline
+                      Timeline
                     </p>
                     <p className="text-sm text-primary mt-1">
                       {formatDateRange(
@@ -690,7 +690,7 @@ export default function Page() {
                   </div>
                 </div>
                 <div className="font-semibold text-primary text-lg">
-                  <h4>Budget is:{selectedCampaign.budget}$</h4>
+                  <h4>Budget:${selectedCampaign.budget}</h4>
                 </div>
                 <div>
                   <h4 className="font-semibold text-primary text-lg mb-2">

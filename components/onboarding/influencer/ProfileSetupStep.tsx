@@ -570,28 +570,77 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
             </p>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {demographics.map((demo) => (
-                <div key={demo} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={demo}
-                    checked={onboardingDataInfluencer.audience_demographics.includes(
-                      demo
-                    )}
-                    onCheckedChange={(checked) =>
-                      handleArrayChange(
-                        "audience_demographics",
-                        demo,
-                        checked as boolean
-                      )
-                    }
-                  />
-                  <Label htmlFor={demo} className="text-sm font-normal">
-                    {demo}
-                  </Label>
-                </div>
-              ))}
-            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+  {/* Men Column */}
+  <div className="space-y-3">
+    <h4 className="font-medium text-sm text-gray-700">Men</h4>
+    {demographics.men.map((demo) => (
+      <div key={demo} className="flex items-center space-x-2">
+        <Checkbox
+          id={demo}
+          checked={onboardingDataInfluencer.audience_demographics.includes(demo)}
+          onCheckedChange={(checked) =>
+            handleArrayChange(
+              "audience_demographics",
+              demo,
+              checked as boolean
+            )
+          }
+        />
+        <Label htmlFor={demo} className="text-sm font-normal">
+          {demo}
+        </Label>
+      </div>
+    ))}
+  </div>
+
+  {/* Women Column */}
+  <div className="space-y-3">
+    <h4 className="font-medium text-sm text-gray-700">Women</h4>
+    {demographics.women.map((demo) => (
+      <div key={demo} className="flex items-center space-x-2">
+        <Checkbox
+          id={demo}
+          checked={onboardingDataInfluencer.audience_demographics.includes(demo)}
+          onCheckedChange={(checked) =>
+            handleArrayChange(
+              "audience_demographics",
+              demo,
+              checked as boolean
+            )
+          }
+        />
+        <Label htmlFor={demo} className="text-sm font-normal">
+          {demo}
+        </Label>
+      </div>
+    ))}
+  </div>
+
+  {/* Kids / Teens Column */}
+  <div className="space-y-3">
+    <h4 className="font-medium text-sm text-gray-700">Youth</h4>
+    {demographics.youth.map((demo) => (
+      <div key={demo} className="flex items-center space-x-2">
+        <Checkbox
+          id={demo}
+          checked={onboardingDataInfluencer.audience_demographics.includes(demo)}
+          onCheckedChange={(checked) =>
+            handleArrayChange(
+              "audience_demographics",
+              demo,
+              checked as boolean
+            )
+          }
+        />
+        <Label htmlFor={demo} className="text-sm font-normal">
+          {demo}
+        </Label>
+      </div>
+    ))}
+  </div>
+</div>
+
           </CardContent>
         </Card>
 

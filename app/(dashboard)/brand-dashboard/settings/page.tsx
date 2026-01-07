@@ -492,7 +492,7 @@ export default function BrandSetupPage() {
             </section>
 
             {/* Email Notifications */}
-            <section className="p-6 bg-gray-50 rounded-xl">
+            {/* <section className="p-6 bg-gray-50 rounded-xl">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900">Email Notifications</h3>
@@ -510,7 +510,7 @@ export default function BrandSetupPage() {
                   <div className="w-12 h-7 bg-gray-300 rounded-full peer peer-checked:bg-primary after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:after:translate-x-5"></div>
                 </label>
               </div>
-            </section>
+            </section> */}
 
             {/* Action Buttons */}
             <div className="flex justify-end gap-4 pt-6 border-t border-gray-200">

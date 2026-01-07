@@ -406,10 +406,11 @@ export default function ProposalsPage() {
 
             <div className="flex justify-end gap-4 mb-6">
               <button
+              onClick={()=>router.push(`/brand-dashboard/messages?id=${profileId}`)}
                 type="button"
-                className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+                className="px-6 py-2 cursor-pointer border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
               >
-                Decline
+                Cancel
               </button>
               <button
                 type="submit"

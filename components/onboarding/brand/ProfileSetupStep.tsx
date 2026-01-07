@@ -22,55 +22,25 @@ interface ProfileSetupStepProps {
 const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
   const { onboardingData, setOnboardingData } = useBrandOnBoarding();
 
-  const targetAudiences = [
-    {
-      label: "Kids",
-      tooltip: "Ages 6–12 – purchasing decisions influenced by parents, education, entertainment, and brand familiarity.",
-    },
-    {
-      label: "Teens",
-      tooltip: "Ages 13–17 – highly influenced by social media trends, peers, and short-form video content.",
-    },
-    {
-      label: "Men 18–24",
-      tooltip: "Gen Z – early adopters, trend-driven.",
-    },
-    {
-      label: "Women 18–24",
-      tooltip: "Gen Z – digital natives, heavy TikTok/IG use.",
-    },
-    {
-      label: "Men 25–34",
-      tooltip: "Millennials – tech-savvy, lifestyle & career focused.",
-    },
-    
-    {
-      label: "Women 25–34",
-      tooltip: "Millennials – young professionals / family-forming stage.",
-    },
-    
-     {
-      label: "Men 35–44",
-      tooltip: "Older Millennials / Gen X – higher disposable income.",
-    },
-    {
-      label: "Women 35–44",
-      tooltip: "Older Millennials / Gen X – career stability & young families.",
-    },
-    
-   {
-      label: "Men 45+",
-      tooltip: "Gen X / Boomers – loyalty and financial stability.",
-    },
-    {
-      label: "Women 45+",
-      tooltip: "Gen X / Boomers – loyalty and financial stability.",
-    },
-    
-    
-    
-    
-  ];
+const targetAudiencesByColumn = {
+  men: [
+    { label: "Men 18–24", tooltip: "Gen Z – early adopters, trend-driven." },
+    { label: "Men 25–34", tooltip: "Millennials – tech-savvy, lifestyle & career focused." },
+    { label: "Men 35–44", tooltip: "Older Millennials / Gen X – higher disposable income." },
+    { label: "Men 45+", tooltip: "Gen X / Boomers – loyalty and financial stability." },
+  ],
+  women: [
+    { label: "Women 18–24", tooltip: "Gen Z – digital natives, heavy TikTok/IG use." },
+    { label: "Women 25–34", tooltip: "Millennials – young professionals / family-forming stage." },
+    { label: "Women 35–44", tooltip: "Older Millennials / Gen X – career stability & young families." },
+    { label: "Women 45+", tooltip: "Gen X / Boomers – loyalty and financial stability." },
+  ],
+  youth: [
+    { label: "Kids", tooltip: "Ages 6–12 – purchasing decisions influenced by parents, education, entertainment, and brand familiarity." },
+    { label: "Teens", tooltip: "Ages 13–17 – highly influenced by social media trends, peers, and short-form video content." },
+  ],
+};
+
 
   const brandValues = [
   // CORE from your original list (Prioritized)
@@ -163,42 +133,80 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {targetAudiences.map((audience) => (
-                  <div
-                    key={audience.label}
-                    className="flex items-center space-x-2"
-                  >
-                    <Checkbox
-                      id={audience.label}
-                      checked={onboardingData.targetAudience.includes(
-                        audience.label
-                      )}
-                      onCheckedChange={(checked) =>
-                        handleArrayChange(
-                          "targetAudience",
-                          audience.label,
-                          checked as boolean
-                        )
-                      }
-                    />
-                    <Label
-                      htmlFor={audience.label}
-                      className="flex items-center gap-1 text-sm font-normal"
-                    >
-                      {audience.label}
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <HelpCircle className="w-4 h-4 text-muted-foreground cursor-pointer" />
-                        </TooltipTrigger>
-                        <TooltipContent className="max-w-xs text-sm">
-                          {audience.tooltip}
-                        </TooltipContent>
-                      </Tooltip>
-                    </Label>
-                  </div>
-                ))}
-              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+  {/* Men Column */}
+  <div className="space-y-2">
+    {targetAudiencesByColumn.men.map((audience) => (
+      <div key={audience.label} className="flex items-center space-x-2">
+        <Checkbox
+          id={audience.label}
+          checked={onboardingData.targetAudience.includes(audience.label)}
+          onCheckedChange={(checked) =>
+            handleArrayChange("targetAudience", audience.label, checked as boolean)
+          }
+        />
+        <Label htmlFor={audience.label} className="flex items-center gap-1 text-sm font-normal">
+          {audience.label}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <HelpCircle className="w-4 h-4 text-muted-foreground cursor-pointer" />
+            </TooltipTrigger>
+            <TooltipContent className="max-w-xs text-sm">{audience.tooltip}</TooltipContent>
+          </Tooltip>
+        </Label>
+      </div>
+    ))}
+  </div>
+
+  {/* Women Column */}
+  <div className="space-y-2">
+    {targetAudiencesByColumn.women.map((audience) => (
+      <div key={audience.label} className="flex items-center space-x-2">
+        <Checkbox
+          id={audience.label}
+          checked={onboardingData.targetAudience.includes(audience.label)}
+          onCheckedChange={(checked) =>
+            handleArrayChange("targetAudience", audience.label, checked as boolean)
+          }
+        />
+        <Label htmlFor={audience.label} className="flex items-center gap-1 text-sm font-normal">
+          {audience.label}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <HelpCircle className="w-4 h-4 text-muted-foreground cursor-pointer" />
+            </TooltipTrigger>
+            <TooltipContent className="max-w-xs text-sm">{audience.tooltip}</TooltipContent>
+          </Tooltip>
+        </Label>
+      </div>
+    ))}
+  </div>
+
+  {/* Kids/Teens Column */}
+  <div className="space-y-2">
+    {targetAudiencesByColumn.youth.map((audience) => (
+      <div key={audience.label} className="flex items-center space-x-2">
+        <Checkbox
+          id={audience.label}
+          checked={onboardingData.targetAudience.includes(audience.label)}
+          onCheckedChange={(checked) =>
+            handleArrayChange("targetAudience", audience.label, checked as boolean)
+          }
+        />
+        <Label htmlFor={audience.label} className="flex items-center gap-1 text-sm font-normal">
+          {audience.label}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <HelpCircle className="w-4 h-4 text-muted-foreground cursor-pointer" />
+            </TooltipTrigger>
+            <TooltipContent className="max-w-xs text-sm">{audience.tooltip}</TooltipContent>
+          </Tooltip>
+        </Label>
+      </div>
+    ))}
+  </div>
+</div>
+
             </CardContent>
           </Card>
 

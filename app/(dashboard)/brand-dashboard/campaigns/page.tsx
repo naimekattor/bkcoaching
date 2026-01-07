@@ -50,6 +50,7 @@ import { HiSpeakerphone } from "react-icons/hi";
 import { motion } from "framer-motion";
 import { Campaign } from "@/types/campaign";
 import { toast } from "react-toastify";
+import Link from "next/link";
 
 /* -------------------------------------------------
    Types
@@ -1102,8 +1103,15 @@ export default function CampaignDashboard() {
                 <div className="space-y-6">
                   {modalHirings.length === 0 ? (
                     <p className="text-sm text-gray-500 italic">
-                      No influencers hired yet.
-                    </p>
+  No influencers hired yet.{" "}
+  <Link
+    href="/brand-dashboard/microinfluencerspage"
+    className="text-primary font-medium underline"
+  >
+    Click here to find influencers
+  </Link>
+</p>
+
                   ) : (
                     modalHirings.map((hiring) => (
                       <div
