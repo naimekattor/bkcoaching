@@ -160,7 +160,7 @@ console.log("needsUpgrade:",needsUpgrade,"isLocked:",isLocked,"hasAccess:",hasAc
         </div>
 
         {/* Stats Row */}
-        <div className="grid grid-cols-2 gap-4 mb-6 border-t border-gray-100 pt-4">
+        {/* <div className="grid grid-cols-2 gap-4 mb-6 border-t border-gray-100 pt-4">
           <div>
             <p className="text-xs font-medium text-gray-400 uppercase mb-1">Service</p>
             <p className={`font-semibold ${applyBlur ? "blur-sm" : ""}`}>
@@ -173,7 +173,7 @@ console.log("needsUpgrade:",needsUpgrade,"isLocked:",isLocked,"hasAccess:",hasAc
               {hasAccess ? `${rating || 0}★ (${reviews || 0} reviews)` : "Hidden"}
             </p>
           </div>
-        </div>
+        </div> */}
 
         {/* CTA Button */}
         <div className="mt-auto">
