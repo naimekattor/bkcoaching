@@ -5,21 +5,21 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaMinus, FaPlus } from "react-icons/fa";
 
 const faqs = [
-  // Micro-influencers
+  // Influencers
   {
     question: "What is The Social Market?",
     answer:
-      "The Social Market is a matchmaking platform that connects brands with micro-influencers for authentic, affordable, and effective collaborations. Brands can easily find creators who are a great fit for their ideal clientele, and smaller and midsize  influencers can discover paid or gifted opportunities that match their style, values, and niche.",
+      "The Social Market is a matchmaking platform that connects brands with influencers for authentic, affordable, and effective collaborations. Brands can easily find creators who are a great fit for their ideal clientele, and smaller and midsize  influencers can discover paid or gifted opportunities that match their style, values, and niche.",
   },
   {
-    question: "Who can join as a micro-influencer?",
+    question: "Who can join as a influencer?",
     answer:
       "Anyone with a small to medium-sized social media audience who wants to share products they care about. Whether you have 50 followers or 50,000, your authentic voice matters. You don’t need to be a professional content creator — passion, creativity, and trustworthiness are what brands love.",
   },
   {
     question: "Do I have to pay to join?",
     answer:
-      "Limited browsing the platform is free — you can explore a selection of brands and micro-influencers without signing up. To fully join and access all features, there’s a very low monthly subscription. Even better: the first 100 users get free lifetime access as a thank-you for helping us build the platform.",
+      "Limited browsing the platform is free — you can explore a selection of brands and influencers without signing up. To fully join and access all features, there’s a very low monthly subscription. Even better: the first 100 users get free lifetime access as a thank-you for helping us build the platform.",
   },
   {
     question: "Do I have to post on Instagram?",

@@ -110,7 +110,7 @@ const targetAudiencesByColumn = {
             Build your brand profile
           </h1>
           <p className="text-muted-foreground">
-            Help micro-influencers understand your brand and find the perfect
+            Help influencers understand your brand and find the perfect
             collaboration fit
           </p>
         </div>

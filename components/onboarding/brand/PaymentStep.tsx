@@ -27,7 +27,7 @@ const PaymentStep = ({ onNext, onBack }: PaymentStepProps) => {
   // Define plans with consistent structure
   const yearlyPlans: Plan[] = [
     {
-      title: "I'm a Micro-Influencer",
+      title: "I'm a Influencer",
       price: 100,
       description: "Ideal for influencers no matter your audience size. ",
       savings: "",
@@ -49,7 +49,7 @@ const PaymentStep = ({ onNext, onBack }: PaymentStepProps) => {
 
   const monthlyPlans: Plan[] = [
     {
-      title: "I'm a Micro-Influencer",
+      title: "I'm a Influencer",
       price: 12,
       description: "Ideal for influencers no matter your audience size. ",
     },

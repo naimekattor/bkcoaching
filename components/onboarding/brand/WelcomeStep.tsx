@@ -12,11 +12,11 @@ const WelcomeStep = ({ onNext }: WelcomeStepProps) => {
       icon: Target,
       title: "Targeted Campaigns",
       description:
-        "Find micro-influencers who match your brand values and target audience",
+        "Find influencers who match your brand values and target audience",
     },
     {
       icon: Users,
-      title: "Verified micro-influencers",
+      title: "Verified influencers",
       description:
         "Work with authenticated influencers with proven engagement rates",
     },
@@ -38,7 +38,7 @@ const WelcomeStep = ({ onNext }: WelcomeStepProps) => {
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
           You&apos;re about to join thousands of brands who&apos;ve discovered
-          the power of authentic micro-influencers partnerships. Let&apos;s get
+          the power of authentic influencers partnerships. Let&apos;s get
           your brand set up for success.
         </p>
       </div>

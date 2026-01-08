@@ -40,9 +40,9 @@ const WelcomeStep = ({ onNext }: WelcomeStepProps) => {
           Welcome to <span className="">The Social Market</span>
         </h1>
         <p className="text-[16px] text-muted-foreground max-w-2xl mx-auto">
-          You&apos;re about to join thousands of micro-influencers who&apos;ve
+          You&apos;re about to join thousands of influencers who&apos;ve
           turned their passion into profit. Let&apos;s get your
-          micro-influencer profile set up and start earning!
+          influencer profile set up and start earning!
         </p>
       </div>
 

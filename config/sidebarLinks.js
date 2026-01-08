@@ -9,7 +9,7 @@ export const brandLinks = [
     path: "/brand-dashboard",
   },
   {
-    name: "Discover Micro-influencers",
+    name: "Discover Influencers",
     icon: <MdOutlineGroup size={25} />,
     path: "/brand-dashboard/microinfluencerspage",
   },

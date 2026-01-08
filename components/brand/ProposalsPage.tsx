@@ -206,11 +206,11 @@ export default function ProposalsPage() {
         <div className=" border-b border-gray-200  py-4 flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">
-              Micro-Influencer Hiring Proposal
+              Influencer Hiring Proposal
             </h1>
             <p className="text-gray-600 mt-1">
               Fill out your information to start connecting with
-              Micro-Influencer
+              Influencer
             </p>
           </div>
         </div>

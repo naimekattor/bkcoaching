@@ -552,7 +552,7 @@ const CampaignStep = ({ onBack,onNext }: CampaignStepProps) => {
             <CardHeader>
               <CardTitle>Payment Preferences *</CardTitle>
               <p className="text-sm text-muted-foreground">
-                Select how you plan to compensate micro-influencers for this
+                Select how you plan to compensate influencers for this
                 campaign
               </p>
             </CardHeader>
@@ -786,9 +786,9 @@ const CampaignStep = ({ onBack,onNext }: CampaignStepProps) => {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
-                    <Label>Auto-match micro-influencers</Label>
+                    <Label>Auto-match influencers</Label>
                     <p className="text-xs text-muted-foreground">
-                      Automatically find matching micro-influencers
+                      Automatically find matching influencers
                     </p>
                   </div>
                   <Switch
@@ -919,7 +919,7 @@ const CampaignStep = ({ onBack,onNext }: CampaignStepProps) => {
             disabled={!isValid}
           >
             {onboardingData.autoMatch
-              ? "Create Campaign & Find micro-influencers"
+              ? "Create Campaign & Find Influencers"
               : "Create Campaign & Next"}
           </Button>
         </div>

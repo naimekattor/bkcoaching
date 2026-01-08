@@ -120,11 +120,11 @@ const Feature = () => {
           </div>
         </Link>
 
-        {/* For Micro-Influencer Card */}
+        {/* For Influencer Card */}
         <Link href={"/influencer-onboarding"}>
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden  flex flex-col justify-between h-full">
             <div className="bg-primary text-white text-center py-6">
-              <h3 className="text-2xl font-bold">For Micro-Influencer</h3>
+              <h3 className="text-2xl font-bold">For Influencer</h3>
             </div>
             <div className="space-y-6 p-8">
               <div className="flex items-center gap-4 bg-[#F7F8F9] shadow p-1 rounded border-white border-3 text-[#838689] text-[24px]">

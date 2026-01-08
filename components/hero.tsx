@@ -34,7 +34,7 @@ const Hero = () => {
               {/* Headline */}
               <h1 className="text-4xl md:h-auto h-[100px] md:text-5xl font-bold text-primary leading-tight">
                 <Typewriter
-                  words={["Micro-influencers", "Brands"]}
+                  words={["Influencers", "Brands"]}
                   speed={80}
                   pause={2000}
                 />{" "}
@@ -43,8 +43,8 @@ const Hero = () => {
 
               {/* Supporting text */}
               <p className="text-lg text-primary leading-relaxed max-w-xl">
-                The Social Market is where brands and micro-influencers team up.
-                Brands get affordable, authentic marketing. Micro-influencers
+                The Social Market is where brands and influencers team up.
+                Brands get affordable, authentic marketing. Influencers
                 get paid to share services they actually love. It’s
                 word-of-mouth, made smarter, faster, and scalable.
               </p>

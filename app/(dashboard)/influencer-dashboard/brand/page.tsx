@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { ChevronDown, Search, XCircle } from "lucide-react";
+import { ChevronDown, Search, Star, XCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { FaInstagram } from "react-icons/fa";
@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 interface BrandProfileResponse {
   business_name?: string;
@@ -37,7 +38,18 @@ interface BrandApiResponse {
 }
 
 const PAGE_SIZE = 12;
-
+const getCleanCategories = (niches?: string): string[] => {
+  if (!niches) return [];
+  
+  // Split by common delimiters and clean
+  return niches
+    .split(/[,;]/)
+    .map(n => {
+      const clean = n.split(/[–-]/)[0].trim();
+      return clean;
+    })
+    .filter(Boolean);
+};
 export default function BrandPage() {
   // ────── UI state ──────
   const [searchQuery, setSearchQuery] = useState("");
@@ -48,6 +60,9 @@ export default function BrandPage() {
   const [currentPage, setCurrentPage] = useState(1);
   // ────── Data ──────
   const [allBrands, setAllBrands] = useState<Brand[]>([]);
+  const [filterByNiches, setFilterByNiches] = useState(false);
+  const { user } = useAuthStore();
+  const contententNiches = user?.influencer_profile?.content_niches;
 
   // ────── Constants ──────
   const timeZones = [
@@ -159,36 +174,48 @@ export default function BrandPage() {
 
   // ────── Filtering & Search (memoised) ──────
   const filteredBrands = useMemo(() => {
-    let list = [...allBrands];
+  let list = [...allBrands];
 
-    // 1. Search (name)
-    if (appliedSearch.trim()) {
-      const q = appliedSearch.toLowerCase();
-      list = list.filter((b) => b.name.toLowerCase().includes(q));
-    }
+  // 1. Search
+  if (appliedSearch.trim()) {
+    const q = appliedSearch.toLowerCase();
+    list = list.filter((b) =>
+      b.name.toLowerCase().includes(q)
+    );
+  }
 
-    // 2. Business type
-    if (businessType) {
-      if (businessType === "All") {
-        return list;
-      }
-      list = list.filter(
-        (b) => b.businessType === getCleanCategory(businessType)
+  if (filterByNiches && contententNiches && typeof contententNiches === "string") {
+    const userNiches = getCleanCategories(contententNiches);
+    
+    list = list.filter((b) => {
+      if (!b.businessType) return false;
+      
+      const businessType = b.businessType;
+      // Check if brand's business type matches any of the user's content niches
+      return userNiches.some(niche => 
+        businessType.toLowerCase().includes(niche.toLowerCase()) ||
+        niche.toLowerCase().includes(businessType.toLowerCase())
       );
-    }
+    });
+  }
 
-    // 3. Time-zone
-    if (timeZone) {
-      if (timeZone === "All") {
-        return list;
-      }
+  // 2. Business type
+  if (businessType && businessType !== "All") {
+    list = list.filter(
+      (b) => b.businessType === getCleanCategory(businessType)
+    );
+  }
 
-      list = list.filter((b) => b.timeZone === timeZone);
-      console.log(list);
-    }
+  // 3. Time zone
+  if (timeZone && timeZone !== "All") {
+    list = list.filter(
+      (b) => b.timeZone === timeZone
+    );
+  }
 
-    return list;
-  }, [allBrands, businessType, timeZone, appliedSearch]);
+  return list;
+}, [allBrands, businessType, timeZone, appliedSearch, filterByNiches, contententNiches]);
+
   const handleSearch = () => {
     setAppliedSearch(searchQuery);
   };
@@ -197,7 +224,7 @@ export default function BrandPage() {
   // Reset page when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [businessType, timeZone, appliedSearch]);
+  }, [businessType, timeZone, appliedSearch, filterByNiches]);
 
   const totalPages = Math.ceil(filteredBrands.length / PAGE_SIZE);
   const paginatedBrands = filteredBrands.slice(
@@ -206,11 +233,25 @@ export default function BrandPage() {
   );
 
   const clearFilters = () => {
+  setSearchQuery("");
+  setAppliedSearch("");
+  setBusinessType("All");
+  setTimeZone("All");
+  setFilterByNiches(false);
+};
+
+
+  const handleReviewMatches = () => {
+    if (!contententNiches) {
+      console.warn("No content niches available for matching");
+      return;
+    }
+    // Re-apply search & filters with niche matching
+    setFilterByNiches(true);
     setAppliedSearch(searchQuery);
-    setSearchQuery("");
-    setBusinessType("");
-    setTimeZone("");
+    setCurrentPage(1);
   };
+
 
   // ────── Render ──────
   if (loading) {
@@ -251,6 +292,16 @@ export default function BrandPage() {
             <Search className="w-4 h-4" />
             Search
           </button>
+          <button
+              onClick={handleReviewMatches}
+              className={`px-6 md:px-8 py-3 cursor-pointer rounded-xl transition-colors font-medium flex items-center gap-2 justify-center shadow-sm border  bg-white text-gray-700 border-gray-300 hover:bg-gray-50
+              `}
+            >
+              <Star
+                className={`w-4 h-4`}
+              />
+              Review Matches
+            </button>
         </div>
 
         {/* Filter row */}

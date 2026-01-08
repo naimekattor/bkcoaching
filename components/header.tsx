@@ -22,7 +22,7 @@ import { signOut, useSession } from "next-auth/react";
 const navigationLinks = [
   { name: "Home", href: "/" },
   { name: "Brands", href: "/brands" },
-  { name: "Micro-Influencers", href: "/microinfluencers" },
+  { name: "Influencers", href: "/microinfluencers" },
   { name: "About", href: "/about" },
   { name: "FAQ", href: "/faq" },
   { name: "Privacy", href: "/privacy" },

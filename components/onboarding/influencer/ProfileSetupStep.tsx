@@ -81,7 +81,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
     <div className="space-y-8">
       <div className="text-center space-y-4">
         <h1 className="text-3xl text-primary  font-bold">
-          Create your micro-influencer profile
+          Create your influencer profile
         </h1>
         <p className="text-muted-foreground">
           Show brands who you are and what makes your content special
@@ -146,7 +146,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
           display_name: e.target.value,
         }))
       }
-      placeholder="Your micro-influencer name"
+      placeholder="Your influencer name"
     />
   </div>
 

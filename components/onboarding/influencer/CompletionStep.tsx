@@ -237,7 +237,7 @@ useEffect(() => {
           Welcome to <span className="">The Social Market</span>!
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          Your micro-influencer profile is complete and you&apos;re ready to
+          Your influencer profile is complete and you&apos;re ready to
           start earning! Get ready to collaborate with amazing brands and grow
           your influence.
         </p>
@@ -247,7 +247,7 @@ useEffect(() => {
       <Card className="bg-secondary/5 border-secondary/20">
         <CardContent className="p-6 text-center space-y-4">
           <Badge variant="secondary" className="text-secondary bg-secondary/10">
-            micro-influencers Account Active
+            influencers Account Active
           </Badge>
           <h3 className="font-semibold text-lg">Ready to Start Earning</h3>
           <p className="text-sm text-muted-foreground">

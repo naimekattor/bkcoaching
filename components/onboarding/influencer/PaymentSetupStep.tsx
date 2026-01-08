@@ -340,7 +340,7 @@ setShowAuthModal(true);
               variant="outline"
               onClick={() =>
                 router.push(
-                  "/auth/login?returnTo=/influencer-onboarding?step=7"
+                  "/auth/login?returnTo=/influencer-onboarding?step=6"
                 )
               }
             >
@@ -349,7 +349,7 @@ setShowAuthModal(true);
             <Button
               onClick={() =>
                 router.push(
-                  "/auth/signup?role=influencer&returnTo=/influencer-onboarding?step=7"
+                  "/auth/signup?role=influencer&returnTo=/influencer-onboarding?step=6"
                 )
               }
             >

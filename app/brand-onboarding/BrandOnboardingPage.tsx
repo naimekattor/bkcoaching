@@ -18,7 +18,6 @@ const BrandOnboarding = () => {
   const steps = [
     { title: "Business Info", description: "Tell us about your business" },
     { title: "Profile Setup", description: "Define your brand and audience" },
-    // { title: "Payment & Plans", description: "Choose your subscription plan" },
     { title: "First Campaign", description: "Create your first campaign" },
     { title: "Complete", description: "You're ready to start collaborating!" },
   ];

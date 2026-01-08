@@ -20,19 +20,19 @@ const InfluencerOnboardingPage = () => {
   const navigate = useRouter();
 
   const steps = [
-    { title: "Welcome", description: "Get started as a micro-influencer" },
+    { title: "Welcome", description: "Get started as a influencer" },
     {
       title: "Profile Setup",
-      description: "Create your micro-influencer profile",
+      description: "Create your influencer profile",
     },
     {
       title: "Collaboration Preferences",
       description: "Set your rates and preferences",
     },
-    {
-      title: "Content Guidelines",
-      description: "Review quality and disclosure rules",
-    },
+    // {
+    //   title: "Content Guidelines",
+    //   description: "Review quality and disclosure rules",
+    // },
     {
       title: "Communication & Workflow",
       description: "Learn how collaborations work",
@@ -96,15 +96,15 @@ const InfluencerOnboardingPage = () => {
             onBack={handleBack}
           />
         );
+      // case 4:
+      //   return <GuidelinesStep onNext={handleNext} onBack={handleBack} />;
       case 4:
-        return <GuidelinesStep onNext={handleNext} onBack={handleBack} />;
-      case 5:
         return <WorkflowStep onNext={handleNext} onBack={handleBack} />;
       // case 6:
       //   return <PaymentSetupStep onNext={handleNext} onBack={handleBack} />;
-      case 6:
+      case 5:
         return <TermsStep onNext={handleNext} onBack={handleBack} />;
-      case 7:
+      case 6:
         return <CompletionStep onComplete={handleComplete} />;
       default:
         return <WelcomeStep onNext={handleNext} />;
@@ -119,9 +119,9 @@ const InfluencerOnboardingPage = () => {
         onBack={currentStep > 1 ? handleBack : undefined}
         stepTitle={steps[currentStep - 1].title}
         stepDescription={steps[currentStep - 1].description}
-        showBack={currentStep > 1 && currentStep < 8}
+        showBack={currentStep > 1 && currentStep < 6}
         skipRole="influencer"
-        finalStep ="7"
+        finalStep ="6"
       >
         {renderStep()}
       </OnboardingLayout>

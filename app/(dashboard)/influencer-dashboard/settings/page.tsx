@@ -311,7 +311,7 @@ export default function ProfilePage() {
         {/* Header Section */}
         <div className="text-center space-y-2 mb-10">
           <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900">
-            Micro-Influencer Profile
+            Influencer Profile
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Complete your profile to increase visibility and attract premium brand partnerships.

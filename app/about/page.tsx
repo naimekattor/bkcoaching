@@ -137,14 +137,14 @@ export default function AboutPage() {
 
             <div className="space-y-6 text-[20px] text-primary leading-relaxed">
               <p>
-                At The Social Market, we connect brands and micro-influencers to
+                At The Social Market, we connect brands and influencers to
                 create authentic growth. Whether you&apos;re a brand looking to
-                expand your reach or a micro-influencer wanting to monetize your
+                expand your reach or a influencer wanting to monetize your
                 influence, our platform makes it easy.
               </p>
 
               <p>
-                Brands share their products, and micro-influencers share their
+                Brands share their products, and influencers share their
                 passion—it&apos;s that simple. By working together, everyone
                 grows.
               </p>

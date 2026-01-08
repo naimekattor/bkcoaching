@@ -785,7 +785,7 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }:Creat
             <CardHeader>
               <CardTitle>Content Deliverables *</CardTitle>
               <p className="text-sm text-muted-foreground">
-                Select the type of content you want micro-influencers to produce
+                Select the type of content you want influencers to produce
               </p>
             </CardHeader>
             <CardContent>
@@ -868,9 +868,9 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }:Creat
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
-                    <Label>Auto-match micro-influencers</Label>
+                    <Label>Auto-match influencers</Label>
                     <p className="text-xs text-muted-foreground">
-                      Automatically find matching micro-influencers
+                      Automatically find matching influencers
                     </p>
                   </div>
                   <Switch

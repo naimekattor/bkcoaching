@@ -101,7 +101,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
   const nextSteps = [
     {
       icon: Users,
-      title: "Browse micro-influencers",
+      title: "Browse influencers",
       description:
         "Explore our marketplace to find perfect collaboration partners",
       action: "Browse Now",
@@ -111,7 +111,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
       icon: Target,
       title: "Review Matches",
       description:
-        "Check out micro-influencers we've matched with your campaign",
+        "Check out influencers we've matched with your campaign",
       action: "View Matches",
       link: "/brand-dashboard/microinfluencerspage?review=filter_by_self",
     },
@@ -220,7 +220,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
         <p className="text-[16px] text-muted-foreground max-w-2xl mx-auto">
           Your brand profile is complete and your first campaign is ready.
           You&apos;re all set to start collaborating with amazing
-          micro-influencers!
+          influencers!
         </p>
       </div>
 
@@ -352,7 +352,7 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
         </Button>
         <Button variant="outline" size="lg">
           <Link href={"/brand-dashboard/microinfluencerspage"}>
-            Browse micro-influencers
+            Browse influencers
           </Link>
         </Button>
       </div>

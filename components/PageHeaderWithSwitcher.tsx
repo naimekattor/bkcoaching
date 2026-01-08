@@ -12,7 +12,7 @@ export default function PageHeaderWithSwitcher({
   return (
     <div className="text-center space-y-2 mb-8">
       <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-primary">
-        Hi, {isBrand ? "Brand" : "Micro-influencer"} 👋
+        Hi, {isBrand ? "Brand" : "Influencer"} 👋
       </h1>
       <p className="text-sm text-muted-foreground">
         {isBrand ? (
@@ -22,12 +22,12 @@ export default function PageHeaderWithSwitcher({
               href="/influencer-onboarding"
               className="font-medium underline hover:text-primary"
             >
-              Micro-influencers click here
+              Influencers click here
             </Link>
           </>
         ) : (
           <>
-            Not a micro-influencer?{" "}
+            Not a Influencer?{" "}
             <Link
               href="/brand-onboarding"
               className="font-medium underline hover:text-primary"
