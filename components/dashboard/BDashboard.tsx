@@ -95,7 +95,6 @@ export default function BDashboard() {
           auth: true,
         });
 
-        // ✅ FIX: Explicitly type the array using the Raw Interface
         const campaignsArray: RawCampaignResponse[] = Array.isArray(campaignsRes.data)
           ? [...campaignsRes.data].reverse()
           : [];

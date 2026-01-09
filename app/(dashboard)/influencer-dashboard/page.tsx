@@ -434,7 +434,7 @@ export default function Page() {
                   />
                 </svg>
                 <h2 className="text-xl font-bold text-gray-900">
-                  My Campaigns{" "}
+                  Brands That Sent You Proposals{" "}
                   <span className="text-sm font-normal text-gray-500">
                     ({campaigns.length})
                   </span>
@@ -639,7 +639,7 @@ export default function Page() {
                 <div className="flex items-center gap-2">
                   <div className="h-5 w-1 bg-primary rounded-full"></div>
                   <h3 className="text-xl font-bold text-gray-900">
-                    Campaign Details
+                    Proposal Details
                   </h3>
                 </div>
 

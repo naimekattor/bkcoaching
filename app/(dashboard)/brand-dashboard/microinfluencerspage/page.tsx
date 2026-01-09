@@ -537,11 +537,11 @@ function MicroInfluencersPageContent() {
                 <SelectItem value="instagram">Instagram</SelectItem>
                 <SelectItem value="tiktok">TikTok</SelectItem>
                 <SelectItem value="youtube">YouTube</SelectItem>
-                <SelectItem value="youtube">Facebook</SelectItem>
-                <SelectItem value="youtube">LinkedIn</SelectItem>
-                <SelectItem value="youtube">Blog</SelectItem>
-                <SelectItem value="youtube">Whatsapp</SelectItem>
-                <SelectItem value="youtube">Podcast</SelectItem>
+                <SelectItem value="facebook">Facebook</SelectItem>
+                <SelectItem value="linkedin">LinkedIn</SelectItem>
+                <SelectItem value="blog">Blog</SelectItem>
+                <SelectItem value="whatsapp">Whatsapp</SelectItem>
+                <SelectItem value="podcast">Podcast</SelectItem>
               </SelectContent>
             </Select>
 

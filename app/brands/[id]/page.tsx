@@ -176,78 +176,102 @@ export default function BrandProfilePage() {
         
 
         {/* Brand Header Card */}
-        <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
-          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
-            <div className="flex items-center gap-4">
-              {brand.logo ? (
-                <Image
-                  src={brand.logo}
-                  alt={brand.name}
-                  width={64}
-                  height={64}
-                  className="w-16 h-16 rounded-lg object-cover"
-                />
-              ) : (
-                <div className="w-16 h-16 bg-primary rounded-lg flex items-center justify-center text-white text-2xl font-bold">
-                  {brand.name.charAt(0)}
-                </div>
-              )}
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <h1 className="text-2xl font-bold text-gray-900">
-                    {brand.name}
-                  </h1>
-                  {brand.verified && (
-                    <div className="flex items-center gap-1 bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-medium">
-                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                      Verified
-                    </div>
-                  )}
-                </div>
-                {/* Description Fallback */}
-                <div className="mb-3">
-                   {renderFallbackText(brand.description, "This brand has not provided a short bio yet.")}
-                </div>
-                <div className="flex flex-wrap items-center gap-6 text-sm text-gray-500">
-                  
-                  {/* Website Fallback */}
-                  <div className="flex items-center gap-1.5">
-                    <Globe className="w-4 h-4 text-gray-400" />
-                    {brand.website ? (
-                      <a
-                        href={brand.website.startsWith("http") ? brand.website : `https://${brand.website}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="hover:text-primary transition-colors underline decoration-dotted"
-                      >
-                        {brand.website.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "")}
-                      </a>
-                    ) : (
-                      <span className="text-gray-400 italic">Website not provided</span>
-                    )}
-                  </div>
+        <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 mb-6">
+  <div className="flex flex-col gap-6">
 
-                  {/* Location Fallback (Optional if you want to show it) */}
-                  <div className="flex items-center gap-1.5">
-                    <MapPin className="w-4 h-4 text-gray-400" />
-                    {brand.location ? (
-                      <span>{brand.location}</span>
-                    ) : (
-                      <span className="text-gray-400 italic">Not Specified</span>
-                    )}
-                  </div>
+    {/* Brand Header */}
+    <div className="flex flex-col sm:flex-row sm:items-start gap-4">
 
-                </div>
-              </div>
-            </div>
-
-            
+      {/* Logo */}
+      <div className="shrink-0">
+        {brand.logo ? (
+          <Image
+            src={brand.logo}
+            alt={brand.name}
+            width={64}
+            height={64}
+            className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg object-cover"
+          />
+        ) : (
+          <div className="w-14 h-14 sm:w-16 sm:h-16 bg-primary rounded-lg flex items-center justify-center text-white text-xl sm:text-2xl font-bold">
+            {brand.name.charAt(0)}
           </div>
+        )}
+      </div>
+
+      {/* Brand Info */}
+      <div className="flex-1 min-w-0">
+
+        {/* Name + Verified */}
+        <div className="flex flex-wrap items-center gap-2 mb-1">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 break-words">
+            {brand.name}
+          </h1>
+
+          {brand.verified && (
+            <span className="flex items-center gap-1 bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs font-medium">
+              <span className="w-2 h-2 bg-green-500 rounded-full" />
+              Verified
+            </span>
+          )}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Description */}
+        <div className="mb-3 text-sm sm:text-base text-gray-600">
+          {renderFallbackText(
+            brand.description,
+            "This brand has not provided a short bio yet."
+          )}
+        </div>
+
+        {/* Meta Info */}
+        <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:gap-6 text-sm text-gray-500">
+
+          {/* Website */}
+          <div className="flex items-center gap-1.5 break-all">
+            <Globe className="w-4 h-4 text-gray-400 shrink-0" />
+            {brand.website ? (
+              <a
+                href={
+                  brand.website.startsWith("http")
+                    ? brand.website
+                    : `https://${brand.website}`
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-primary underline decoration-dotted"
+              >
+                {brand.website
+                  .replace(/^https?:\/\/(www\.)?/, "")
+                  .replace(/\/$/, "")}
+              </a>
+            ) : (
+              <span className="italic text-gray-400">
+                Website not provided
+              </span>
+            )}
+          </div>
+
+          {/* Location */}
+          <div className="flex items-center gap-1.5">
+            <MapPin className="w-4 h-4 text-gray-400 shrink-0" />
+            {brand.location ? (
+              <span className="break-words">{brand.location}</span>
+            ) : (
+              <span className="italic text-gray-400">Not specified</span>
+            )}
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+        <div className="">
           {/* LEFT COLUMN */}
-          <div className="lg:col-span-2 space-y-6">
+          
             
             {/* About Section */}
             <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
@@ -283,12 +307,9 @@ export default function BrandProfilePage() {
             </div>
           </div>
           
-          {/* RIGHT COLUMN (Placeholder for future stats/contact) */}
-          <div className="lg:col-span-1">
-             {/* You can add contact info cards here later */}
-          </div>
+          
 
-        </div>
+       
       </div>
     </div>
   );

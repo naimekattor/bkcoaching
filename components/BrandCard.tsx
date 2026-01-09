@@ -76,36 +76,41 @@ console.log("needsUpgrade:",needsUpgrade,"isLocked:",isLocked,"hasAccess:",hasAc
   return (
     <div className="group relative bg-white rounded-2xl border border-gray-200 hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col lg:flex-row">
       {/* Image Section */}
-      <div className="relative w-full lg:w-96 h-80 lg:h-auto flex-shrink-0 bg-gray-100">
-        <Image
-          width={392}
-          height={431}
-          src={image}
-          alt={name}
-          className={`w-full h-full object-cover transition-all duration-500 ${
-            applyBlur ? "blur-[6px] brightness-75" : "group-hover:scale-105"
-          }`}
-        />
+      <div className="relative w-full lg:w-96 h-80 lg:h-auto flex-shrink-0 bg-gray-100 overflow-hidden rounded-2xl">
+  <Image
+    src={image}
+    alt={name}
+    fill
+    sizes="(max-width: 1024px) 100vw, 384px"
+    quality={90}
+    priority
+    className={`object-cover transition-transform duration-500 ${
+      applyBlur
+        ? "blur-[6px] brightness-75"
+        : "group-hover:scale-105"
+    }`}
+  />
 
-        {/* Category Badge */}
-        <div className="absolute top-4 left-4 z-20">
-          <span className="px-3 py-1.5 bg-white/95 backdrop-blur-sm text-xs font-bold text-gray-900 rounded-full shadow-lg uppercase tracking-wide">
-            {category || "Brand"}
-          </span>
-        </div>
+  {/* Category Badge */}
+  <div className="absolute top-4 left-4 z-20">
+    <span className="px-3 py-1.5 bg-white/95 backdrop-blur-sm text-xs font-bold text-gray-900 rounded-full shadow-lg uppercase tracking-wide">
+      {category || "Brand"}
+    </span>
+  </div>
 
-        {/* Locked/Upgrade Overlay */}
-        {applyBlur && (
-          <div className="absolute inset-0 bg-black/30 flex items-center justify-center z-10">
-            <div className="bg-white/95 p-5 rounded-2xl shadow-2xl text-center">
-              <FaLock className="w-10 h-10 text-gray-800 mx-auto mb-3" />
-              <p className="text-base font-bold text-gray-900">
-                {isLocked ? "Locked" : "Upgrade Required"}
-              </p>
-            </div>
-          </div>
-        )}
+  {/* Locked / Upgrade Overlay */}
+  {applyBlur && (
+    <div className="absolute inset-0 bg-black/30 flex items-center justify-center z-10">
+      <div className="bg-white/95 p-5 rounded-2xl shadow-2xl text-center">
+        <FaLock className="w-10 h-10 text-gray-800 mx-auto mb-3" />
+        <p className="text-base font-bold text-gray-900">
+          {isLocked ? "Locked" : "Upgrade Required"}
+        </p>
       </div>
+    </div>
+  )}
+</div>
+
 
       {/* Content Section */}
       <div className="flex-1 p-8 flex flex-col">

@@ -1,46 +1,80 @@
 import Link from "next/link";
+import { Plus, Layout, ArrowRight, CircleDot } from "lucide-react";
 
-export function CampaignsSection({ allCampaigns }) {
-  
+export function CampaignsSection({ allCampaigns = [] }) {
+  // Logic to show only the latest 2
+  const displayedCampaigns = allCampaigns.slice(0, 2);
+  const hasMore = allCampaigns.length > 2;
 
   return (
-    <div className="bg-white rounded-lg p-6 border border-slate-200">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-xl font-semibold text-slate-800">Campaigns</h3>
+    <div className="bg-white rounded-xl px-2 py-6 border border-slate-200 shadow-sm transition-all">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-2">
+          <div className="p-2 bg-primary/10 rounded-lg">
+            <Layout className="w-5 h-5 text-primary" />
+          </div>
+          <h3 className="text-xl font-bold text-slate-800">My Campaigns</h3>
+        </div>
+        
         <Link
-          href={"/brand-dashboard/campaigns"}
-          className="bg-secondary hover:bg-[var(--secondaryhover)] text-slate-800 text-sm px-4 py-2 rounded-lg transition-colors font-medium"
+          href="/brand-dashboard/campaigns?create=true"
+          className="flex items-center gap-1.5 bg-secondary hover:bg-[var(--secondaryhover)] text-slate-800 text-sm px-4 py-2 rounded-lg transition-all font-semibold shadow-sm active:scale-95"
         >
-          + Create new
+          <Plus className="w-4 h-4" />
+          Create new
         </Link>
       </div>
-      {
-        allCampaigns.length === 0 ? (
-          <p className="text-sm text-slate-600">No campaigns available.</p>
-        ):(
-          <div className="space-y-4">
-        {allCampaigns.slice(0, 2).map((campaign, index) => (
-          <div
-            key={index}
-            className="flex items-center justify-between p-4 bg-slate-50 rounded-lg"
-          >
-            <div>
-              <h4 className="font-medium text-slate-800">{campaign?.title}</h4>
-              {/* <p className="text-sm text-slate-600">
-                {campaign?.creators || 0} Creators onboarded
-              </p> */}
-            </div>
-            <span
-              className={`px-3 py-1 rounded-full text-sm font-medium ${campaign?.statusColor}`}
+
+      {/* Content */}
+      {allCampaigns.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-10 px-4 bg-slate-50 rounded-xl border border-dashed border-slate-300">
+          <CircleDot className="w-8 h-8 text-slate-300 mb-2" />
+          <p className="text-sm font-medium text-slate-500">No campaigns available yet.</p>
+          <Link href="/brand-dashboard/campaigns" className="text-xs text-primary font-bold mt-1 hover:underline">
+            Launch your first campaign
+          </Link>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {displayedCampaigns.map((campaign, index) => (
+            <div
+              key={index}
+              className="group flex items-center justify-between p-4 bg-white border border-slate-100 rounded-xl hover:border-primary/30 hover:shadow-md transition-all duration-200"
             >
-              {campaign?.campaignStatus || "Active"}
-            </span>
-          </div>
-        ))}
-      </div>
-        )
-      }
-      
+              <div className="flex flex-col">
+                <h4 className="font-bold text-slate-800 group-hover:text-primary transition-colors">
+                  {campaign?.title}
+                </h4>
+                <p className="text-xs text-slate-500 mt-1 flex items-center gap-1">
+                  ID: <span className="text-slate-700 font-mono uppercase">{campaign?.id || 'N/A'}</span>
+                </p>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-bold border ${
+                    campaign?.statusColor || "bg-emerald-50 text-emerald-700 border-emerald-100"
+                  }`}
+                >
+                  {campaign?.campaignStatus || "Active"}
+                </span>
+                
+              </div>
+            </div>
+          ))}
+
+          {/* Footer Link - Only shows if more than 2 items */}
+          {hasMore && (
+            <Link
+              href="/brand-dashboard/campaigns"
+              className="flex items-center justify-center w-full py-2 text-sm font-bold text-primary hover:bg-primary/5 rounded-lg transition-colors mt-2"
+            >
+              View all campaigns ({allCampaigns.length})
+            </Link>
+          )}
+        </div>
+      )}
     </div>
   );
 }

@@ -70,9 +70,16 @@ export default function InfluencersPage() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [influencers, setInfluencers] = useState<InfluencerAccount[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isMember, setIsMember] = useState(true);
 
   // Hardcoded for now based on your code, usually comes from an Auth Store
-  const isMember = false;
+  useEffect(()=>{
+    const token = localStorage.getItem("access_token");
+    if(!token){
+      setIsMember(false);
+    }
+  },[]);
+  
 
   useEffect(() => {
     const fetchAllInfluencer = async () => {
@@ -179,7 +186,7 @@ export default function InfluencersPage() {
                   className="group relative bg-white rounded-2xl border border-gray-200 hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col sm:flex-row"
                 >
                   {/* Image Section */}
-                  <div className="sm:w-48 h-48 sm:h-auto relative bg-gray-100 shrink-0">
+                  <div className="sm:w-48 h-48 sm:h-auto relative bg-gray-100 ">
                     <Image
                       src={profile?.profile_picture || "/images/person.jpg"}
                       alt={profile?.display_name || "Name"}
@@ -246,7 +253,7 @@ export default function InfluencersPage() {
                     <div className="mt-auto">
                       {isMember ? (
                         <Link
-                          href={`/influencer/${inf.user?.id}`}
+                          href={`/microinfluencers/${inf.user?.id}`}
                           className="block w-full py-2.5 text-center rounded-lg bg-primary text-white font-medium text-sm hover:bg-primary/90 transition-colors"
                         >
                           View Full Profile

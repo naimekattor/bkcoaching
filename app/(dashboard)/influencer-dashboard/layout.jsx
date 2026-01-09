@@ -44,7 +44,7 @@ export default function BrandDashboardLayout({ children }) {
     className="fixed top-10 -left-4 z-30 p-2  text-primary rounded-lg md:hidden"
     aria-label="Open sidebar"
   >
-    <PanelRightClose size={30} />
+    <PanelRightClose size={35} />
   </button>
 )}
 

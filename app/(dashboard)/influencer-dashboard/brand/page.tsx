@@ -309,16 +309,16 @@ export default function BrandPage() {
           {/* Business Type Select */}
           <div className="relative w-full">
             <Select value={businessType} onValueChange={setBusinessType}>
-              <SelectTrigger className="w-full h-[50px] bg-white border border-gray-300 rounded-lg px-4 text-base focus:ring-2 focus:ring-primary/40 transition-all hover:bg-gray-50 hover:border-gray-400">
+              <SelectTrigger className="w-full h-[50px] bg-white border border-gray-300 rounded-lg px-4 text-sm sm:text-base focus:ring-2 focus:ring-primary/40 transition-all hover:bg-gray-50 hover:border-gray-400">
                 <SelectValue placeholder="All Business Types" />
               </SelectTrigger>
-              <SelectContent className="max-h-[300px]">
+              <SelectContent className="max-h-[300px] max-w-[calc(100vw-2rem)] sm:w-[600px]" position="popper" align="start">
                 <SelectItem value="All">All Business Types</SelectItem>
                 {businessTypes.map((t) => (
                   <SelectItem
                     key={t}
                     value={t}
-                    className="cursor-pointer py-2.5"
+                    className="cursor-pointer py-2.5 sm:truncate break-words"
                   >
                     {t}
                   </SelectItem>
@@ -330,16 +330,16 @@ export default function BrandPage() {
           {/* Time Zone Select */}
           <div className="relative w-full">
             <Select value={timeZone} onValueChange={setTimeZone}>
-              <SelectTrigger className="w-full h-[50px] bg-white border border-gray-300 rounded-lg px-4 text-base focus:ring-2 focus:ring-primary/40 transition-all hover:bg-gray-50 hover:border-gray-400">
+              <SelectTrigger className="w-full max-w-full h-[50px] bg-white border border-gray-300 rounded-lg px-4 text-sm sm:text-base focus:ring-2 focus:ring-primary/40 transition-all hover:bg-gray-50 hover:border-gray-400">
                 <SelectValue placeholder="All Time Zones" />
               </SelectTrigger>
-              <SelectContent className="max-h-[300px]">
+              <SelectContent className="max-h-[300px] w-screen max-w-[calc(100vw-2rem)] sm:w-[600px]"position="popper" align="start">
                 <SelectItem value="All">All Time Zones</SelectItem>
                 {timeZones.map((tz) => (
                   <SelectItem
                     key={tz.value}
                     value={tz.value}
-                    className="cursor-pointer py-2.5"
+                    className="cursor-pointer py-2.5 break-words sm:truncate"
                   >
                     {tz.label}
                   </SelectItem>
@@ -375,13 +375,16 @@ export default function BrandPage() {
               Clear Filters
             </button>
           </div>
-
-          <button
+          <div className="w-full sm:w-auto bg-white border-1 rounded-md flex items-center justify-center text-gray-700 font-medium ">
+            <button
             onClick={clearFilters}
-            className="border-1 px-2 py-1 rounded-md cursor-pointer"
+            className=" px-2 py-1  cursor-pointer"
           >
             All
           </button>
+          </div>
+
+          
         </div>
       </div>
 

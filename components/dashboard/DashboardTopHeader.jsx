@@ -178,6 +178,10 @@ const DashboardTopHeader = () => {
         const mapped = json.data.map((n) => ({
           id: n.id,
           message: n.payload.message,
+          campaign_id: n.payload.campaign_id,
+          brand_id: n.payload.brand_id,
+          type_alias: n.payload.type_alias,
+          hire_id: n.payload.hire_id,
         }));
 
         console.log("🧠 Mapped notifications:", mapped);
@@ -191,6 +195,10 @@ const DashboardTopHeader = () => {
           const messageNoti = noti.map((n) => ({
             id: n.id,
             message: n.message,
+            campaign_id: n.campaign_id,
+          brand_id: brand_id,
+          type_alias: n.type_alias,
+          hire_id: n.hire_id,
           }));
 
           // setNotifications((prev) => [...messageNoti, ...prev]);
@@ -327,10 +335,19 @@ const DashboardTopHeader = () => {
             {showNotifDropdown && (
               <>
                 <div
-                  className="fixed inset-0 z-40"
+                  className="fixed inset-0 z-40 "
                   onClick={() => setShowNotifDropdown(false)}
                 />
-                <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden z-50">
+                <div className="fixed inset-x-0 left-0 z-50 px-4 sm:px-0 pointer-events-none">
+                  <div className="pointer-events-auto
+        sm:absolute
+        sm:right-0 sm:mt-2
+        w-full sm:w-80
+        max-h-[70vh] sm:max-h-[300px]
+        bg-white
+        rounded-t-2xl sm:rounded-xl
+        shadow-xl border border-gray-200
+        overflow-hidden">
                   <div className="p-4 border-b border-gray-100 flex justify-between items-center">
                     <h3 className="font-semibold text-gray-800">
                       Notifications
@@ -340,34 +357,37 @@ const DashboardTopHeader = () => {
                     </button>
                   </div>
                   <div className="max-h-[300px] overflow-y-auto">
-                    {notifications.length === 0 ? (
-                      <div className="p-8 flex flex-col items-center justify-center text-gray-400">
-                        <IoIosNotificationsOutline
-                          size={40}
-                          className="mb-2 opacity-20"
-                        />
-                        <p className="text-sm">No new notifications</p>
-                      </div>
-                    ) : (
-                      notifications.map((notif, index) => (
-                        <div
-                          key={index}
-                          className="p-3 border-b border-gray-50 hover:bg-gray-50 cursor-pointer flex gap-3"
-                        >
-                          <div className="w-2 h-2 mt-2 rounded-full bg-primary flex-shrink-0"></div>
-                          <div>
-                            <p className="text-sm text-gray-800 leading-snug">
-                              {notif.message || JSON.stringify(notif)}
-                            </p>
-                            <span className="text-xs text-gray-400 mt-1 block">
-                              Just now
-                            </span>
-                          </div>
-                        </div>
-                      ))
-                    )}
+                    {notifications.map((notif, index) => (
+  <div
+    key={index}
+    className="p-3 border-b border-gray-50 hover:bg-gray-50 cursor-pointer flex gap-3"
+  >
+    <div className="w-2 h-2 mt-2 rounded-full bg-primary flex-shrink-0"></div>
+    <div>
+      <p className="text-sm text-gray-800 leading-snug">
+        {notif.type_alias === "HIRING_PROPOSAL" ? (
+          <>
+            You have a new hiring proposal.{" "}
+            <a
+              href="/influencer-dashboard/campaigns"
+              className="text-primary underline hover:text-primary/80"
+            >
+              Click here
+            </a>{" "}
+            to view.
+          </>
+        ) : (
+          notif.message || JSON.stringify(notif)
+        )}
+      </p>
+      <span className="text-xs text-gray-400 mt-1 block">Just now</span>
+    </div>
+  </div>
+))}
                   </div>
                 </div>
+                </div>
+                
               </>
             )}
           </div>

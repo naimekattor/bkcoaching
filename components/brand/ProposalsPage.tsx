@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { apiClient } from "@/lib/apiClient";
@@ -61,6 +61,14 @@ export default function ProposalsPage() {
     campaignId: null,
     campaignName: "",
   });
+  const [errors, setErrors] = useState<{
+  campaign?: boolean;
+  startDate?: boolean;
+  endDate?: boolean;
+  budget?: boolean;
+  deliverables?: boolean;
+}>({});
+
 
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -70,6 +78,12 @@ export default function ProposalsPage() {
   const profileId = params.id;
   console.log(profileId);
   const router=useRouter();
+  const campaignRef = useRef<HTMLDivElement>(null);
+const startDateRef = useRef<HTMLDivElement>(null);
+const endDateRef = useRef<HTMLDivElement>(null);
+const budgetRef = useRef<HTMLDivElement>(null);
+const deliverablesRef = useRef<HTMLDivElement>(null);
+
 
   const handleInputChange = (field: keyof ProposalForm, value: string) => {
     setFormData((prev) => ({
@@ -98,26 +112,60 @@ export default function ProposalsPage() {
     }));
     console.log(formData.campaignId);
   };
-
-  const handleSubmitForm = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setShowReviewModal(true);
+const validateForm = () => {
+  const newErrors = {
+    campaign: !formData.campaignId,
+    startDate: !formData.startDate,
+    endDate: !formData.endDate,
+    budget: !formData.budget?.trim(),
+    deliverables: formData.deliverables.length === 0,
   };
 
-  const isValid =
-    formData.campaignId &&
-    formData.budget &&
-    formData.startDate &&
-    formData.endDate &&
-    formData.deliverables.length > 0;
+  setErrors(newErrors);
+
+  // Auto-scroll to first error (in order of importance)
+  if (newErrors.campaign) {
+    campaignRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  } else if (newErrors.startDate) {
+    startDateRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  } else if (newErrors.endDate) {
+    endDateRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  } else if (newErrors.budget) {
+    budgetRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  } else if (newErrors.deliverables) {
+    deliverablesRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
+  return !Object.values(newErrors).some(Boolean);
+};
+  const handleSubmitForm = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const isValid = validateForm();
+
+  if (isValid) {
+    setShowReviewModal(true);
+  }
+    
+  };
+
+  // const isValid =
+  //   formData.campaignId &&
+  //   formData.budget &&
+  //   formData.startDate &&
+  //   formData.endDate &&
+  //   formData.deliverables.length > 0;
+
+
+    
 
   const handleSendProposal = async () => {
     setLoading(true);
     try {
-      if (!isValid) {
-        toast("Please fill all required fields before sending the proposal.");
-        return;
-      }
+      if (!validateForm()) {
+    setLoading(false);
+    setShowReviewModal(false); 
+    return;
+  }
 
       const formPayload = new FormData();
       formPayload.append("campaign_id", String(formData.campaignId));
@@ -215,7 +263,7 @@ export default function ProposalsPage() {
           </div>
         </div>
 
-        <div className="my-6">
+        <div className="my-6" ref={campaignRef}>
           <label className="block text-[16px] font-semibold text-gray-900 mb-2">
             Select Campaign *
           </label>
@@ -231,7 +279,11 @@ export default function ProposalsPage() {
               handleInputChange("campaignName", selectedCampaign.campaign_name);
             }}
           >
-            <SelectTrigger className="w-[250px]">
+            <SelectTrigger className={`w-[250px] ${
+    errors.campaign
+      ? "border-red-500 ring-2 ring-red-300"
+      : "border-gray-300"
+  }`}>
               <SelectValue placeholder="Select a Campaign" />
             </SelectTrigger>
             <SelectContent>
@@ -251,9 +303,9 @@ export default function ProposalsPage() {
 
         <div className="">
           <form onSubmit={handleSubmitForm} className="mx-auto">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-2 mb-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="px-3">
+                <div className="" ref={startDateRef}>
                   <h4 className="text-[16px] font-semibold text-gray-900 mb-4">
                     Project Timeline *
                   </h4>
@@ -269,7 +321,9 @@ export default function ProposalsPage() {
                         onChange={(e) =>
                           handleInputChange("startDate", e.target.value)
                         }
-                        className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className={`border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2
+  ${errors.startDate ? "border-red-500 ring-red-300" : "border-gray-300 focus:ring-primary"}
+`}
                       />
                     </div>
 
@@ -283,13 +337,15 @@ export default function ProposalsPage() {
                         onChange={(e) =>
                           handleInputChange("endDate", e.target.value)
                         }
-                        className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                        className={`border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2
+  ${errors.endDate ? "border-red-500 ring-red-300" : "border-gray-300 focus:ring-primary"}
+`}
                       />
                     </div>
                   </div>
                 </div>
                 {/* Budget */}
-                <div>
+                <div ref={budgetRef}>
                   <label className="block text-sm text-gray-900 font-medium mb-2">
                     Budget *
                   </label>
@@ -297,11 +353,17 @@ export default function ProposalsPage() {
                     type="text"
                     placeholder="$200"
                     value={formData.budget}
-                    onChange={(e) =>
-                      handleInputChange("budget", e.target.value)
+                    onChange={(e) =>{
+                      const value = e.target.value.replace(/[^0-9$.\s-]/g, '');
+                      handleInputChange("budget", value)}
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                    className={`w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2
+      ${errors.budget ? "border-red-500 border-1 ring-red-300" : "border-gray-300 border-1 focus:ring-primary"}
+    `}
                   />
+                  {errors.budget && (
+  <p className="mt-1 text-sm text-red-600">Budget is required</p>
+)}
                 </div>
               </div>
             </div>
@@ -321,10 +383,13 @@ export default function ProposalsPage() {
               />
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+            <div ref={deliverablesRef} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
               <h3 className="text-[16px] font-semibold text-gray-900 mb-2">
                 Content Deliverables *
               </h3>
+              {errors.deliverables && (
+    <p className="text-red-600 text-sm mb-3">Please select at least one deliverable</p>
+  )}
               <p className="text-sm text-gray-600 mb-4">
                 Select the type of content you want micro-influencers to produce
               </p>
@@ -345,9 +410,11 @@ export default function ProposalsPage() {
                           e.target.checked
                         )
                       }
-                      className="w-4 h-4 text-primary rounded focus:ring-2 focus:ring-primary"
+                      className={`checked:bg-primary  accent-primary
+    
+  `}
                     />
-                    {/* <span className="text-lg">{deliverable.icon}</span> */}
+                    
                     <label
                       htmlFor={deliverable.id}
                       className="text-sm font-normal cursor-pointer text-gray-700"

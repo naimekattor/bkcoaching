@@ -140,7 +140,6 @@ export default function BrandProfilePage() {
   const { id } = useParams<{ id: string }>();
   const [influencer, SetInfluencer] = useState<MicroInfluencer | null>(null);
   const [loading, setLoading] = useState(true);
-  const [copied, setCopied] = useState(false);
   const router = useRouter();
 const [collaboration, setCollaboration] = useState<Collaboration | null>(null);
 
@@ -371,18 +370,9 @@ useEffect(()=>{
   // 4. Render the full profile
   // -------------------------------------------------
   return (
-    <div className="min-h-screen ">
+    <div className="min-h-screen container mx-auto px-4 pt-8">
       <div className="">
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-6">
-          <Link
-            href="/brand-dashboard/microinfluencerspage/"
-            className="text-gray-400 hover:text-gray-600"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </Link>
-          <span className="text-gray-600">Back</span>
-        </div>
+        
 
         {/* influencerHeader Card */}
         <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
@@ -510,7 +500,7 @@ useEffect(()=>{
             </div>
 
             <div className="flex gap-3">
-              <button
+              {/* <button
                 className="bg-yellow-500 hover:bg-[var(--secondaryhover)] text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2"
                 onClick={() =>
                   router.push(
@@ -520,7 +510,7 @@ useEffect(()=>{
               >
                 <MessageCircle className="w-4 h-4" />
                 Message
-              </button>
+              </button> */}
               {/* <button className="border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2">
                 <Bookmark className="w-4 h-4" />
                 Save

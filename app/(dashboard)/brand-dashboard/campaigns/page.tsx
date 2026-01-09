@@ -51,6 +51,7 @@ import { motion } from "framer-motion";
 import { Campaign } from "@/types/campaign";
 import { toast } from "react-toastify";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 /* -------------------------------------------------
    Types
@@ -189,6 +190,13 @@ export default function CampaignDashboard() {
     []
   );
   const [completeLoading, setCompleteLoading] = useState<number | null>(null);
+
+  const searchParams = useSearchParams();
+  const isModalOpen = searchParams.get("create") === "true";
+
+  useEffect(()=>{
+    setShowModal(isModalOpen);
+  },[isModalOpen]);
 
   /* ---------- Stats (no type errors) ---------- */
   const stats = [
@@ -727,10 +735,10 @@ export default function CampaignDashboard() {
             />
           </div>
 
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <Select value={statusFilter} onValueChange={setStatusFilter} >
             <SelectTrigger
               className="
-      w-[160px] 
+      w-full sm:w-[160px]
       bg-white 
       border border-gray-300 
       rounded-lg 
@@ -749,7 +757,7 @@ export default function CampaignDashboard() {
       shadow-lg 
       border border-gray-200 
       mt-1 
-      w-[160px]
+       w-full
     "
             >
               <SelectItem
