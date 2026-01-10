@@ -97,7 +97,7 @@ const transformCampaignDataForAPI = (data: OnboardingData) => {
 
 const CompletionStep = ({ onComplete }: CompletionStepProps) => {
   const [referralCode] = useState("BRAND-ABC123");
-
+ const {setUser}=useAuthStore();
   const nextSteps = [
     {
       icon: Users,
@@ -145,13 +145,16 @@ const CompletionStep = ({ onComplete }: CompletionStepProps) => {
         const profilePayload = transformProfileDataForAPI(onboardingData);
         console.log("Profile payload:", profilePayload);
 
-        await apiClient("user_service/update_user_profile/", {
+       const res= await apiClient("user_service/update_user_profile/", {
           method: "PATCH",
           auth: true,
           body: JSON.stringify(profilePayload),
         });
         console.log("Profile data submitted successfully");
-
+        if(res.code==200){
+      setUser(res.data);
+      localStorage.removeItem("InfluencerOnboardingData");
+     }
         // Submit campaign data to campaign_service
         console.log("Submitting campaign data...");
         

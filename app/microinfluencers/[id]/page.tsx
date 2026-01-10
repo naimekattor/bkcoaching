@@ -372,7 +372,13 @@ useEffect(()=>{
   return (
     <div className="min-h-screen container mx-auto px-4 pt-8">
       <div className="">
-        
+        <div
+      onClick={() => router.back()}
+      className="flex items-center gap-4 mb-6 cursor-pointer text-gray-400 hover:text-gray-600"
+    >
+      <ArrowLeft className="w-5 h-5" />
+      <span className="text-gray-600">Back</span>
+    </div>
 
         {/* influencerHeader Card */}
         <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">

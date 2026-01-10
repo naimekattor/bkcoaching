@@ -154,9 +154,9 @@ export function RecentCollaborations({
             <div
               key={collab.campaignId}
               onClick={() => handleCardClick(collab.influencerId)}
-              className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors"
+              className="flex items-center justify-between p-2 bg-white shadow border-gray-50 border-1 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors"
             >
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-3 ">
                 <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 border border-gray-100">
                   {collab.avatar ? (
                     <Image
@@ -182,14 +182,14 @@ export function RecentCollaborations({
                 </div>
               </div>
 
-              <div className="flex items-center space-x-1">
+              {/* <div className="flex items-center space-x-1">
                 <span className="text-secondary">
                   <CiStar size={20} />
                 </span>
                 <span className="text-sm font-medium text-slate-700">
                   {collab.rating.toFixed(1)}
                 </span>
-              </div>
+              </div> */}
             </div>
           ))
         )}

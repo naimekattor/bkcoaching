@@ -1,7 +1,12 @@
 import Link from "next/link";
 import { Plus, Layout, ArrowRight, CircleDot } from "lucide-react";
+import type { DashboardCampaign } from "./BDashboard";
 
-export function CampaignsSection({ allCampaigns = [] }) {
+interface CampaignsSectionProps {
+  allCampaigns?: DashboardCampaign[];
+}
+
+export function CampaignsSection({ allCampaigns = [] as DashboardCampaign[] }: CampaignsSectionProps) {
   // Logic to show only the latest 2
   const displayedCampaigns = allCampaigns.slice(0, 2);
   const hasMore = allCampaigns.length > 2;
@@ -78,3 +83,4 @@ export function CampaignsSection({ allCampaigns = [] }) {
     </div>
   );
 }
+

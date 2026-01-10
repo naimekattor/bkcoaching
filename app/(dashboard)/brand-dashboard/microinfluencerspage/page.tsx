@@ -62,6 +62,9 @@ interface InfluencerProfile {
   linkedin_follower?: number;
   youtube_follower?: number;
   blog_follower?: number;
+  podcast_follower?:number;
+  whatsapp_follower?:number;
+  twitter_follower?:number;
 }
 
 interface InfluencerUser {
@@ -101,6 +104,9 @@ const calculateFollowers = (inf: InfluencerProfile | undefined | null) => {
     Number(inf.tiktok_follower || 0) +
     Number(inf.linkedin_follower || 0) +
     Number(inf.youtube_follower || 0) +
+    Number(inf.whatsapp_follower || 0) +
+    Number(inf.twitter_follower || 0) +
+    Number(inf.podcast_follower || 0) +
     Number(inf.blog_follower || 0);
 
   return total;
@@ -322,6 +328,7 @@ function MicroInfluencersPageContent() {
             if (inf.podcast_handle) platforms.push("podcast");
             if (inf.blog_handle) platforms.push("blog");
             if (inf.whatsapp_handle) platforms.push("whatsapp");
+            if (inf.twitter_handle) platforms.push("twitter");
 
             const total = calculateFollowers(item.influencer_profile);
 

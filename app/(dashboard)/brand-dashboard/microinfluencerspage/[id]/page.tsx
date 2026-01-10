@@ -374,15 +374,13 @@ useEffect(()=>{
     <div className="min-h-screen ">
       <div className="">
         {/* Header */}
-        <div className="flex items-center gap-4 mb-6">
-          <Link
-            href="/brand-dashboard/microinfluencerspage/"
-            className="text-gray-400 hover:text-gray-600"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </Link>
-          <span className="text-gray-600">Back</span>
-        </div>
+        <div
+      onClick={() => router.back()}
+      className="flex items-center gap-4 mb-6 cursor-pointer text-gray-400 hover:text-gray-600 mt-4"
+    >
+      <ArrowLeft className="w-5 h-5" />
+      <span className="text-gray-600">Back</span>
+    </div>
 
         {/* influencerHeader Card */}
         <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">

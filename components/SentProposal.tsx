@@ -137,7 +137,7 @@ const SentProposal = () => {
               </div>
               <div className="flex flex-wrap gap-4 text-sm text-gray-600">
                 <span className="flex items-center gap-1">
-                  <DollarSign size={14} className="text-primary" />
+                  <DollarSign size={14} className="text-primary/40" />
                   <span className="font-medium text-gray-900">${proposal.budget}</span>
                 </span>
                 <span className="flex items-center gap-1">

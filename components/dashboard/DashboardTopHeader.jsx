@@ -11,6 +11,47 @@ import Link from "next/link";
 import { ArrowRightLeft, Briefcase, Sparkles } from "lucide-react";
 import { useNotificationStore } from "@/stores/useNotificationStore";
 import Cookies from "js-cookie";
+const INFLUENCER_NOTIFICATIONS = [
+  "CAMPAIGN_COMPLETED",
+  "HIRING_PROPOSAL",
+];
+
+const BRAND_NOTIFICATIONS = [
+  "PROPOSAL_ACCEPTED",
+  "PROPOSAL_REJECTED",
+];
+
+const getNotificationLink = (notif) => {
+  switch (notif.type_alias) {
+    case "HIRING_PROPOSAL":
+      return "/influencer-dashboard/campaigns";
+
+    case "CAMPAIGN_COMPLETED":
+      return `/influencer-dashboard/campaigns?${notif.campaign_id}`;
+
+    case "PROPOSAL_ACCEPTED":
+    case "PROPOSAL_REJECTED":
+      return `/brand-dashboard?scrollTo=proposal`;
+
+    default:
+      return "#";
+  }
+};
+
+// Helper function to filter notifications based on dashboard type
+const filterNotificationsByDashboard = (notifications, isBrandDashboard, isInfluencerDashboard) => {
+  if (!notifications || notifications.length === 0) return [];
+  
+  const allowedTypes = isBrandDashboard 
+    ? BRAND_NOTIFICATIONS 
+    : isInfluencerDashboard 
+    ? INFLUENCER_NOTIFICATIONS 
+    : [];
+  
+  return notifications.filter((notif) => 
+    notif.type_alias && allowedTypes.includes(notif.type_alias)
+  );
+};
 
 const DashboardTopHeader = () => {
   const user = useAuthStore((state) => state.user);
@@ -34,10 +75,18 @@ const DashboardTopHeader = () => {
   // --- Refs ---
   const wsRef = useRef(null); // Store socket instance
   const reconnectTimeoutRef = useRef(null); // Store timeout ID
+  const pathnameRef = useRef(pathname); // Track current pathname for WebSocket handler
 
   const isBrandDashboard = pathname.startsWith("/brand-dashboard");
   const isInfluencerDashboard = pathname.startsWith("/influencer-dashboard");
   const { data: session, status: sessionStatus } = useSession();
+
+  // Update pathname ref when pathname changes
+  useEffect(() => {
+    pathnameRef.current = pathname;
+  }, [pathname]);
+
+
 
   // --- 1. WebSocket Connection Logic ---
   const connectWebSocket = () => {
@@ -70,9 +119,36 @@ const DashboardTopHeader = () => {
         const data = JSON.parse(event.data);
         console.log("🔔 Notification Received:", data);
 
-        // Update UI
-        // setNotificationCount((prev) => prev + 1);
-        // setNotifications((prev) => [data, ...prev]);
+        // Map WebSocket notification to match our format
+        const mappedNotif = {
+          id: data.id || Date.now(),
+          message: data.payload?.message || data.message || "",
+          campaign_id: data.payload?.campaign_id || data.campaign_id,
+          brand_id: data.payload?.brand_id || data.brand_id,
+          type_alias: data.payload?.type_alias || data.type_alias,
+          hire_id: data.payload?.hire_id || data.hire_id,
+        };
+
+        // Filter based on current dashboard before adding
+        const currentPathname = pathnameRef.current;
+        const isBrand = currentPathname.startsWith("/brand-dashboard");
+        const isInfluencer = currentPathname.startsWith("/influencer-dashboard");
+        const allowedTypes = isBrand 
+          ? BRAND_NOTIFICATIONS 
+          : isInfluencer 
+          ? INFLUENCER_NOTIFICATIONS 
+          : [];
+        
+        // Only add if it matches current dashboard type
+        if (mappedNotif.type_alias && allowedTypes.includes(mappedNotif.type_alias)) {
+          setNotifications((prev) => {
+            // Avoid duplicates
+            const exists = prev.some((n) => n.id === mappedNotif.id);
+            if (exists) return prev;
+            return [mappedNotif, ...prev];
+          });
+          setNotificationCount((prev) => prev + 1);
+        }
       } catch (error) {
         console.error("Error parsing WS message:", error);
       }
@@ -196,19 +272,23 @@ const DashboardTopHeader = () => {
             id: n.id,
             message: n.message,
             campaign_id: n.campaign_id,
-          brand_id: brand_id,
-          type_alias: n.type_alias,
-          hire_id: n.hire_id,
+            brand_id: n.brand_id,
+            type_alias: n.type_alias,
+            hire_id: n.hire_id,
           }));
 
-          // setNotifications((prev) => [...messageNoti, ...prev]);
-
-          // // 🔥 Set exact unread count
-          // setNotificationCount(messageNoti.length);
           combinedNotifications = [...messageNoti, ...combinedNotifications];
         }
-        setNotifications(combinedNotifications);
-        setNotificationCount(combinedNotifications.length);
+        
+        // Filter notifications based on current dashboard
+        const filteredNotifications = filterNotificationsByDashboard(
+          combinedNotifications,
+          isBrandDashboard,
+          isInfluencerDashboard
+        );
+        
+        setNotifications(filteredNotifications);
+        setNotificationCount(filteredNotifications.length);
 
         console.log("🔔 Unread count:", mapped.length);
       } catch (err) {
@@ -217,7 +297,7 @@ const DashboardTopHeader = () => {
     };
 
     fetchUnreadNotifications();
-  }, []);
+  }, [pathname, isBrandDashboard, isInfluencerDashboard, noti]);
 
   // const handleLogout = async () => {
   //   try {
@@ -352,38 +432,64 @@ const DashboardTopHeader = () => {
                     <h3 className="font-semibold text-gray-800">
                       Notifications
                     </h3>
-                    <button className="text-xs text-primary hover:underline">
+                    <button 
+                      onClick={async () => {
+                        try {
+                          const token =
+                            session?.accessToken || localStorage.getItem("access_token");
+                          if (!token) return;
+                          const res = await fetch(
+                            `${process.env.NEXT_PUBLIC_API_BASE_URL}chat_service/noti_seen_all/`,
+                            {
+                              method: "POST",
+                              headers: { Authorization: `Bearer ${token}` },
+                            }
+                          );
+                          const data = await res.json();
+                          if (data) {
+                            setNotificationCount(0);
+                            setNotifications([]);
+                          }
+                        } catch (error) {
+                          console.log(error);
+                        }
+                      }}
+                      className="text-xs text-primary hover:underline"
+                    >
                       Mark all read
                     </button>
                   </div>
                   <div className="max-h-[300px] overflow-y-auto">
-                    {notifications.map((notif, index) => (
-  <div
-    key={index}
-    className="p-3 border-b border-gray-50 hover:bg-gray-50 cursor-pointer flex gap-3"
-  >
-    <div className="w-2 h-2 mt-2 rounded-full bg-primary flex-shrink-0"></div>
-    <div>
-      <p className="text-sm text-gray-800 leading-snug">
-        {notif.type_alias === "HIRING_PROPOSAL" ? (
-          <>
-            You have a new hiring proposal.{" "}
-            <a
-              href="/influencer-dashboard/campaigns"
-              className="text-primary underline hover:text-primary/80"
-            >
-              Click here
-            </a>{" "}
-            to view.
-          </>
-        ) : (
-          notif.message || JSON.stringify(notif)
-        )}
-      </p>
-      <span className="text-xs text-gray-400 mt-1 block">Just now</span>
-    </div>
-  </div>
-))}
+                    {notifications.length === 0 ? (
+                      <div className="p-6 text-center text-gray-500 text-sm">
+                        No notifications
+                      </div>
+                    ) : (
+                      notifications.map((notif) => (
+                        <div
+                          key={notif.id}
+                          onClick={() => {
+                            router.push(getNotificationLink(notif));
+                            setShowNotifDropdown(false);
+                          }}
+                          className="p-3 border-b border-gray-50 hover:bg-gray-50 cursor-pointer flex gap-3"
+                        >
+                          <div className="w-2 h-2 mt-2 rounded-full bg-primary flex-shrink-0"></div>
+
+                          <div>
+                            <p className="text-sm text-gray-800 leading-snug">
+                              {notif.message}
+                              <span className="text-primary underline ml-1">
+                                View
+                              </span>
+                            </p>
+                            <span className="text-xs text-gray-400 mt-1 block">
+                              Just now
+                            </span>
+                          </div>
+                        </div>
+                      ))
+                    )}
                   </div>
                 </div>
                 </div>

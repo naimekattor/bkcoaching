@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   Search,
@@ -56,6 +56,7 @@ interface HistoryMessage {
   message: string;
   timestamp: string;
   file: string;
+  seen:boolean;
 }
 
 interface Message {
@@ -68,6 +69,7 @@ interface Message {
   fileUrl?: string;
   fileType?: string;
   fileName?: string;
+  seen:boolean;
 }
 
 type MessageWithRawTimestamp = Message & { rawTimestamp: Date };
@@ -161,6 +163,12 @@ export default function MessagesClient() {
 
   const wsRef = useRef<WebSocket | null>(null);
   const virtuosoRef = useRef<any>(null);
+
+  const firstUnreadIndex = useMemo(() => {
+    return messages.findIndex(
+      (m) => !m.seen && !m.isOwn
+    );
+  }, [messages]);
 
   useEffect(() => {
     const createRoom = async () => {
@@ -321,6 +329,7 @@ export default function MessagesClient() {
             senderName: msg.is_me ? "You" : selectedRoom?.name || "User",
             content: msg.message,
             fileUrl: msg.file,
+            seen:msg.seen,
             timestamp: new Date(msg.timestamp).toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",
@@ -517,6 +526,7 @@ export default function MessagesClient() {
                   fileUrl,
                   fileType,
                   fileName,
+                  seen:payload.seen,
                   senderId: payload.sender_id,
                   isOwn: Number(payload.sender_id) == userId,
                   timestamp: new Date().toLocaleTimeString([], {
@@ -616,6 +626,7 @@ export default function MessagesClient() {
         content: hasText ? newMessage : "",
         senderId: myId,
         senderName: "You",
+        seen:true,
         isOwn: true,
         timestamp: new Date().toLocaleTimeString([], {
           hour: "2-digit",
@@ -902,33 +913,29 @@ export default function MessagesClient() {
               </div>
             ) : (
               <Virtuoso
-                ref={virtuosoRef}
-                data={messages}
-                initialTopMostItemIndex={messages.length - 1}
-                followOutput="smooth"
-                startReached={() => {
-                  if (hasMoreMessages && !loadingOlderMessages) {
-                    // loadOlderMessages();
-                  }
-                }}
-                itemContent={(index, message) => (
-                  <div className="px-4">
-                    <MessageBubble
-                      message={message}
-                      selectedRoomName={selectedRoom?.name}
-                      selectedRoomOtherUserId={selectedRoom?.other_user_id}
-                    />
-                  </div>
-                )}
-                components={{
-                  Header: () =>
-                    loadingOlderMessages ? (
-                      <div className="flex items-center justify-center p-4">
-                        <Loader className="h-5 w-5 animate-spin text-primary" />
-                      </div>
-                    ) : null,
-                }}
-              />
+        ref={virtuosoRef}
+        data={messages}
+        itemContent={(index, message) => (
+          <div className="px-4">
+            {/* STEP 2 USES IT HERE */}
+            {index === firstUnreadIndex && (
+              <div className="flex items-center my-4">
+                <div className="flex-grow border-t border-gray-200" />
+                <span className="mx-3 text-xs text-gray-400 font-medium">
+                  New message
+                </span>
+                <div className="flex-grow border-t border-gray-200" />
+              </div>
+            )}
+
+            <MessageBubble
+              message={message}
+              selectedRoomName={selectedRoom?.name}
+              selectedRoomOtherUserId={selectedRoom?.other_user_id}
+            />
+          </div>
+        )}
+      />
             )}
           </div>
 

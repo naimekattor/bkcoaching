@@ -118,7 +118,7 @@ const transformInfluencerDataForAPI = (data: InfluencerOnboardingData) => {
 
 const CompletionStep = ({ onComplete }: CompletionStepProps) => {
       const { data: session, status: sessionStatus } = useSession(); 
-    
+    const {setUser}=useAuthStore();
   const nextSteps = [
     {
       icon: Search,
@@ -217,7 +217,12 @@ useEffect(() => {
         throw new Error(`${res.status} - ${text}`);
       }
 
-      // toast("Profile Saved!");
+      const responseData = await res.json();
+      if (responseData.code === 200 || res.status === 200) {
+        setUser(responseData.data);
+        localStorage.removeItem("InfluencerOnboardingData");
+        // toast("Profile Saved!");
+      }
     } catch (error) {
       console.error("Failed to submit influencer onboarding data:", error);
       toast("Error Saving Profile");

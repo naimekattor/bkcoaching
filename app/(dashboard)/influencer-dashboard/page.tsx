@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { FaEdit, FaPlus } from "react-icons/fa";
 import { TbMessageCircleFilled } from "react-icons/tb";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuthStore } from "@/stores/useAuthStore";
 import {
   X,
@@ -15,7 +15,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { toast } from "react-toastify";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useNotificationStore } from "@/stores/useNotificationStore";
 import Swal from "sweetalert2";
 
@@ -106,9 +106,19 @@ export default function Page() {
   const unread = useNotificationStore((s) => s.unreadCount);
   const noti = useNotificationStore((s) => s.notifications);
   console.log(unread, "message notification", noti);
-
+  const proposalRef = useRef<HTMLDivElement | null>(null);
+const searchParams = useSearchParams();
   // const store = useAuthStore.getState();
+useEffect(() => {
+  const section = searchParams.get("scrollTo"); 
 
+  if (section === "proposal" && proposalRef.current) {
+    proposalRef.current.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }
+}, [searchParams]);
   // 1. Fetch User Info
   useEffect(() => {
     const fetchUser = async () => {
@@ -417,7 +427,7 @@ export default function Page() {
         <div className="pt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
             {/* --- My Campaigns Section --- */}
-            <div className=" border-[#E5E7EB] shadow border-[1px] rounded p-6 h-[420px] flex flex-col">
+            <div ref={proposalRef} id="proposal" className=" border-[#E5E7EB] shadow border-[1px] rounded p-6 h-[420px] flex flex-col">
               <div className="flex items-center space-x-2 mb-4 flex-shrink-0">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
