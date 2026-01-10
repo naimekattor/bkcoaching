@@ -1,8 +1,9 @@
 "use client"
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from 'next/link';
 import { PiBuildingOffice } from "react-icons/pi";
-export default function BrandSubscriptionRequired() {
+function BrandSubscriptionRequiredContent() {
   const searchParams = useSearchParams();
   const reason = searchParams.get('reason');
 
@@ -55,5 +56,13 @@ export default function BrandSubscriptionRequired() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function BrandSubscriptionRequired() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-gray-50" />}>
+      <BrandSubscriptionRequiredContent />
+    </Suspense>
   );
 }

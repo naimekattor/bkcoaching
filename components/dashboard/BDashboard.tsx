@@ -57,6 +57,8 @@ export interface DashboardCampaign {
   autoMatch: boolean;
   campaignOwner: number;
   campaignStatus: string;
+  statusColor?: string;
+
 }
 
 interface BrandProfile {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, Suspense } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   Search,
@@ -135,7 +135,7 @@ const getSafeImageSrc = (src?: string) => {
   return null;
 };
 
-export default function MessagesClient() {
+function MessagesClientContent() {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -1040,5 +1040,13 @@ export default function MessagesClient() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function MessagesClient() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center p-10"><Loader className="w-8 h-8 animate-spin text-primary" /></div>}>
+      <MessagesClientContent />
+    </Suspense>
   );
 }

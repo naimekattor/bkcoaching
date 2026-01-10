@@ -1,9 +1,10 @@
 'use client';
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from 'next/link';
 import { FaUserGroup } from "react-icons/fa6";
 
-export default function InfluencerSubscriptionRequired() {
+function InfluencerSubscriptionRequiredContent() {
   const searchParams = useSearchParams();
   const reason = searchParams.get('reason');
 
@@ -56,5 +57,13 @@ export default function InfluencerSubscriptionRequired() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function InfluencerSubscriptionRequired() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-gray-50" />}>
+      <InfluencerSubscriptionRequiredContent />
+    </Suspense>
   );
 }

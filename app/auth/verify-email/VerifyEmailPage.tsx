@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
@@ -11,7 +11,7 @@ import { apiClient } from "@/lib/apiClient";
 import { toast } from "react-toastify";
 import { Loader2 } from "lucide-react";
 
-export default function VerifyEmailPage() {
+function VerifyEmailPageContent() {
   const router = useRouter();
   const params = useSearchParams();
   const returnTo = params.get("returnTo");
@@ -248,5 +248,13 @@ export default function VerifyEmailPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-50 flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-slate-800" /></div>}>
+      <VerifyEmailPageContent />
+    </Suspense>
   );
 }

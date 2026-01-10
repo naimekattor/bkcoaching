@@ -1,9 +1,10 @@
 'use client';
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from 'next/link';
 import { FaExclamationTriangle } from "react-icons/fa";
 
-export default function SubscriptionError() {
+function SubscriptionErrorContent() {
   const searchParams = useSearchParams();
   const message = searchParams.get('message') || 'Error verifying subscription';
 
@@ -38,5 +39,13 @@ export default function SubscriptionError() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SubscriptionError() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-gray-50" />}>
+      <SubscriptionErrorContent />
+    </Suspense>
   );
 }

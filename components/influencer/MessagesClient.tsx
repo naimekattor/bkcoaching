@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Search,
@@ -127,7 +127,7 @@ const getSafeImageSrc = (src?: string) => {
 };
 
 
-export default function InfluencerMessagesClient() {
+function InfluencerMessagesClientContent() {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -1030,5 +1030,13 @@ export default function InfluencerMessagesClient() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function InfluencerMessagesClient() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center p-10"><Loader className="w-8 h-8 animate-spin text-primary" /></div>}>
+      <InfluencerMessagesClientContent />
+    </Suspense>
   );
 }

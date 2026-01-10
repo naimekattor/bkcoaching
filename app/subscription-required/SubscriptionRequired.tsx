@@ -1,8 +1,9 @@
 'use client';
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from 'next/link';
 
-export default function SubscriptionRequired() {
+function SubscriptionRequiredContent() {
   const searchParams = useSearchParams();
   const message = searchParams.get('message') || 'Subscription required';
 
@@ -33,5 +34,13 @@ export default function SubscriptionRequired() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SubscriptionRequired() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-gray-50" />}>
+      <SubscriptionRequiredContent />
+    </Suspense>
   );
 }

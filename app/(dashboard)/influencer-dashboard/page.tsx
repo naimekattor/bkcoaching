@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { FaEdit, FaPlus } from "react-icons/fa";
 import { TbMessageCircleFilled } from "react-icons/tb";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, Suspense } from "react";
 import { useAuthStore } from "@/stores/useAuthStore";
 import {
   X,
@@ -84,7 +84,7 @@ const getSafeImageSrc = (src?: string) => {
   return `/${src}`;
 };
 
-export default function Page() {
+function InfluencerDashboardContent() {
   const [influencerProfile, setInfluencerProfile] =
     useState<InfluencerProfileInfo | null>(null);
   const [roomData, setRoomData] = useState<RoomData[]>([]);
@@ -858,5 +858,13 @@ useEffect(() => {
         </div>
       )}
     </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center p-10"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>}>
+      <InfluencerDashboardContent />
+    </Suspense>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 import Swal from "sweetalert2";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import {
   Search,
   MoreHorizontal,
@@ -168,7 +168,7 @@ const getPlatformConfig = (deliverable?: string | null) => {
 /* -------------------------------------------------
    Component
 ------------------------------------------------- */
-export default function CampaignDashboard() {
+function CampaignDashboardContent() {
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(
     null
   );
@@ -1296,5 +1296,13 @@ export default function CampaignDashboard() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function CampaignDashboard() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center p-10"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>}>
+      <CampaignDashboardContent />
+    </Suspense>
   );
 }

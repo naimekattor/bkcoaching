@@ -2,7 +2,7 @@
 
 import type React from "react";
 import Cookies from "js-cookie";
-import { useMemo, useState } from "react";
+import { useMemo, useState, Suspense } from "react";
 import Link from "next/link";
 import { Check, Eye, EyeOff, Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { setAuthFromResponse, signup } from "@/lib/auth";
 import { signIn } from "next-auth/react";
 
-export default function SignupPage() {
+function SignupPageContent() {
   const router = useRouter();
   const params = useSearchParams();
   const returnTo = params.get("returnTo") || "";
@@ -444,5 +444,13 @@ const handleGoogleSignUp = async () => {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-50 flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-slate-800" /></div>}>
+      <SignupPageContent />
+    </Suspense>
   );
 }
