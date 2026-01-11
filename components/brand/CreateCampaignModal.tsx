@@ -974,7 +974,7 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }:Creat
 
         {/* Footer */}
         <div className="flex md:flex-row flex-col items-center justify-center p-6 border-t bg-gray-50 rounded-b-lg">
-          <div className="flex items-center gap-3">
+          <div className="flex md:flex-row flex-col items-center justify-center gap-3">
             <Button
               variant="outline"
               onClick={() => {

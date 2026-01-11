@@ -238,7 +238,8 @@ useEffect(() => {
       } finally {
         setCampaignActionLoading({ id: null, action: null });
       }
-    } else if (action === "reject") {
+    } 
+    else if (action === "reject") {
       Swal.fire({
         title: "Reject Campaign?",
         text: "Are you sure you want to reject this campaign? This action cannot be undone.",
@@ -277,7 +278,7 @@ useEffect(() => {
                 confirmButtonText: "OK",
               });
 
-              setSelectedCampaign(null); // Close modal
+              setSelectedCampaign(null); 
             } else {
               Swal.fire({
                 title: "Error",

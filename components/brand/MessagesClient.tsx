@@ -163,12 +163,14 @@ function MessagesClientContent() {
 
   const wsRef = useRef<WebSocket | null>(null);
   const virtuosoRef = useRef<any>(null);
-
+console.log("testing for firstUnreadIndex",messages);
   const firstUnreadIndex = useMemo(() => {
     return messages.findIndex(
-      (m) => !m.seen && !m.isOwn
+      (m) => !m.seen 
     );
   }, [messages]);
+  console.log("firstUnreadIndex",firstUnreadIndex);
+
 
   useEffect(() => {
     const createRoom = async () => {
@@ -392,6 +394,7 @@ function MessagesClientContent() {
               senderName: msg.is_me ? "You" : selectedRoom?.name || "User",
               content: msg.message,
               fileUrl: msg.file,
+              seen:msg.seen,
               timestamp: new Date(msg.timestamp).toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",
@@ -891,7 +894,7 @@ function MessagesClientContent() {
                       `/brand-dashboard/influencers/${selectedRoom?.other_user_id}/send-proposal`
                     );
                   }}
-                  className="px-4 py-2 bg-secondary text-primary rounded-xl font-semibold transition-all duration-200 cursor-pointer text-sm shadow-sm"
+                  className="px-4 py-2 bg-secondary text-primary rounded-md font-semibold transition-all duration-200 cursor-pointer text-sm shadow-sm"
                 >
                   Hire
                 </button>
@@ -900,7 +903,7 @@ function MessagesClientContent() {
           </div>
 
           {/* Messages Area */}
-          <div className="flex-1 bg-gray-50">
+          <div className="flex-1 bg-gray-50 py-2">
             {loadingHistory ? (
               <div className="flex items-center justify-center h-full">
                 <Loader className="h-6 w-6 animate-spin text-primary" />
@@ -913,20 +916,24 @@ function MessagesClientContent() {
               </div>
             ) : (
               <Virtuoso
+              atBottomThreshold={150}
+              followOutput={(isAtBottom) => isAtBottom ? "smooth" : false}
         ref={virtuosoRef}
         data={messages}
         itemContent={(index, message) => (
           <div className="px-4">
-            {/* STEP 2 USES IT HERE */}
-            {index === firstUnreadIndex && (
-              <div className="flex items-center my-4">
-                <div className="flex-grow border-t border-gray-200" />
-                <span className="mx-3 text-xs text-gray-400 font-medium">
-                  New message
-                </span>
-                <div className="flex-grow border-t border-gray-200" />
-              </div>
-            )}
+            <div className="h-6 my-4">
+  {index === firstUnreadIndex && (
+    <div className="flex items-center">
+      <div className="flex-grow border-t border-gray-200" />
+      <span className="mx-3 text-xs text-primary font-medium">
+        New message
+      </span>
+      <div className="flex-grow border-t border-gray-200" />
+    </div>
+  )}
+</div>
+
 
             <MessageBubble
               message={message}

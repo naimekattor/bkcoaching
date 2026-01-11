@@ -89,106 +89,106 @@ const DashboardTopHeader = () => {
 
 
   // --- 1. WebSocket Connection Logic ---
-  const connectWebSocket = () => {
-    const token = localStorage.getItem("access_token");
+  // const connectWebSocket = () => {
+  //   const token = localStorage.getItem("access_token");
 
-    // If already connected or no token, stop
-    if (
-      !token ||
-      (wsRef.current && wsRef.current.readyState === WebSocket.OPEN)
-    ) {
-      return;
-    }
+  //   // If already connected or no token, stop
+  //   if (
+  //     !token ||
+  //     (wsRef.current && wsRef.current.readyState === WebSocket.OPEN)
+  //   ) {
+  //     return;
+  //   }
 
-    console.log("🔄 Attempting to connect WebSocket...");
+  //   console.log("🔄 Attempting to connect WebSocket...");
 
-    const ws = new WebSocket(
-      `${process.env.NEXT_PUBLIC_WEBSOCKET_NOTI_URL}?token=${token}`
-    );
+  //   const ws = new WebSocket(
+  //     `${process.env.NEXT_PUBLIC_WEBSOCKET_NOTI_URL}?token=${token}`
+  //   );
 
-    ws.onopen = () => {
-      console.log("✅ WebSocket Connected");
-      setIsSocketConnected(true);
-      // Optional: Clear any pending reconnection timeouts
-      if (reconnectTimeoutRef.current)
-        clearTimeout(reconnectTimeoutRef.current);
-    };
+  //   ws.onopen = () => {
+  //     console.log("✅ WebSocket Connected");
+  //     setIsSocketConnected(true);
+  //     // Optional: Clear any pending reconnection timeouts
+  //     if (reconnectTimeoutRef.current)
+  //       clearTimeout(reconnectTimeoutRef.current);
+  //   };
 
-    ws.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        console.log("🔔 Notification Received:", data);
+  //   ws.onmessage = (event) => {
+  //     try {
+  //       const data = JSON.parse(event.data);
+  //       console.log("🔔 Notification Received:", data);
 
-        // Map WebSocket notification to match our format
-        const mappedNotif = {
-          id: data.id || Date.now(),
-          message: data.payload?.message || data.message || "",
-          campaign_id: data.payload?.campaign_id || data.campaign_id,
-          brand_id: data.payload?.brand_id || data.brand_id,
-          type_alias: data.payload?.type_alias || data.type_alias,
-          hire_id: data.payload?.hire_id || data.hire_id,
-        };
+  //       // Map WebSocket notification to match our format
+  //       const mappedNotif = {
+  //         id: data.id || Date.now(),
+  //         message: data.payload?.message || data.message || "",
+  //         campaign_id: data.payload?.campaign_id || data.campaign_id,
+  //         brand_id: data.payload?.brand_id || data.brand_id,
+  //         type_alias: data.payload?.type_alias || data.type_alias,
+  //         hire_id: data.payload?.hire_id || data.hire_id,
+  //       };
 
-        // Filter based on current dashboard before adding
-        const currentPathname = pathnameRef.current;
-        const isBrand = currentPathname.startsWith("/brand-dashboard");
-        const isInfluencer = currentPathname.startsWith("/influencer-dashboard");
-        const allowedTypes = isBrand 
-          ? BRAND_NOTIFICATIONS 
-          : isInfluencer 
-          ? INFLUENCER_NOTIFICATIONS 
-          : [];
+  //       // Filter based on current dashboard before adding
+  //       const currentPathname = pathnameRef.current;
+  //       const isBrand = currentPathname.startsWith("/brand-dashboard");
+  //       const isInfluencer = currentPathname.startsWith("/influencer-dashboard");
+  //       const allowedTypes = isBrand 
+  //         ? BRAND_NOTIFICATIONS 
+  //         : isInfluencer 
+  //         ? INFLUENCER_NOTIFICATIONS 
+  //         : [];
         
-        // Only add if it matches current dashboard type
-        if (mappedNotif.type_alias && allowedTypes.includes(mappedNotif.type_alias)) {
-          setNotifications((prev) => {
-            // Avoid duplicates
-            const exists = prev.some((n) => n.id === mappedNotif.id);
-            if (exists) return prev;
-            return [mappedNotif, ...prev];
-          });
-          setNotificationCount((prev) => prev + 1);
-        }
-      } catch (error) {
-        console.error("Error parsing WS message:", error);
-      }
-    };
+  //       // Only add if it matches current dashboard type
+  //       if (mappedNotif.type_alias && allowedTypes.includes(mappedNotif.type_alias)) {
+  //         setNotifications((prev) => {
+  //           // Avoid duplicates
+  //           const exists = prev.some((n) => n.id === mappedNotif.id);
+  //           if (exists) return prev;
+  //           return [mappedNotif, ...prev];
+  //         });
+  //         setNotificationCount((prev) => prev + 1);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error parsing WS message:", error);
+  //     }
+  //   };
 
-    ws.onclose = (event) => {
-      console.log("🔌 WebSocket Disconnected", event.reason);
-      setIsSocketConnected(false);
-      wsRef.current = null;
+  //   ws.onclose = (event) => {
+  //     console.log("🔌 WebSocket Disconnected", event.reason);
+  //     setIsSocketConnected(false);
+  //     wsRef.current = null;
 
-      // --- Reconnection Logic ---
-      // Try to reconnect after 3 seconds
-      reconnectTimeoutRef.current = setTimeout(() => {
-        console.log("⏳ Reconnecting...");
-        connectWebSocket();
-      }, 3000);
-    };
+  //     // --- Reconnection Logic ---
+  //     // Try to reconnect after 3 seconds
+  //     reconnectTimeoutRef.current = setTimeout(() => {
+  //       console.log("⏳ Reconnecting...");
+  //       connectWebSocket();
+  //     }, 3000);
+  //   };
 
-    ws.onerror = (error) => {
-      console.error("❌ WebSocket Error:", error);
-      ws.close(); // Close triggers onclose, which handles reconnection
-    };
+  //   ws.onerror = (error) => {
+  //     console.error("❌ WebSocket Error:", error);
+  //     ws.close(); // Close triggers onclose, which handles reconnection
+  //   };
 
-    wsRef.current = ws;
-  };
+  //   wsRef.current = ws;
+  // };
 
   // --- 2. Initialize Socket on Mount ---
-  useEffect(() => {
-    connectWebSocket();
+  // useEffect(() => {
+  //   connectWebSocket();
 
-    // Cleanup on unmount
-    return () => {
-      if (wsRef.current) {
-        wsRef.current.close();
-      }
-      if (reconnectTimeoutRef.current) {
-        clearTimeout(reconnectTimeoutRef.current);
-      }
-    };
-  }, []);
+  //   // Cleanup on unmount
+  //   return () => {
+  //     if (wsRef.current) {
+  //       wsRef.current.close();
+  //     }
+  //     if (reconnectTimeoutRef.current) {
+  //       clearTimeout(reconnectTimeoutRef.current);
+  //     }
+  //   };
+  // }, []);
 
   // --- Handlers ---
   const switchDashboard = () => {
@@ -415,11 +415,11 @@ const DashboardTopHeader = () => {
             {showNotifDropdown && (
               <>
                 <div
-                  className="fixed inset-0 z-40 "
+                  className="fixed inset-0 z-40"
                   onClick={() => setShowNotifDropdown(false)}
                 />
                 <div className="fixed inset-x-0 left-0 z-50 px-4 sm:px-0 pointer-events-none">
-                  <div className="pointer-events-auto
+                  <div className="pointer-events-auto overflow-y-auto
         sm:absolute
         sm:right-0 sm:mt-2
         w-full sm:w-80

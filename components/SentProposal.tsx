@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { apiClient } from "@/lib/apiClient";
 import { 
   Eye, 
@@ -11,6 +11,7 @@ import {
   XCircle, 
   Clock 
 } from "lucide-react";
+import Link from "next/link";
 
 // --- Types ---
 export interface Attachment {
@@ -59,6 +60,8 @@ const SentProposal = () => {
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedProposal, setSelectedProposal] = useState<Proposal | null>(null);
+  const [hiredInfluenceName,setHiredInfluenceName]=useState("");
+const influencerCache = useRef<Record<number, string>>({});
 
   useEffect(() => {
     const fetchProposals = async () => {
@@ -67,6 +70,8 @@ const SentProposal = () => {
           method: "GET",
           auth: true,
         });
+        console.log("proposal:",response);
+        
         setProposals(response || []);
       } catch (error) {
         console.error("Failed to fetch proposals", error);
@@ -76,6 +81,41 @@ const SentProposal = () => {
     };
     fetchProposals();
   }, []);
+
+  useEffect(() => {
+  const influencerId = selectedProposal?.hired_influencer_id;
+  if (!influencerId) return;
+
+  if (influencerCache.current[influencerId]) {
+    setHiredInfluenceName(influencerCache.current[influencerId]);
+    return;
+  }
+
+  const fetchInfluencer = async () => {
+    try {
+      const res = await apiClient(
+        `user_service/get_a_influencer/${influencerId}/`,
+        { method: "GET", auth: true }
+      );
+
+      const name =
+        res?.data?.influencer_profile?.display_name ||
+        res?.data?.user?.first_name ||
+        "";
+
+      // ✅ Save to cache
+      influencerCache.current[influencerId] = name;
+
+      setHiredInfluenceName(name);
+    } catch (error) {
+      console.error("Failed to fetch influencer", error);
+    }
+  };
+
+  fetchInfluencer();
+}, [selectedProposal?.hired_influencer_id]);
+
+
 
   const StatusBadge = ({ status }: { status: ProposalStatus }) => {
     const styles = {
@@ -135,6 +175,7 @@ const SentProposal = () => {
                 </h3>
                 <StatusBadge status={getProposalStatus(proposal)} />
               </div>
+              
               <div className="flex flex-wrap gap-4 text-sm text-gray-600">
                 <span className="flex items-center gap-1">
                   <DollarSign size={14} className="text-primary/40" />
@@ -178,6 +219,20 @@ const SentProposal = () => {
 
             {/* Modal Content */}
             <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)] space-y-6">
+                <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+  Influencer Name:
+  {hiredInfluenceName ? (
+    <Link
+      href={`/brand-dashboard/microinfluencerspage/${selectedProposal?.hired_influencer_id}`}
+      className="text-primary hover:underline hover:text-primary/80 transition"
+    >
+      {hiredInfluenceName}
+    </Link>
+  ) : (
+    <span className="text-gray-400 text-sm">Not Set</span>
+  )}
+</h2>
+
               <section>
                 <h4 className="text-xs font-bold text-primary uppercase tracking-widest mb-2">Message</h4>
                 <div className="text-gray-700 bg-gray-50 p-4 rounded-xl border border-gray-100 italic text-sm leading-relaxed">
