@@ -33,10 +33,16 @@ interface PublicCampaign {
   target_audience: string;
   keywords_and_hashtags: string;
   campaign_status: string;
-  campaign_owner: number;
+  campaign_owner?: number;
   campaign_poster: string | null;
   timestamp: string;
   attachments: Attachment[];
+  owner_id:number;
+   campaign:{
+    campaign_name:string;
+    campaign_owner:number;
+  }
+  
 }
 
 // Interface for "get_my_previous_where_i_was_hired" (Your specific jobs)
@@ -47,7 +53,7 @@ interface HiredCampaign {
   start_date: string;
   end_date: string;
   proposal_message: string;
-  campaign_deliverables: string; // JSON string
+  campaign_deliverables: string; 
   attachments: Attachment[];
   is_accepted_by_influencer: boolean;
   is_completed_marked_by_brand: boolean;
@@ -56,8 +62,33 @@ interface HiredCampaign {
   campaign_id:number;
   campaign:{
     campaign_name:string;
+    campaign_owner:number;
   }
+  timestamp:string|Date;
+  campaign_owner?:number;
   
+}
+
+function timeAgo(dateString: string | Date): string {
+  // Ensure we have a Date object
+  const past: Date = typeof dateString === "string" ? new Date(dateString) : dateString;
+  const now: Date = new Date();
+
+  if (isNaN(past.getTime())) return "Invalid date"; // type-safe check
+
+  const diffInMs: number = now.getTime() - past.getTime();
+
+  const diffInMinutes: number = Math.floor(diffInMs / (1000 * 60));
+  if (diffInMinutes < 1) return "Just now";
+  if (diffInMinutes < 60) return `${diffInMinutes} min${diffInMinutes > 1 ? "s" : ""} ago`;
+
+  const diffInHours: number = Math.floor(diffInMs / (1000 * 60 * 60));
+  if (diffInHours < 24) return `${diffInHours} hr${diffInHours > 1 ? "s" : ""} ago`;
+
+  const diffInDays: number = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+  if (diffInDays === 1) return "Yesterday";
+
+  return `${diffInDays} days ago`;
 }
 
 export default function CampaignsPage() {
@@ -88,6 +119,8 @@ export default function CampaignsPage() {
     id: number | null;
     action: "accept" | "reject" | null;
   }>({ id: null, action: null });
+    const [brandMap, setBrandMap] = useState<Record<number, any>>({});
+
 
   const router = useRouter();
   const ITEMS_PER_PAGE = 9;
@@ -114,6 +147,46 @@ export default function CampaignsPage() {
     };
     fetchHiredCampaigns();
   }, []);
+
+  // fetch brand information
+  useEffect(() => {
+    if (!hiredCampaigns.length) return;
+
+    const fetchBrands = async () => {
+      try {
+        // 1️⃣ unique owner ids
+        const ownerIds = [
+          ...new Set(hiredCampaigns.map((c) => c.owner_id).filter(Boolean)),
+        ];
+
+        // 2️⃣ fetch all brands in parallel
+        const responses = await Promise.all(
+          ownerIds.map((id) =>
+            apiClient(`user_service/get_a_influencer/${id}/`, {
+              method: "GET",
+              auth: true,
+            })
+          )
+        );
+
+        // 3️⃣ build lookup map
+        const map: Record<number, any> = {};
+        responses.forEach((res) => {
+          if (res?.data) {
+            map[res.data.user.id] = res.data;
+          }
+        });
+
+        console.log("All Brand", map);
+
+        setBrandMap(map);
+      } catch (error) {
+        console.error("❌ Brand fetch error:", error);
+      }
+    };
+
+    fetchBrands();
+  }, [hiredCampaigns]);
 
   // --- Fetch Public Campaigns ---
   useEffect(() => {
@@ -200,7 +273,9 @@ export default function CampaignsPage() {
     if (selectedCampaign) {
       // Logic depends on which ID is the owner. 
       // HiredCampaign has `owner_id`, PublicCampaign has `campaign_owner`
-      const ownerId = 'owner_id' in selectedCampaign ? selectedCampaign.owner_id : selectedCampaign.campaign_owner;
+      const ownerId = 'owner_id' in selectedCampaign 
+        ? selectedCampaign.owner_id 
+        : (selectedCampaign as PublicCampaign)?.campaign_owner;
       router.push(`/influencer-dashboard/messages?id=${ownerId}`);
     }
   };
@@ -818,6 +893,31 @@ export default function CampaignsPage() {
               ) : (
                 // HIRED CAMPAIGN DETAILS
                 <>
+                <p className="text-sm text-gray-600 my-1">
+                    Brand:{" "}
+                    {brandMap[selectedCampaign.owner_id] ? (
+                      <a
+                        href={`influencer-dashboard/brand/${selectedCampaign.owner_id}`}
+                        className="text-primary font-medium hover:underline"
+                      >
+                        {brandMap[selectedCampaign.owner_id]?.brand_profile
+                          ?.business_name ||
+                          brandMap[selectedCampaign.owner_id]?.user?.first_name}
+                      </a>
+                    ) : (
+                      <span className="text-gray-400">Loading...</span>
+                    )}
+                  </p>
+                <div className="flex flex-wrap items-baseline gap-1 mb-4">
+    <span className="text-sm font-semibold text-primary ">
+      Received:
+    </span>
+    <span className="text-sm text-gray-600">
+      {selectedCampaign.timestamp
+        ? timeAgo(selectedCampaign.timestamp)
+        : "N/A"}
+    </span>
+  </div>
                   <div className="flex items-start gap-3 p-4 rounded-xl border border-primary mb-4">
                     <Calendar className="w-5 h-5 text-primary mt-0.5" />
                     <div>

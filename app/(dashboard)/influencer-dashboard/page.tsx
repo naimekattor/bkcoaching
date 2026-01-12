@@ -49,6 +49,7 @@ interface Campaign {
     campaign_name: string;
     id: number;
   };
+  timestamp:string | Date;
 }
 
 interface InfluencerProfileInfo {
@@ -83,6 +84,27 @@ const getSafeImageSrc = (src?: string) => {
   if (src.startsWith("/")) return src;
   return `/${src}`;
 };
+function timeAgo(dateString: string | Date): string {
+  // Ensure we have a Date object
+  const past: Date = typeof dateString === "string" ? new Date(dateString) : dateString;
+  const now: Date = new Date();
+
+  if (isNaN(past.getTime())) return "Invalid date"; // type-safe check
+
+  const diffInMs: number = now.getTime() - past.getTime();
+
+  const diffInMinutes: number = Math.floor(diffInMs / (1000 * 60));
+  if (diffInMinutes < 1) return "Just now";
+  if (diffInMinutes < 60) return `${diffInMinutes} min${diffInMinutes > 1 ? "s" : ""} ago`;
+
+  const diffInHours: number = Math.floor(diffInMs / (1000 * 60 * 60));
+  if (diffInHours < 24) return `${diffInHours} hr${diffInHours > 1 ? "s" : ""} ago`;
+
+  const diffInDays: number = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+  if (diffInDays === 1) return "Yesterday";
+
+  return `${diffInDays} days ago`;
+}
 
 function InfluencerDashboardContent() {
   const [influencerProfile, setInfluencerProfile] =
@@ -749,7 +771,20 @@ function InfluencerDashboardContent() {
                       <span className="text-gray-400">Loading...</span>
                     )}
                   </p>
+                  <div className="flex flex-wrap items-baseline gap-1">
+    <span className="text-sm font-semibold text-primary ">
+      Received:
+    </span>
+    <span className="text-sm text-gray-600">
+      {selectedCampaign.timestamp
+        ? timeAgo(selectedCampaign.timestamp)
+        : "N/A"}
+    </span>
+  </div>
+                  
                 </div>
+                
+                
               </div>
               <button
                 onClick={() => setSelectedCampaign(null)}
