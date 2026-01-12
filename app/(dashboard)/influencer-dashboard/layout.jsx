@@ -7,11 +7,15 @@ import { influencerLinks } from "../../../config/sidebarLinks";
 import { usePathname } from "next/navigation";
 import DashboardTopHeader from "../../../components/dashboard/DashboardTopHeader";
 import { PanelRightClose } from "lucide-react";
+import { apiClient } from "@/lib/apiClient";
+import { useChatStore } from "@/stores/chatStore";
 
 export default function BrandDashboardLayout({ children }) {
   const [showSideBar, setShowSideBar] = useState(false);
   const sideBarRef = useRef(null);
   const path = usePathname();
+  const setRooms = useChatStore((state) => state.setRooms);
+
   useEffect(() => {
     const clickOutSideSideBar = (event) => {
       if (sideBarRef.current && !sideBarRef.current.contains(event.target)) {
@@ -29,6 +33,24 @@ export default function BrandDashboardLayout({ children }) {
       document.removeEventListener("mousedown", clickOutSideSideBar);
     };
   }, [showSideBar]);
+
+
+  useEffect(() => {
+  const fetchAllRooms = async () => {
+    try {
+      const res = await apiClient("chat_service/get_my_rooms/", {
+        method: "GET",
+        auth: true,
+      });
+
+      setRooms(res.data || []);
+    } catch (error) {
+      console.error("❌ API Error:", error);
+    }
+  };
+
+  fetchAllRooms();
+}, []);
 
   return (
     <div className="flex min-h-screen bg-[#FFFFFF]">

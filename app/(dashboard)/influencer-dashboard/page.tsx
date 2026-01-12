@@ -95,6 +95,7 @@ function InfluencerDashboardContent() {
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(
     null
   );
+  const [brandMap, setBrandMap] = useState<Record<number, any>>({});
 
   const user = useAuthStore((state) => state.user);
   const setUser = useAuthStore((state) => state.setUser);
@@ -107,18 +108,18 @@ function InfluencerDashboardContent() {
   const noti = useNotificationStore((s) => s.notifications);
   console.log(unread, "message notification", noti);
   const proposalRef = useRef<HTMLDivElement | null>(null);
-const searchParams = useSearchParams();
+  const searchParams = useSearchParams();
   // const store = useAuthStore.getState();
-useEffect(() => {
-  const section = searchParams.get("scrollTo"); 
+  useEffect(() => {
+    const section = searchParams.get("scrollTo");
 
-  if (section === "proposal" && proposalRef.current) {
-    proposalRef.current.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  }
-}, [searchParams]);
+    if (section === "proposal" && proposalRef.current) {
+      proposalRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }, [searchParams]);
   // 1. Fetch User Info
   useEffect(() => {
     const fetchUser = async () => {
@@ -164,6 +165,8 @@ useEffect(() => {
           }
         );
         if (res.data) {
+          console.log("All proposals",res.data);
+
           setCampaigns(res.data);
         }
       } catch (error) {
@@ -174,6 +177,46 @@ useEffect(() => {
     };
     fetchCampaigns();
   }, []);
+
+  // fetch brand information
+  useEffect(() => {
+    if (!campaigns.length) return;
+
+    const fetchBrands = async () => {
+      try {
+        // 1️⃣ unique owner ids
+        const ownerIds = [
+          ...new Set(campaigns.map((c) => c.owner_id).filter(Boolean)),
+        ];
+
+        // 2️⃣ fetch all brands in parallel
+        const responses = await Promise.all(
+          ownerIds.map((id) =>
+            apiClient(`user_service/get_a_influencer/${id}/`, {
+              method: "GET",
+              auth: true,
+            })
+          )
+        );
+
+        // 3️⃣ build lookup map
+        const map: Record<number, any> = {};
+        responses.forEach((res) => {
+          if (res?.data) {
+            map[res.data.user.id] = res.data;
+          }
+        });
+
+        console.log("All Brand", map);
+
+        setBrandMap(map);
+      } catch (error) {
+        console.error("❌ Brand fetch error:", error);
+      }
+    };
+
+    fetchBrands();
+  }, [campaigns]);
 
   // --- Helper Functions ---
   const formatTime = (timestamp: string) => {
@@ -238,8 +281,7 @@ useEffect(() => {
       } finally {
         setCampaignActionLoading({ id: null, action: null });
       }
-    } 
-    else if (action === "reject") {
+    } else if (action === "reject") {
       Swal.fire({
         title: "Reject Campaign?",
         text: "Are you sure you want to reject this campaign? This action cannot be undone.",
@@ -278,7 +320,7 @@ useEffect(() => {
                 confirmButtonText: "OK",
               });
 
-              setSelectedCampaign(null); 
+              setSelectedCampaign(null);
             } else {
               Swal.fire({
                 title: "Error",
@@ -428,7 +470,11 @@ useEffect(() => {
         <div className="pt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
             {/* --- My Campaigns Section --- */}
-            <div ref={proposalRef} id="proposal" className=" border-[#E5E7EB] shadow border-[1px] rounded p-6 h-[420px] flex flex-col">
+            <div
+              ref={proposalRef}
+              id="proposal"
+              className=" border-[#E5E7EB] shadow border-[1px] rounded p-6 h-[420px] flex flex-col"
+            >
               <div className="flex items-center space-x-2 mb-4 flex-shrink-0">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -482,6 +528,22 @@ useEffect(() => {
                             #{campaign.campaign_id}
                           </span>
                         </div>
+                        <p className="text-sm text-gray-600 mt-1">
+                          Brand:{" "}
+                          {brandMap[campaign.owner_id] ? (
+                            <a
+                              href={`/influencer-dashboard/brand/${campaign.owner_id}`}
+                              className="text-primary font-medium hover:underline"
+                            >
+                              {brandMap[campaign.owner_id]?.brand_profile
+                                ?.business_name ||
+                                brandMap[campaign.owner_id]?.user?.first_name}
+                            </a>
+                          ) : (
+                            <span className="text-gray-400">Loading...</span>
+                          )}
+                        </p>
+
                         <p className="text-sm text-gray-500 line-clamp-1">
                           {campaign.proposal_message || "No Message provided"}
                         </p>
@@ -672,6 +734,21 @@ useEffect(() => {
                       {selectedCampaign?.campaign?.campaign_name}
                     </span>
                   </div>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Brand:{" "}
+                    {brandMap[selectedCampaign.owner_id] ? (
+                      <a
+                        href={`influencer-dashboard/brand/${selectedCampaign.owner_id}`}
+                        className="text-primary font-medium hover:underline"
+                      >
+                        {brandMap[selectedCampaign.owner_id]?.brand_profile
+                          ?.business_name ||
+                          brandMap[selectedCampaign.owner_id]?.user?.first_name}
+                      </a>
+                    ) : (
+                      <span className="text-gray-400">Loading...</span>
+                    )}
+                  </p>
                 </div>
               </div>
               <button
@@ -825,10 +902,7 @@ useEffect(() => {
                         Rejecting…
                       </>
                     ) : (
-                      <>
-                        
-                        Reject
-                      </>
+                      <>Reject</>
                     )}
                   </button>
                   <button
@@ -846,10 +920,7 @@ useEffect(() => {
                         Accepting…
                       </>
                     ) : (
-                      <>
-                       
-                        Accept Campaign
-                      </>
+                      <>Accept Campaign</>
                     )}
                   </button>
                 </>
@@ -864,7 +935,13 @@ useEffect(() => {
 
 export default function Page() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center p-10"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>}>
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center p-10">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      }
+    >
       <InfluencerDashboardContent />
     </Suspense>
   );

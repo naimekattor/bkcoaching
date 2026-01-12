@@ -52,6 +52,7 @@ export const influencerLinks = [
     name: "Messages",
     icon: <FiMessageSquare size={20} />,
     path: "/influencer-dashboard/messages",
+    showUnread: true,
   },
   {
     name: "Subscription",

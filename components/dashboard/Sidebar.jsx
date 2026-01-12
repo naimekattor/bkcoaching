@@ -5,11 +5,16 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { LogOut } from "lucide-react";
+import { useChatStore } from "@/stores/chatStore";
 
 export function Sidebar({ links = [], setShowSideBar }) {
   const pathname = usePathname() || "";
   const router = useRouter();
   const { user, logout } = useAuthStore();
+    const unreadCount = useChatStore((state) => state.unreadCount);
+    console.log("unreadCount from context",unreadCount);
+    
+
   const handleLogOut = () => {
     logout();
     router.push("/");
@@ -36,25 +41,36 @@ export function Sidebar({ links = [], setShowSideBar }) {
       {/* Navigation Menu */}
       <nav className="flex-1 p-4 overflow-y-auto">
         <ul className="space-y-2">
-          {links.map((item) => {
-            const isActive = pathname === item.path;
-            const linkClass = `w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${
-              isActive
-                ? "bg-secondary text-slate-800 font-medium"
-                : "text-slate-300 hover:bg-primary hover:text-white hover:text-white"
-            }`;
-            return (
-              <li
-                key={item.name}
-                onClick={() => setShowSideBar?.(false)}
-              >
-                <Link href={item.path} className={linkClass}>
-                  <span className="text-lg">{item.icon}</span>
-                  <span>{item.name}</span>
-                </Link>
-              </li>
-            );
-          })}
+         {links.map((item) => {
+  const isActive = pathname === item.path;
+
+  return (
+    <li key={item.name} onClick={() => setShowSideBar?.(false)}>
+      <Link
+        href={item.path}
+        className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${
+          isActive
+            ? "bg-secondary text-slate-800 font-medium"
+            : "text-slate-300 hover:bg-primary hover:text-white"
+        }`}
+      >
+        {/* Left side */}
+        <div className="flex items-center gap-3">
+          <span className="text-lg">{item.icon}</span>
+          <span>{item.name}</span>
+        </div>
+
+        {/* 🔴 Unread badge */}
+        {item.showUnread && unreadCount > 0 && (
+          <span className="min-w-[22px] h-[22px] flex items-center justify-center rounded-full bg-red-500 text-white text-xs font-semibold">
+            {unreadCount}
+          </span>
+        )}
+      </Link>
+    </li>
+  );
+})}
+
         </ul>
       </nav>
 

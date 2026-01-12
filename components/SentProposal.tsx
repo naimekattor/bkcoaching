@@ -1,25 +1,33 @@
-import React, { useEffect, useRef, useState } from "react";
+"use client";
+
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { apiClient } from "@/lib/apiClient";
-import { 
-  Eye, 
-  Calendar, 
-  DollarSign, 
-  FileText, 
-  Paperclip, 
-  X, 
-  CheckCircle2, 
-  XCircle, 
-  Clock 
+import {
+  Eye,
+  Calendar,
+  DollarSign,
+  FileText,
+  Paperclip,
+  X,
+  CheckCircle2,
+  XCircle,
+  Clock,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
-// --- Types ---
-export interface Attachment {
+/* -------------------- TYPES -------------------- */
+interface Attachment {
   id: number;
   link: string;
 }
 
-export interface Proposal {
+interface Campaign {
+  id: number;
+  campaign_name: string;
+}
+
+interface Proposal {
   id: number;
   owner_id: number;
   campaign_id: number;
@@ -27,54 +35,55 @@ export interface Proposal {
   start_date: string;
   end_date: string;
   proposal_message: string;
-  campaign_deliverables: string; 
+  campaign_deliverables: string;
   attachments: Attachment[];
   is_accepted_by_influencer: boolean;
   is_rejected_by_influencer: boolean;
   is_completed_marked_by_brand: boolean;
   budget: number;
   rating: number;
-  campaign: {
-    campaign_name: string;
-  };
+  campaign: Campaign;
 }
 
-export type ProposalStatus = "Accepted" | "Rejected" | "Pending";
+type ProposalStatus = "Accepted" | "Rejected" | "Pending";
 
-// --- Helpers ---
-export const getProposalStatus = (proposal: Proposal): ProposalStatus => {
-  if (proposal.is_accepted_by_influencer) return "Accepted";
-  if (proposal.is_rejected_by_influencer) return "Rejected";
+/* -------------------- HELPERS -------------------- */
+const getProposalStatus = (p: Proposal): ProposalStatus => {
+  if (p.is_accepted_by_influencer) return "Accepted";
+  if (p.is_rejected_by_influencer) return "Rejected";
   return "Pending";
 };
 
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString("en-US", {
+const formatDate = (date: string) =>
+  new Date(date).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
   });
-};
 
+/* -------------------- COMPONENT -------------------- */
 const SentProposal = () => {
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedProposal, setSelectedProposal] = useState<Proposal | null>(null);
-  const [hiredInfluenceName,setHiredInfluenceName]=useState("");
-const influencerCache = useRef<Record<number, string>>({});
+  const [selectedProposal, setSelectedProposal] = useState<Proposal | null>(
+    null
+  );
+  const [hiredInfluenceName, setHiredInfluenceName] = useState("");
 
+  // ✅ Cache influencer names (prevents repeated API calls)
+  const influencerCache = useRef<Record<number, string>>({});
+
+  /* -------------------- FETCH PROPOSALS -------------------- */
   useEffect(() => {
     const fetchProposals = async () => {
       try {
-        const response = await apiClient("campaign_service/proposals/", {
+        const res = await apiClient("campaign_service/proposals/", {
           method: "GET",
           auth: true,
         });
-        console.log("proposal:",response);
-        
-        setProposals(response || []);
-      } catch (error) {
-        console.error("Failed to fetch proposals", error);
+        setProposals(res || []);
+      } catch (err) {
+        console.error("Failed to fetch proposals", err);
       } finally {
         setLoading(false);
       }
@@ -82,239 +91,273 @@ const influencerCache = useRef<Record<number, string>>({});
     fetchProposals();
   }, []);
 
+  /* -------------------- GROUP BY CAMPAIGN -------------------- */
+  const groupedByCampaign = useMemo(() => {
+    const map: Record<number, { campaign: Campaign; proposals: Proposal[] }> =
+      {};
+
+    proposals.forEach((p) => {
+      if (!map[p.campaign_id]) {
+        map[p.campaign_id] = {
+          campaign: p.campaign,
+          proposals: [],
+        };
+      }
+      map[p.campaign_id].proposals.push(p);
+    });
+
+    return Object.values(map);
+  }, [proposals]);
+
+  /* -------------------- FETCH INFLUENCER (CACHED) -------------------- */
   useEffect(() => {
-  const influencerId = selectedProposal?.hired_influencer_id;
-  if (!influencerId) return;
+    const influencerId = selectedProposal?.hired_influencer_id;
+    if (!influencerId) return;
 
-  if (influencerCache.current[influencerId]) {
-    setHiredInfluenceName(influencerCache.current[influencerId]);
-    return;
-  }
-
-  const fetchInfluencer = async () => {
-    try {
-      const res = await apiClient(
-        `user_service/get_a_influencer/${influencerId}/`,
-        { method: "GET", auth: true }
-      );
-
-      const name =
-        res?.data?.influencer_profile?.display_name ||
-        res?.data?.user?.first_name ||
-        "";
-
-      // ✅ Save to cache
-      influencerCache.current[influencerId] = name;
-
-      setHiredInfluenceName(name);
-    } catch (error) {
-      console.error("Failed to fetch influencer", error);
+    if (influencerCache.current[influencerId]) {
+      setHiredInfluenceName(influencerCache.current[influencerId]);
+      return;
     }
-  };
 
-  fetchInfluencer();
-}, [selectedProposal?.hired_influencer_id]);
+    const fetchInfluencer = async () => {
+      try {
+        const res = await apiClient(
+          `user_service/get_a_influencer/${influencerId}/`,
+          { method: "GET", auth: true }
+        );
 
+        const name =
+          res?.data?.influencer_profile?.display_name ||
+          res?.data?.user?.first_name ||
+          "";
 
+        influencerCache.current[influencerId] = name;
+        setHiredInfluenceName(name);
+      } catch (err) {
+        console.error("Influencer fetch failed", err);
+      }
+    };
 
+    fetchInfluencer();
+  }, [selectedProposal?.hired_influencer_id]);
+
+  /* -------------------- STATUS BADGE -------------------- */
   const StatusBadge = ({ status }: { status: ProposalStatus }) => {
     const styles = {
       Accepted: "bg-emerald-50 text-emerald-700 border-emerald-200",
       Rejected: "bg-rose-50 text-rose-700 border-rose-200",
       Pending: "bg-amber-50 text-amber-700 border-amber-200",
     };
-
     const icons = {
-      Accepted: <CheckCircle2 size={14} className="mr-1" />,
-      Rejected: <XCircle size={14} className="mr-1" />,
-      Pending: <Clock size={14} className="mr-1" />,
+      Accepted: <CheckCircle2 size={14} />,
+      Rejected: <XCircle size={14} />,
+      Pending: <Clock size={14} />,
     };
 
     return (
-      <span className={`flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${styles[status]}`}>
-        {icons[status]}
-        {status}
+      <span
+        className={`flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium border ${styles[status]}`}
+      >
+        {icons[status]} {status}
       </span>
     );
   };
 
-  if (loading) {
+  /* -------------------- LOADING / EMPTY -------------------- */
+  if (loading)
     return (
-      <div className="flex items-center justify-center h-64 bg-white rounded-xl shadow-sm border">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className="flex justify-center p-10">
+        <div className="animate-spin h-8 w-8 border-b-2 border-primary rounded-full" />
       </div>
     );
-  }
 
-  if (proposals.length === 0) {
+  if (!proposals.length)
     return (
-      <div className="flex flex-col items-center justify-center p-12 bg-white rounded-xl shadow-sm border border-dashed border-gray-300">
-        <FileText className="text-gray-400 mb-3" size={40} />
-        <p className="text-gray-500 font-medium">No proposals sent yet.</p>
+      <div className="p-12 text-center border rounded-xl">
+        <FileText size={36} className="mx-auto text-gray-400 mb-3" />
+        <p className="text-gray-500">No proposals sent yet</p>
       </div>
     );
-  }
 
+  /* -------------------- RENDER -------------------- */
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-      <div className="p-6 border-b border-gray-100">
+    <div className="bg-white rounded-xl border shadow-sm">
+      <div className="p-6 border-b">
         <h2 className="text-xl font-bold text-primary">Your Sent Proposals</h2>
-        <p className="text-sm text-gray-500">Track the status of your campaign applications</p>
+        <p className="text-sm text-gray-500">Proposals grouped by campaign</p>
       </div>
 
-      <div className="max-h-[500px] overflow-y-auto px-2 py-6 space-y-4">
-        {proposals.map((proposal) => (
+      <div className="max-h-[520px] overflow-y-auto p-4 space-y-6">
+        {groupedByCampaign.map((group) => (
           <div
-            key={proposal.id}
-            className="group flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 border border-gray-100 rounded-xl hover:border-primary/30 hover:shadow-md transition-all duration-200"
+            key={group.campaign.id}
+            className="border rounded-2xl p-4 bg-gray-50"
           >
-            <div className="space-y-1">
-              <div className="flex items-center gap-3">
-                <h3 className="font-semibold text-gray-900 group-hover:text-primary transition-colors">
-                  {proposal?.campaign?.campaign_name || `Campaign #${proposal.campaign_id}`}
-                </h3>
-                <StatusBadge status={getProposalStatus(proposal)} />
-              </div>
-              
-              <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                <span className="flex items-center gap-1">
-                  <DollarSign size={14} className="text-primary/40" />
-                  <span className="font-medium text-gray-900">${proposal.budget}</span>
-                </span>
-                <span className="flex items-center gap-1">
-                  <Calendar size={14} className="text-gray-400" />
-                  {formatDate(proposal.start_date)}
-                </span>
-              </div>
-            </div>
+            {/* Campaign Header */}
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">
+              {group.campaign.campaign_name}
+            </h3>
 
-            <button
-              onClick={() => setSelectedProposal(proposal)}
-              className="mt-4 sm:mt-0 flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary bg-primary/10 rounded-lg hover:bg-primary hover:text-white transition-all duration-200"
-            >
-              <Eye size={16} />
-              View Details
-            </button>
+            {/* Proposals */}
+            <div className="space-y-3">
+              {group.proposals.map((p) => (
+                <div
+                  key={p.id}
+                  className="flex justify-between items-center bg-white p-4 border rounded-xl hover:shadow-md transition"
+                >
+                  <div>
+                    <div className="flex items-center gap-3">
+                      <h4 className="font-medium">Proposal #{p.id}</h4>
+                      <StatusBadge status={getProposalStatus(p)} />
+                    </div>
+
+                    <div className="flex gap-4 text-sm text-gray-600 mt-1">
+                      <span className="flex items-center gap-1">
+                        <DollarSign size={14} /> ${p.budget}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Calendar size={14} /> {formatDate(p.start_date)}
+                      </span>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => setSelectedProposal(p)}
+                    className="px-4 py-2 bg-primary/10 text-primary rounded-lg hover:bg-primary hover:text-white transition"
+                  >
+                    <Eye size={16} />
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
         ))}
       </div>
 
-      {/* --- Detail Modal --- */}
+      {/* -------------------- MODAL -------------------- */}
       {selectedProposal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200">
-            {/* Modal Header */}
-            <div className="flex justify-between items-center p-6 border-b">
-              <div>
-                <h3 className="text-xl font-bold text-primary">Proposal Details</h3>
-                <p className="text-sm text-gray-500 font-medium">Proposal ID: #{selectedProposal.id}</p>
-              </div>
-              <button 
-                onClick={() => setSelectedProposal(null)}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400 hover:text-gray-600"
-              >
-                <X size={20} />
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-xl w-full overflow-hidden">
+            <div className="flex justify-between items-center p-4 border-b">
+              <h3 className="font-bold text-lg">Proposal Details</h3>
+              <button onClick={() => setSelectedProposal(null)}>
+                <X />
               </button>
             </div>
 
-            {/* Modal Content */}
-            <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)] space-y-6">
-                <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-  Influencer Name:
-  {hiredInfluenceName ? (
-    <Link
-      href={`/brand-dashboard/microinfluencerspage/${selectedProposal?.hired_influencer_id}`}
-      className="text-primary hover:underline hover:text-primary/80 transition"
-    >
-      {hiredInfluenceName}
-    </Link>
-  ) : (
-    <span className="text-gray-400 text-sm">Not Set</span>
-  )}
-</h2>
+            <div className="p-4 space-y-4">
+              <p>
+                <strong>Influencer:</strong>{" "}
+                {hiredInfluenceName ? (
+                  <Link
+                    href={`/brand-dashboard/microinfluencerspage/${selectedProposal.hired_influencer_id}`}
+                    className="text-primary underline"
+                  >
+                    {hiredInfluenceName}
+                  </Link>
+                ) : (
+                  "Not Set"
+                )}
+              </p>
 
-              <section>
-                <h4 className="text-xs font-bold text-primary uppercase tracking-widest mb-2">Message</h4>
-                <div className="text-gray-700 bg-gray-50 p-4 rounded-xl border border-gray-100 italic text-sm leading-relaxed">
-                  "{selectedProposal.proposal_message}"
+              <div>
+                <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-2">
+                  Proposal Message
+                </h4>
+                <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-gray-700 text-sm leading-relaxed whitespace-pre-wrap">
+                  {selectedProposal.proposal_message || "No Message"}
                 </div>
-              </section>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <section>
-                  <h4 className="text-xs font-bold text-primary uppercase tracking-widest mb-2">Timeline</h4>
-                  <div className="flex items-center gap-3 text-sm text-gray-700">
-                    <div className="p-2 bg-primary/10 rounded-lg">
-                        <Calendar size={18} className="text-primary" />
-                    </div>
-                    <span>{formatDate(selectedProposal.start_date)} — {formatDate(selectedProposal.end_date)}</span>
-                  </div>
-                </section>
-
-                <section>
-                  <h4 className="text-xs font-bold text-primary uppercase tracking-widest mb-2">Budget</h4>
-                  <div className="flex items-center gap-3 text-sm text-gray-700">
-                    <div className="p-2 bg-primary/10 rounded-lg">
-                        <DollarSign size={18} className="text-primary" />
-                    </div>
-                    <span className="font-bold text-lg text-gray-900">${selectedProposal.budget}</span>
-                  </div>
-                </section>
               </div>
-
-              <section>
-                <h4 className="text-xs font-bold text-primary uppercase tracking-widest mb-2">Deliverables</h4>
-                <div className="flex flex-wrap gap-2">
-                  {(() => {
+              <div className="font-semibold text-primary text-lg">
+                <h4>Budget:${selectedProposal.budget}</h4>
+              </div>
+              <div>
+                <h4 className="font-semibold text-primary text-lg mb-2">
+                  Content Deliverables
+                </h4>
+                {selectedProposal.campaign_deliverables &&
+                  (() => {
                     try {
-                      const deliverables = JSON.parse(selectedProposal.campaign_deliverables);
-                      return Array.isArray(deliverables) ? (
-                        deliverables.map((item: string, idx: number) => (
-                          <span key={idx} className="bg-primary/5 text-primary px-3 py-1.5 rounded-lg text-xs font-semibold border border-primary/10">
-                            {item}
-                          </span>
-                        ))
-                      ) : (
-                        <p className="text-sm text-gray-600">{selectedProposal.campaign_deliverables}</p>
+                      const deliverablesArray =
+                        typeof selectedProposal.campaign_deliverables ===
+                        "string"
+                          ? JSON.parse(selectedProposal.campaign_deliverables)
+                          : selectedProposal.campaign_deliverables;
+
+                      // 2. Render the array
+                      if (Array.isArray(deliverablesArray)) {
+                        return (
+                          <div className="flex flex-wrap gap-2">
+                            {deliverablesArray.map(
+                              (item: string, index: number) => (
+                                <span
+                                  key={index}
+                                  className="bg-blue-50 text-primary px-3 py-1 rounded-full text-xs font-medium border border-blue-100 capitalize"
+                                >
+                                  {/* 3. Format "socialPost" to "Social Post" using Regex */}
+                                  {item.replace(/([A-Z])/g, " $1").trim()}
+                                </span>
+                              )
+                            )}
+                          </div>
+                        );
+                      }
+                      return null;
+                    } catch (e) {
+                      console.error("Error parsing deliverables", e);
+                      return (
+                        <p className="text-sm text-gray-500">
+                          No deliverables specified
+                        </p>
                       );
-                    } catch {
-                      return <p className="text-sm text-gray-600">{selectedProposal.campaign_deliverables}</p>;
                     }
                   })()}
-                </div>
-              </section>
-
-              {selectedProposal.attachments?.length > 0 && (
-                <section>
-                  <h4 className="text-xs font-bold text-primary uppercase tracking-widest mb-2">Attachments</h4>
-                  <div className="grid grid-cols-1 gap-2">
-                    {selectedProposal.attachments.map((file) => (
-                      <a
-                        key={file.id}
-                        href={file.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-between p-3 border border-gray-100 rounded-xl text-sm text-primary hover:bg-primary/5 hover:border-primary/20 transition-all group"
-                      >
-                        <div className="flex items-center gap-2">
-                            <Paperclip size={16} className="text-primary" />
-                            <span className="font-medium">View Attachment #{file.id}</span>
-                        </div>
-                        <Eye size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </a>
-                    ))}
+              </div>
+              {selectedProposal.attachments &&
+                selectedProposal.attachments.length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-2 flex items-center gap-2">
+                      <Paperclip className="w-4 h-4" /> Attachments
+                    </h4>
+                    <div className="grid grid-cols-2 gap-3">
+                      {selectedProposal.attachments.map((att) => (
+                        <Link
+                          href={att.link}
+                          key={att.id}
+                          target="_blank"
+                          className="group relative block overflow-hidden rounded-lg border border-gray-200 hover:border-primary transition-colors"
+                        >
+                          <div className="aspect-video bg-gray-100 relative">
+                            {/* Simple check for image extension for preview, otherwise generic icon */}
+                            {/\.(jpg|jpeg|png|gif|webp)$/i.test(att.link) ? (
+                              <Image
+                                src={att.link}
+                                alt="Attachment"
+                                fill
+                                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                              />
+                            ) : (
+                              <div className="flex items-center justify-center h-full text-gray-400">
+                                <Paperclip className="w-8 h-8" />
+                              </div>
+                            )}
+                          </div>
+                          <div className="p-2 bg-white text-xs text-center text-gray-600 truncate px-2">
+                            View Attachment {att.id}
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
                   </div>
-                </section>
-              )}
+                )}
             </div>
 
-            {/* Modal Footer */}
-            <div className="p-4 border-t bg-gray-50 flex justify-end">
+            <div className="p-4 border-t text-right">
               <button
                 onClick={() => setSelectedProposal(null)}
-                className="px-8 py-2.5 bg-primary text-white rounded-xl font-semibold hover:opacity-90 transition-all shadow-md shadow-primary/20 active:scale-95"
+                className="px-6 py-2 bg-primary text-white rounded-lg"
               >
-                Done
+                Close
               </button>
             </div>
           </div>

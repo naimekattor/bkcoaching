@@ -1,4 +1,4 @@
-import  { ChangeEvent, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Target,
@@ -55,7 +55,7 @@ interface CampaignFormData {
   campaign_description: string;
   content_deliverables: string[];
   campaign_timeline: string;
-  target_audience: string[]; 
+  target_audience: string[];
   keywords: string;
   content_approval_required: boolean;
   auto_match_micro_influencers: boolean;
@@ -92,7 +92,7 @@ interface DeliverableType {
   icon: React.ElementType;
 }
 
-const deliverableTypes:DeliverableType[] = [
+const deliverableTypes: DeliverableType[] = [
   { id: "instagramStory", label: "Instagram Story", icon: Image },
   { id: "instagramReel", label: "Instagram Reel", icon: Video },
   { id: "tiktokVideo", label: "TikTok Video", icon: Video },
@@ -116,8 +116,11 @@ const timelineOptions = [
   { value: "flexible", label: "Flexible timing" },
 ];
 
-export default function CreateCampaignModal({ isOpen, onClose, onSuccess }:CreateCampaignModalProps) {
-
+export default function CreateCampaignModal({
+  isOpen,
+  onClose,
+  onSuccess,
+}: CreateCampaignModalProps) {
   const [formData, setFormData] = useState<CampaignFormData>({
     campaign_name: "",
     campaign_objective: "",
@@ -164,14 +167,12 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }:Creat
   const [uploadingImage, setUploadingImage] = useState(false);
 
   // Generic field updater for top-level fields
-  const handleInputChange = (field:keyof CampaignFormData, value: unknown) => {
+  const handleInputChange = (field: keyof CampaignFormData, value: unknown) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  
-
   // PaymentPreferences toggle (array)
-  const togglePaymentPreference = (pref:string) => {
+  const togglePaymentPreference = (pref: string) => {
     setFormData((prev) => {
       const current = prev.payment_preference || [];
       return current.includes(pref)
@@ -180,7 +181,7 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }:Creat
     });
   };
 
-  const handleDeliverableChange = (id:string, checked:boolean) => {
+  const handleDeliverableChange = (id: string, checked: boolean) => {
     if (id === "Repost Only" && checked) {
       setFormData((prev) => ({
         ...prev,
@@ -217,14 +218,8 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }:Creat
     }
   };
 
-  
-
- 
-
- 
-
   // Poster upload validation
-  const validateFile = (file:File) => {
+  const validateFile = (file: File) => {
     const maxSize = 5 * 1024 * 1024; // 5MB
     const validTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 
@@ -243,7 +238,7 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }:Creat
   };
 
   // Handle poster upload
-  const handleImageChange = async (e:ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -333,21 +328,27 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }:Creat
     }));
     setUploadError("");
   };
+const getMissingFields = () => {
+  const missing: string[] = [];
+
+  if (!formData.campaign_name) missing.push("Campaign Name");
+  if (!formData.campaign_objective) missing.push("Campaign Objective");
+  if (!formData.content_deliverables.length)
+    missing.push("Content Deliverables");
+  if (!formData.campaign_timeline) missing.push("Campaign Timeline");
+  if (!(formData.payment_preference || []).length)
+    missing.push("Payment Method");
+
+  return missing;
+};
 
   const handleSaveDraft = async () => {
-    const isValid =
-      formData.campaign_name &&
-      formData.campaign_objective &&
-      formData.content_deliverables.length > 0 &&
-      formData.campaign_timeline &&
-      (formData.payment_preference || []).length > 0;
+    const missingFields = getMissingFields();
 
-    if (!isValid) {
-      alert(
-        "Please fill required fields: name, campaign_objective, content_deliverables, campaign_timeline, payment method."
-      );
-      return;
-    }
+  if (missingFields.length > 0) {
+    toast(`Please fill: ${missingFields.join(", ")}`);
+    return;
+  }
 
     try {
       const campaignData = {
@@ -406,20 +407,12 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }:Creat
   };
 
   const handleCreateCampaign = async () => {
+    const missingFields = getMissingFields();
 
-    const isValid =
-      formData.campaign_name &&
-      formData.campaign_objective &&
-      formData.content_deliverables.length > 0 &&
-      formData.campaign_timeline &&
-      (formData.payment_preference || []).length > 0;
-
-    if (!isValid) {
-      toast(
-        "Please fill required fields: name, campaign_objective, content_deliverables, campaign_timeline, payment method."
-      );
-      return;
-    }
+  if (missingFields.length > 0) {
+    toast(`Please fill: ${missingFields.join(", ")}`);
+    return;
+  }
 
     try {
       const campaignData = {
@@ -486,9 +479,7 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }:Creat
             <h2 className="text-xl text-primary font-semibold">
               Create New Campaign
             </h2>
-            <p className="text-sm text-gray-500 mt-1">
-              Set up your campaign
-            </p>
+            <p className="text-sm text-gray-500 mt-1">Set up your campaign</p>
           </div>
           <button onClick={onClose} className="p-2 rounded hover:bg-gray-100">
             <X className="w-5 h-5" />
@@ -799,7 +790,7 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }:Creat
                       id={d.id}
                       checked={formData.content_deliverables.includes(d.id)}
                       onCheckedChange={(checked) =>
-                        handleDeliverableChange(d.id, checked==true)
+                        handleDeliverableChange(d.id, checked == true)
                       }
                     />
                     <d.icon className="w-4 h-4 text-muted-foreground" />
@@ -893,61 +884,78 @@ export default function CreateCampaignModal({ isOpen, onClose, onSuccess }:Creat
 
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-  {/* Men */}
-  <div className="space-y-3">
-    {demographics.men.map((demo) => (
-      <div key={demo} className="flex items-center space-x-2">
-        <Checkbox
-          id={demo}
-          checked={(formData.target_audience || []).includes(demo)}
-          onCheckedChange={(checked) =>
-            handleArrayChange("target_audience", demo, !!checked)
-          }
-        />
-        <Label htmlFor={demo} className="text-sm font-normal">
-          {demo}
-        </Label>
-      </div>
-    ))}
-  </div>
+                  {/* Men */}
+                  <div className="space-y-3">
+                    {demographics.men.map((demo) => (
+                      <div key={demo} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={demo}
+                          checked={(formData.target_audience || []).includes(
+                            demo
+                          )}
+                          onCheckedChange={(checked) =>
+                            handleArrayChange(
+                              "target_audience",
+                              demo,
+                              !!checked
+                            )
+                          }
+                        />
+                        <Label htmlFor={demo} className="text-sm font-normal">
+                          {demo}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
 
-  {/* Women */}
-  <div className="space-y-3">
-    {demographics.women.map((demo) => (
-      <div key={demo} className="flex items-center space-x-2">
-        <Checkbox
-          id={demo}
-          checked={(formData.target_audience || []).includes(demo)}
-          onCheckedChange={(checked) =>
-            handleArrayChange("target_audience", demo, !!checked)
-          }
-        />
-        <Label htmlFor={demo} className="text-sm font-normal">
-          {demo}
-        </Label>
-      </div>
-    ))}
-  </div>
+                  {/* Women */}
+                  <div className="space-y-3">
+                    {demographics.women.map((demo) => (
+                      <div key={demo} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={demo}
+                          checked={(formData.target_audience || []).includes(
+                            demo
+                          )}
+                          onCheckedChange={(checked) =>
+                            handleArrayChange(
+                              "target_audience",
+                              demo,
+                              !!checked
+                            )
+                          }
+                        />
+                        <Label htmlFor={demo} className="text-sm font-normal">
+                          {demo}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
 
-  {/* Kids / Teens */}
-  <div className="space-y-3">
-    {demographics.youth.map((demo) => (
-      <div key={demo} className="flex items-center space-x-2">
-        <Checkbox
-          id={demo}
-          checked={(formData.target_audience || []).includes(demo)}
-          onCheckedChange={(checked) =>
-            handleArrayChange("target_audience", demo, !!checked)
-          }
-        />
-        <Label htmlFor={demo} className="text-sm font-normal">
-          {demo}
-        </Label>
-      </div>
-    ))}
-  </div>
-</div>
-
+                  {/* Kids / Teens */}
+                  <div className="space-y-3">
+                    {demographics.youth.map((demo) => (
+                      <div key={demo} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={demo}
+                          checked={(formData.target_audience || []).includes(
+                            demo
+                          )}
+                          onCheckedChange={(checked) =>
+                            handleArrayChange(
+                              "target_audience",
+                              demo,
+                              !!checked
+                            )
+                          }
+                        />
+                        <Label htmlFor={demo} className="text-sm font-normal">
+                          {demo}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </CardContent>
             </Card>
 
