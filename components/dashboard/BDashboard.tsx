@@ -171,7 +171,7 @@ const data: HiringCampaign[] = hiringsRes.data;
             <div className="lg:col-span-2 space-y-6">
               <BusinessBio />
               <SentProposal/>
-              <CampaignsSection allCampaigns={allCampaigns} />
+              {/* <CampaignsSection allCampaigns={allCampaigns} /> */}
             </div>
             <div className="space-y-6">
               <RecentCollaborations rawCampaigns={previousHirings} />

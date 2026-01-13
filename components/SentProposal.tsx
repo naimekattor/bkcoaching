@@ -12,9 +12,14 @@ import {
   CheckCircle2,
   XCircle,
   Clock,
+  Plus,
+  ArrowUp,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { AnimatePresence, motion } from "framer-motion";
 
 /* -------------------- TYPES -------------------- */
 interface Attachment {
@@ -68,6 +73,8 @@ const SentProposal = () => {
   const [selectedProposal, setSelectedProposal] = useState<Proposal | null>(
     null
   );
+  const [expandedCampaignId, setExpandedCampaignId] = useState<number | null>(null);
+
   const [hiredInfluenceName, setHiredInfluenceName] = useState("");
 
   // ✅ Cache influencer names (prevents repeated API calls)
@@ -182,9 +189,18 @@ const SentProposal = () => {
   /* -------------------- RENDER -------------------- */
   return (
     <div className="bg-white rounded-xl border shadow-sm">
-      <div className="p-6 border-b">
-        <h2 className="text-xl font-bold text-primary">Your Sent Proposals</h2>
-        <p className="text-sm text-gray-500">Proposals grouped by campaign</p>
+      <div className="flex items-center justify-between mb-6 border-b-1 border-gray-300 py-6 px-4">
+        <div className="">
+          <h2 className="text-xl font-bold text-primary">My Campaigns</h2>
+          <p className="text-sm text-gray-500">Proposals grouped by campaign</p>
+        </div>
+        <Link
+          href="/brand-dashboard/campaigns?create=true"
+          className="flex items-center gap-1.5 bg-secondary hover:bg-[var(--secondaryhover)] text-slate-800 text-sm px-4 py-2 rounded-lg transition-all font-semibold shadow-sm active:scale-95"
+        >
+          <Plus className="w-4 h-4" />
+          Create new
+        </Link>
       </div>
 
       <div className="max-h-[520px] overflow-y-auto p-4 space-y-6">
@@ -194,42 +210,69 @@ const SentProposal = () => {
             className="border rounded-2xl p-4 bg-gray-50"
           >
             {/* Campaign Header */}
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">
+            <h3
+              className="text-lg font-semibold text-gray-900 mb-3 cursor-pointer flex justify-between items-center"
+              onClick={() =>
+                setExpandedCampaignId(
+                  expandedCampaignId === group.campaign.id
+                    ? null
+                    : group.campaign.id
+                )
+              }
+            >
               {group.campaign.campaign_name}
+              <span>
+                {expandedCampaignId === group.campaign.id ? (
+                  <ChevronUp />
+                ) : (
+                  <ChevronDown />
+                )}
+              </span>
             </h3>
 
             {/* Proposals */}
-            <div className="space-y-3">
-              {group.proposals.map((p) => (
-                <div
-                  key={p.id}
-                  className="flex justify-between items-center bg-white p-4 border rounded-xl hover:shadow-md transition"
+            <AnimatePresence>
+              {expandedCampaignId === group.campaign.id && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="space-y-3"
                 >
-                  <div>
-                    <div className="flex items-center gap-3">
-                      <h4 className="font-medium">Proposal #{p.id}</h4>
-                      <StatusBadge status={getProposalStatus(p)} />
-                    </div>
+                  <div className="space-y-3">
+                    {group.proposals.map((p) => (
+                      <div
+                        key={p.id}
+                        className="flex justify-between items-center bg-white p-4 border rounded-xl hover:shadow-md transition"
+                      >
+                        <div>
+                          <div className="flex items-center gap-3">
+                            <h4 className="font-medium">Proposal #{p.id}</h4>
+                            <StatusBadge status={getProposalStatus(p)} />
+                          </div>
 
-                    <div className="flex gap-4 text-sm text-gray-600 mt-1">
-                      <span className="flex items-center gap-1">
-                        <DollarSign size={14} /> ${p.budget}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Calendar size={14} /> {formatDate(p.start_date)}
-                      </span>
-                    </div>
+                          <div className="flex gap-4 text-sm text-gray-600 mt-1">
+                            <span className="flex items-center gap-1">
+                              <DollarSign size={14} /> ${p.budget}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Calendar size={14} /> {formatDate(p.start_date)}
+                            </span>
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() => setSelectedProposal(p)}
+                          className="px-4 py-2 bg-primary/10 text-primary rounded-lg hover:bg-primary hover:text-white transition"
+                        >
+                          <Eye size={16} />
+                        </button>
+                      </div>
+                    ))}
                   </div>
-
-                  <button
-                    onClick={() => setSelectedProposal(p)}
-                    className="px-4 py-2 bg-primary/10 text-primary rounded-lg hover:bg-primary hover:text-white transition"
-                  >
-                    <Eye size={16} />
-                  </button>
-                </div>
-              ))}
-            </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         ))}
       </div>
@@ -256,7 +299,7 @@ const SentProposal = () => {
                     {hiredInfluenceName}
                   </Link>
                 ) : (
-                  "Not Set"
+                  "Not Exist"
                 )}
               </p>
 

@@ -145,6 +145,11 @@ function MicroInfluencersPageContent() {
   const [loading, setLoading] = useState(true);
   const [totalCount, setTotalCount] = useState(0);
   const [hasNextPage, setHasNextPage] = useState(false);
+  const [showReviewPopup, setShowReviewPopup] = useState(false);
+const [reviewMatchCount, setReviewMatchCount] = useState(0);
+const hasShownReviewPopup = useRef(false);
+
+
 
   const timeZones = [
     {
@@ -286,8 +291,17 @@ function MicroInfluencersPageContent() {
             };
           });
 
+          if (!hasShownReviewPopup.current) {
+  setReviewMatchCount(normalized.length);
+  setShowReviewPopup(true);
+  hasShownReviewPopup.current = true;
+}
+
+
           setInfluencers(normalized);
           setTotalCount(normalized.length);
+          // setReviewMatchCount(normalized.length);
+// setShowReviewPopup(true);
           setHasNextPage(false);
         }
 
@@ -415,6 +429,14 @@ function MicroInfluencersPageContent() {
 
     fetchInfluencers();
   }, [currentPage, searchTerm, filters, hasActiveFilters, filter_by_self]);
+
+  useEffect(() => {
+  if (!filter_by_self) {
+    hasShownReviewPopup.current = false;
+    setShowReviewPopup(false);
+  }
+}, [filter_by_self]);
+
 
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
@@ -833,6 +855,28 @@ function MicroInfluencersPageContent() {
           </div>
         )}
       </div>
+      {showReviewPopup && (
+  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+    <div className="bg-white rounded-xl p-6 w-[360px] text-center">
+      <h2 className="text-lg font-semibold mb-2">
+        Review Matches Found
+      </h2>
+
+      <p className="text-gray-600 mb-4">
+        We found <span className="font-bold">{reviewMatchCount}</span> influencers
+        matching your campaign.
+      </p>
+
+      <button
+        onClick={() => setShowReviewPopup(false)}
+        className="px-4 py-2 bg-primary text-white rounded-lg"
+      >
+        View Influencers
+      </button>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }

@@ -13,6 +13,7 @@ import {
   CheckCircle,
   XCircle,
   Loader2,
+  Search,
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { usePathname, useSearchParams } from "next/navigation";
@@ -438,6 +439,13 @@ function InfluencerDashboardContent() {
 
             {/* Action Button */}
             <div className="flex gap-2">
+              <Link
+          href="/influencer-dashboard/campaigns"
+          className="flex items-center gap-1.5 bg-secondary hover:bg-[var(--secondaryhover)] text-slate-800 text-sm px-4 py-2 rounded-lg transition-all font-semibold shadow-sm active:scale-95"
+        >
+          <Search className="w-4 h-4" />
+          Search Campaign
+        </Link>
               <Link
                 href="/influencer-dashboard/settings"
                 className="flex items-center gap-2 px-4 py-2 text-sm sm:text-base font-medium rounded-lg bg-secondary  text-primary transition"

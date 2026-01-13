@@ -1,5 +1,5 @@
+//@ts-nocheck
 "use client";
-
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -49,6 +49,41 @@ const deliverableTypes = [
   { id: "repost", label: "Repost", icon: Repeat },
 ];
 
+
+// Format Date to YYYY-MM-DD for date input
+const formatDate = (date) => {
+  const d = new Date(date);
+  return d.toISOString().split("T")[0];
+};
+
+// Calculate End Date based on timeline and startDate
+const calculateEndDate = (timeline, startDate = new Date()) => {
+  const start = new Date(startDate);
+
+  switch (timeline) {
+    case "asap":
+      // End = Start
+      return formatDate(start);
+    case "1-week":
+      start.setDate(start.getDate() + 7);
+      return formatDate(start);
+    case "2-weeks":
+      start.setDate(start.getDate() + 14);
+      return formatDate(start);
+    case "1-month":
+      start.setMonth(start.getMonth() + 1);
+      return formatDate(start);
+    case "flexible":
+      // Return empty so user can select manually
+      return "";
+    default:
+      return ""; // fallback
+  }
+};
+
+
+
+
 export default function ProposalsPage() {
   const [formData, setFormData] = useState<ProposalForm>({
     proposalMessage: "",
@@ -73,6 +108,7 @@ export default function ProposalsPage() {
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [myCampaigns, setMyCampaigns] = useState<MyCampaigns[]>([]);
+  const[selectedMyCampaign,setSelectedMyCampaign]=useState(null);
   const [loading, setLoading] = useState(false);
   const params = useParams<{ id: string }>();
   const profileId = params.id;
@@ -146,17 +182,7 @@ const validateForm = () => {
     setShowReviewModal(true);
   }
     
-  };
-
-  // const isValid =
-  //   formData.campaignId &&
-  //   formData.budget &&
-  //   formData.startDate &&
-  //   formData.endDate &&
-  //   formData.deliverables.length > 0;
-
-
-    
+  };  
 
   const handleSendProposal = async () => {
     setLoading(true);
@@ -248,6 +274,34 @@ const validateForm = () => {
     fetchMyCampaigns();
   }, []);
 
+
+useEffect(() => {
+  if (!selectedMyCampaign) return;
+
+  const start = new Date(); // default start date = today
+  const timeline = selectedMyCampaign.campaign_timeline;
+
+  setFormData((prev) => ({
+    ...prev,
+
+    // Budget
+    budget: selectedMyCampaign.budget_range || "",
+
+    // Start Date (today or API date)
+     startDate: formatDate(start),
+    endDate: calculateEndDate(timeline, start),
+
+
+    // Deliverables (string → array)
+    deliverables: selectedMyCampaign.content_deliverables
+      ? selectedMyCampaign.content_deliverables.split(",")
+      : [],
+  }));
+}, [selectedMyCampaign]);
+
+  console.log(selectedMyCampaign);
+  
+
   return (
     <div className="flex min-h-screen ">
       <div className="flex-1">
@@ -275,6 +329,7 @@ const validateForm = () => {
               if (!selectedCampaign) return;
 
               // Use the generic handleInputChange
+              setSelectedMyCampaign(selectedCampaign);
               handleInputChange("campaignId", String(selectedCampaign.id));
               handleInputChange("campaignName", selectedCampaign.campaign_name);
             }}

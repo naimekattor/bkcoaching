@@ -165,6 +165,7 @@ export default function CreateCampaignModal({
   const [dragActive, setDragActive] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const [uploadingImage, setUploadingImage] = useState(false);
+  const router = useRouter();
 
   // Generic field updater for top-level fields
   const handleInputChange = (field: keyof CampaignFormData, value: unknown) => {
@@ -337,7 +338,7 @@ const getMissingFields = () => {
     missing.push("Content Deliverables");
   if (!formData.campaign_timeline) missing.push("Campaign Timeline");
   if (!(formData.payment_preference || []).length)
-    missing.push("Payment Method");
+    missing.push("Payment Preference");
 
   return missing;
 };
@@ -440,6 +441,9 @@ const getMissingFields = () => {
         toast("Campaign created successfully");
         onSuccess(res.data);
         onClose();
+        if (formData.auto_match_micro_influencers) {
+  router.push("/brand-dashboard/microinfluencerspage?review=true");
+}
         console.log(res);
       }
     } catch (error) {
@@ -842,21 +846,6 @@ const getMissingFields = () => {
                 <CardTitle>Campaign Settings</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {/* <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <Label>Content Approval Required</Label>
-                    <p className="text-xs text-muted-foreground">
-                      Review content before publishing
-                    </p>
-                  </div>
-                  <Switch
-                    checked={formData.content_approval_required}
-                    onCheckedChange={(checked) =>
-                      handleInputChange("content_approval_required", checked)
-                    }
-                  />
-                </div> */}
-
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <Label>Auto-match influencers</Label>
