@@ -788,7 +788,7 @@ useEffect(()=>{
             {/* Pricing */}
             <div className="bg-white rounded-lg border border-gray-200 p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                Pricing & Rates
+                 Rates
               </h2>
 
               {influencer.pricing &&

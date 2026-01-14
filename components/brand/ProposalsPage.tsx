@@ -1,4 +1,3 @@
-//@ts-nocheck
 "use client";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
@@ -16,6 +15,11 @@ import {
 } from "../ui/select";
 import { FileText, Mic, Repeat, Video } from "lucide-react";
 
+interface Campaign{
+  campaign_timeline:string;
+  budget_range:string;
+  content_deliverables:string;
+}
 type ProposalForm = {
   proposalMessage: string;
   startDate: string;
@@ -31,7 +35,12 @@ type ProposalForm = {
 interface MyCampaigns {
   id: number;
   campaign_name: string;
+  campaign_timeline:string;
+  budget_range:string;
+  content_deliverables:string;
 }
+interface FullCampaign extends MyCampaigns, Campaign {}
+
 
 const deliverableTypes = [
   { id: "instagramStory", label: "Instagram Story", icon: Image },
@@ -51,13 +60,13 @@ const deliverableTypes = [
 
 
 // Format Date to YYYY-MM-DD for date input
-const formatDate = (date) => {
+const formatDate = (date:Date) => {
   const d = new Date(date);
   return d.toISOString().split("T")[0];
 };
 
 // Calculate End Date based on timeline and startDate
-const calculateEndDate = (timeline, startDate = new Date()) => {
+const calculateEndDate = (timeline:Date | string, startDate = new Date()) => {
   const start = new Date(startDate);
 
   switch (timeline) {
@@ -108,7 +117,7 @@ export default function ProposalsPage() {
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [myCampaigns, setMyCampaigns] = useState<MyCampaigns[]>([]);
-  const[selectedMyCampaign,setSelectedMyCampaign]=useState(null);
+  const[selectedMyCampaign,setSelectedMyCampaign]=useState<FullCampaign | null>(null);
   const [loading, setLoading] = useState(false);
   const params = useParams<{ id: string }>();
   const profileId = params.id;

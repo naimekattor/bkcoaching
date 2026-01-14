@@ -55,16 +55,16 @@ interface InfluencerProfile {
   facebook_handle?: string;
   blog_handle?: string;
   whatsapp_handle?: string;
-  twitter_handle?:string;
+  twitter_handle?: string;
   insta_follower?: number;
   facebook_follower?: number;
   tiktok_follower?: number;
   linkedin_follower?: number;
   youtube_follower?: number;
   blog_follower?: number;
-  podcast_follower?:number;
-  whatsapp_follower?:number;
-  twitter_follower?:number;
+  podcast_follower?: number;
+  whatsapp_follower?: number;
+  twitter_follower?: number;
 }
 
 interface InfluencerUser {
@@ -146,10 +146,8 @@ function MicroInfluencersPageContent() {
   const [totalCount, setTotalCount] = useState(0);
   const [hasNextPage, setHasNextPage] = useState(false);
   const [showReviewPopup, setShowReviewPopup] = useState(false);
-const [reviewMatchCount, setReviewMatchCount] = useState(0);
-const hasShownReviewPopup = useRef(false);
-
-
+  const [reviewMatchCount, setReviewMatchCount] = useState(0);
+  const hasShownReviewPopup = useRef(false);
 
   const timeZones = [
     {
@@ -292,16 +290,15 @@ const hasShownReviewPopup = useRef(false);
           });
 
           if (!hasShownReviewPopup.current) {
-  setReviewMatchCount(normalized.length);
-  setShowReviewPopup(true);
-  hasShownReviewPopup.current = true;
-}
-
+            setReviewMatchCount(normalized.length);
+            setShowReviewPopup(true);
+            hasShownReviewPopup.current = true;
+          }
 
           setInfluencers(normalized);
           setTotalCount(normalized.length);
           // setReviewMatchCount(normalized.length);
-// setShowReviewPopup(true);
+          // setShowReviewPopup(true);
           setHasNextPage(false);
         }
 
@@ -431,12 +428,11 @@ const hasShownReviewPopup = useRef(false);
   }, [currentPage, searchTerm, filters, hasActiveFilters, filter_by_self]);
 
   useEffect(() => {
-  if (!filter_by_self) {
-    hasShownReviewPopup.current = false;
-    setShowReviewPopup(false);
-  }
-}, [filter_by_self]);
-
+    if (!filter_by_self) {
+      hasShownReviewPopup.current = false;
+      setShowReviewPopup(false);
+    }
+  }, [filter_by_self]);
 
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
@@ -514,7 +510,6 @@ const hasShownReviewPopup = useRef(false);
 
           {/* Filters */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 xl:grid-cols-6 gap-4">
-            
             {/* Content Niches */}
             <Select
               value={filters.contentNiches || "all"}
@@ -573,8 +568,6 @@ const hasShownReviewPopup = useRef(false);
                 <SelectItem value="podcast">Podcast</SelectItem>
               </SelectContent>
             </Select>
-
-            
 
             {/* Followers */}
             <div className="relative">
@@ -686,17 +679,19 @@ const hasShownReviewPopup = useRef(false);
                 >
                   {/* Avatar */}
                   <div className="flex justify-center mb-4">
-                    {creator.profileImage ? <Image
-                      width={80}
-                      height={80}
-                      src={creator.profileImage}
-                      alt={creator.name}
-                      className="w-20 h-20 rounded-full object-cover border-2 border-white shadow"
-                    />
-                  :
-                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/10 to-primary/10 border-3 border-white shadow-md uppercase flex items-center justify-center text-3xl font-bold text-primary">
-  {creator?.name?.charAt(0) || "N"}
-</div>}
+                    {creator.profileImage ? (
+                      <Image
+                        width={80}
+                        height={80}
+                        src={creator.profileImage}
+                        alt={creator.name}
+                        className="w-20 h-20 rounded-full object-cover border-2 border-white shadow"
+                      />
+                    ) : (
+                      <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/10 to-primary/10 border-3 border-white shadow-md uppercase flex items-center justify-center text-3xl font-bold text-primary">
+                        {creator?.name?.charAt(0) || "N"}
+                      </div>
+                    )}
                   </div>
 
                   {/* Name & Followers */}
@@ -856,27 +851,70 @@ const hasShownReviewPopup = useRef(false);
         )}
       </div>
       {showReviewPopup && (
-  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-    <div className="bg-white rounded-xl p-6 w-[360px] text-center">
-      <h2 className="text-lg font-semibold mb-2">
-        Review Matches Found
-      </h2>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl p-8 w-full max-w-md shadow-2xl transform transition-all animate-in zoom-in-95 duration-200">
+            {/* Icon */}
+            <div className="mx-auto w-16 h-16 bg-secondary rounded-full flex items-center justify-center mb-5">
+              <svg
+                className="w-8 h-8 text-primary"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
 
-      <p className="text-gray-600 mb-4">
-        We found <span className="font-bold">{reviewMatchCount}</span> influencers
-        matching your campaign.
-      </p>
+            {/* Content */}
+            <h2 className="text-2xl font-bold text-gray-900 mb-3 text-center">
+              Matches Found!
+            </h2>
 
-      <button
-        onClick={() => setShowReviewPopup(false)}
-        className="px-4 py-2 bg-primary text-white rounded-lg"
-      >
-        View Influencers
-      </button>
-    </div>
-  </div>
-)}
+            <p className="text-gray-600 text-center mb-6 leading-relaxed">
+              We found{" "}
+              <span className="inline-flex items-center justify-center min-w-[3rem] px-3 py-1 bg-secondary text-primary font-bold rounded-full text-lg mx-1">
+                {reviewMatchCount}
+              </span>{" "}
+              relevant influencers that match your criteria
+            </p>
 
+            {/* Actions */}
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowReviewPopup(false)}
+                className="flex-1 px-6 py-3 bg-secondary cursor-pointer text-primary font-semibold rounded-md transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
+              >
+                View Influencers
+              </button>
+            </div>
+
+            {/* Close button */}
+            <button
+              onClick={() => setShowReviewPopup(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

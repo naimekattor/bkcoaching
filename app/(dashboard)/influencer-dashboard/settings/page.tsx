@@ -118,7 +118,13 @@ const fieldMap: Record<string, string> = {
   twitterPost: "rate_range_for_twitter_post",
 
 };
+const splitContentNiches = (value: string): string[] => {
+  if (!value) return [];
 
+  return value
+    .split(/,\s(?=[A-Z][^,]*(?:&|–))/)
+    .map((s) => s.trim());
+};
 export default function ProfilePage() {
   const { user,setUser } = useAuthStore();
   console.log(user);
@@ -138,8 +144,8 @@ export default function ProfilePage() {
   };
 
   const initialNiches = p.content_niches
-    ? p.content_niches.split(",").map((s: string) => s.trim())
-    : [];
+  ? splitContentNiches(p.content_niches)
+  : [];
   const initialFormats = p.content_formats
     ? p.content_formats.split(",").map((s: string) => s.trim())
     : [];
