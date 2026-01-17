@@ -49,24 +49,33 @@ export const authOptions: NextAuthOptions = {
   session: { strategy: "jwt" },
   secret: process.env.NEXTAUTH_SECRET,
   debug: true,
-
+cookies: {
+        pkceCodeVerifier: {
+            name: "next-auth.pkce.code_verifier",
+            options: {
+                httpOnly: true,
+                sameSite: "none",
+                path: "/",
+                secure: true,
+            },
+        },
+    },
   callbacks: {
     async jwt({ token, account, profile,user  }) {
       if (account && (account.provider === "google" || account.provider === "apple")) {
         try {
           const cookieStore = await cookies();
           const role = cookieStore.get("signup_role")?.value || "influencer";
-          const googleProfile = profile as any;
           token.provider = account.provider;
 
-          // const payload = {
-          //   first_name: googleProfile.given_name ?? googleProfile.name?.split(" ")[0] ?? "",
-          //   last_name: googleProfile.family_name ?? googleProfile.name?.split(" ")[1] ?? "",
-          //   email: googleProfile.email,
-          //   signed_up_as: role,
-          // };
+          const email = user?.email || token.email;
+          // Email is mandatory
+    if (!email) {
+      console.error("❌ Social login failed: email missing");
+      return token; // DO NOT throw
+    }
           let payload: any = {
-            email: user?.email || token.email,
+            email,
             signed_up_as: role,
             provider: account.provider,
           };
@@ -77,14 +86,20 @@ export const authOptions: NextAuthOptions = {
             payload.first_name = googleProfile.given_name || googleProfile.name?.split(" ")[0] || "";
             payload.last_name = googleProfile.family_name || googleProfile.name?.split(" ")[1] || "";
           }
-          // Handle Apple (name might be in user object)
-          else if (account.provider === "apple") {
-            // Apple only returns name on first login
-            const nameParts = user?.name?.split(" ") || [];
-            payload.first_name = nameParts[0] || "";
-            payload.last_name = nameParts.slice(1).join(" ") || "";
-            payload.apple_id = profile?.sub || token.sub; // Apple's user ID
-          }
+           // ---------------- APPLE ----------------
+    if (account.provider === "apple") {
+      payload.apple_id = profile?.sub || token.sub;
+
+      // Name only exists on FIRST login
+      if (user?.name) {
+        const parts = user.name.split(" ");
+        payload.first_name = parts[0] || "";
+        payload.last_name = parts.slice(1).join(" ");
+      } else {
+        payload.first_name = "Name";
+        payload.last_name = "";
+      }
+    }
 
           console.log("🚀 Payload sending to Backend:", JSON.stringify(payload, null, 2));
 

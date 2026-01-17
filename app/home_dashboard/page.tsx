@@ -22,42 +22,72 @@ function DashboardPageContent() {
 
   useEffect(() => {
     const checkUserProfile = async () => {
-      
-      const localToken =
-  typeof window !== "undefined"
-    ? localStorage.getItem("access_token")
-    : null;
-
-const effectiveToken = session?.accessToken ?? localToken;
-
-if (effectiveToken) {
-  localStorage.setItem("access_token", effectiveToken);
-}
-
-      console.log(session?.accessToken);
-      console.log(localToken);
-      
-      
-
-      
-      if (!effectiveToken && sessionStatus === "loading") {
-        return; 
+      // 1. Wait for session to finish loading
+      if (sessionStatus === "loading") {
+        console.log("⏳ Waiting for session to load...");
+        return;
       }
-      
-      // 3. Handle Unauthenticated State
+
+      // 2. Get token - prioritize session token over localStorage
+      const sessionToken = session?.accessToken;
+      const localToken = typeof window !== "undefined" 
+        ? localStorage.getItem("access_token") 
+        : null;
+
+      console.log("🔍 Token check:", {
+        sessionStatus,
+        hasSessionToken: !!sessionToken,
+        hasLocalToken: !!localToken,
+      });
+
+      // 3. If session has token but localStorage doesn't, wait for AuthSessionSync
+      if (sessionToken && !localToken) {
+        console.log("⏳ Session token exists but not in localStorage yet. Waiting for AuthSessionSync...");
+        
+        // Poll localStorage for up to 3 seconds
+        let attempts = 0;
+        const maxAttempts = 30; // 30 * 100ms = 3 seconds
+        
+        const pollForToken = () => {
+          const token = localStorage.getItem("access_token");
+          if (token) {
+            console.log("✅ Token synced to localStorage!");
+            // Trigger re-run of this effect
+            checkUserProfile();
+          } else if (attempts < maxAttempts) {
+            attempts++;
+            setTimeout(pollForToken, 100);
+          } else {
+            console.log("⚠️ Timeout waiting for token sync, using session token directly");
+            // Continue with session token
+            proceedWithToken(sessionToken);
+          }
+        };
+        
+        pollForToken();
+        return;
+      }
+
+      const effectiveToken = sessionToken ?? localToken;
+
+      // 4. Handle unauthenticated state
       if (!effectiveToken) {
-        console.log("No session or local token found");
+        console.log("❌ No session or local token found");
         setError("Please log in to continue.");
         return;
       }
 
-      console.log("Token found, fetching profile...");
+      await proceedWithToken(effectiveToken);
+    };
+
+    const proceedWithToken = async (token: string) => {
+      console.log("✅ Token found, fetching profile...");
 
       try {
         const res = await apiClient("user_service/get_user_info/", {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${effectiveToken}`,
+            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -67,19 +97,16 @@ if (effectiveToken) {
 
         const userData = res?.data; 
 
-        console.log("User Data Received:", userData);
+        console.log("👤 User Data Received:", userData);
 
-        // const hasBrandProfile = userData.signed_up_as === "brand";
-        // const hasInfluencerProfile = userData.signed_up_as === "influencer";
         const role = userData.signed_up_as;
 
         let redirectPath = "/influencer-dashboard";
         
-         if (role === "brand") {
+        if (role === "brand") {
           redirectPath = "/brand-dashboard";
         } 
         else if (role === "influencer") {
-          // This block will execute for your specific API response
           redirectPath = "/influencer-dashboard";
         } 
 
@@ -89,9 +116,7 @@ if (effectiveToken) {
           router.replace(redirectPath);
         }
       } catch (error: unknown) {
-        console.error("Profile check failed:", error);
-        // Optional: If API fails with 401, clear local storage
-        // localStorage.removeItem("access_token"); 
+        console.error("❌ Profile check failed:", error);
         setError("Could not retrieve your profile. Please try logging in again.");
       }
     };
