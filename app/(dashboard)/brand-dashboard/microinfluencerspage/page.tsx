@@ -28,7 +28,7 @@ import {
   FaYoutube,
 } from "react-icons/fa";
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 8;
 
 interface Influencer {
   id: string;

@@ -15,10 +15,10 @@ import {
 } from "../ui/select";
 import { FileText, Mic, Repeat, Video } from "lucide-react";
 
-interface Campaign{
-  campaign_timeline:string;
-  budget_range:string;
-  content_deliverables:string;
+interface Campaign {
+  campaign_timeline: string;
+  budget_range: string;
+  content_deliverables: string;
 }
 type ProposalForm = {
   proposalMessage: string;
@@ -30,17 +30,17 @@ type ProposalForm = {
   budget: string;
   campaignId: number | null;
   campaignName: string;
+  isBudgetNegotiable: boolean;
 };
 
 interface MyCampaigns {
   id: number;
   campaign_name: string;
-  campaign_timeline:string;
-  budget_range:string;
-  content_deliverables:string;
+  campaign_timeline: string;
+  budget_range: string;
+  content_deliverables: string;
 }
 interface FullCampaign extends MyCampaigns, Campaign {}
-
 
 const deliverableTypes = [
   { id: "instagramStory", label: "Instagram Story", icon: Image },
@@ -58,15 +58,14 @@ const deliverableTypes = [
   { id: "repost", label: "Repost", icon: Repeat },
 ];
 
-
 // Format Date to YYYY-MM-DD for date input
-const formatDate = (date:Date) => {
+const formatDate = (date: Date) => {
   const d = new Date(date);
   return d.toISOString().split("T")[0];
 };
 
 // Calculate End Date based on timeline and startDate
-const calculateEndDate = (timeline:Date | string, startDate = new Date()) => {
+const calculateEndDate = (timeline: Date | string, startDate = new Date()) => {
   const start = new Date(startDate);
 
   switch (timeline) {
@@ -90,9 +89,6 @@ const calculateEndDate = (timeline:Date | string, startDate = new Date()) => {
   }
 };
 
-
-
-
 export default function ProposalsPage() {
   const [formData, setFormData] = useState<ProposalForm>({
     proposalMessage: "",
@@ -104,33 +100,36 @@ export default function ProposalsPage() {
     budget: "",
     campaignId: null,
     campaignName: "",
+    isBudgetNegotiable: false,
   });
   const [errors, setErrors] = useState<{
-  campaign?: boolean;
-  startDate?: boolean;
-  endDate?: boolean;
-  budget?: boolean;
-  deliverables?: boolean;
-}>({});
-
+    campaign?: boolean;
+    startDate?: boolean;
+    endDate?: boolean;
+    budget?: boolean;
+    deliverables?: boolean;
+  }>({});
 
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [myCampaigns, setMyCampaigns] = useState<MyCampaigns[]>([]);
-  const[selectedMyCampaign,setSelectedMyCampaign]=useState<FullCampaign | null>(null);
+  const [selectedMyCampaign, setSelectedMyCampaign] =
+    useState<FullCampaign | null>(null);
   const [loading, setLoading] = useState(false);
   const params = useParams<{ id: string }>();
   const profileId = params.id;
   console.log(profileId);
-  const router=useRouter();
+  const router = useRouter();
   const campaignRef = useRef<HTMLDivElement>(null);
-const startDateRef = useRef<HTMLDivElement>(null);
-const endDateRef = useRef<HTMLDivElement>(null);
-const budgetRef = useRef<HTMLDivElement>(null);
-const deliverablesRef = useRef<HTMLDivElement>(null);
+  const startDateRef = useRef<HTMLDivElement>(null);
+  const endDateRef = useRef<HTMLDivElement>(null);
+  const budgetRef = useRef<HTMLDivElement>(null);
+  const deliverablesRef = useRef<HTMLDivElement>(null);
 
-
-  const handleInputChange = (field: keyof ProposalForm, value: string) => {
+  const handleInputChange = <K extends keyof ProposalForm>(
+    field: K,
+    value: ProposalForm[K]
+  ) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
@@ -157,50 +156,64 @@ const deliverablesRef = useRef<HTMLDivElement>(null);
     }));
     console.log(formData.campaignId);
   };
-const validateForm = () => {
-  const newErrors = {
-    campaign: !formData.campaignId,
-    startDate: !formData.startDate,
-    endDate: !formData.endDate,
-    budget: !formData.budget?.trim(),
-    deliverables: formData.deliverables.length === 0,
+  const validateForm = () => {
+    const newErrors = {
+      campaign: !formData.campaignId,
+      startDate: !formData.startDate,
+      endDate: !formData.endDate,
+      budget: !formData.isBudgetNegotiable && !formData.budget?.trim(),
+      deliverables: formData.deliverables.length === 0,
+    };
+
+    setErrors(newErrors);
+
+    // Auto-scroll to first error (in order of importance)
+    if (newErrors.campaign) {
+      campaignRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    } else if (newErrors.startDate) {
+      startDateRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    } else if (newErrors.endDate) {
+      endDateRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    } else if (newErrors.budget) {
+      budgetRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    } else if (newErrors.deliverables) {
+      deliverablesRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+
+    return !Object.values(newErrors).some(Boolean);
   };
-
-  setErrors(newErrors);
-
-  // Auto-scroll to first error (in order of importance)
-  if (newErrors.campaign) {
-    campaignRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-  } else if (newErrors.startDate) {
-    startDateRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-  } else if (newErrors.endDate) {
-    endDateRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-  } else if (newErrors.budget) {
-    budgetRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-  } else if (newErrors.deliverables) {
-    deliverablesRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-  }
-
-  return !Object.values(newErrors).some(Boolean);
-};
   const handleSubmitForm = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const isValid = validateForm();
 
-  if (isValid) {
-    setShowReviewModal(true);
-  }
-    
-  };  
+    if (isValid) {
+      setShowReviewModal(true);
+    }
+  };
 
   const handleSendProposal = async () => {
     setLoading(true);
     try {
       if (!validateForm()) {
-    setLoading(false);
-    setShowReviewModal(false); 
-    return;
-  }
+        setLoading(false);
+        setShowReviewModal(false);
+        return;
+      }
 
       const formPayload = new FormData();
       formPayload.append("campaign_id", String(formData.campaignId));
@@ -211,8 +224,15 @@ const validateForm = () => {
         "campaign_deliverables",
         JSON.stringify(formData.deliverables)
       );
-      const cleanBudget = formData.budget.replace(/[^0-9.]/g, "");
-      formPayload.append("budget", cleanBudget);
+      if (formData.isBudgetNegotiable) {
+        formPayload.append("budget", "0");
+        formPayload.append("budgetNegotiable", "true");
+      } else {
+        const cleanBudget = formData.budget.replace(/[^0-9.]/g, "");
+        formPayload.append("budget", cleanBudget);
+        formPayload.append("budgetNegotiable", "false");
+      }
+
       formPayload.append("influencer_id", profileId);
       if (formData.campaignBrief) {
         formPayload.append("attachments", formData.campaignBrief);
@@ -244,8 +264,6 @@ const validateForm = () => {
         console.log("Proposal sent successfully:", data.data);
         setShowReviewModal(false);
         setShowSuccessModal(true);
-        
-        
       } else {
         console.error("Failed to send proposal:", data.error);
         toast(data.error);
@@ -262,12 +280,9 @@ const validateForm = () => {
     }
   };
 
-  
-
   const handleCloseSuccess = () => {
     setShowSuccessModal(false);
     router.push("/brand-dashboard");
-   
   };
 
   useEffect(() => {
@@ -283,33 +298,30 @@ const validateForm = () => {
     fetchMyCampaigns();
   }, []);
 
+  useEffect(() => {
+    if (!selectedMyCampaign) return;
 
-useEffect(() => {
-  if (!selectedMyCampaign) return;
+    const start = new Date(); // default start date = today
+    const timeline = selectedMyCampaign.campaign_timeline;
 
-  const start = new Date(); // default start date = today
-  const timeline = selectedMyCampaign.campaign_timeline;
+    setFormData((prev) => ({
+      ...prev,
 
-  setFormData((prev) => ({
-    ...prev,
+      // Budget
+      budget: selectedMyCampaign.budget_range || "",
 
-    // Budget
-    budget: selectedMyCampaign.budget_range || "",
+      // Start Date (today or API date)
+      startDate: formatDate(start),
+      endDate: calculateEndDate(timeline, start),
 
-    // Start Date (today or API date)
-     startDate: formatDate(start),
-    endDate: calculateEndDate(timeline, start),
-
-
-    // Deliverables (string → array)
-    deliverables: selectedMyCampaign.content_deliverables
-      ? selectedMyCampaign.content_deliverables.split(",")
-      : [],
-  }));
-}, [selectedMyCampaign]);
+      // Deliverables (string → array)
+      deliverables: selectedMyCampaign.content_deliverables
+        ? selectedMyCampaign.content_deliverables.split(",")
+        : [],
+    }));
+  }, [selectedMyCampaign]);
 
   console.log(selectedMyCampaign);
-  
 
   return (
     <div className="flex min-h-screen ">
@@ -320,8 +332,7 @@ useEffect(() => {
               Influencer Hiring Proposal
             </h1>
             <p className="text-gray-600 mt-1">
-              Fill out your information to start connecting with
-              Influencer
+              Fill out your information to start connecting with Influencer
             </p>
           </div>
         </div>
@@ -339,15 +350,17 @@ useEffect(() => {
 
               // Use the generic handleInputChange
               setSelectedMyCampaign(selectedCampaign);
-              handleInputChange("campaignId", String(selectedCampaign.id));
+              handleInputChange("campaignId", selectedCampaign.id);
               handleInputChange("campaignName", selectedCampaign.campaign_name);
             }}
           >
-            <SelectTrigger className={`w-[250px] ${
-    errors.campaign
-      ? "border-red-500 ring-2 ring-red-300"
-      : "border-gray-300"
-  }`}>
+            <SelectTrigger
+              className={`w-[250px] ${
+                errors.campaign
+                  ? "border-red-500 ring-2 ring-red-300"
+                  : "border-gray-300"
+              }`}
+            >
               <SelectValue placeholder="Select a Campaign" />
             </SelectTrigger>
             <SelectContent>
@@ -386,7 +399,11 @@ useEffect(() => {
                           handleInputChange("startDate", e.target.value)
                         }
                         className={`border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2
-  ${errors.startDate ? "border-red-500 ring-red-300" : "border-gray-300 focus:ring-primary"}
+  ${
+    errors.startDate
+      ? "border-red-500 ring-red-300"
+      : "border-gray-300 focus:ring-primary"
+  }
 `}
                       />
                     </div>
@@ -402,7 +419,11 @@ useEffect(() => {
                           handleInputChange("endDate", e.target.value)
                         }
                         className={`border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2
-  ${errors.endDate ? "border-red-500 ring-red-300" : "border-gray-300 focus:ring-primary"}
+  ${
+    errors.endDate
+      ? "border-red-500 ring-red-300"
+      : "border-gray-300 focus:ring-primary"
+  }
 `}
                       />
                     </div>
@@ -416,18 +437,51 @@ useEffect(() => {
                   <input
                     type="text"
                     placeholder="$200"
+                    disabled={formData.isBudgetNegotiable}
                     value={formData.budget}
-                    onChange={(e) =>{
-                      const value = e.target.value.replace(/[^0-9$.\s-]/g, '');
-                      handleInputChange("budget", value)}
-                    }
-                    className={`w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2
-      ${errors.budget ? "border-red-500 border-1 ring-red-300" : "border-gray-300 border-1 focus:ring-primary"}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/[^0-9$.\s-]/g, "");
+                      handleInputChange("budget", value);
+                    }}
+                    className={`w-full px-3 py-2 border-1 rounded-md focus:outline-none focus:ring-2
+      ${
+        errors.budget
+          ? "border-red-500 ring-red-300"
+          : "border-gray-300 focus:ring-primary"
+      }
+      ${formData.isBudgetNegotiable ? "bg-gray-100 cursor-not-allowed" : ""}
     `}
                   />
+                  {/* Budget negotiable option */}
+                  <div className="flex items-center gap-2 mt-2">
+                    <input
+                      type="checkbox"
+                      id="budgetNegotiable"
+                      checked={formData.isBudgetNegotiable}
+                      onChange={(e) => {
+                        handleInputChange(
+                          "isBudgetNegotiable",
+                          e.target.checked
+                        );
+                        if (e.target.checked) {
+                          handleInputChange("budget", "");
+                        }
+                      }}
+                      className="accent-primary"
+                    />
+                    <label
+                      htmlFor="budgetNegotiable"
+                      className="text-sm text-gray-700"
+                    >
+                      Budget to be discussed
+                    </label>
+                  </div>
+
                   {errors.budget && (
-  <p className="mt-1 text-sm text-red-600">Budget is required</p>
-)}
+                    <p className="mt-1 text-sm text-red-600">
+                      Please enter a budget or select “Budget to be discussed”
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -447,13 +501,18 @@ useEffect(() => {
               />
             </div>
 
-            <div ref={deliverablesRef} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+            <div
+              ref={deliverablesRef}
+              className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6"
+            >
               <h3 className="text-[16px] font-semibold text-gray-900 mb-2">
                 Content Deliverables *
               </h3>
               {errors.deliverables && (
-    <p className="text-red-600 text-sm mb-3">Please select at least one deliverable</p>
-  )}
+                <p className="text-red-600 text-sm mb-3">
+                  Please select at least one deliverable
+                </p>
+              )}
               <p className="text-sm text-gray-600 mb-4">
                 Select the type of content you want micro-influencers to produce
               </p>
@@ -478,7 +537,7 @@ useEffect(() => {
     
   `}
                     />
-                    
+
                     <label
                       htmlFor={deliverable.id}
                       className="text-sm font-normal cursor-pointer text-gray-700"
@@ -537,7 +596,9 @@ useEffect(() => {
 
             <div className="flex justify-end gap-4 mb-6">
               <button
-              onClick={()=>router.push(`/brand-dashboard/messages?id=${profileId}`)}
+                onClick={() =>
+                  router.push(`/brand-dashboard/messages?id=${profileId}`)
+                }
                 type="button"
                 className="px-6 py-2 cursor-pointer border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
               >
@@ -570,13 +631,6 @@ useEffect(() => {
             <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="border-2 border-gray-200 rounded-xl p-4">
                 <div className="flex items-center gap-3 mb-4">
-                  {/* <Image
-                    width={60}
-                    height={60}
-                    src="/placeholder.svg"
-                    alt="Influencer"
-                    className="w-15 h-15 rounded-full"
-                  /> */}
                   <div>
                     <h3 className="font-semibold text-gray-900">
                       Campaign Name
@@ -586,13 +640,6 @@ useEffect(() => {
                     </p>
                   </div>
                 </div>
-
-                {/* <div className="mb-4 border-b-2 border-gray-200 pb-3">
-                  <h4 className="font-medium text-gray-900 mb-2">Campaign</h4>
-                  <p className="text-sm text-gray-600">
-                    Campaign details and objectives
-                  </p>
-                </div> */}
 
                 <div className="mb-4">
                   <h4 className="font-medium text-gray-900 mb-2">
@@ -619,6 +666,14 @@ useEffect(() => {
                     </div>
                   </div>
                 </div>
+                <div className="mb-4 border-b-2 border-gray-200 pb-3">
+                  <h4 className="font-medium text-gray-900 mb-2">
+                    Campaign Budget :
+                    {formData.isBudgetNegotiable
+                      ? " Open to discussion"
+                      : ` $${formData.budget || "—"}`}
+                  </h4>
+                </div>
               </div>
 
               <div className="border-2 border-gray-200 rounded-xl p-4">
@@ -629,7 +684,7 @@ useEffect(() => {
                 <div className="mb-4 border-2 border-gray-200 p-3 rounded-lg">
                   <p className="text-sm text-gray-700">
                     {formData.proposalMessage ||
-                      "Your proposal message will appear here"}
+                      "No proposal message provided yet."}
                   </p>
                 </div>
 

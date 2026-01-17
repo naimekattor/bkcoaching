@@ -38,18 +38,14 @@ interface BrandApiResponse {
 }
 
 const PAGE_SIZE = 12;
-const getCleanCategories = (niches?: string): string[] => {
-  if (!niches) return [];
-  
-  // Split by common delimiters and clean
-  return niches
-    .split(/[,;]/)
-    .map(n => {
-      const clean = n.split(/[–-]/)[0].trim();
-      return clean;
-    })
-    .filter(Boolean);
+const splitContentNiches = (value: string): string[] => {
+  if (!value) return [];
+
+  return value
+    .split(/,\s(?=[A-Z][^,]*(?:&|–))/)
+    .map((s) => s.trim());
 };
+
 export default function BrandPage() {
   // ────── UI state ──────
   const [searchQuery, setSearchQuery] = useState("");
@@ -184,8 +180,8 @@ export default function BrandPage() {
     );
   }
 
-  if (filterByNiches && contententNiches && typeof contententNiches === "string") {
-    const userNiches = getCleanCategories(contententNiches);
+  if (filterByNiches ) {
+    const userNiches =contententNiches ? splitContentNiches(contententNiches as string):[];
     
     list = list.filter((b) => {
       if (!b.businessType) return false;
@@ -242,10 +238,10 @@ export default function BrandPage() {
 
 
   const handleReviewMatches = () => {
-    if (!contententNiches) {
-      console.warn("No content niches available for matching");
-      return;
-    }
+    // if (!contententNiches) {
+    //   console.warn("No content niches available for matching");
+    //   return;
+    // }
     // Re-apply search & filters with niche matching
     setFilterByNiches(true);
     setAppliedSearch(searchQuery);

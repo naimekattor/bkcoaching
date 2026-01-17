@@ -70,6 +70,7 @@ interface Message {
   fileType?: string;
   fileName?: string;
   seen:boolean;
+
 }
 
 type MessageWithRawTimestamp = Message & { rawTimestamp: Date };
@@ -166,9 +167,9 @@ function MessagesClientContent() {
 console.log("testing for firstUnreadIndex",messages);
   const firstUnreadIndex = useMemo(() => {
     return messages.findIndex(
-      (m) => !m.seen 
+      (m) => !m.seen && !m.isOwn
     );
-  }, [messages]);
+  }, [messages,currentUserId]);
   console.log("firstUnreadIndex",firstUnreadIndex);
 
 

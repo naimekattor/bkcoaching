@@ -48,6 +48,7 @@ interface Proposal {
   budget: number;
   rating: number;
   campaign: Campaign;
+  isBudgetNegotiable:Boolean;
 }
 
 type ProposalStatus = "Accepted" | "Rejected" | "Pending";
@@ -253,8 +254,11 @@ const SentProposal = () => {
 
                           <div className="flex gap-4 text-sm text-gray-600 mt-1">
                             <span className="flex items-center gap-1">
-                              <DollarSign size={14} /> ${p.budget}
-                            </span>
+  <DollarSign size={14} />
+  {p?.isBudgetNegotiable || p.budget === 0
+    ? "Open to discussion"
+    : `$${p.budget}`}
+</span>
                             <span className="flex items-center gap-1">
                               <Calendar size={14} /> {formatDate(p.start_date)}
                             </span>
@@ -290,11 +294,11 @@ const SentProposal = () => {
 
             <div className="p-4 space-y-4">
               <p>
-                <strong>Influencer:</strong>{" "}
+                <span className="text-sm uppercase tracking-wider text-gray-700 font-semibold">Influencer:</span>{" "}
                 {hiredInfluenceName ? (
                   <Link
                     href={`/brand-dashboard/microinfluencerspage/${selectedProposal.hired_influencer_id}`}
-                    className="text-primary underline"
+                    className="text-primary uppercase tracking-wider underline text-sm font-[500]"
                   >
                     {hiredInfluenceName}
                   </Link>
@@ -311,11 +315,17 @@ const SentProposal = () => {
                   {selectedProposal.proposal_message || "No Message"}
                 </div>
               </div>
-              <div className="font-semibold text-primary text-lg">
-                <h4>Budget:${selectedProposal.budget}</h4>
-              </div>
+              <div className="font-semibold  md:text-lg">
+  <h4 className="m-0 text-gray-700 uppercase tracking-wider text-sm">
+    Budget:{" "}
+    {selectedProposal.isBudgetNegotiable || selectedProposal.budget === 0
+      ? "Open to discussion"
+      : `$${selectedProposal.budget}`}
+  </h4>
+</div>
+
               <div>
-                <h4 className="font-semibold text-primary text-lg mb-2">
+                <h4 className="font-semibold  text-sm uppercase tracking-wider text-gray-700 mb-2">
                   Content Deliverables
                 </h4>
                 {selectedProposal.campaign_deliverables &&
@@ -335,7 +345,7 @@ const SentProposal = () => {
                               (item: string, index: number) => (
                                 <span
                                   key={index}
-                                  className="bg-blue-50 text-primary px-3 py-1 rounded-full text-xs font-medium border border-blue-100 capitalize"
+                                  className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-medium border border-blue-100 capitalize"
                                 >
                                   {/* 3. Format "socialPost" to "Social Post" using Regex */}
                                   {item.replace(/([A-Z])/g, " $1").trim()}

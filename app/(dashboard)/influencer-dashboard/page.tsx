@@ -51,6 +51,7 @@ interface Campaign {
     id: number;
   };
   timestamp:string | Date;
+  isBudgetNegotiable:Boolean;
 }
 
 interface InfluencerProfileInfo {
@@ -741,7 +742,7 @@ function InfluencerDashboardContent() {
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <div className="h-5 w-1 bg-primary rounded-full"></div>
-                  <h3 className="text-xl font-bold text-gray-900">
+                  <h3 className="text-sm font-semibold uppercase text-gray-700 ">
                     Proposal Details
                   </h3>
                 </div>
@@ -751,7 +752,7 @@ function InfluencerDashboardContent() {
                     <span className="text-sm font-semibold text-primary min-w-[100px]">
                       Campaign ID:
                     </span>
-                    <span className="text-sm font-medium text-gray-800 bg-blue-50 px-2 py-0.5 rounded">
+                    <span className="text-sm  text-gray-700 bg-primary/10 px-2 py-0.5 rounded">
                       #{selectedCampaign?.campaign?.id}
                     </span>
                   </div>
@@ -764,12 +765,12 @@ function InfluencerDashboardContent() {
                       {selectedCampaign?.campaign?.campaign_name}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-600 mt-1">
+                  <p className="text-sm text-primary font-semibold mt-1">
                     Brand:{" "}
                     {brandMap[selectedCampaign.owner_id] ? (
                       <a
                         href={`influencer-dashboard/brand/${selectedCampaign.owner_id}`}
-                        className="text-primary font-medium hover:underline"
+                        className="text-primary font-medium tracking-wide underline"
                       >
                         {brandMap[selectedCampaign.owner_id]?.brand_profile
                           ?.business_name ||
@@ -806,7 +807,7 @@ function InfluencerDashboardContent() {
             <div className="p-6 overflow-y-auto">
               <div className="space-y-6">
                 {/* Date Section */}
-                <div className="flex items-start gap-3 bg-blue-50 p-4 rounded-xl border border-blue-100">
+                <div className="flex items-start gap-3 bg-primary/10 p-4 rounded-xl border border-blue-100">
                   <Calendar className="w-5 h-5 text-primary mt-0.5" />
                   <div>
                     <p className="text-sm font-semibold text-primary">
@@ -820,11 +821,16 @@ function InfluencerDashboardContent() {
                     </p>
                   </div>
                 </div>
-                <div className="font-semibold text-primary text-lg">
-                  <h4>Budget:${selectedCampaign.budget}</h4>
+                <div className="font-semibold text-sm uppercase tracking-wider text-gray-700">
+                  <h4 className="m-0">
+    Budget:{" "}
+    {selectedCampaign?.isBudgetNegotiable || selectedCampaign.budget === 0
+      ? "Open to discussion"
+      : `$${selectedCampaign.budget}`}
+  </h4>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-primary text-lg mb-2">
+                  <h4 className="font-semibold text-gray-700 text-sm tracking-wider uppercase mb-2">
                     Content Deliverables
                   </h4>
                   {selectedCampaign.campaign_deliverables &&
@@ -844,7 +850,7 @@ function InfluencerDashboardContent() {
                                 (item: string, index: number) => (
                                   <span
                                     key={index}
-                                    className="bg-blue-50 text-primary px-3 py-1 rounded-full text-xs font-medium border border-blue-100 capitalize"
+                                    className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-medium border border-blue-100 capitalize"
                                   >
                                     {/* 3. Format "socialPost" to "Social Post" using Regex */}
                                     {item.replace(/([A-Z])/g, " $1").trim()}

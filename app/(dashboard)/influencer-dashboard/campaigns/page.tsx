@@ -66,6 +66,7 @@ interface HiredCampaign {
   }
   timestamp:string|Date;
   campaign_owner?:number;
+  isBudgetNegotiable:Boolean;
   
 }
 
@@ -714,14 +715,27 @@ export default function CampaignsPage() {
           <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl transform transition-all scale-100 flex flex-col max-h-[90vh]">
             <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">
               <div>
-                <h3 className="text-xl font-bold text-gray-900">
+                <h3 className="text-sm font-semibold uppercase text-gray-700 ">
                   {selectedType === "public"
                     ? "Campaign Details"
                     : "Proposal Details"}
                 </h3>
-                <p className="text-sm text-gray-500">
-                  ID: #{selectedCampaign.id}
-                </p>
+                <div className="flex flex-wrap items-baseline gap-1 mt-2">
+                    <span className="text-sm font-semibold text-primary min-w-[100px]">
+                      Campaign ID:
+                    </span>
+                    <span className="text-sm  text-gray-700 bg-primary/10 px-2 py-0.5 rounded">
+                      #{selectedCampaign.id}
+                    </span>
+                  </div>
+                <div className="flex flex-wrap items-baseline gap-1">
+                    <span className="text-sm font-semibold text-primary min-w-[100px]">
+                      Campaign Title:
+                    </span>
+                    <span className="text-sm text-gray-700">
+                      {selectedCampaign?.campaign?.campaign_name}
+                    </span>
+                  </div>
               </div>
               <button
                 onClick={handleCloseModal}
@@ -893,12 +907,12 @@ export default function CampaignsPage() {
               ) : (
                 // HIRED CAMPAIGN DETAILS
                 <>
-                <p className="text-sm text-gray-600 my-1">
+                <p className="text-sm text-gray-700 font-semibold my-1">
                     Brand:{" "}
                     {brandMap[selectedCampaign.owner_id] ? (
                       <a
                         href={`influencer-dashboard/brand/${selectedCampaign.owner_id}`}
-                        className="text-primary font-medium hover:underline"
+                        className="text-primary font-medium underline"
                       >
                         {brandMap[selectedCampaign.owner_id]?.brand_profile
                           ?.business_name ||
@@ -933,20 +947,30 @@ export default function CampaignsPage() {
                     </div>
                   </div>
 
-                  <div className="font-semibold text-primary text-lg mb-4">
-                    Budget: ${(selectedCampaign as HiredCampaign).budget}
-                  </div>
+                  <div className="font-semibold text-sm uppercase tracking-wider text-gray-700">
+                  <h4 className="m-0">
+    Budget:{" "}
+    {(selectedCampaign as HiredCampaign)?.isBudgetNegotiable || (selectedCampaign as HiredCampaign).budget === 0
+      ? "Open to discussion"
+      : `$${(selectedCampaign as HiredCampaign).budget}`}
+  </h4>
+                </div>
 
-                  <div className="mb-4">
-                    <h4 className="font-semibold mb-2">Proposal Message</h4>
-                    <p className="text-gray-600 bg-gray-50 p-3 rounded">
-                      {(selectedCampaign as HiredCampaign).proposal_message}
-                    </p>
+                  
+
+                  
+                  <div>
+                  <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-2">
+                    Proposal Message
+                  </h4>
+                  <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-gray-700 text-sm leading-relaxed whitespace-pre-wrap">
+                    {(selectedCampaign as HiredCampaign).proposal_message || "No Message"}
                   </div>
+                </div>
 
                   {/* Render Deliverables from JSON string */}
                   <div className="mb-4">
-                    <h4 className="font-semibold mb-2">Deliverables</h4>
+                    <h4 className="font-semibold text-gray-700 text-sm tracking-wider uppercase my-2">Deliverables</h4>
                     <div className="flex flex-wrap gap-2">
                       {(() => {
                         try {
@@ -958,7 +982,7 @@ export default function CampaignsPage() {
                             return parsed.map((d: string, i: number) => (
                               <span
                                 key={i}
-                                className="bg-gray-100 px-2 py-1 rounded text-xs capitalize"
+                                className="bg-primary/10 text-primary px-2 py-1 rounded text-xs capitalize"
                               >
                                 {d.replace(/([A-Z])/g, " $1").trim()}
                               </span>
@@ -1014,7 +1038,7 @@ export default function CampaignsPage() {
             </div>
 
             {/* Footer Actions */}
-            <div className="p-6 border-t border-gray-200 bg-gray-50 flex gap-3 justify-end rounded-b-2xl">
+            <div className="p-6 w-full border-t border-gray-200 bg-gray-50 flex gap-3 justify-end rounded-b-2xl">
               {selectedType === "hired" &&
               !(selectedCampaign as HiredCampaign).is_accepted_by_influencer ? (
                 <>
@@ -1022,16 +1046,18 @@ export default function CampaignsPage() {
                     onClick={() =>
                       handleCampaignAction(selectedCampaign.id, "reject")
                     }
-                    className="px-4 py-2 border border-red-200 text-red-600 rounded-lg hover:bg-red-50"
+                    className="w-full px-4 py-3 border font-bold flex gap-1 justify-center items-center border-red-200 text-red-600 rounded-lg hover:bg-red-50"
                   >
+                    <XCircle className="w-5 h-5" />
                     Reject
                   </button>
                   <button
                     onClick={() =>
                       handleCampaignAction(selectedCampaign.id, "accept")
                     }
-                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                    className="w-full px-4 py-3 flex gap-1 justify-center items-center font-bold bg-green-600 text-white rounded-lg hover:bg-green-700"
                   >
+                    <CheckCircle className="w-5 h-5" />
                     Accept
                   </button>
                 </>
