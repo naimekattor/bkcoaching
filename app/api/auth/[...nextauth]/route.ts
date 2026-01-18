@@ -22,7 +22,7 @@ declare module "next-auth/jwt" {
     backendAccessToken?: string;
     backendRefreshToken?: string;
     role?: string;
-    provider?: string; 
+    provider?: string;
   }
 }
 
@@ -36,32 +36,48 @@ export const authOptions: NextAuthOptions = {
       },
     }),
     AppleProvider({
-    clientId: process.env.APPLE_CLIENT_ID!, 
-    clientSecret: process.env.APPLE_CLIENT_SECRET!,
-    authorization: {
+      clientId: process.env.APPLE_CLIENT_ID!,
+      clientSecret: process.env.APPLE_CLIENT_SECRET!,
+      authorization: {
         params: {
           scope: "name email",
-          response_mode: "form_post", 
+          response_mode: "form_post",
         },
       },
-  }),
+    }),
   ],
   session: { strategy: "jwt" },
   secret: process.env.NEXTAUTH_SECRET,
   debug: true,
-cookies: {
-        pkceCodeVerifier: {
-            name: "next-auth.pkce.code_verifier",
-            options: {
-                httpOnly: true,
-                sameSite: "none",
-                path: "/",
-                secure: true,
-            },
-        },
+  cookies: {
+    pkceCodeVerifier: {
+      name: "next-auth.pkce.code_verifier",
+      options: {
+        httpOnly: true,
+        sameSite: "none",
+        path: "/",
+        secure: true,
+      },
     },
+    callbackUrl: {
+      name: `next-auth.callback-url`,
+      options: {
+        sameSite: "none",
+        path: "/",
+        secure: true,
+      },
+    },
+    csrfToken: {
+      name: `next-auth.csrf-token`,
+      options: {
+        sameSite: "none",
+        path: "/",
+        secure: true,
+      },
+    },
+  },
   callbacks: {
-    async jwt({ token, account, profile,user  }) {
+    async jwt({ token, account, profile, user }) {
       if (account && (account.provider === "google" || account.provider === "apple")) {
         try {
           const cookieStore = await cookies();
@@ -70,36 +86,36 @@ cookies: {
 
           const email = user?.email || token.email;
           // Email is mandatory
-    if (!email) {
-      console.error("❌ Social login failed: email missing");
-      return token; // DO NOT throw
-    }
+          if (!email) {
+            console.error("❌ Social login failed: email missing");
+            return token; // DO NOT throw
+          }
           let payload: any = {
             email,
             signed_up_as: role,
             provider: account.provider,
           };
-          
+
           // Handle Google (has name in profile)
           if (account.provider === "google" && profile) {
             const googleProfile = profile as any;
             payload.first_name = googleProfile.given_name || googleProfile.name?.split(" ")[0] || "";
             payload.last_name = googleProfile.family_name || googleProfile.name?.split(" ")[1] || "";
           }
-           // ---------------- APPLE ----------------
-    if (account.provider === "apple") {
-      payload.apple_id = profile?.sub || token.sub;
+          // ---------------- APPLE ----------------
+          if (account.provider === "apple") {
+            payload.apple_id = profile?.sub || token.sub;
 
-      // Name only exists on FIRST login
-      if (user?.name) {
-        const parts = user.name.split(" ");
-        payload.first_name = parts[0] || "";
-        payload.last_name = parts.slice(1).join(" ");
-      } else {
-        payload.first_name = "Name";
-        payload.last_name = "";
-      }
-    }
+            // Name only exists on FIRST login
+            if (user?.name) {
+              const parts = user.name.split(" ");
+              payload.first_name = parts[0] || "";
+              payload.last_name = parts.slice(1).join(" ");
+            } else {
+              payload.first_name = "Name";
+              payload.last_name = "";
+            }
+          }
 
           console.log("🚀 Payload sending to Backend:", JSON.stringify(payload, null, 2));
 
