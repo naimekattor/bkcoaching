@@ -30,7 +30,7 @@ const MessageBubble = memo(function MessageBubble({
     <div
       className={`flex ${
         message.isOwn ? "justify-end" : "justify-start"
-      } mb-4 my-6`}
+      }  my-2`}
     >
       <div className="flex items-end gap-2 max-w-[85%] sm:max-w-xs lg:max-w-md">
         {!message.isOwn && (

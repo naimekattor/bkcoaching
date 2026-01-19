@@ -706,7 +706,7 @@ console.log("testing for firstUnreadIndex",messages);
   };
 
   return (
-    <div className="h-[calc(100vh-64px)] bg-gray-50 flex relative">
+    <div className="h-[calc(100dvh-64px)] bg-gray-50 flex relative">
       {/* Mobile Overlay */}
       {showSidebar && (
         <div
@@ -731,14 +731,14 @@ console.log("testing for firstUnreadIndex",messages);
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <button
-                onClick={() => setShowSidebar(false)}
+                // onClick={() => setShowSidebar(prev=>!prev)}
+                onClick={() => router.back()}
                 className="md:hidden p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all duration-200"
               >
                 <ArrowLeft className="h-5 w-5" />
               </button>
               <h1 className="text-xl font-bold text-primary">Messages</h1>
             </div>
-            
           </div>
 
           <div className="relative">
@@ -852,7 +852,7 @@ console.log("testing for firstUnreadIndex",messages);
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setShowSidebar(true)}
-                  className="md:hidden p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all duration-200"
+                  className="md:hidden text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all duration-200"
                 >
                   <MoreHorizontal className="h-5 w-5" />
                 </button>

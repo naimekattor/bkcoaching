@@ -136,7 +136,7 @@ export function RecentCollaborations({
 
   return (
     <div className="bg-white rounded-lg p-6 border border-slate-200  flex flex-col">
-      <h3 className="text-xl font-semibold text-slate-800 mb-4 flex-shrink-0">
+      <h3 className="text-xl font-bold text-slate-700 mb-4 flex-shrink-0">
         Recent Collaborations
       </h3>
 

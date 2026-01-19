@@ -329,6 +329,12 @@ const DashboardTopHeader = () => {
     });
   };
 
+  const profileImage =
+  user?.brand_profile?.logo ||
+  user?.influencer_profile?.profile_picture;
+
+const isBrand = !!user?.brand_profile?.logo;
+
   return (
     <div className="bg-white px-4 sm:px-8 py-5 border-b border-gray-100">
       <div className="flex items-center justify-between">
@@ -501,43 +507,44 @@ const DashboardTopHeader = () => {
           {/* --- PROFILE --- */}
           <div className="relative">
             <button
-              onClick={() => {
-                setShowProfileDropdown(!showProfileDropdown);
-                setShowNotifDropdown(false);
-              }}
-              className="flex items-center gap-2 hover:bg-gray-50 rounded-full p-1 pr-3 transition"
-            >
-              {user?.brand_profile?.logo ||
-              user?.influencer_profile?.profile_picture ? (
-                <Image
-                  src={
-                    user?.brand_profile?.logo ||
-                    user?.influencer_profile?.profile_picture
-                  }
-                  width={44}
-                  height={44}
-                  alt="Profile"
-                  className="w-11 h-11 rounded-full object-cover ring-2 ring-gray-200"
-                />
-              ) : (
-                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-primary to-secondary text-white flex items-center justify-center font-semibold uppercase">
-                  {(
-                    user?.brand_profile?.business_name ||
-                    user?.influencer_profile?.display_name ||
-                    user?.user?.first_name ||
-                    "Name"
-                  )
-                    .charAt(0)
-                    .toUpperCase()}
-                </div>
-              )}
-              <ChevronDown
-                size={18}
-                className={`text-gray-600 transition-transform ${
-                  showProfileDropdown ? "rotate-180" : ""
-                }`}
-              />
-            </button>
+  onClick={() => {
+    setShowProfileDropdown(!showProfileDropdown);
+    setShowNotifDropdown(false);
+  }}
+  className="flex items-center gap-2 hover:bg-gray-50 rounded-full p-1 pr-3 transition"
+>
+  {profileImage ? (
+    <div className="w-11 h-11 rounded-full overflow-hidden ring-2 ring-gray-200 bg-white flex items-center justify-center">
+      <Image
+        src={profileImage}
+        alt="Profile"
+        width={44}
+        height={44}
+        className={`w-full h-full ${
+          isBrand ? "object-contain p-1" : "object-cover"
+        }`}
+      />
+    </div>
+  ) : (
+    <div className="w-11 h-11 rounded-full bg-gradient-to-br from-primary to-secondary text-white flex items-center justify-center font-semibold uppercase">
+      {(
+        user?.brand_profile?.business_name ||
+        user?.influencer_profile?.display_name ||
+        user?.user?.first_name ||
+        "N"
+      )
+        .charAt(0)
+        .toUpperCase()}
+    </div>
+  )}
+
+  <ChevronDown
+    size={18}
+    className={`text-gray-600 transition-transform ${
+      showProfileDropdown ? "rotate-180" : ""
+    }`}
+  />
+</button>
 
             {/* Profile Dropdown */}
             {showProfileDropdown && (

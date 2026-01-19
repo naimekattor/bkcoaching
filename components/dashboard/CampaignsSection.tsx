@@ -19,7 +19,7 @@ export function CampaignsSection({ allCampaigns = [] as DashboardCampaign[] }: C
           <div className="p-2 bg-primary/10 rounded-lg">
             <Layout className="w-5 h-5 text-primary" />
           </div>
-          <h3 className="text-xl font-bold text-slate-800">My Campaigns</h3>
+          <h3 className="text-xl font-bold text-slate-700">My Campaigns</h3>
         </div>
         
         <Link
@@ -48,7 +48,7 @@ export function CampaignsSection({ allCampaigns = [] as DashboardCampaign[] }: C
               className="group flex items-center justify-between p-4 bg-white border border-slate-100 rounded-xl hover:border-primary/30 hover:shadow-md transition-all duration-200"
             >
               <div className="flex flex-col">
-                <h4 className="font-bold text-slate-800 group-hover:text-primary transition-colors">
+                <h4 className="font-normal text-slate-700 group-hover:text-primary transition-colors">
                   {campaign?.title}
                 </h4>
                 <p className="text-xs text-slate-500 mt-1 flex items-center gap-1">

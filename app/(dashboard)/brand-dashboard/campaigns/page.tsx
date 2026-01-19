@@ -38,6 +38,7 @@ import {
   FaWhatsapp,
   FaYoutube,
   FaFacebook,
+  FaTwitter,
 } from "react-icons/fa";
 import { apiClient } from "@/lib/apiClient";
 import {
@@ -144,6 +145,11 @@ const PLATFORM_CONFIG: PlatformConfig[] = [
   {
     match: "podcast",
     icon: <FaPodcast className="w-4 h-4" />,
+    className: "text-purple-600",
+  },
+  {
+    match: "twitter",
+    icon: <FaTwitter className="w-4 h-4" />,
     className: "text-purple-600",
   },
 ];
@@ -790,13 +796,12 @@ function CampaignDashboardContent() {
                 key={campaign.id}
                 className="bg-white rounded-lg shadow-sm cursor-pointer hover:shadow-lg border border-gray-200 transform transition-transform duration-300 hover:scale-102"
               >
-                <div className="relative">
+                <div className="relative w-full aspect-[16/9] overflow-hidden rounded-t-lg">
                   <Image
-                    width={600}
-                    height={192}
+                    fill
                     src={campaign.image}
                     alt={campaign.title}
-                    className="w-full h-48  rounded-t-lg"
+                    className="object-cover"
                   />
                   <span
                     className={`absolute top-3 left-3 px-2 py-1 rounded-full text-xs font-medium ${
@@ -904,7 +909,7 @@ function CampaignDashboardContent() {
                         <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Budget
                         </p>
-                        <p className="text-lg font-bold text-gray-900">
+                        <p className="text-base font-semibold text-primary">
                           {campaign.budget}
                         </p>
                       </div>
@@ -919,7 +924,7 @@ function CampaignDashboardContent() {
                         <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Timeline
                         </p>
-                        <p className="text-lg font-bold text-gray-900">
+                        <p className="text-base font-semibold text-primary">
                           {campaign.timeLeft}
                         </p>
                       </div>
@@ -1039,7 +1044,7 @@ function CampaignDashboardContent() {
                             <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
                               Budget
                             </p>
-                            <p className="text-lg font-bold text-gray-900">
+                            <p className="text-base font-semibold text-primary">
                               {campaign.budget}
                             </p>
                           </div>
@@ -1053,7 +1058,7 @@ function CampaignDashboardContent() {
                             <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
                               Timeline
                             </p>
-                            <p className="text-lg font-bold text-gray-900">
+                            <p className="text-base font-semibold text-primary">
                               {campaign.timeLeft}
                             </p>
                           </div>
@@ -1074,12 +1079,12 @@ function CampaignDashboardContent() {
           <div className="bg-white rounded-lg max-w-lg w-full max-h-[90vh] overflow-y-auto">
             {/* Modal Header Image */}
             <div className="relative">
-              <div className=" h-56 mb-6 w-full p-4">
+              <div className=" w-full aspect-[16/9] overflow-hidden rounded-t-lg p-4">
                 <Image
                   fill
                   src={selectedCampaign.image}
                   alt={selectedCampaign.title}
-                  className="object-cover rounded-xl shadow-sm p-4"
+                  className="object-cover "
                 />
               </div>
               <button
@@ -1112,12 +1117,14 @@ function CampaignDashboardContent() {
                   {modalHirings.length === 0 ? (
                     <p className="text-sm text-gray-500 italic">
   No influencers hired yet.{" "}
-  <Link
+  <br/>
+  <p className="text-primary">Click <Link
     href="/brand-dashboard/microinfluencerspage"
-    className="text-primary font-medium underline"
+    className=" font-medium underline"
   >
-    Click here to find influencers
-  </Link>
+     here 
+  </Link> to find influencers</p>
+  
 </p>
 
                   ) : (

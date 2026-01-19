@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { Paperclip, X, Globe, Mail, Building2 } from "lucide-react";
+import { Paperclip, X, Globe, Mail, Building2, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,6 +19,7 @@ import { uploadToCloudinary } from "@/lib/fileUpload";
 import { apiClient } from "@/lib/apiClient";
 import { toast } from "react-toastify";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 type BrandProfile = Partial<{
   business_name: string | null;
@@ -27,7 +28,7 @@ type BrandProfile = Partial<{
   mission: string | null;
   designation: string | null;
   logo: string | null;
-  business_type: string | null;
+  business_type: "";
   website: string | null;
   timezone: string | null;
   description: string | null;
@@ -46,7 +47,7 @@ type FormDataState = {
   mission: string;
   designation: string;
   logo: string | null;
-  business_type: string;
+  business_type: string[];
   website: string;
   timezone: string;
   description: string;
@@ -109,6 +110,17 @@ const businessTypes = [
   "Other",
 ];
 
+
+
+const splitBusinessTypes = (value: string): string[] => {
+  if (!value) return [];
+  // Splits by comma + space, but only if the next character starts a new category 
+  // (starts with Uppercase and contains & or –)
+  return value
+    .split(/,\s(?=[A-Z][^,]*(?:&|–))/)
+    .map((s) => s.trim());
+};
+
 export default function BrandSetupPage() {
   const { user,setUser } = useAuthStore();
   console.log(user);
@@ -123,7 +135,7 @@ export default function BrandSetupPage() {
     mission: "",
     designation: "",
     logo: null as string | null,
-    business_type: "",
+    business_type: [],
     website: "",
     timezone: "",
     description: "",
@@ -136,19 +148,29 @@ export default function BrandSetupPage() {
   });
 
   const [saving, setSaving] = useState(false);
-
+const toggleBusinessType = (type: string) => {
+  setFormData((prev) => {
+    const isSelected = prev.business_type.includes(type);
+    const updatedTypes = isSelected
+      ? prev.business_type.filter((t) => t !== type)
+      : [...prev.business_type, type];
+    
+    return { ...prev, business_type: updatedTypes };
+  });
+};
   // Load data from user.brand_profile
   useEffect(() => {
     if (!profile || Object.keys(profile).length === 0) return;
 
     setFormData({
+      ...formData,
       business_name: profile.business_name || "",
       display_name: profile.display_name || "",
       short_bio: profile.short_bio || "",
       mission: profile.mission || "",
       designation: profile.designation || "",
       logo: profile.logo || null,
-      business_type: profile.business_type || "",
+      business_type: profile.business_type ? splitBusinessTypes(profile.business_type) : [],
       website: profile.website || "",
       timezone: profile.timezone || "",
       description: profile.description || "",
@@ -195,7 +217,9 @@ export default function BrandSetupPage() {
         mission: formData.mission || null,
         designation: formData.designation || null,
         logo: formData.logo || null,
-        business_type: formData.business_type || null,
+        business_type: formData.business_type.length > 0 
+        ? formData.business_type.join(", ") 
+        : null,
         website: formData.website || null,
         timezone: formData.timezone || null,
         description: formData.description || null,
@@ -361,21 +385,65 @@ export default function BrandSetupPage() {
                   )}
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="business_type" className="text-base font-medium">
-                    Business Type
-                  </Label>
-                  <Select value={formData.business_type} onValueChange={(v) => handleInputChange("business_type", v)}>
-                    <SelectTrigger id="business_type" className="h-11">
-                      <SelectValue placeholder="Select business type" />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-64">
-                      {businessTypes.map((type) => (
-                        <SelectItem key={type} value={type}>{type}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                <div className="space-y-4 md:col-span-2">
+  <Label className="text-base font-medium">Business Types</Label>
+  <Card className="border-none shadow-sm bg-white border border-gray-100">
+    <CardContent className="p-0 space-y-4">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="outline"
+            className="w-full justify-between h-12 text-left font-normal border-gray-300 hover:bg-white focus:ring-2 focus:ring-primary/20"
+          >
+            <span className={formData.business_type.length ? "text-gray-900" : "text-muted-foreground"}>
+              {formData.business_type.length
+                ? `${formData.business_type.length} categories selected`
+                : "Select your business categories..."}
+            </span>
+            <ChevronDown className="h-4 w-4 text-gray-500 opacity-50" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent 
+          className="w-[var(--radix-dropdown-menu-trigger-width)] max-h-[400px] overflow-y-auto p-1"
+          align="start"
+        >
+          {businessTypes.map((type) => (
+            <DropdownMenuCheckboxItem
+              key={type}
+              checked={formData.business_type.includes(type)}
+               onCheckedChange={() => toggleBusinessType(type)}
+              // Prevents the dropdown from closing after every single click
+              onSelect={(e) => e.preventDefault()}
+              className="cursor-pointer py-3 px-3 border-b border-gray-50 last:border-0"
+            >
+              <span className="text-sm leading-relaxed">{type}</span>
+            </DropdownMenuCheckboxItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      {formData.business_type.length > 0 && (
+        <div className="flex flex-wrap gap-2 p-4 bg-gray-50 rounded-xl border border-gray-100">
+          {formData.business_type.map((type) => (
+            <span
+              key={type}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-medium text-gray-700 shadow-sm transition-all hover:border-gray-300"
+            >
+              {type}
+              <button
+                type="button"
+                onClick={() => handleInputChange("business_type", formData.business_type.filter((t) => t !== type))}
+                className="hover:bg-gray-100 p-0.5 rounded-full text-gray-400 hover:text-red-500 transition-colors"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+    </CardContent>
+  </Card>
+</div>
 
                 <div className="space-y-2">
                   <Label htmlFor="website" className="text-base font-medium">

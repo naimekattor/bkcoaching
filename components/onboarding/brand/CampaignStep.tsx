@@ -19,7 +19,7 @@ import {
   Target,
   DollarSign,
   Calendar,
-  Image,
+  Image as ImageIcon,
   Video,
   Mic,
   FileText,
@@ -39,6 +39,7 @@ import {
 import { useBrandOnBoarding } from "@/contexts/BrandOnboardingContext";
 import { demographics } from "@/constants/demographics";
 import { uploadToCloudinary } from "@/lib/fileUpload";
+import Image from "next/image";
 
 interface CampaignStepProps {
   onNext: () => void;
@@ -92,7 +93,7 @@ const CampaignStep = ({ onBack,onNext }: CampaignStepProps) => {
   const deliverableTypes = [
     
     
-    { id: "instagramStory", label: "Instagram Story", icon: Image },
+    { id: "instagramStory", label: "Instagram Story", icon: ImageIcon },
     { id: "instagramReel", label: "Instagram Reel", icon: Video },
     { id: "tiktokVideo", label: "TikTok Video", icon: Video },
     { id: "youtubeVideo", label: "YouTube Video", icon: Video },
@@ -102,8 +103,8 @@ const CampaignStep = ({ onBack,onNext }: CampaignStepProps) => {
     { id: "podcastMention", label: "Podcast Mention", icon: Mic },
     { id: "liveStream", label: "Live Stream", icon: Video },
     { id: "userGeneratedContent", label: "UGC Creation", icon: Video },
-    { id: "whatsappStatus", label: "WhatsApp Status Post", icon: Image },
-    { id: "socialPost", label: "Whatsapp Group Post", icon: Image },
+    { id: "whatsappStatus", label: "WhatsApp Status Post", icon: ImageIcon },
+    { id: "socialPost", label: "Whatsapp Group Post", icon: ImageIcon },
     { id: "repost", label: "Repost", icon: Repeat },
   ];
 
@@ -375,6 +376,9 @@ const CampaignStep = ({ onBack,onNext }: CampaignStepProps) => {
                 <Label htmlFor="campaignposter" className="mb-2">
                   Campaign Flyer
                 </Label>
+                <p className="text-xs text-gray-500 mb-3">
+  Use a landscape image (16:9). Recommended size: 1280×720 or 1920×1080.
+</p>
                 {!onboardingData.posterPreview ? (
                   <div
                     onDragEnter={handleDrag}
@@ -418,12 +422,15 @@ const CampaignStep = ({ onBack,onNext }: CampaignStepProps) => {
                     )}
                   </div>
                 ) : (
-                  <div className="relative rounded-lg overflow-hidden border border-gray-200">
-                    <img
-                      src={onboardingData.campaign_poster}
-                      alt="Poster preview"
-                      className="w-full h-80 object-cover"
-                    />
+                  <div className="relative rounded-lg w-full aspect-[16/9] rounded-t-lg overflow-hidden border border-gray-200">
+                    {onboardingData.posterPreview && (
+  <Image
+    fill
+    src={onboardingData.posterPreview}
+    alt="Poster preview"
+    className="object-cover"
+  />
+)}
                     <button
                       onClick={handleRemovePoster}
                       className="absolute top-2 right-2 p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition cursor-pointer"

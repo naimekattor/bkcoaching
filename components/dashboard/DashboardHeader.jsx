@@ -7,6 +7,8 @@ export function DashboardHeader() {
   const { user, logout } = useAuthStore();
   console.log("brand_header",user);
 const businessType=user?.brand_profile?.business_type?.split("–")[0];
+const logo = user?.brand_profile?.logo;
+
   return (
     <>
       <div className="bg-white rounded-xl shadow-md p-5 sm:p-6 hover:shadow-lg transition-shadow duration-300">
@@ -15,23 +17,25 @@ const businessType=user?.brand_profile?.business_type?.split("–")[0];
     {/* Logo + Info */}
     <div className="flex items-center gap-4">
       {/* Brand Logo */}
-      <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100 flex items-center justify-center">
-        {user?.brand_profile?.logo ? (
-          <Image
-            width={64}
-            height={64}
-            src={user.brand_profile.logo}
-            alt="Brand Logo"
-            className="object-cover w-full h-full"
-          />
-        ) : (
-          <span className="text-gray-500 font-bold text-xl">
-            {user?.brand_profile?.business_name?.[0]?.toUpperCase() 
-  || user?.user?.first_name?.[0]?.toUpperCase()}
-
-          </span>
-        )}
-      </div>
+      <div className="w-16 h-16 rounded-lg bg-gray-100 overflow-hidden flex items-center justify-center">
+  {logo ? (
+    <Image
+      src={logo}
+      alt="Profile image"
+      width={64}
+      height={64}
+      className="w-full h-full object-contain object-center"
+      
+    />
+  ) : (
+    <span className="text-gray-500 font-bold text-xl">
+      {(
+        user?.brand_profile?.business_name?.[0] ||
+        user?.user?.first_name?.[0]
+      )?.toUpperCase()}
+    </span>
+  )}
+</div>
 
       {/* Brand Info */}
       <div className="flex flex-col">

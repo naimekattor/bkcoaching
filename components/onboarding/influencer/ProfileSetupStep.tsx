@@ -104,7 +104,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
                 <Label>Profile Photo </Label>
                 <label
                   htmlFor="profilePhoto"
-                  className="aspect-square w-32 mx-auto md:mx-0 border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors overflow-hidden"
+                  className="aspect-square w-32  border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors overflow-hidden"
                 >
                   {!uploading && (preview || onboardingDataInfluencer.profile_picture) ? (
                     <Image

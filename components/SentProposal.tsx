@@ -212,7 +212,7 @@ const SentProposal = () => {
           >
             {/* Campaign Header */}
             <h3
-              className="text-lg font-semibold text-gray-900 mb-3 cursor-pointer flex justify-between items-center"
+              className="text-[16px] font-semibold text-primary mb-3 cursor-pointer flex justify-between items-center"
               onClick={() =>
                 setExpandedCampaignId(
                   expandedCampaignId === group.campaign.id

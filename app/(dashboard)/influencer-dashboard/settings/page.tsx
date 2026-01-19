@@ -199,6 +199,7 @@ export default function ProfilePage() {
       linkedin: p.linkedin_handle || "",
       whatsapp: p.whatsapp_handle || "",
       blog:p.blog_handle || "",
+      podcast:p.podcast_handle || "",
     },
     followers: {
     instagram: p.insta_follower || "",

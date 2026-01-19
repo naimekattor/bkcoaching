@@ -147,16 +147,38 @@ const Header = () => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button className="focus:outline-none">
-            <Avatar className="h-12 w-12 cursor-pointer rounded-full overflow-hidden border-white border-[1px]">
-  <AvatarImage
-    src={getProfilePic() || undefined}
-    alt={getDisplayName()}
-    className="h-full w-full object-cover"
-  />
-  <AvatarFallback className="bg-primary text-white font-semibold">
-    {getDisplayName().charAt(0).toUpperCase()}
-  </AvatarFallback>
-</Avatar>
+            <div className="w-12 h-12 flex items-center justify-center overflow-hidden bg-gray-200 rounded-full ring-2 ring-gray-200
+">
+  {getProfilePic() ? (
+  <div
+    className={
+      userData?.signed_up_as === "brand"
+        ? "w-full h-full flex items-center justify-center p-2"
+        : "w-full h-full rounded-full overflow-hidden"
+    }
+  >
+    <Image
+      src={getProfilePic()!} 
+      alt={getDisplayName()}
+      width={96}
+      height={96}
+      className={
+        userData?.signed_up_as === "brand"
+          ? "object-contain"
+          : "object-cover"
+      }
+      priority
+      unoptimized
+    />
+  </div>
+) : (
+  <div className="w-full h-full rounded-full bg-primary text-white flex items-center justify-center font-semibold uppercase">
+    {getDisplayName().charAt(0)}
+  </div>
+)}
+
+</div>
+
 
           </button>
         </DropdownMenuTrigger>

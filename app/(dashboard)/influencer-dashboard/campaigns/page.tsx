@@ -1,7 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Search, DollarSign, CircleCheck, X, CheckCircle, XCircle, Paperclip, Calendar, Megaphone, ArrowRight, Target, Clock } from "lucide-react";
+import {
+  Search,
+  DollarSign,
+  CircleCheck,
+  X,
+  CheckCircle,
+  XCircle,
+  Paperclip,
+  Calendar,
+  Megaphone,
+  ArrowRight,
+  Target,
+  Clock,
+} from "lucide-react";
 import { StatCard } from "@/components/cards/stat-card";
 import Image from "next/image";
 import { apiClient } from "@/lib/apiClient";
@@ -37,12 +50,11 @@ interface PublicCampaign {
   campaign_poster: string | null;
   timestamp: string;
   attachments: Attachment[];
-  owner_id:number;
-   campaign:{
-    campaign_name:string;
-    campaign_owner:number;
-  }
-  
+  owner_id: number;
+  campaign: {
+    campaign_name: string;
+    campaign_owner: number;
+  };
 }
 
 // Interface for "get_my_previous_where_i_was_hired" (Your specific jobs)
@@ -53,26 +65,26 @@ interface HiredCampaign {
   start_date: string;
   end_date: string;
   proposal_message: string;
-  campaign_deliverables: string; 
+  campaign_deliverables: string;
   attachments: Attachment[];
   is_accepted_by_influencer: boolean;
   is_completed_marked_by_brand: boolean;
   budget: number;
   rating: number;
-  campaign_id:number;
-  campaign:{
-    campaign_name:string;
-    campaign_owner:number;
-  }
-  timestamp:string|Date;
-  campaign_owner?:number;
-  isBudgetNegotiable:Boolean;
-  
+  campaign_id: number;
+  campaign: {
+    campaign_name: string;
+    campaign_owner: number;
+  };
+  timestamp: string | Date;
+  campaign_owner?: number;
+  isBudgetNegotiable: Boolean;
 }
 
 function timeAgo(dateString: string | Date): string {
   // Ensure we have a Date object
-  const past: Date = typeof dateString === "string" ? new Date(dateString) : dateString;
+  const past: Date =
+    typeof dateString === "string" ? new Date(dateString) : dateString;
   const now: Date = new Date();
 
   if (isNaN(past.getTime())) return "Invalid date"; // type-safe check
@@ -81,10 +93,12 @@ function timeAgo(dateString: string | Date): string {
 
   const diffInMinutes: number = Math.floor(diffInMs / (1000 * 60));
   if (diffInMinutes < 1) return "Just now";
-  if (diffInMinutes < 60) return `${diffInMinutes} min${diffInMinutes > 1 ? "s" : ""} ago`;
+  if (diffInMinutes < 60)
+    return `${diffInMinutes} min${diffInMinutes > 1 ? "s" : ""} ago`;
 
   const diffInHours: number = Math.floor(diffInMs / (1000 * 60 * 60));
-  if (diffInHours < 24) return `${diffInHours} hr${diffInHours > 1 ? "s" : ""} ago`;
+  if (diffInHours < 24)
+    return `${diffInHours} hr${diffInHours > 1 ? "s" : ""} ago`;
 
   const diffInDays: number = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
   if (diffInDays === 1) return "Yesterday";
@@ -96,32 +110,35 @@ export default function CampaignsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All Status");
   const [platformFilter, setPlatformFilter] = useState("All Platforms");
-  
+
   // State for Marketplace Campaigns
   const [publicCampaigns, setPublicCampaigns] = useState<PublicCampaign[]>([]);
-  
+
   // State for My Jobs (Invitations + Active)
   const [hiredCampaigns, setHiredCampaigns] = useState<HiredCampaign[]>([]);
-  
+
   // Selected Campaign for Modal (Can be either type)
-  const [selectedCampaign, setSelectedCampaign] = useState<PublicCampaign | HiredCampaign | null>(null);
-  const [selectedType, setSelectedType] = useState<"public" | "hired" | null>(null);
+  const [selectedCampaign, setSelectedCampaign] = useState<
+    PublicCampaign | HiredCampaign | null
+  >(null);
+  const [selectedType, setSelectedType] = useState<"public" | "hired" | null>(
+    null
+  );
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loadingPublic, setLoadingPublic] = useState(true);
   const [loadingHired, setLoadingHired] = useState(true);
-  
+
   // Pagination for Public Campaigns
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [nextUrl, setNextUrl] = useState<string | null>(null);
   const [previousUrl, setPreviousUrl] = useState<string | null>(null);
-   const [campaignActionLoading, setCampaignActionLoading] = useState<{
+  const [campaignActionLoading, setCampaignActionLoading] = useState<{
     id: number | null;
     action: "accept" | "reject" | null;
   }>({ id: null, action: null });
-    const [brandMap, setBrandMap] = useState<Record<number, any>>({});
-
+  const [brandMap, setBrandMap] = useState<Record<number, any>>({});
 
   const router = useRouter();
   const ITEMS_PER_PAGE = 9;
@@ -221,7 +238,10 @@ export default function CampaignsPage() {
   // --- Calculations & Logic ---
 
   // 1. Calculate Progress
-  const calculateProgress = (startDateStr: string, endDateStr: string): number => {
+  const calculateProgress = (
+    startDateStr: string,
+    endDateStr: string
+  ): number => {
     const start = new Date(startDateStr).getTime();
     const end = new Date(endDateStr).getTime();
     const now = new Date().getTime();
@@ -232,22 +252,35 @@ export default function CampaignsPage() {
 
     const totalDuration = end - start;
     const elapsed = now - start;
-    
+
     return Math.round((elapsed / totalDuration) * 100);
   };
 
   // 2. Filter Hired Campaigns
-  const invitations = hiredCampaigns.filter(c => !c.is_accepted_by_influencer);
-  const activeCampaigns = hiredCampaigns.filter(c => c.is_accepted_by_influencer && !c.is_completed_marked_by_brand);
-  const completedCampaigns = hiredCampaigns.filter(c => c.is_completed_marked_by_brand);
+  const invitations = hiredCampaigns.filter(
+    (c) => !c.is_accepted_by_influencer
+  );
+  const activeCampaigns = hiredCampaigns.filter(
+    (c) => c.is_accepted_by_influencer && !c.is_completed_marked_by_brand
+  );
+  const completedCampaigns = hiredCampaigns.filter(
+    (c) => c.is_completed_marked_by_brand
+  );
 
-  const totalEarnings = hiredCampaigns.reduce((acc, curr) => acc + curr.budget, 0);
+  const totalEarnings = hiredCampaigns.reduce(
+    (acc, curr) => acc + curr.budget,
+    0
+  );
 
   // 3. Filter Public Campaigns (Search)
   const filteredPublicCampaigns = publicCampaigns.filter((campaign) => {
     const matchesSearch =
-      campaign.campaign_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      campaign.campaign_description?.toLowerCase().includes(searchQuery.toLowerCase());
+      campaign.campaign_name
+        ?.toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      campaign.campaign_description
+        ?.toLowerCase()
+        .includes(searchQuery.toLowerCase());
 
     const matchesStatus =
       statusFilter === "All Status" ||
@@ -258,7 +291,10 @@ export default function CampaignsPage() {
 
   // --- Handlers ---
 
-  const handleViewDetails = (campaign: PublicCampaign | HiredCampaign, type: "public" | "hired") => {
+  const handleViewDetails = (
+    campaign: PublicCampaign | HiredCampaign,
+    type: "public" | "hired"
+  ) => {
     setSelectedCampaign(campaign);
     setSelectedType(type);
     setIsModalOpen(true);
@@ -272,31 +308,40 @@ export default function CampaignsPage() {
 
   const handleConnectWithOwner = () => {
     if (selectedCampaign) {
-      // Logic depends on which ID is the owner. 
+      // Logic depends on which ID is the owner.
       // HiredCampaign has `owner_id`, PublicCampaign has `campaign_owner`
-      const ownerId = 'owner_id' in selectedCampaign 
-        ? selectedCampaign.owner_id 
-        : (selectedCampaign as PublicCampaign)?.campaign_owner;
+      const ownerId =
+        "owner_id" in selectedCampaign
+          ? selectedCampaign.owner_id
+          : (selectedCampaign as PublicCampaign)?.campaign_owner;
       router.push(`/influencer-dashboard/messages?id=${ownerId}`);
     }
   };
 
-  const handleCampaignAction = async (campaignId: number, action: "accept" | "reject") => {
+  const handleCampaignAction = async (
+    campaignId: number,
+    action: "accept" | "reject"
+  ) => {
     if (action === "accept") {
       try {
-        const res = await apiClient(`campaign_service/accept_offer/${campaignId}/`, {
-          method: "PATCH",
-          auth: true,
-        });
+        const res = await apiClient(
+          `campaign_service/accept_offer/${campaignId}/`,
+          {
+            method: "PATCH",
+            auth: true,
+          }
+        );
 
         if (res?.code === 200 || res?.status === "success") {
           // ✅ Update State Locally to reflect change instantly
-          setHiredCampaigns((prev) => 
-            prev.map((c) => 
-              c.id === campaignId ? { ...c, is_accepted_by_influencer: true } : c
+          setHiredCampaigns((prev) =>
+            prev.map((c) =>
+              c.id === campaignId
+                ? { ...c, is_accepted_by_influencer: true }
+                : c
             )
           );
-          
+
           toast(res.data?.message || "Offer Accepted! 🎉");
           handleCloseModal();
         } else {
@@ -305,75 +350,83 @@ export default function CampaignsPage() {
       } catch (error) {
         console.error("Accept Error:", error);
       }
+    } else if (action === "reject") {
+      Swal.fire({
+        title: "Reject Campaign?",
+        text: "Are you sure you want to reject this campaign? This action cannot be undone.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d32f2f",
+        cancelButtonColor: "#6b7280",
+        confirmButtonText: "Yes, Reject",
+        cancelButtonText: "Cancel",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          setCampaignActionLoading({ id: campaignId, action: "reject" });
+          try {
+            // Call reject API
+            const res = await apiClient(
+              `campaign_service/reject_offer/${campaignId}/`,
+              {
+                method: "PATCH",
+                auth: true,
+              }
+            );
+
+            // Handle Success
+            if (res?.code === 200 || res?.status === "success") {
+              // Remove rejected campaign from local state
+              setHiredCampaigns((prev) =>
+                prev.filter((c) => c.id !== campaignId)
+              );
+
+              // Show success sweetalert
+              Swal.fire({
+                title: "Campaign Rejected!",
+                text:
+                  res.data?.message ||
+                  "Campaign has been rejected successfully.",
+                icon: "success",
+                confirmButtonColor: "#10b981",
+                confirmButtonText: "OK",
+              });
+
+              setSelectedCampaign(null);
+            } else {
+              Swal.fire({
+                title: "Error",
+                text: "Something went wrong. Please try again.",
+                icon: "error",
+                confirmButtonColor: "#d32f2f",
+              });
+            }
+          } catch (error) {
+            console.error("Reject Error:", error);
+            Swal.fire({
+              title: "Error",
+              text: "Failed to reject the offer. Please try again.",
+              icon: "error",
+              confirmButtonColor: "#d32f2f",
+            });
+          } finally {
+            setCampaignActionLoading({ id: null, action: null });
+          }
+        }
+      });
     }
-     else if (action === "reject") {
-           Swal.fire({
-             title: "Reject Campaign?",
-             text: "Are you sure you want to reject this campaign? This action cannot be undone.",
-             icon: "warning",
-             showCancelButton: true,
-             confirmButtonColor: "#d32f2f",
-             cancelButtonColor: "#6b7280",
-             confirmButtonText: "Yes, Reject",
-             cancelButtonText: "Cancel",
-           }).then(async (result) => {
-             if (result.isConfirmed) {
-               setCampaignActionLoading({ id: campaignId, action: "reject" });
-               try {
-                 // Call reject API
-                 const res = await apiClient(
-                   `campaign_service/reject_offer/${campaignId}/`,
-                   {
-                     method: "PATCH",
-                     auth: true,
-                   }
-                 );
-     
-                 // Handle Success
-                 if (res?.code === 200 || res?.status === "success") {
-                   // Remove rejected campaign from local state
-                   setHiredCampaigns((prev) => prev.filter((c) => c.id !== campaignId));
-     
-                   // Show success sweetalert
-                   Swal.fire({
-                     title: "Campaign Rejected!",
-                     text:
-                       res.data?.message ||
-                       "Campaign has been rejected successfully.",
-                     icon: "success",
-                     confirmButtonColor: "#10b981",
-                     confirmButtonText: "OK",
-                   });
-     
-                   setSelectedCampaign(null); 
-                 } else {
-                   Swal.fire({
-                     title: "Error",
-                     text: "Something went wrong. Please try again.",
-                     icon: "error",
-                     confirmButtonColor: "#d32f2f",
-                   });
-                 }
-               } catch (error) {
-                 console.error("Reject Error:", error);
-                 Swal.fire({
-                   title: "Error",
-                   text: "Failed to reject the offer. Please try again.",
-                   icon: "error",
-                   confirmButtonColor: "#d32f2f",
-                 });
-               } finally {
-                 setCampaignActionLoading({ id: null, action: null });
-               }
-             }
-           });
-         }
   };
 
   // --- Helpers ---
   const formatDateRange = (start: string, end: string) => {
-    const s = new Date(start).toLocaleDateString(undefined, { month: "short", day: "numeric" });
-    const e = new Date(end).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+    const s = new Date(start).toLocaleDateString(undefined, {
+      month: "short",
+      day: "numeric",
+    });
+    const e = new Date(end).toLocaleDateString(undefined, {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
     return `${s} - ${e}`;
   };
 
@@ -386,7 +439,7 @@ export default function CampaignsPage() {
         <p className="text-gray-600">
           Create, manage and collaborate with campaigns
         </p>
-        <h2 className="text-primary font-bold text-[20px] mt-4">Analytics</h2>
+        <h2 className="text-xl font-bold text-slate-700 mt-4">Analytics</h2>
       </div>
 
       {/* Stats Cards */}
@@ -488,13 +541,13 @@ export default function CampaignsPage() {
                   >
                     <div className="flex justify-between items-center mb-2">
                       <div className="flex items-center gap-2 mb-1">
-                      <h3 className="text-lg font-semibold text-gray-800 group-hover:text-primary transition-colors line-clamp-1">
-                        {item?.campaign?.campaign_name}
-                      </h3>
-                      <span className="text-xs text-primary bg-primary/10 px-2 py-0.5 rounded">
-                        #{item?.campaign_id}
-                      </span>
-                    </div>
+                        <h3 className="text-lg font-semibold text-gray-800 group-hover:text-primary transition-colors line-clamp-1">
+                          {item?.campaign?.campaign_name}
+                        </h3>
+                        <span className="text-xs text-primary bg-primary/10 px-2 py-0.5 rounded">
+                          #{item?.campaign_id}
+                        </span>
+                      </div>
                       {/* <div>
                         <h3 className="font-medium">Campaign #{item.id}</h3>
                         <p className="text-sm text-gray-500">
@@ -569,15 +622,14 @@ export default function CampaignsPage() {
               key={campaign.id}
               className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
             >
-              <div className="relative">
+              <div className="relative w-full aspect-[16/9] overflow-hidden rounded-t-lg">
                 <Image
-                  width={500}
-                  height={192}
+                  fill
                   src={campaign.campaign_poster || "/images/placeholder.jpg"}
                   alt={campaign.campaign_name || "Campaign"}
-                  className="w-full h-48 object-cover"
+                  className=" object-cover"
                 />
-                <div className="absolute top-2 right-2 bg-white rounded-full px-3 py-1 text-xs font-semibold capitalize">
+                <div className={`absolute top-2 right-2 ${campaign.campaign_status==="active"?"bg-green-100 text-green-800":""}  rounded-full px-3 py-1 text-xs font-semibold capitalize`}>
                   {campaign.campaign_status}
                 </div>
               </div>
@@ -721,21 +773,21 @@ export default function CampaignsPage() {
                     : "Proposal Details"}
                 </h3>
                 <div className="flex flex-wrap items-baseline gap-1 mt-2">
-                    <span className="text-sm font-semibold text-primary min-w-[100px]">
-                      Campaign ID:
-                    </span>
-                    <span className="text-sm  text-gray-700 bg-primary/10 px-2 py-0.5 rounded">
-                      #{selectedCampaign.id}
-                    </span>
-                  </div>
-                <div className="flex flex-wrap items-baseline gap-1">
+                  <span className="text-sm font-semibold text-primary min-w-[100px]">
+                    Campaign ID:
+                  </span>
+                  <span className="text-sm  text-gray-700 bg-primary/10 px-2 py-0.5 rounded">
+                    #{selectedCampaign.id}
+                  </span>
+                </div>
+                {/* <div className="flex flex-wrap items-baseline gap-1">
                     <span className="text-sm font-semibold text-primary min-w-[100px]">
                       Campaign Title:
                     </span>
                     <span className="text-sm text-gray-700">
                       {selectedCampaign?.campaign?.campaign_name}
                     </span>
-                  </div>
+                  </div> */}
               </div>
               <button
                 onClick={handleCloseModal}
@@ -751,7 +803,7 @@ export default function CampaignsPage() {
                 // PUBLIC CAMPAIGN DETAILS
                 <>
                   {/* 1. Campaign Poster & Status */}
-                  <div className="relative h-56 mb-6 w-full">
+                  <div className="relative w-full aspect-[16/9] overflow-hidden rounded-lg">
                     <Image
                       src={
                         (selectedCampaign as PublicCampaign).campaign_poster ||
@@ -759,7 +811,7 @@ export default function CampaignsPage() {
                       }
                       alt={(selectedCampaign as PublicCampaign).campaign_name}
                       fill
-                      className="object-cover rounded-xl shadow-sm"
+                      className="object-cover "
                     />
                     <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold capitalize text-primary shadow-sm border border-gray-100">
                       {(selectedCampaign as PublicCampaign).campaign_status}
@@ -767,7 +819,7 @@ export default function CampaignsPage() {
                   </div>
 
                   {/* 2. Title & Description */}
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  <h2 className="text-base font-bold text-gray-900 my-4">
                     {(selectedCampaign as PublicCampaign).campaign_name}
                   </h2>
                   <p className="text-gray-600 mb-6 leading-relaxed">
@@ -780,7 +832,7 @@ export default function CampaignsPage() {
                       <p className="text-xs text-gray-500 uppercase font-semibold tracking-wide">
                         Budget
                       </p>
-                      <p className="font-bold text-gray-900 text-lg">
+                      <p className="font-semibold text-primary text-lg">
                         ${(selectedCampaign as PublicCampaign).budget_range}
                         <span className="text-xs text-gray-400 font-normal ml-1 capitalize">
                           / {(selectedCampaign as PublicCampaign).budget_type}
@@ -791,7 +843,7 @@ export default function CampaignsPage() {
                       <p className="text-xs text-gray-500 uppercase font-semibold tracking-wide">
                         Timeline
                       </p>
-                      <p className="font-bold text-gray-900 text-lg capitalize">
+                      <p className="font-semibold text-primary text-lg capitalize">
                         {(selectedCampaign as PublicCampaign).campaign_timeline}
                       </p>
                     </div>
@@ -799,7 +851,7 @@ export default function CampaignsPage() {
                       <p className="text-xs text-gray-500 uppercase font-semibold tracking-wide">
                         Objective
                       </p>
-                      <p className="font-medium text-gray-900 capitalize">
+                      <p className="font-semibold text-primary capitalize">
                         {
                           (selectedCampaign as PublicCampaign)
                             .campaign_objective
@@ -810,8 +862,8 @@ export default function CampaignsPage() {
 
                   {/* 4. Deliverables (Splitting comma-separated string) */}
                   <div className="mb-6">
-                    <h4 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                      <Megaphone className="w-4 h-4 text-secondary" /> Required
+                    <h4 className="font-bold text-primary mb-3 flex items-center gap-2">
+                      <Megaphone className="w-4 h-4 text-primary" /> Required
                       Deliverables
                     </h4>
                     <div className="flex flex-wrap gap-2">
@@ -824,7 +876,7 @@ export default function CampaignsPage() {
                           .map((item, i) => (
                             <span
                               key={i}
-                              className="bg-blue-50 text-primary px-3 py-1.5 rounded-lg text-sm font-medium border border-blue-100 capitalize"
+                              className="bg-primary/10 text-primary px-3 py-1.5 rounded-lg text-sm font-medium border  capitalize"
                             >
                               {item.trim().replace(/-/g, " ")}
                             </span>
@@ -850,7 +902,7 @@ export default function CampaignsPage() {
                           .map((item, i) => (
                             <span
                               key={i}
-                              className="bg-green-50 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-100 capitalize"
+                              className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold border border-green-100 capitalize"
                             >
                               {item.trim()}
                             </span>
@@ -877,7 +929,7 @@ export default function CampaignsPage() {
                       <h4 className="font-bold text-gray-900 mb-1 text-sm">
                         Keywords & Hashtags
                       </h4>
-                      <p className="text-sm text-secondary font-medium">
+                      <p className="text-sm text-primary font-medium">
                         {
                           (selectedCampaign as PublicCampaign)
                             .keywords_and_hashtags
@@ -891,14 +943,14 @@ export default function CampaignsPage() {
                     {(selectedCampaign as PublicCampaign)
                       .content_approval_required && (
                       <span className="flex items-center gap-1">
-                        <CheckCircle className="w-3 h-3 text-green-500" />{" "}
+                        <CheckCircle className="w-3 h-3 text-primary" />{" "}
                         Approval Required
                       </span>
                     )}
                     {(selectedCampaign as PublicCampaign)
                       .auto_match_micro_influencers && (
                       <span className="flex items-center gap-1">
-                        <CheckCircle className="w-3 h-3 text-green-500" />{" "}
+                        <CheckCircle className="w-3 h-3 text-primary" />{" "}
                         Auto-Match Enabled
                       </span>
                     )}
@@ -907,7 +959,7 @@ export default function CampaignsPage() {
               ) : (
                 // HIRED CAMPAIGN DETAILS
                 <>
-                <p className="text-sm text-gray-700 font-semibold my-1">
+                  <p className="text-sm text-gray-700 font-semibold my-1">
                     Brand:{" "}
                     {brandMap[selectedCampaign.owner_id] ? (
                       <a
@@ -922,16 +974,25 @@ export default function CampaignsPage() {
                       <span className="text-gray-400">Loading...</span>
                     )}
                   </p>
-                <div className="flex flex-wrap items-baseline gap-1 mb-4">
-    <span className="text-sm font-semibold text-primary ">
-      Received:
-    </span>
-    <span className="text-sm text-gray-600">
-      {selectedCampaign.timestamp
-        ? timeAgo(selectedCampaign.timestamp)
-        : "N/A"}
-    </span>
-  </div>
+                  <div className="flex flex-wrap items-baseline gap-1 mb-2">
+                    <span className="text-sm font-semibold text-primary ">
+                      Received:
+                    </span>
+                    <span className="text-sm text-gray-600">
+                      {selectedCampaign.timestamp
+                        ? timeAgo(selectedCampaign.timestamp)
+                        : "N/A"}
+                    </span>
+                  </div>
+
+                  <div className="flex flex-wrap items-baseline gap-1 mb-2">
+                    <span className="text-sm font-semibold text-primary min-w-[100px]">
+                      Campaign Title:
+                    </span>
+                    <span className="text-sm text-gray-700">
+                      {selectedCampaign?.campaign?.campaign_name}
+                    </span>
+                  </div>
                   <div className="flex items-start gap-3 p-4 rounded-xl border border-primary mb-4">
                     <Calendar className="w-5 h-5 text-primary mt-0.5" />
                     <div>
@@ -947,30 +1008,32 @@ export default function CampaignsPage() {
                     </div>
                   </div>
 
-                  <div className="font-semibold text-sm uppercase tracking-wider text-gray-700">
-                  <h4 className="m-0">
-    Budget:{" "}
-    {(selectedCampaign as HiredCampaign)?.isBudgetNegotiable || (selectedCampaign as HiredCampaign).budget === 0
-      ? "Open to discussion"
-      : `$${(selectedCampaign as HiredCampaign).budget}`}
-  </h4>
-                </div>
-
-                  
-
-                  
-                  <div>
-                  <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-2">
-                    Proposal Message
-                  </h4>
-                  <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-gray-700 text-sm leading-relaxed whitespace-pre-wrap">
-                    {(selectedCampaign as HiredCampaign).proposal_message || "No Message"}
+                  <div className="font-semibold text-sm uppercase tracking-wider text-gray-700 mb-2">
+                    <h4 className="m-0">
+                      Budget:{" "}
+                      {(selectedCampaign as HiredCampaign)
+                        ?.isBudgetNegotiable ||
+                      (selectedCampaign as HiredCampaign).budget === 0
+                        ? "Open to discussion"
+                        : `$${(selectedCampaign as HiredCampaign).budget}`}
+                    </h4>
                   </div>
-                </div>
+
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-2">
+                      Proposal Message
+                    </h4>
+                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-gray-700 text-sm leading-relaxed whitespace-pre-wrap">
+                      {(selectedCampaign as HiredCampaign).proposal_message ||
+                        "No Message"}
+                    </div>
+                  </div>
 
                   {/* Render Deliverables from JSON string */}
                   <div className="mb-4">
-                    <h4 className="font-semibold text-gray-700 text-sm tracking-wider uppercase my-2">Deliverables</h4>
+                    <h4 className="font-semibold text-gray-700 text-sm tracking-wider uppercase my-2">
+                      Deliverables
+                    </h4>
                     <div className="flex flex-wrap gap-2">
                       {(() => {
                         try {

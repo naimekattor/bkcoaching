@@ -402,22 +402,25 @@ export default function BrandPage() {
                 className="bg-white rounded-lg border border-gray-200 p-6 text-center"
               >
                 {/* Logo */}
-                <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-primary/5 to-primary/10 border-2 border-white shadow-sm flex-shrink-0">
-                  {brand.logo ? (
-                    <Image
-                      width={64}
-                      height={64}
-                      src={brand.logo}
-                      alt={brand.name}
-                      className="w-full h-full object-cover"
-                      unoptimized
-                    />
-                  ) : (
-                    <div className="w-full h-full rounded-full flex items-center justify-center text-2xl font-bold text-primary">
-                      {brand?.name?.charAt(0) || "N"}
-                    </div>
-                  )}
-                </div>
+                <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center rounded-full bg-gradient-to-br from-primary/5 to-primary/10 border-2 border-white shadow-sm overflow-hidden">
+  {brand.logo ? (
+    <div className="w-full h-full p-2 flex items-center justify-center">
+      <Image
+        src={brand.logo}
+        alt={brand.name}
+        width={64}
+        height={64}
+        className="object-contain"
+        unoptimized
+      />
+    </div>
+  ) : (
+    <div className="w-full h-full rounded-full flex items-center justify-center text-2xl font-bold text-primary">
+      {brand?.name?.charAt(0) || "N"}
+    </div>
+  )}
+</div>
+
 
                 {/* Name */}
                 <h3 className="font-semibold text-[17px] text-[#242524] mb-1">

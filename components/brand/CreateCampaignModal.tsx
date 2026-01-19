@@ -11,7 +11,7 @@ import {
   Upload,
   X,
   Repeat,
-  Image,
+  
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -36,6 +36,7 @@ import { toast } from "react-toastify";
 import { demographics } from "@/constants/demographics";
 import { DragEvent } from "react";
 import { Campaign } from "@/types/campaign";
+import Image from 'next/image';
 
 // --- Interfaces ---
 
@@ -568,6 +569,9 @@ const getMissingFields = () => {
                 <Label htmlFor="campaignposter" className="mb-2">
                   Campaign Flyer
                 </Label>
+                <p className="text-xs text-gray-500 mb-3">
+  Use a landscape image (16:9). Recommended size: 1280×720 or 1920×1080.
+</p>
                 {!formData.posterPreview ? (
                   <div
                     onDragEnter={handleDrag}
@@ -603,11 +607,12 @@ const getMissingFields = () => {
                     </label>
                   </div>
                 ) : (
-                  <div className="relative rounded-lg overflow-hidden border border-gray-200">
-                    <img
+                  <div className="relative rounded-lg overflow-hidden w-full aspect-[16/9] rounded-t-lg border border-gray-200">
+                    <Image
+                    fill
                       src={formData.posterPreview}
                       alt="Poster preview"
-                      className="w-full h-48 object-cover"
+                      className="object-cover"
                     />
                     <button
                       onClick={handleRemovePoster}

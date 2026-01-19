@@ -55,7 +55,7 @@ export default async function BrandsPage() {
         location: brand?.brand_profile?.timezone || "Location not specified",
         category: brand?.brand_profile?.business_type
           ? brand.brand_profile.business_type.split("–")[0].trim()
-          : "General Influencer",
+          : "General Brand",
         description: brand?.brand_profile?.short_bio || "",
         image: brand?.brand_profile?.logo || "/images/placeholder.jpg",
         logo: brand?.brand_profile?.logo || "/images/placeholder.jpg",
