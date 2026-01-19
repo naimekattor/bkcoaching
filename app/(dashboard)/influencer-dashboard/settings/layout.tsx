@@ -15,7 +15,7 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="min-h-screen ">
       {/* Tabs */}
-      <div className="flex gap-6 border-b border-gray-200 mb-6">
+      <div className="flex gap-6 mt-2 border-gray-200 mb-6">
         {tabs.map((tab) => {
           const isActive = pathname === tab.href;
           return (

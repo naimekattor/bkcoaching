@@ -381,7 +381,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
 
     
 
-    <div className="border-t border-gray-100 my-4"></div>
+    
 
     {/*  WhatsApp  */}
     <div className="grid md:grid-cols-2 gap-4">

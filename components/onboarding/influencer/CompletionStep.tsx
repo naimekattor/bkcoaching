@@ -26,6 +26,17 @@ interface InfluencerOnboardingData {
   linkedin_handle?: string;
   whatsapp_handle?: string;
   facebook_handle?: string;
+  podcast_handle:string;
+  blog_url:string;
+  youtube_follower:number;
+  whatsapp_follower:number;
+  twitter_follower:number;
+tiktok_follower:number;
+podcast_follower:number;
+linkedin_follower:number;
+insta_follower:number;
+facebook_follower:number;
+blog_follower:number;
   content_niches?: string[];
   audience_demographics?: string[];
   keyword_and_tags?: string;
@@ -73,6 +84,8 @@ const transformInfluencerDataForAPI = (data: InfluencerOnboardingData) => {
       linkedin_handle: data.linkedin_handle,
       whatsapp_handle: data.whatsapp_handle,
       facebook_handle: data.facebook_handle,
+      blog_handle:data.blog_url,
+      podcast_handle:data.podcast_handle,
 
       content_niches: Array.isArray(data.content_niches)
         ? data.content_niches.join(", ")
@@ -111,6 +124,15 @@ const transformInfluencerDataForAPI = (data: InfluencerOnboardingData) => {
       paypal_email: data.paypal_email,
       notifications_email:data.notifications.email,
       notifications_push:data.notifications.push,
+      insta_follower: data.insta_follower || 0,
+    tiktok_follower: data.tiktok_follower || 0,
+    youtube_follower: data.youtube_follower || 0,
+    facebook_follower: data.facebook_follower || 0,
+    linkedin_follower: data.linkedin_follower || 0,
+    blog_follower: data.blog_follower || 0,
+    whatsapp_follower: data.whatsapp_follower || 0,
+    podcast_follower: data.podcast_follower || 0,
+    twitter_follower: data.twitter_follower || 0,
     },
   };
   return payload;

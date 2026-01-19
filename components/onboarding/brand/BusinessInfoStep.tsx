@@ -193,7 +193,12 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
   
   <div className="space-y-2">
   <Label htmlFor="timezone">Time Zone</Label>
-  <Select value={timeZone} onValueChange={setTimeZone}>
+  <Select value={onboardingData.timeZone || ""} onValueChange={(value) =>
+      setOnboardingData((prev) => ({
+        ...prev,
+        timeZone: value,
+      }))
+    }>
     <SelectTrigger 
       id="timezone"
       className="

@@ -491,7 +491,7 @@ const toggleBusinessType = (type: string) => {
             </section>
 
             {/* Social Media */}
-            <section className="space-y-6">
+            {/* <section className="space-y-6">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
                   <Mail className="w-5 h-5 text-primary" />
@@ -557,7 +557,7 @@ const toggleBusinessType = (type: string) => {
                   />
                 </div>
               </div>
-            </section>
+            </section> */}
 
             {/* Email Notifications */}
             {/* <section className="p-6 bg-gray-50 rounded-xl">
