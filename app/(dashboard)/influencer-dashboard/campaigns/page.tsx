@@ -634,11 +634,11 @@ export default function CampaignsPage() {
                 </div>
               </div>
 
-              <div className="group relative overflow-hidden rounded-2xl bg-white shadow-sm border border-gray-100 hover:shadow-xl hover:border-gray-200 transition-all duration-300">
+              <div className="group relative overflow-hidden rounded-2xl     transition-all duration-300">
                 {/* Subtle gradient overlay on hover */}
                 <div className="absolute inset-0 bg-gradient-to-br from-[#00786f]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                <div className="group relative overflow-hidden rounded-2xl bg-white shadow-sm border border-gray-100 hover:shadow-xl hover:border-gray-200 transition-all duration-300">
+                <div className="group relative overflow-hidden rounded-2xl     transition-all duration-300">
                   {/* Subtle hover overlay with your primary color */}
                   <div className="absolute inset-0 bg-gradient-to-br from-[#0d2f4f]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
 
@@ -724,7 +724,7 @@ export default function CampaignsPage() {
         <button
           onClick={() => setCurrentPage(1)}
           disabled={!previousUrl}
-          className="px-3 py-2 rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+          className="px-3 py-2 rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 md:block hidden"
         >
           ← First
         </button>
@@ -755,7 +755,7 @@ export default function CampaignsPage() {
         <button
           onClick={() => setCurrentPage(Math.ceil(totalCount / ITEMS_PER_PAGE))}
           disabled={!nextUrl}
-          className="px-3 py-2 rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+          className="px-3 py-2 rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 md:block hidden"
         >
           Last →
         </button>
