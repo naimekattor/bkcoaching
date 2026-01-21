@@ -923,7 +923,7 @@ console.log("testing for firstUnreadIndex",messages);
         data={messages}
         itemContent={(index, message) => (
           <div className="px-4">
-            <div className="h-6 my-4">
+            <div className="">
   {index === firstUnreadIndex && (
     <div className="flex items-center">
       <div className="flex-grow border-t border-gray-200" />

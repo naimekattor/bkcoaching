@@ -7,26 +7,39 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { apiClient } from "@/lib/apiClient";
+import { useRouter } from "next/navigation";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
+  const[loading,setLoading]=useState(false);
+const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
+  setLoading(true);
 
-    if (!email) {
-      setError("Email is required");
-      return;
-    }
+  if (!email) {
+    setError("Email is required");
+    setLoading(false);
+    return;
+  }
+
+  try {
     const res = await apiClient("user_service/send_otp/", {
       method: "POST",
-      body: JSON.stringify({ email: email }),
+      body: JSON.stringify({ email }),
     });
-    if (res.code == "200") {
-      window.location.href = `/auth/verify-reset?email=${email}`;
+
+    if (res.code === "200") {
+      router.push(`/auth/verify-reset?email=${email}`);
     }
-  };
+  } catch (error) {
+    setError("Please try again later.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
@@ -71,9 +84,10 @@ export default function ForgotPasswordPage() {
 
               <Button
                 type="submit"
+                disabled={loading}
                 className="w-full bg-secondary hover:bg-[var(--secondaryhover)] text-slate-800 font-semibold py-3 rounded-lg"
               >
-                Send OTP
+                {loading? "Sending OTP":"Send OTP"}
               </Button>
 
               <div className="text-center">

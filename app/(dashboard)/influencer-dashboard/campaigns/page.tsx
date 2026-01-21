@@ -636,11 +636,11 @@ export default function CampaignsPage() {
 
               <div className="group relative overflow-hidden rounded-2xl     transition-all duration-300">
                 {/* Subtle gradient overlay on hover */}
-                <div className="absolute inset-0 bg-gradient-to-br from-[#00786f]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-br from-[#00786f]/5 to-transparent opacity-0  transition-opacity duration-300" />
 
                 <div className="group relative overflow-hidden rounded-2xl     transition-all duration-300">
                   {/* Subtle hover overlay with your primary color */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#0d2f4f]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#0d2f4f]/5 to-transparent opacity-0 transition-opacity duration-300 pointer-events-none" />
 
                   <div className="p-6 relative">
                     {/* Campaign Name */}
