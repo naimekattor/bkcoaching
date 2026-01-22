@@ -437,7 +437,7 @@ export default function CampaignsPage() {
           Campaign Management
         </h1>
         <p className="text-gray-600">
-          Create, manage and collaborate with campaigns
+          Collaborate with campaigns
         </p>
         <h2 className="text-xl font-bold text-slate-700 mt-4">Analytics</h2>
       </div>

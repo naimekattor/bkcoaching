@@ -31,7 +31,7 @@ const router = useRouter();
       body: JSON.stringify({ email }),
     });
 
-    if (res.code === "200") {
+    if (res.code == 200) {
       router.push(`/auth/verify-reset?email=${email}`);
     }
   } catch (error) {
