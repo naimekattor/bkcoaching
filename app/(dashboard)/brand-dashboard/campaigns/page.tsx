@@ -472,6 +472,9 @@ function CampaignDashboardContent() {
         title: "Deleted!",
         text: "Your campaign has been deleted.",
         icon: "success",
+        customClass: {
+    icon: 'custom-success-icon'
+  }
       });
     } catch (err) {
       console.error("Delete failed", err);
@@ -854,50 +857,51 @@ function CampaignDashboardContent() {
                   </p>
 
                   <div className="flex items-center gap-2 mb-4">
-                    {Array.isArray(campaign.deliverables) &&
-                    campaign.deliverables.length > 0
-                      ? campaign.deliverables
-                          .filter(Boolean)
-                          .map((item, idx) => {
-                            const { icon, className } = getPlatformConfig(item);
-                            return (
-                              <div
-                                key={idx}
-                                className={`w-4 h-4 rounded flex items-center justify-center ${className}`}
-                              >
-                                {icon}
-                              </div>
-                            );
-                          })
-                      : null}
+  {Array.isArray(campaign.deliverables) &&
+  campaign.deliverables.length > 0
+    ? Array.from(new Set(campaign.deliverables.filter(Boolean))).map(
+        (item, idx) => {
+          const { icon, className } = getPlatformConfig(item);
+          return (
+            <div
+              key={idx}
+              className={`w-4 h-4 rounded flex items-center justify-center ${className}`}
+            >
+              {icon}
+            </div>
+          );
+        }
+      )
+    : null}
 
-                    {/* Assigned creators avatars */}
-                    <div className="flex -space-x-2 ml-2">
-                      {(campaign.assignedCreators || [])
-                        .slice(0, 3)
-                        .map((creator, idx) => (
-                          <div
-                            key={idx}
-                            className="w-6 h-6 rounded-full border-2 border-white overflow-hidden bg-gray-300"
-                          >
-                            <Image
-                              width={600}
-                              height={600}
-                              src={creator.avatar || "/placeholder.svg"}
-                              alt={creator.name}
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                        ))}
-                      {(campaign.assignedCreators || []).length > 3 && (
-                        <div className="w-6 h-6 bg-gray-200 rounded-full border-2 border-white flex items-center justify-center">
-                          <span className="text-xs">
-                            +{(campaign.assignedCreators || []).length - 3}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+  {/* Assigned creators avatars */}
+  <div className="flex -space-x-2 ml-2">
+    {(campaign.assignedCreators || [])
+      .slice(0, 3)
+      .map((creator, idx) => (
+        <div
+          key={idx}
+          className="w-6 h-6 rounded-full border-2 border-white overflow-hidden bg-gray-300"
+        >
+          <Image
+            width={600}
+            height={600}
+            src={creator.avatar || "/placeholder.svg"}
+            alt={creator.name}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      ))}
+    {(campaign.assignedCreators || []).length > 3 && (
+      <div className="w-6 h-6 bg-gray-200 rounded-full border-2 border-white flex items-center justify-center">
+        <span className="text-xs">
+          +{(campaign.assignedCreators || []).length - 3}
+        </span>
+      </div>
+    )}
+  </div>
+</div>
+
 
                   <div className="mt-6 grid grid-cols-2 gap-6">
                     {/* Budget */}

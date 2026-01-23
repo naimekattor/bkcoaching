@@ -64,13 +64,12 @@ console.log(planName);
 
 
   // Determine current state
-  const hasAccess = authChecked && isAuthenticated && planName?.trim() !== "";
-const isLocked = authChecked && !isAuthenticated;
+  const hasAccess = authChecked && isAuthenticated && !!planName?.trim();
+const isLocked = authChecked && !isAuthenticated; // not logged in
 const needsUpgrade = authChecked && isAuthenticated && !planName?.trim();
 console.log("needsUpgrade:",needsUpgrade,"isLocked:",isLocked,"hasAccess:",hasAccess);
 
 
-  // Blur & lock effects only when NOT fully accessible
   const applyBlur = !hasAccess;
 
   return (
@@ -222,7 +221,7 @@ console.log("needsUpgrade:",needsUpgrade,"isLocked:",isLocked,"hasAccess:",hasAc
       {/* PRIORITY 1: User is logged in but needs upgrade */}
       {needsUpgrade && (
         <Button
-          className="w-full h-12 text-base font-semibold bg-gradient-to-r from-primary to-purple-600 text-white hover:opacity-90 shadow-lg"
+          className="w-full h-12 text-base font-semibold bg-primary text-white hover:opacity-90 shadow-lg"
           onClick={() => {
             setShowAuthModal(false);
             router.push("/pricing"); // Your pricing/upgrade page
@@ -236,10 +235,10 @@ console.log("needsUpgrade:",needsUpgrade,"isLocked:",isLocked,"hasAccess:",hasAc
       {isLocked && (
         <>
           <Button
-            className="w-full h-12 text-base font-semibold bg-primary hover:bg-primary/90 text-white"
+            className="w-full h-12 text-base font-semibold border-2 border-primary text-white hover:bg-primary hover:text-white"
             onClick={() => {
               setShowAuthModal(false);
-              router.push("/brand-onboarding");
+              router.push("/auth/signup?role=brand&returnTo=/brand-onboarding?step=1");
             }}
           >
             Sign Up as Brand
@@ -249,10 +248,20 @@ console.log("needsUpgrade:",needsUpgrade,"isLocked:",isLocked,"hasAccess:",hasAc
             className="w-full h-12 text-base font-semibold border-2 border-primary text-primary hover:bg-primary hover:text-white"
             onClick={() => {
               setShowAuthModal(false);
-              router.push("/influencer-onboarding");
+              router.push("/auth/signup?role=influencer&returnTo=/influencer-onboarding?step=1");
             }}
           >
             Sign Up as Influencer
+          </Button>
+          <Button
+            variant="outline"
+            className="w-full h-12 text-base font-semibold border-2 border-primary text-primary hover:bg-primary hover:text-white"
+            onClick={() => {
+              setShowAuthModal(false);
+              router.push("/auth/signup?role=both&returnTo=/brand-onboarding?step=1");
+            }}
+          >
+            Sign Up as Both
           </Button>
         </>
       )}

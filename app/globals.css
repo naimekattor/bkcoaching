@@ -145,3 +145,10 @@ body {
     }
   }
 }
+.custom-success-icon {
+  border-color: #10b981 !important;
+  background-color: rgba(16, 185, 129, 0.15) !important;
+}
+/* button.swal2-confirm.swal2-styled {
+    background: green;
+} */

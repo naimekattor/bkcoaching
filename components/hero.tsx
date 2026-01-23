@@ -108,7 +108,7 @@ const Hero = () => {
             </Button>
             <Button
               onClick={() => {
-                router.push("/auth/signup?role=brand&returnTo=/brand-onboarding?step=1");
+                router.push("/auth/signup?role=both&returnTo=/brand-onboarding?step=1");
                
               }}
             >

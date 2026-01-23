@@ -93,7 +93,7 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
   };
 
   const isValid =
-    onboardingData.businessName && onboardingData.businessTypes.length > 0;
+    onboardingData.businessName && onboardingData.timeZone && onboardingData.bio && onboardingData.logoUrl &&  onboardingData.businessTypes.length > 0;
 
   const handleClick = () => {
     fileInputRef.current?.click();
@@ -192,7 +192,7 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
   
   
   <div className="space-y-2">
-  <Label htmlFor="timezone">Time Zone</Label>
+  <Label htmlFor="timezone">Time Zone *</Label>
   <Select value={onboardingData.timeZone || ""} onValueChange={(value) =>
       setOnboardingData((prev) => ({
         ...prev,
@@ -228,7 +228,7 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
 </div>
 
             <div className="space-y-2">
-              <Label htmlFor="bio">Short Bio (250 characters)</Label>
+              <Label htmlFor="bio">Short Bio (250 characters) *</Label>
               <Textarea
                 id="bio"
                 maxLength={250}
@@ -257,7 +257,7 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
 
             {/* Logo Upload */}
             <div className="space-y-2">
-              <Label>Logo (Optional)</Label>
+              <Label>Logo *</Label>
               
               <div
                 onClick={handleClick}

@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { apiClient } from "@/lib/apiClient";
 import { Loader } from "lucide-react";
+
 interface UserDetails {
   id: number;
   email: string;
@@ -38,7 +39,6 @@ interface InfluencerProfile {
   response_time: string | null;
   is_featured: boolean;
   timezone: string | null;
-  // Add other specific rate fields if you plan to use them
 }
 
 interface BrandProfile {
@@ -56,7 +56,7 @@ interface InfluencerAccount {
   influencer_profile: InfluencerProfile | null;
   brand_profile: BrandProfile | null;
 }
-// Helper to format numbers like 50000 -> 50k
+
 const formatFollowers = (num: number | null | undefined) => {
   if (!num) return "0";
   if (num >= 1000000) return (num / 1000000).toFixed(1).replace(/\.0$/, "") + "M";
@@ -70,17 +70,46 @@ export default function InfluencersPage() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [influencers, setInfluencers] = useState<InfluencerAccount[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isMember, setIsMember] = useState(true);
+  const [isMember, setIsMember] = useState(false);        // ← changed initial value
+  const [planName, setPlanName] = useState<string | null>(null);
+  const [planChecked, setPlanChecked] = useState(false);
 
-  // Hardcoded for now based on your code, usually comes from an Auth Store
-  useEffect(()=>{
+  // Check if user is logged in
+  useEffect(() => {
     const token = localStorage.getItem("access_token");
-    if(!token){
+    if (token) {
+      setIsMember(true);
+    } else {
       setIsMember(false);
+      setPlanChecked(true); // no need to check plan if not logged in
     }
-  },[]);
-  
+  }, []);
 
+  // Fetch subscription plan only if logged in
+  useEffect(() => {
+    if (!isMember) return;
+
+    const fetchUserPlan = async () => {
+      try {
+        const res = await apiClient("user_service/get_user_subscription_information/", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        });
+        setPlanName(res?.data?.plan_name || null);
+      } catch (error) {
+        console.error("Failed to fetch user plan", error);
+        setPlanName(null);
+      } finally {
+        setPlanChecked(true);
+      }
+    };
+
+    fetchUserPlan();
+  }, [isMember]);
+
+  // Fetch featured influencers (public endpoint – no auth required)
   useEffect(() => {
     const fetchAllInfluencer = async () => {
       try {
@@ -88,7 +117,6 @@ export default function InfluencersPage() {
         const res = await apiClient("user_service/get_featured_influencers/", {
           method: "GET",
         });
-        // Based on typical API wrappers, we access res.data or res directly
         setInfluencers(res?.data || res || []);
       } catch (error) {
         console.error("Failed to fetch influencers", error);
@@ -109,9 +137,14 @@ export default function InfluencersPage() {
     );
   });
 
+  // Access logic ─ only changed part
+  const hasAccess    = planChecked && isMember && !!planName?.trim();
+  const needsUpgrade = planChecked && isMember && !planName?.trim();
+  const isLocked     = !isMember;
+
   return (
     <div className="min-h-screen bg-gray-50/50">
-      {/* --- Hero Section --- */}
+      {/* Hero Section */}
       <section className="bg-white border-b border-gray-100">
         <main className="container mx-auto px-4 pt-16 lg:pt-20 pb-16">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -125,7 +158,6 @@ export default function InfluencersPage() {
                 authentic connections and strong engagement.
               </p>
 
-              {/* Search Bar */}
               <div className="relative max-w-lg w-full mt-8 shadow-lg rounded-xl">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <FaSearch className="text-gray-400 text-lg" />
@@ -154,14 +186,11 @@ export default function InfluencersPage() {
         </main>
       </section>
 
-      {/* --- Main Content --- */}
+      {/* Main Content */}
       <main className="container mx-auto py-16 px-4">
         <div className="flex justify-between items-end mb-8">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">Featured Micro-Influencers</h2>
-            {/* <p className="text-gray-500 mt-1">
-              {loading ? "Loading creators..." : `${filteredInfluencers.length} active influencers match your search`}
-            </p> */}
           </div>
         </div>
 
@@ -173,10 +202,9 @@ export default function InfluencersPage() {
           <div className="grid md:grid-cols-2 xl:grid-cols-2 gap-6">
             {filteredInfluencers.map((inf) => {
               const profile = inf.influencer_profile;
-              // Calculate total followers or pick the main platform
               const totalFollowers = formatFollowers(
-                (profile?.insta_follower || 0) + 
-                (profile?.tiktok_follower || 0) + 
+                (profile?.insta_follower || 0) +
+                (profile?.tiktok_follower || 0) +
                 (profile?.youtube_follower || 0)
               );
 
@@ -185,14 +213,13 @@ export default function InfluencersPage() {
                   key={inf.id}
                   className="group relative bg-white rounded-2xl border border-gray-200 hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col sm:flex-row"
                 >
-                  {/* Image Section */}
-                  <div className="sm:w-48 h-48 sm:h-auto relative bg-gray-100 ">
+                  <div className="sm:w-48 h-48 sm:h-auto relative bg-gray-100">
                     <Image
                       src={profile?.profile_picture || "/images/person.jpg"}
                       alt={profile?.display_name || "Name"}
                       fill
                       className={`object-cover transition-transform duration-500 group-hover:scale-105 ${
-                        !isMember ? "blur-[4px]" : ""
+                        !hasAccess ? "blur-[4px]" : ""
                       }`}
                     />
                     <div className="absolute top-3 left-3">
@@ -200,7 +227,7 @@ export default function InfluencersPage() {
                         {profile?.content_niches?.split(",")[0] || "Creator"}
                       </span>
                     </div>
-                    {!isMember && (
+                    {!hasAccess && (
                       <div className="absolute inset-0 flex items-center justify-center bg-black/10">
                         <div className="bg-white/90 p-2 rounded-full shadow-lg">
                           <FaLock className="text-gray-700 w-4 h-4" />
@@ -209,12 +236,15 @@ export default function InfluencersPage() {
                     )}
                   </div>
 
-                  {/* Content Section */}
                   <div className="p-6 flex flex-col flex-1">
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <h3 className="text-xl font-bold text-gray-900 group-hover:text-primary transition-colors">
-                          {isMember ? profile?.display_name : "Locked Profile"}
+                          {hasAccess
+                            ? profile?.display_name
+                            : needsUpgrade
+                            ? "Premium Profile"
+                            : "Locked Profile"}
                         </h3>
                         <div className="flex items-center gap-2 mt-1 text-sm text-gray-500">
                           <FaMapMarkerAlt className="text-gray-400 w-3 h-3" />
@@ -241,17 +271,21 @@ export default function InfluencersPage() {
                       <div>
                         <p className="text-xs font-medium text-gray-400 uppercase">Rate (Post)</p>
                         <p className="text-gray-900 font-semibold">
-                          {profile?.rate_range_for_social_post ? `$${profile.rate_range_for_social_post}` : "Contact for rates"}
+                          {profile?.rate_range_for_social_post
+                            ? `$${profile.rate_range_for_social_post}`
+                            : "Contact for rates"}
                         </p>
                       </div>
                       <div>
                         <p className="text-xs font-medium text-gray-400 uppercase">Response</p>
-                        <p className="text-gray-900 font-semibold">{profile?.response_time || "N/A"}</p>
+                        <p className="text-gray-900 font-semibold">
+                          {profile?.response_time || "N/A"}
+                        </p>
                       </div>
                     </div>
 
                     <div className="mt-auto">
-                      {isMember ? (
+                      {hasAccess ? (
                         <Link
                           href={`/microinfluencers/${inf.user?.id}`}
                           className="block w-full py-2.5 text-center rounded-lg bg-primary text-white font-medium text-sm hover:bg-primary/90 transition-colors"
@@ -264,7 +298,7 @@ export default function InfluencersPage() {
                           className="w-full py-2.5 text-center rounded-lg bg-primary text-white font-medium text-sm flex items-center justify-center gap-2 cursor-pointer"
                         >
                           <FaLock className="w-3 h-3" />
-                          Unlock to View
+                          {needsUpgrade ? "Upgrade Your Plan" : "Unlock to View"}
                         </button>
                       )}
                     </div>
@@ -276,46 +310,78 @@ export default function InfluencersPage() {
         ) : (
           <div className="text-center py-24 bg-white rounded-2xl border border-dashed border-gray-300">
             <h3 className="text-lg font-semibold text-gray-900">No influencers found</h3>
-            <button onClick={() => setSearchTerm("")} className="text-primary font-medium hover:underline mt-2">
+            <button
+              onClick={() => setSearchTerm("")}
+              className="text-primary font-medium hover:underline mt-2"
+            >
               Clear Search
             </button>
           </div>
         )}
       </main>
 
-      {/* --- Auth Required Modal --- */}
+      {/* Auth / Upgrade Modal */}
       <Dialog open={showAuthModal} onOpenChange={setShowAuthModal}>
         <DialogContent className="max-w-md bg-white p-6 rounded-xl shadow-2xl">
           <DialogHeader className="space-y-3 text-center">
             <DialogTitle className="text-2xl font-bold text-gray-900">
-              Join The Social Market
+              {needsUpgrade ? "Upgrade Your Plan" : "Unlock Full Access"}
             </DialogTitle>
             <DialogDescription className="text-gray-500 text-base">
-              Choose your role to unlock full profile details, pricing, and contact info.
+              {needsUpgrade
+                ? "You're logged in! Upgrade to a premium plan to access full influencer profiles."
+                : "Sign up to unlock full profile details and start collaborations."}
             </DialogDescription>
           </DialogHeader>
 
           <div className="flex flex-col gap-4 pt-6">
-            <Button
-              className="w-full h-12 text-base font-semibold bg-primary hover:bg-primary/90 text-white"
-              onClick={() => {
-                setShowAuthModal(false);
-                router.push("/influencer-onboarding");
-              }}
-            >
-              Sign up as Influencer
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full h-12 text-base font-semibold border-2"
-              onClick={() => {
-                setShowAuthModal(false);
-                router.push("/brand-onboarding");
-              }}
-            >
-              Sign up as Brand
-            </Button>
+            {needsUpgrade ? (
+              <Button
+                className="w-full h-12 text-base font-semibold bg-primary hover:bg-primary/90 text-white"
+                onClick={() => {
+                  setShowAuthModal(false);
+                  router.push("/pricing");
+                }}
+              >
+                View Plans & Upgrade
+              </Button>
+            ) : (
+              <>
+              <Button
+                  className="w-full h-12 text-base font-semibold border-2 border-primary text-white hover:bg-primary hover:text-white"
+                  onClick={() => {
+                    setShowAuthModal(false);
+                    router.push("/auth/signup?role=influencer&returnTo=/influencer-onboarding?step=1");
+                  }}
+                >
+                  Sign up as Influencer
+                </Button>
+              <Button
+                  variant="outline"
+                  className="w-full h-12 text-base font-semibold border-2 border-primary  text-primary hover:bg-primary hover:text-white"
+                  onClick={() => {
+                    setShowAuthModal(false);
+                    router.push("/auth/signup?role=brand&returnTo=/brand-onboarding?step=1");
+                  }}
+                >
+                  Sign up as Brand
+                </Button>
+                
+                
+                <Button
+                  variant="outline"
+                  className="w-full h-12 text-base font-semibold border-2 border-primary text-primary hover:bg-primary hover:text-white"
+                  onClick={() => {
+                    setShowAuthModal(false);
+                    router.push("/auth/signup?role=both&returnTo=/brand-onboarding?step=1");
+                  }}
+                >
+                  Sign up as Both
+                </Button>
+              </>
+            )}
           </div>
+
           <div className="flex justify-center pt-6 text-sm text-gray-500">
             <p>
               Already have an account?{" "}

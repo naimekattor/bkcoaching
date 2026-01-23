@@ -293,7 +293,7 @@ const toggleBusinessType = (type: string) => {
                   />
                 </div>
 
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <Label htmlFor="display_name" className="text-base font-medium">
                     Display Name
                   </Label>
@@ -304,7 +304,7 @@ const toggleBusinessType = (type: string) => {
                     placeholder="Enter Your Full Name"
                     className="h-11"
                   />
-                </div>
+                </div> */}
 
                 <div className="space-y-2">
                   <Label htmlFor="short_bio" className="text-base font-medium">
@@ -490,95 +490,9 @@ const toggleBusinessType = (type: string) => {
               </div>
             </section>
 
-            {/* Social Media */}
-            {/* <section className="space-y-6">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <Mail className="w-5 h-5 text-primary" />
-                </div>
-                <h2 className="text-2xl font-semibold text-gray-900">
-                  Social Media Accounts
-                </h2>
-              </div>
+            
 
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="instagram">Instagram Handle</Label>
-                  <Input
-                    id="instagram"
-                    value={formData.instagramHandle}
-                    onChange={(e) => handleInputChange("instagramHandle", e.target.value)}
-                    placeholder="http://instagram.com/username"
-                    className="h-11"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="tiktok">TikTok</Label>
-                  <Input
-                    id="tiktok"
-                    value={formData.tiktokHandle}
-                    onChange={(e) => handleInputChange("tiktokHandle", e.target.value)}
-                    placeholder="http://tiktok.com/username"
-                    className="h-11"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="x">X (Twitter)</Label>
-                  <Input
-                    id="x"
-                    value={formData.xHandle}
-                    onChange={(e) => handleInputChange("xHandle", e.target.value)}
-                    placeholder="http://twitter.com/username"
-                    className="h-11"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="linkedin">LinkedIn Profile</Label>
-                  <Input
-                    id="linkedin"
-                    value={formData.linkedinProfile}
-                    onChange={(e) => handleInputChange("linkedinProfile", e.target.value)}
-                    placeholder="http://linkedin.com/in/username"
-                    className="h-11"
-                  />
-                </div>
-
-                <div className="space-y-2 md:col-span-2">
-                  <Label htmlFor="whatsapp">WhatsApp Business</Label>
-                  <Input
-                    id="whatsapp"
-                    value={formData.whatsappBusiness}
-                    onChange={(e) => handleInputChange("whatsappBusiness", e.target.value)}
-                    placeholder="https://wa.me/6221551321"
-                    className="h-11"
-                  />
-                </div>
-              </div>
-            </section> */}
-
-            {/* Email Notifications */}
-            {/* <section className="p-6 bg-gray-50 rounded-xl">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">Email Notifications</h3>
-                  <p className="text-sm text-gray-600 mt-1">
-                    Get an email when your profile receives a market match
-                  </p>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={formData.emailNotifications}
-                    onChange={(e) => handleInputChange("emailNotifications", e.target.checked)}
-                    className="sr-only peer"
-                  />
-                  <div className="w-12 h-7 bg-gray-300 rounded-full peer peer-checked:bg-primary after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:after:translate-x-5"></div>
-                </label>
-              </div>
-            </section> */}
+            
 
             {/* Action Buttons */}
             <div className="flex justify-end gap-4 pt-6 border-t border-gray-200">

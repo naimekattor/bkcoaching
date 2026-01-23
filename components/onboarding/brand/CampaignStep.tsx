@@ -133,6 +133,7 @@ const CampaignStep = ({ onBack,onNext }: CampaignStepProps) => {
   const isValid =
     onboardingData.campaignName &&
     onboardingData.objective &&
+    onboardingData.campaign_poster &&
     onboardingData.deliverables.length > 0 &&
     onboardingData.timeline &&
     onboardingData.paymentPreferences.length > 0 &&
@@ -374,7 +375,7 @@ const CampaignStep = ({ onBack,onNext }: CampaignStepProps) => {
 
               <div>
                 <Label htmlFor="campaignposter" className="mb-2">
-                  Campaign Flyer
+                  Campaign Flyer *
                 </Label>
                 <p className="text-xs text-gray-500 mb-3">
   Use a landscape image (16:9). Recommended size: 1280×720 or 1920×1080.

@@ -72,6 +72,7 @@ const transformInfluencerDataForAPI = (data: InfluencerOnboardingData) => {
   console.log("profile_picture:", data.profile_picture);
 
   const payload = {
+    is_influencer_profile_complete:true,
     influencer_profile: {
       display_name: data.display_name,
       short_bio: data.short_bio,

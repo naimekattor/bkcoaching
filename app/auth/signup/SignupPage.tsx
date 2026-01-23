@@ -15,9 +15,8 @@ function SignupPageContent() {
   const router = useRouter();
   const params = useSearchParams();
   const returnTo = params.get("returnTo") || "";
-  const match = returnTo.match(/^\/([^-]+)/);
-  const result = match ? match[1] : null;
-  console.log("current to where go",returnTo);
+  const result = params.get("role")
+  console.log("current to where go",returnTo ,result);
   
 
   const [loading, setLoading] = useState(false);

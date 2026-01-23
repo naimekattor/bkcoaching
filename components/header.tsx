@@ -146,42 +146,31 @@ const Header = () => {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <button className="focus:outline-none">
-            <div className="w-12 h-12 flex items-center justify-center overflow-hidden bg-gray-200 rounded-full ring-2 ring-gray-200
-">
-  {getProfilePic() ? (
-  <div
-    className={
-      userData?.signed_up_as === "brand"
-        ? "w-full h-full flex items-center justify-center p-2"
-        : "w-full h-full rounded-full overflow-hidden"
-    }
-  >
-    <Image
-      src={getProfilePic()!} 
-      alt={getDisplayName()}
-      width={96}
-      height={96}
-      className={
-        userData?.signed_up_as === "brand"
-          ? "object-contain"
-          : "object-cover"
-      }
-      priority
-      unoptimized
-    />
-  </div>
-) : (
-  <div className="w-full h-full rounded-full bg-primary text-white flex items-center justify-center font-semibold uppercase">
-    {getDisplayName().charAt(0)}
-  </div>
-)}
+  <button className="focus:outline-none">
+    <div className="w-12 h-12 rounded-full ring-2 ring-gray-200 bg-white flex items-center justify-center overflow-hidden">
+      {getProfilePic() ? (
+        <Image
+          src={getProfilePic()!}
+          alt={getDisplayName()}
+          width={48}
+          height={48}
+          className={`w-full h-full transition-all ${
+            userData?.signed_up_as === "brand"
+              ? "object-contain p-2"
+              : "object-cover"
+          }`}
+          priority
+          unoptimized
+        />
+      ) : (
+        <div className="w-full h-full bg-gradient-to-br from-primary to-secondary text-white flex items-center justify-center font-semibold uppercase">
+          {getDisplayName().charAt(0).toUpperCase()}
+        </div>
+      )}
+    </div>
+  </button>
+</DropdownMenuTrigger>
 
-</div>
-
-
-          </button>
-        </DropdownMenuTrigger>
 
         <DropdownMenuContent align="end" className="w-56 mt-2">
           <DropdownMenuLabel className="font-normal">

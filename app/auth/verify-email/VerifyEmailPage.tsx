@@ -51,7 +51,7 @@ function VerifyEmailPageContent() {
     };
 
     fetchUser();
-  }, []); // Empty dependency array - runs only once on mount
+  }, []); 
 
   const handleInputChange = (index: number, value: string) => {
     if (value.length > 1) return;
@@ -94,12 +94,13 @@ function VerifyEmailPageContent() {
         localStorage.setItem("emailVerified", "true");
         setIsVerified(true);
         setTimeout(() => {
-        if (returnTo) {
-          router.push(returnTo);
-        } else {
-          // router.push("/brand-dashboard");
-          router.push("/auth/login");
-        }
+          router.push("/auth/success")
+        // if (returnTo) {
+        //   router.push(returnTo);
+        // } else {
+        //   // router.push("/brand-dashboard");
+        //   router.push("/auth/login");
+        // }
       }, 2000);
 
         

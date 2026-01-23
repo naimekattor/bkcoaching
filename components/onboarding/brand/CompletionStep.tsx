@@ -42,6 +42,7 @@ interface OnboardingData {
 
 const transformProfileDataForAPI = (data: OnboardingData) => {
   const profilePayload = {
+    is_brand_profile_complete:true,
     brand_profile: {
       business_name: data.businessName,
       website: data.website,

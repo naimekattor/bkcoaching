@@ -334,6 +334,8 @@ const getMissingFields = () => {
   const missing: string[] = [];
 
   if (!formData.campaign_name) missing.push("Campaign Name");
+  if (!formData.campaign_description) missing.push("Campaign Description");
+  if (!formData.campaign_poster) missing.push("Campaign Flyer");
   if (!formData.campaign_objective) missing.push("Campaign Objective");
   if (!formData.content_deliverables.length)
     missing.push("Content Deliverables");
@@ -540,7 +542,7 @@ const getMissingFields = () => {
 
               <div>
                 <Label htmlFor="campaign_description" className="mb-2">
-                  Campaign description
+                  Campaign description *
                 </Label>
                 <Textarea
                   id="campaign_description"
@@ -567,7 +569,7 @@ const getMissingFields = () => {
 
               <div>
                 <Label htmlFor="campaignposter" className="mb-2">
-                  Campaign Flyer
+                  Campaign Flyer *
                 </Label>
                 <p className="text-xs text-gray-500 mb-3">
   Use a landscape image (16:9). Recommended size: 1280×720 or 1920×1080.

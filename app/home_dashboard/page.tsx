@@ -6,12 +6,13 @@ import { apiClient } from "@/lib/apiClient";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import Cookies from 'js-cookie';
 
 function DashboardPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { data: session, status: sessionStatus } = useSession(); 
-  
+  const { data: session, status: sessionStatus } = useSession();
+
   const [error, setError] = useState<string | null>(null);
   const [statusParam, setStatusParam] = useState<string | null>(null);
 
@@ -22,28 +23,24 @@ function DashboardPageContent() {
 
   useEffect(() => {
     const checkUserProfile = async () => {
-      
       const localToken =
-  typeof window !== "undefined"
-    ? localStorage.getItem("access_token")
-    : null;
+        typeof window !== "undefined"
+          ? localStorage.getItem("access_token")
+          : null;
 
-const effectiveToken = session?.accessToken ?? localToken;
+      const effectiveToken = session?.accessToken ?? localToken;
 
-if (effectiveToken) {
-  localStorage.setItem("access_token", effectiveToken);
-}
+      if (effectiveToken) {
+        localStorage.setItem("access_token", effectiveToken);
+      }
 
       console.log(session?.accessToken);
       console.log(localToken);
-      
-      
 
-      
       if (!effectiveToken && sessionStatus === "loading") {
-        return; 
+        return;
       }
-      
+
       // 3. Handle Unauthenticated State
       if (!effectiveToken) {
         console.log("No session or local token found");
@@ -65,27 +62,55 @@ if (effectiveToken) {
           throw new Error("Invalid API response");
         }
 
-        const userData = res?.data; 
+        const userData = res?.data;
 
         console.log("User Data Received:", userData);
+        Cookies.set(
+  "user_info",
+  JSON.stringify({
+  
+    role: userData.signed_up_as,
+    isBrandComplete: userData.is_brand_profile_complete,
+    isInfluencerComplete: userData.is_influencer_profile_complete,
+  }),
+  { expires: 7, path: "/" } // path "/" is important so middleware can read it
+);
 
         // const hasBrandProfile = userData.signed_up_as === "brand";
         // const hasInfluencerProfile = userData.signed_up_as === "influencer";
         let redirectPath = "/";
 
-const role = userData.signed_up_as;
+        const role = userData.signed_up_as;
 
-if (role === "brand") {
-  redirectPath = userData.is_brand_profile_complete
-    ? "/brand-dashboard"
-    : "/brand-onboarding";
+
+// Both roles
+if (role === "both") {
+  if (!userData.is_brand_profile_complete) {
+    redirectPath = "/brand-onboarding";
+  } else if (!userData.is_influencer_profile_complete) {
+    redirectPath = "/influencer-onboarding";
+  } else {
+    // Both complete
+    redirectPath = "/dashboard"; // unified dashboard
+  }
 }
 
-if (role === "influencer") {
-  redirectPath = userData.is_influencer_profile_complete
-    ? "/influencer-dashboard"
-    : "/influencer-onboarding";
+// Only brand role
+else if (role === "brand") {
+  redirectPath = !userData.is_brand_profile_complete
+    ? "/brand-onboarding"
+    : "/brand-dashboard";
 }
+
+// Only influencer role
+else if (role === "influencer") {
+  redirectPath = !userData.is_influencer_profile_complete
+    ? "/influencer-onboarding"
+    : "/influencer-dashboard";
+}
+
+
+        
 
         if (statusParam === "success") {
           router.replace(`${redirectPath}?status=success`);
@@ -95,8 +120,10 @@ if (role === "influencer") {
       } catch (error: unknown) {
         console.error("Profile check failed:", error);
         // Optional: If API fails with 401, clear local storage
-        // localStorage.removeItem("access_token"); 
-        setError("Could not retrieve your profile. Please try logging in again.");
+        // localStorage.removeItem("access_token");
+        setError(
+          "Could not retrieve your profile. Please try logging in again.",
+        );
       }
     };
 
@@ -127,7 +154,13 @@ if (role === "influencer") {
 
 export default function DashboardPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-slate-50 flex items-center justify-center"><Loader2 className="animate-spin"/></div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+          <Loader2 className="animate-spin" />
+        </div>
+      }
+    >
       <DashboardPageContent />
     </Suspense>
   );
