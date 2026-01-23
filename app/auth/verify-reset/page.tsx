@@ -52,7 +52,7 @@ function VerifyResetContent() {
       body: JSON.stringify({ email: userEmail, otp: verificationCode }),
     });
 
-    if (res.code == "200") {
+    if (res.code == 200) {
       // Handle verification - redirect to reset password page
       window.location.href = ` /auth/reset-password?email=${userEmail}`;
     }

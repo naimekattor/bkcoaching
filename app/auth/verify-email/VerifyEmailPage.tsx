@@ -90,19 +90,15 @@ function VerifyEmailPageContent() {
 
       console.log("Verification response:", res);
 
-      if (res.code === 200) {
+      if (res.code == 200) {
         localStorage.setItem("emailVerified", "true");
         setIsVerified(true);
-      //   toast.success("🎉 Account verified successfully! Redirecting...", {
-      //   position: "top-center",
-      //   autoClose: 2000,
-      // });
-
         setTimeout(() => {
         if (returnTo) {
           router.push(returnTo);
         } else {
-          router.push("/brand-dashboard");
+          // router.push("/brand-dashboard");
+          router.push("/auth/login");
         }
       }, 2000);
 

@@ -71,17 +71,21 @@ if (effectiveToken) {
 
         // const hasBrandProfile = userData.signed_up_as === "brand";
         // const hasInfluencerProfile = userData.signed_up_as === "influencer";
-        const role = userData.signed_up_as;
+        let redirectPath = "/";
 
-        let redirectPath = "/influencer-dashboard";
-        
-         if (role === "brand") {
-          redirectPath = "/brand-dashboard";
-        } 
-        else if (role === "influencer") {
-          // This block will execute for your specific API response
-          redirectPath = "/influencer-dashboard";
-        } 
+const role = userData.signed_up_as;
+
+if (role === "brand") {
+  redirectPath = userData.is_brand_profile_complete
+    ? "/brand-dashboard"
+    : "/brand-onboarding";
+}
+
+if (role === "influencer") {
+  redirectPath = userData.is_influencer_profile_complete
+    ? "/influencer-dashboard"
+    : "/influencer-onboarding";
+}
 
         if (statusParam === "success") {
           router.replace(`${redirectPath}?status=success`);

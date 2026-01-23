@@ -14,7 +14,7 @@ export default function PageHeaderWithSwitcher({
       <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-primary">
         Hi, {isBrand ? "Brand" : "Influencer"} 👋
       </h1>
-      <p className="text-sm text-muted-foreground">
+      {/* <p className="text-sm text-muted-foreground">
         {isBrand ? (
           <>
             Not a brand?{" "}
@@ -36,7 +36,7 @@ export default function PageHeaderWithSwitcher({
             </Link>
           </>
         )}
-      </p>
+      </p> */}
     </div>
   );
 }

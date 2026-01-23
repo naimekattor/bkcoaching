@@ -71,9 +71,9 @@ const OnboardingLayout = ({
       {
         currentStep !== Number(finalStep) &&(
           <div>
-        <Link href={`/auth/signup?role=${skipRole}&returnTo=/${skipRole}-onboarding?step=${finalStep}`} className="text-muted-foreground font-semibold underline text-sm mt-6">
+        {/* <Link href={`/auth/signup?role=${skipRole}&returnTo=/${skipRole}-onboarding?step=${finalStep}`} className="text-muted-foreground font-semibold underline text-sm mt-6">
         Complete My Profile Setup Later
-        </Link>
+        </Link> */}
       </div>
         )
       }

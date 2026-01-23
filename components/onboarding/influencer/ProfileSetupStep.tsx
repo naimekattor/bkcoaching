@@ -73,6 +73,16 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
 
   const isValid =
     onboardingDataInfluencer.display_name &&
+    onboardingDataInfluencer.profile_picture &&
+    ((onboardingDataInfluencer.instagram_handle && onboardingDataInfluencer.insta_follower) || 
+    (onboardingDataInfluencer.tiktok_handle && onboardingDataInfluencer.tiktok_follower) ||
+    (onboardingDataInfluencer.blog_url && onboardingDataInfluencer.blog_follower) ||
+    (onboardingDataInfluencer.whatsapp_handle && onboardingDataInfluencer.whatsapp_follower) ||
+    (onboardingDataInfluencer.podcast_handle && onboardingDataInfluencer.podcast_follower) ||
+    (onboardingDataInfluencer.twitter_handle && onboardingDataInfluencer.twitter_follower) ||
+    (onboardingDataInfluencer.linkedin_handle && onboardingDataInfluencer.linkedin_follower) ||
+    (onboardingDataInfluencer.facebook_handle && onboardingDataInfluencer.facebook_follower) ||
+    (onboardingDataInfluencer.youtube_handle && onboardingDataInfluencer.youtube_follower) )&&
     onboardingDataInfluencer.short_bio &&
     onboardingDataInfluencer.gender &&
     onboardingDataInfluencer.content_niches.length > 0;
@@ -101,7 +111,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
             <div className="flex flex-col md:flex-row gap-6">
               {/* Profile Photo Upload */}
               <div className="space-y-2 ">
-                <Label>Profile Photo </Label>
+                <Label>Profile Photo *</Label>
                 <label
                   htmlFor="profilePhoto"
                   className="aspect-square w-32  border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors overflow-hidden"
@@ -202,7 +212,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
 
         <Card>
   <CardHeader>
-    <CardTitle>Social Presence & Reach</CardTitle>
+    <CardTitle>Social Presence & Reach *</CardTitle>
     <p className="text-sm text-muted-foreground">
       Connect your accounts and specify your audience size for each platform.
     </p>
@@ -483,7 +493,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
         <Label htmlFor="blog_url">Blog / Website URL</Label>
         <Input
           id="blog_url"
-          value={onboardingDataInfluencer.blog_url || ""} 
+          value={onboardingDataInfluencer.blog_url } 
           onChange={(e) =>
             setOnboardingDataInfluencer((prev) => ({
               ...prev,
@@ -521,8 +531,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
               Content Niches *
             </CardTitle>
             <p className="text-sm text-muted-foreground">
-              Select your primary content categories (choose 3-5 for best
-              matches)
+              Select your primary content categories 
             </p>
           </CardHeader>
           <CardContent>

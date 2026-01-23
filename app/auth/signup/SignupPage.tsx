@@ -124,7 +124,7 @@ const handleGoogleSignUp = async () => {
     });
   }
   signIn("google", {
-    callbackUrl: `${returnTo}`,
+    callbackUrl: `/home_dashboard`,
   });
 };
 
@@ -136,7 +136,7 @@ const handleAppleSignUp = async () => {
     });
   }
   signIn("apple", {
-    callbackUrl: `${returnTo}`,
+    callbackUrl: `/home_dashboard`,
   });
 };
 

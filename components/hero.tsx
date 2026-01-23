@@ -92,19 +92,27 @@ const Hero = () => {
           <div className="flex flex-col gap-3 pt-4">
             <Button
               onClick={() => {
-                router.push("/influencer-onboarding");
-                setShowAuthModal(false);
+                router.push("/auth/signup?role=influencer&returnTo=/influencer-onboarding?step=1");
+                
               }}
             >
               Sign up as Influencer
             </Button>
             <Button
               onClick={() => {
-                router.push("/brand-onboarding");
-                setShowAuthModal(false);
+                router.push("/auth/signup?role=brand&returnTo=/brand-onboarding?step=1");
+                
               }}
             >
               Sign up as Brand
+            </Button>
+            <Button
+              onClick={() => {
+                router.push("/auth/signup?role=brand&returnTo=/brand-onboarding?step=1");
+               
+              }}
+            >
+              Sign up as Both
             </Button>
           </div>
 

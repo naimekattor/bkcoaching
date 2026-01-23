@@ -31,14 +31,15 @@ const TermsAndGuidelinesStep = ({ onNext, onBack }: Props) => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const router = useRouter();
 
-  const token =
-    typeof window !== "undefined"
-      ? localStorage.getItem("access_token")
-      : null;
+  // const token =
+  //   typeof window !== "undefined"
+  //     ? localStorage.getItem("access_token")
+  //     : null;
 
   const handleContinue = () => {
     if (!agreed) return;
-    token ? onNext() : setShowAuthModal(true);
+    onNext();
+    // token ? onNext() : setShowAuthModal(true);
   };
 
   return (
@@ -243,7 +244,7 @@ const TermsAndGuidelinesStep = ({ onNext, onBack }: Props) => {
       </div>
 
       {/* Auth Modal */}
-      <Dialog open={showAuthModal} onOpenChange={setShowAuthModal}>
+      {/* <Dialog open={showAuthModal} onOpenChange={setShowAuthModal}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Sign up required</DialogTitle>
@@ -271,7 +272,7 @@ const TermsAndGuidelinesStep = ({ onNext, onBack }: Props) => {
             </Button>
           </div>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
     </>
   );
 };

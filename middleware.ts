@@ -49,6 +49,25 @@ console.log("Final accessToken:", accessToken);
 
     console.log(`Subscription check - Plan: ${planName}, Active: ${isActive}`);
 
+    /* ------------- BRAND ONBOARDING -------------- */
+if (pathname.startsWith("/brand-onboarding")) {
+  if (!isActive) {
+    url.pathname = "/brand-subscription-required";
+    url.searchParams.set("reason", "subscription_inactive");
+    return NextResponse.redirect(url);
+  }
+}
+
+/* ----------- INFLUENCER ONBOARDING ------------ */
+if (pathname.startsWith("/influencer-onboarding")) {
+  if (!isActive) {
+    url.pathname = "/influencer-subscription-required";
+    url.searchParams.set("reason", "subscription_inactive");
+    return NextResponse.redirect(url);
+  }
+}
+
+
     /* ---------------- BRAND DASHBOARD ---------------- */
      if (isFailure) {
     url.pathname = "/subscription-required";
@@ -104,5 +123,7 @@ console.log("Final accessToken:", accessToken);
 }
 
 export const config = {
-  matcher: ["/brand-dashboard/:path*", "/influencer-dashboard/:path*"],
+  matcher: ["/brand-dashboard/:path*", "/influencer-dashboard/:path*",
+    "/brand-onboarding/:path*",
+    "/influencer-onboarding/:path*",],
 };

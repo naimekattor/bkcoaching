@@ -952,7 +952,7 @@ const CampaignStep = ({ onBack,onNext }: CampaignStepProps) => {
             <Button
               onClick={() =>
                 router.push(
-                  "/auth/signup?role=brand&returnTo=/brand-onboarding?step=4"
+                  "/auth/signup?role=brand&returnTo=/brand-onboarding?step=1"
                 )
               }
             >
