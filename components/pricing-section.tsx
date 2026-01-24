@@ -52,11 +52,13 @@ export function PricingSection({
   const [token, setToken] = useState<string | null>(null);
     const [userData, setUserData] = useState<UserData | null>(null);
     const[currPlanName,setCurrPlanName]=useState();
+const isLoading =
+  // No plans at all yet → still loading
+  plans.length === 0 ||
 
-  // --- Logic to determine Dashboard Context ---
-  // Using includes() handles sub-paths like /influencer-dashboard/subscription
-  const isInfluencerDashboard = pathname?.includes("/influencer-dashboard");
-  const isBrandDashboard = pathname?.includes("/brand-dashboard");
+  // We are logged in (have token) BUT don't know user type / current plan yet
+  (token !== null && userData === null && currPlanName === undefined);
+  
   const { data: session, status: sessionStatus } = useSession(); 
 
   const fetchUser = async () => {
@@ -213,7 +215,7 @@ export function PricingSection({
   };
 
   // --- Loading State ---
-  if (loading) {
+  if (isLoading) {
     return (
       <section className="px-4 py-16 container mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
