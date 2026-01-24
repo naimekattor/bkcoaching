@@ -157,7 +157,7 @@ console.log("Header mounted");
           height={48}
           className={`w-full h-full transition-all ${
             userData?.signed_up_as === "brand"
-              ? "object-contain p-2"
+              ? "object-contain"
               : "object-cover"
           }`}
           priority
