@@ -7,6 +7,7 @@ import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import Cookies from 'js-cookie';
+import { useAuthStore } from "@/stores/useAuthStore";
 
 function DashboardPageContent() {
   const router = useRouter();
@@ -15,6 +16,7 @@ function DashboardPageContent() {
 
   const [error, setError] = useState<string | null>(null);
   const [statusParam, setStatusParam] = useState<string | null>(null);
+  const {user}=useAuthStore();
 
   useEffect(() => {
     const s = searchParams.get("status");

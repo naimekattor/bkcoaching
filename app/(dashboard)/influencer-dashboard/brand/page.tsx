@@ -404,13 +404,13 @@ export default function BrandPage() {
                 {/* Logo */}
                 <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center rounded-full bg-gradient-to-br from-primary/5 to-primary/10 border-2 border-white shadow-sm overflow-hidden">
   {brand.logo ? (
-    <div className="w-full h-full p-2 flex items-center justify-center">
+    <div className="w-full h-full flex items-center justify-center">
       <Image
         src={brand.logo}
         alt={brand.name}
         width={64}
         height={64}
-        className="object-contain"
+        className="object-cover w-full h-full"
         unoptimized
       />
     </div>

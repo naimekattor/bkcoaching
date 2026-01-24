@@ -387,11 +387,17 @@ function InfluencerDashboardContent() {
       ? user.influencer_profile.profile_picture
       : "/images/person.jpg";
 
-  const profileName: string =
-    typeof user?.influencer_profile?.display_name === "string" &&
-    user.influencer_profile.display_name !== ""
-      ? user.influencer_profile.display_name
-      : String(user?.user?.first_name);
+  const initial =
+  typeof user?.influencer_profile?.display_name === "string"
+    ? user.influencer_profile.display_name[0].toUpperCase()
+    : typeof user?.user?.first_name === "string"
+    ? user.user.first_name[0].toUpperCase()
+    : "N";
+
+const avatarLetter = initial.toUpperCase();
+
+
+      
 
   return (
     <div className="relative">
@@ -401,23 +407,18 @@ function InfluencerDashboardContent() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             {/* Greeting + Profile */}
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center flex-shrink-0">
+              <div className="w-14 h-14 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center ring-1 ring-gray-200">
                 {profileSrc && profileSrc !== "/images/person.jpg" ? (
                   <Image
                     src={profileSrc}
                     width={64}
                     height={64}
-                    alt={profileName}
+                    alt={initial  || "Profile" }
                     className="object-cover w-full h-full"
                   />
                 ) : (
                   <div className="w-16 h-16 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold text-lg flex-shrink-0">
-                    {(typeof user?.influencer_profile?.display_name === "string"
-                      ? user.influencer_profile.display_name[0]
-                      : undefined) ||
-                      (typeof user?.user?.first_name === "string"
-                        ? user.user.first_name[0].toUpperCase()
-                        : undefined)}
+                    {avatarLetter}
                   </div>
                 )}
               </div>

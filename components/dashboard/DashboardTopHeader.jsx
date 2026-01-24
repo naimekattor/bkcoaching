@@ -329,11 +329,20 @@ const DashboardTopHeader = () => {
     });
   };
 
-  const profileImage =
-  user?.brand_profile?.logo ||
-  user?.influencer_profile?.profile_picture;
 
-const isBrand = !!user?.brand_profile?.logo;
+const profileImage = isBrandDashboard
+  ? user?.brand_profile?.logo
+  : isInfluencerDashboard
+  ? user?.influencer_profile?.profile_picture
+  : null;
+
+const displayName =
+  (isBrandDashboard && user?.brand_profile?.business_name) ||
+  (isInfluencerDashboard && user?.influencer_profile?.display_name) ||
+  user?.user?.first_name ||
+  "N";
+
+const isBrand = isBrandDashboard;
 
   return (
     <div className="bg-white px-4 sm:px-8 py-5 border-b border-gray-100">
@@ -527,14 +536,9 @@ const isBrand = !!user?.brand_profile?.logo;
     </div>
   ) : (
     <div className="w-11 h-11 rounded-full bg-gradient-to-br from-primary to-secondary text-white flex items-center justify-center font-semibold uppercase">
-      {(
-        user?.brand_profile?.business_name ||
-        user?.influencer_profile?.display_name ||
-        user?.user?.first_name ||
-        "N"
-      )
-        .charAt(0)
-        .toUpperCase()}
+      {
+        displayName.charAt(0).toUpperCase()
+        }
     </div>
   )}
 

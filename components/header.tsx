@@ -119,6 +119,7 @@ const Header = () => {
   };
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+console.log("Header mounted");
 
   // Desktop Auth Section
   const DesktopAuthSection = () => {

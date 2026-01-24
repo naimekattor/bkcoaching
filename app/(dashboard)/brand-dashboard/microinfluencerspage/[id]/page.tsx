@@ -939,7 +939,7 @@ useEffect(()=>{
               {influencer.paymentPreferences &&
                 influencer.paymentPreferences.length > 0 && (
                   <div className="mt-4 pt-4 border-t border-gray-200">
-                    <h3 className="text-sm font-medium text-gray-700 mb-2">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
                       Payment Options
                     </h3>
                     <div className="flex flex-wrap gap-2">
@@ -962,7 +962,7 @@ useEffect(()=>{
 
               {influencer.response_time ? (
                 <div className="flex items-center">
-                  <span className="text-2xl font-bold text-gray-900">
+                  <span className="text-sm font-semibold text-primary">
                     {influencer.response_time}
                   </span>
                   {/* <span className="ml-2 text-sm text-gray-500">hours</span> */}
