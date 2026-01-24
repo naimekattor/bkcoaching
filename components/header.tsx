@@ -49,6 +49,12 @@ const Header = () => {
     const token=(accessToken || sessionToken) ?? null;
     setToken(token);
 
+    useEffect(() => {
+  if (session?.accessToken) {
+    fetchUser(); 
+  }
+}, [session]);
+
     if (!token) {
       setLoading(false);
       return;
