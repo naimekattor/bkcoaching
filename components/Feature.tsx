@@ -10,7 +10,7 @@ const Feature = () => {
 
       <div className="grid md:grid-cols-2 gap-8 container mx-auto">
         {/* For Brands Card */}
-        <Link href={"/brand-onboarding"}>
+        <Link href={"/auth/signup?role=brand&returnTo=/brand-onboarding?step=1"}>
           <div className="bg-white rounded-2xl shadow-lg flex flex-col justify-between  gap-4  overflow-hidden h-full">
             <div className=" bg-primary text-white text-center py-6">
               <h3 className="text-2xl font-bold">For Brands</h3>
@@ -121,7 +121,7 @@ const Feature = () => {
         </Link>
 
         {/* For Influencer Card */}
-        <Link href={"/influencer-onboarding"}>
+        <Link href={"/auth/signup?role=influencer&returnTo=/influencer-onboarding?step=1"}>
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden  flex flex-col justify-between h-full">
             <div className="bg-primary text-white text-center py-6">
               <h3 className="text-2xl font-bold">For Influencer</h3>
@@ -235,7 +235,7 @@ const Feature = () => {
               </div>
             </div>
             <div className="p-8">
-              <button className="w-full bg-secondary hover:bg-[var(--secondaryhover)] text-primary font-semibold py-4 rounded-lg transition-colors duration-200 text-lg ">
+              <button className="w-full cursor-pointer bg-secondary hover:bg-[var(--secondaryhover)] text-primary font-semibold py-4 rounded-lg transition-colors duration-200 text-lg ">
                 
                   Monetize My Influence
                 

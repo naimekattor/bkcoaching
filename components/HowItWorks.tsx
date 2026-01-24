@@ -14,7 +14,7 @@ const HowItWorks = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 place-items-center">
           {/* Left side boxes */}
-          <Link href={"/brand-onboarding"}>
+          <Link href={"/auth/signup?role=brand&returnTo=/brand-onboarding?step=1"}>
             <div className="w-[326px]">
               <div className="bg-white rounded shadow-md  text-left">
                 <div className="flex gap-4 items-center justify-center bg-primary py-2 px-2 rounded">
@@ -47,7 +47,7 @@ const HowItWorks = () => {
           </div>
 
           {/* Right side boxes */}
-          <Link href={"/influencer-onboarding"}>
+          <Link href={"/auth/signup?role=influencer&returnTo=/influencer-onboarding?step=1"}>
             <div className="w-[326px]">
               <div className="bg-white rounded shadow-md  text-left">
                 <div className="flex gap-4 items-center justify-center bg-primary py-2 px-2 rounded">
