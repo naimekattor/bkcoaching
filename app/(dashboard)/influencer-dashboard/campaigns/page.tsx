@@ -114,6 +114,12 @@ export default function CampaignsPage() {
   // State for Marketplace Campaigns
   const [publicCampaigns, setPublicCampaigns] = useState<PublicCampaign[]>([]);
 
+  // Search State
+  const [searchResults, setSearchResults] = useState<PublicCampaign[] | null>(
+    null
+  );
+  const [isSearching, setIsSearching] = useState(false);
+
   // State for My Jobs (Invitations + Active)
   const [hiredCampaigns, setHiredCampaigns] = useState<HiredCampaign[]>([]);
 
@@ -142,6 +148,36 @@ export default function CampaignsPage() {
 
   const router = useRouter();
   const ITEMS_PER_PAGE = 9;
+
+  // --- Search Handler ---
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) return;
+
+    try {
+      setIsSearching(true);
+      const res = await apiClient("campaign_service/search_campaign/", {
+        method: "POST",
+        body: JSON.stringify({ campaign_name: searchQuery }),
+        auth: true,
+      });
+
+      if (res.data) {
+        setSearchResults(res.data);
+      } else {
+        setSearchResults([]);
+      }
+    } catch (error) {
+      console.error("Search Error:", error);
+      toast.error("Failed to search campaigns.");
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const clearSearch = () => {
+    setSearchQuery("");
+    setSearchResults(null);
+  };
 
   // --- Fetch Hired Campaigns (Invitations & Active) ---
   useEffect(() => {
@@ -274,19 +310,19 @@ export default function CampaignsPage() {
 
   // 3. Filter Public Campaigns (Search)
   const filteredPublicCampaigns = publicCampaigns.filter((campaign) => {
-    const matchesSearch =
-      campaign.campaign_name
-        ?.toLowerCase()
-        .includes(searchQuery.toLowerCase()) ||
-      campaign.campaign_description
-        ?.toLowerCase()
-        .includes(searchQuery.toLowerCase());
+    // const matchesSearch =
+    //   campaign.campaign_name
+    //     ?.toLowerCase()
+    //     .includes(searchQuery.toLowerCase()) ||
+    //   campaign.campaign_description
+    //     ?.toLowerCase()
+    //     .includes(searchQuery.toLowerCase());
 
     const matchesStatus =
       statusFilter === "All Status" ||
       campaign.campaign_status?.toLowerCase() === statusFilter.toLowerCase();
-
-    return matchesSearch && matchesStatus;
+    
+    return  matchesStatus;
   });
 
   // --- Handlers ---
@@ -592,32 +628,53 @@ export default function CampaignsPage() {
       </h2>
       <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
         <div className="flex flex-col lg:flex-row gap-4">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search public campaigns..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-            />
+          <div className="flex-1 relative flex gap-2">
+            <div className="relative flex-grow">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search public campaigns..."
+                value={searchQuery}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleSearch();
+                  }
+                }}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+              />
+            </div>
+            <button
+              onClick={handleSearch}
+              disabled={isSearching || !searchQuery.trim()}
+              className="px-6 py-2 bg-primary text-white font-semibold rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {isSearching ? "Searching..." : "Search"}
+            </button>
+            {searchResults && (
+              <button
+                onClick={clearSearch}
+                className="px-4 py-2 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Clear
+              </button>
+            )}
           </div>
-          {/* Add filters if needed */}
         </div>
       </div>
 
       {/* Public Campaign Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
-        {loadingPublic ? (
+        {loadingPublic || isSearching ? (
           <div className="col-span-full text-center py-8 text-gray-600">
-            Loading...
+            {isSearching ? "Searching campaigns..." : "Loading..."}
           </div>
-        ) : filteredPublicCampaigns.length === 0 ? (
+        ) : (searchResults || filteredPublicCampaigns).length === 0 ? (
           <div className="col-span-full text-center py-8 text-gray-600">
             No campaigns found
           </div>
         ) : (
-          filteredPublicCampaigns.map((campaign) => (
+          (searchResults || filteredPublicCampaigns).map((campaign) => (
             <div
               key={campaign.id}
               className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
@@ -629,7 +686,13 @@ export default function CampaignsPage() {
                   alt={campaign.campaign_name || "Campaign"}
                   className=" object-cover"
                 />
-                <div className={`absolute top-2 right-2 ${campaign.campaign_status==="active"?"bg-green-100 text-green-800":""}  rounded-full px-3 py-1 text-xs font-semibold capitalize`}>
+                <div
+                  className={`absolute top-2 right-2 ${
+                    campaign.campaign_status === "active"
+                      ? "bg-green-100 text-green-800"
+                      : ""
+                  }  rounded-full px-3 py-1 text-xs font-semibold capitalize`}
+                >
                   {campaign.campaign_status}
                 </div>
               </div>
@@ -719,47 +782,51 @@ export default function CampaignsPage() {
         )}
       </div>
 
-      {/* Pagination */}
-      <div className="flex justify-center items-center gap-2 mb-8">
-        <button
-          onClick={() => setCurrentPage(1)}
-          disabled={!previousUrl}
-          className="px-3 py-2 rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 md:block hidden"
-        >
-          ← First
-        </button>
+      {/* Pagination (Only show if NOT searching) */}
+      {!searchResults && (
+        <div className="flex justify-center items-center gap-2 mb-8">
+          <button
+            onClick={() => setCurrentPage(1)}
+            disabled={!previousUrl}
+            className="px-3 py-2 rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 md:block hidden"
+          >
+            ← First
+          </button>
 
-        <button
-          onClick={() => setCurrentPage(currentPage - 1)}
-          disabled={!previousUrl}
-          className="px-3 py-2 rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
-        >
-          Previous
-        </button>
+          <button
+            onClick={() => setCurrentPage(currentPage - 1)}
+            disabled={!previousUrl}
+            className="px-3 py-2 rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+          >
+            Previous
+          </button>
 
-        <span className="px-4 py-2 text-sm font-medium text-gray-700">
-          Page <span className="font-bold">{currentPage}</span> of{" "}
-          <span className="font-bold">
-            {Math.ceil(totalCount / ITEMS_PER_PAGE)}
+          <span className="px-4 py-2 text-sm font-medium text-gray-700">
+            Page <span className="font-bold">{currentPage}</span> of{" "}
+            <span className="font-bold">
+              {Math.ceil(totalCount / ITEMS_PER_PAGE)}
+            </span>
           </span>
-        </span>
 
-        <button
-          onClick={() => setCurrentPage(currentPage + 1)}
-          disabled={!nextUrl}
-          className="px-3 py-2 rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
-        >
-          Next
-        </button>
+          <button
+            onClick={() => setCurrentPage(currentPage + 1)}
+            disabled={!nextUrl}
+            className="px-3 py-2 rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+          >
+            Next
+          </button>
 
-        <button
-          onClick={() => setCurrentPage(Math.ceil(totalCount / ITEMS_PER_PAGE))}
-          disabled={!nextUrl}
-          className="px-3 py-2 rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 md:block hidden"
-        >
-          Last →
-        </button>
-      </div>
+          <button
+            onClick={() =>
+              setCurrentPage(Math.ceil(totalCount / ITEMS_PER_PAGE))
+            }
+            disabled={!nextUrl}
+            className="px-3 py-2 rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 md:block hidden"
+          >
+            Last →
+          </button>
+        </div>
+      )}
 
       {/* --- Campaign Detail Modal (Handles both Types) --- */}
       {isModalOpen && selectedCampaign && (
