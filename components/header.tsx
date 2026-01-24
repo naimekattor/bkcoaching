@@ -43,17 +43,19 @@ const Header = () => {
   const [loading, setLoading] = useState(true);
   const pathName=usePathname();
   const {data:session}=useSession();
+
+  useEffect(() => {
+  if (session?.accessToken) {
+    fetchUser(); 
+  }
+}, [session]);
   const fetchUser = async () => {
     const accessToken = localStorage.getItem("access_token");
     const sessionToken=session?.accessToken;
     const token=(accessToken || sessionToken) ?? null;
     setToken(token);
 
-    useEffect(() => {
-  if (session?.accessToken) {
-    fetchUser(); 
-  }
-}, [session]);
+    
 
     if (!token) {
       setLoading(false);
