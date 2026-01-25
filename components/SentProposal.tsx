@@ -222,7 +222,7 @@ const SentProposal = () => {
       <div className="max-h-[520px] overflow-y-auto p-4 space-y-6">
         {groupedByCampaign.map((group) => (
           <div
-            key={group.campaign.id}
+            key={group.campaign?.id}
             className="border rounded-2xl p-4 bg-gray-50"
           >
             {/* Campaign Header */}
@@ -230,15 +230,15 @@ const SentProposal = () => {
               className="text-[16px] font-semibold text-primary mb-3 cursor-pointer flex justify-between items-center"
               onClick={() =>
                 setExpandedCampaignId(
-                  expandedCampaignId === group.campaign.id
+                  expandedCampaignId === group.campaign?.id
                     ? null
                     : group.campaign.id
                 )
               }
             >
-              {group.campaign.campaign_name}
+              {group.campaign?.campaign_name}
               <span>
-                {expandedCampaignId === group.campaign.id ? (
+                {expandedCampaignId === group.campaign?.id ? (
                   <ChevronUp />
                 ) : (
                   <ChevronDown />
@@ -248,7 +248,7 @@ const SentProposal = () => {
 
             {/* Proposals */}
             <AnimatePresence>
-              {expandedCampaignId === group.campaign.id && (
+              {expandedCampaignId === group.campaign?.id && (
                 <motion.div
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
