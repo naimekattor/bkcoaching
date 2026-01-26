@@ -97,6 +97,8 @@ const WorkflowStep = ({ onNext, onBack }: WorkflowStepProps) => {
     }));
   };
 
+  const isValid=onboardingDataInfluencer.response_time;
+
   return (
     <div className="space-y-8">
       <div className="text-center space-y-4">
@@ -313,7 +315,7 @@ const WorkflowStep = ({ onNext, onBack }: WorkflowStepProps) => {
         <Button variant="outline" onClick={onBack}>
           Back
         </Button>
-        <Button variant="primary" onClick={onNext}>
+        <Button variant="primary" onClick={onNext} disabled={!isValid}>
           Got it, Continue
         </Button>
       </div>
