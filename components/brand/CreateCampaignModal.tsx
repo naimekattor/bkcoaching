@@ -94,7 +94,7 @@ interface DeliverableType {
 }
 
 const deliverableTypes: DeliverableType[] = [
-  { id: "instagramStory", label: "Instagram Story", icon: Image },
+  { id: "instagramStory", label: "Instagram Story", icon: FileText },
   { id: "instagramReel", label: "Instagram Reel", icon: Video },
   { id: "tiktokVideo", label: "TikTok Video", icon: Video },
   { id: "youtubeVideo", label: "YouTube Video", icon: Video },
@@ -104,8 +104,10 @@ const deliverableTypes: DeliverableType[] = [
   { id: "podcastMention", label: "Podcast Mention", icon: Mic },
   { id: "liveStream", label: "Live Stream", icon: Video },
   { id: "userGeneratedContent", label: "UGC Creation", icon: Video },
-  { id: "whatsappStatus", label: "WhatsApp Status Post", icon: Image },
-  { id: "socialPost", label: "Whatsapp Group Post", icon: Image },
+  { id: "whatsappStatus", label: "WhatsApp Status Post", icon: FileText },
+  { id: "socialPost", label: "Whatsapp Group Post", icon: FileText },
+  { id: "linkedinPost", label: "Linkedin Post", icon: FileText },
+  { id: "twitterPost", label: "Twitter/X  Post", icon: FileText },
   { id: "repost", label: "Repost", icon: Repeat },
 ];
 
@@ -262,7 +264,7 @@ export default function CreateCampaignModal({
           posterFile: file,
           posterPreview: URL.createObjectURL(file), // Local preview for speed
         }));
-        toast.success("Image uploaded successfully");
+        // toast.success("Image uploaded successfully");
       } else {
         setUploadError("Upload failed - no URL returned");
       }

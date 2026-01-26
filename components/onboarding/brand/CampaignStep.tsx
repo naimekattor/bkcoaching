@@ -105,6 +105,8 @@ const CampaignStep = ({ onBack,onNext }: CampaignStepProps) => {
     { id: "userGeneratedContent", label: "UGC Creation", icon: Video },
     { id: "whatsappStatus", label: "WhatsApp Status Post", icon: ImageIcon },
     { id: "socialPost", label: "Whatsapp Group Post", icon: ImageIcon },
+    { id: "linkedinPost", label: "Linkedin Post", icon: FileText },
+    { id: "twitterPost", label: "Twitter/X  Post", icon: FileText },
     { id: "repost", label: "Repost", icon: Repeat },
   ];
 

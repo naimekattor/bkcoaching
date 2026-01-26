@@ -154,21 +154,33 @@ const PLATFORM_CONFIG: PlatformConfig[] = [
   },
 ];
 
+const defaultConfig = {
+  icon: <FaQuestionCircle className="w-4 h-4" />,
+  className: "text-gray-400",
+};
+
 const getPlatformConfig = (deliverable?: string | null) => {
   if (!deliverable || typeof deliverable !== "string") {
-    return {
-      icon: <FaQuestionCircle className="w-4 h-4" />,
-      className: "text-gray-400",
-    };
+    return defaultConfig;
   }
-  return (
-    PLATFORM_CONFIG.find((c) =>
-      deliverable.toLowerCase().includes(c.match)
-    ) ?? {
-      icon: <FaQuestionCircle className="w-4 h-4" />,
-      className: "text-gray-400",
-    }
-  );
+
+  const lowerDeliverable = deliverable.toLowerCase().trim();
+  
+  let platformKey = lowerDeliverable;
+  
+  if (lowerDeliverable.includes('instagram')) platformKey = 'instagram';
+  else if (lowerDeliverable.includes('tiktok')) platformKey = 'tiktok';
+  else if (lowerDeliverable.includes('youtube')) platformKey = 'youtube';
+  else if (lowerDeliverable.includes('facebook')) platformKey = 'facebook';
+  else if (lowerDeliverable.includes('linkedin')) platformKey = 'linkedin';
+  else if (lowerDeliverable.includes('twitter')) platformKey = 'twitter';
+  else if (lowerDeliverable.includes('whatsapp')) platformKey = 'whatsapp';
+  else if (lowerDeliverable.includes('blog')) platformKey = 'blog';
+  else if (lowerDeliverable.includes('podcast')) platformKey = 'podcast';
+  
+  const config = PLATFORM_CONFIG.find((c) => c.match === platformKey);
+  
+  return config || defaultConfig;
 };
 
 /* -------------------------------------------------
@@ -184,7 +196,6 @@ function CampaignDashboardContent() {
   const [platformFilter, setPlatformFilter] = useState("all");
   const [allCampaigns, setAllCampaigns] = useState<Campaign[]>([]);
   const [previousHirings, setPreviousHirings] = useState<HiringCampaign[]>([]);
-  // State for rating input
   const [hoverRating, setHoverRating] = useState<number>(0);
   const [ratingValue, setRatingValue] = useState<Record<number, number>>({});
   const [ratingLoading, setRatingLoading] = useState<number | null>(null);
@@ -239,7 +250,6 @@ function CampaignDashboardContent() {
 
   /* ---------- Filters ---------- */
   const filteredCampaigns = allCampaigns.filter((campaign) => {
-    // Exclude archived campaigns from main view
     if ((campaign.status || "").toLowerCase() === "archive") {
       return false;
     }
@@ -376,8 +386,6 @@ function CampaignDashboardContent() {
     const fetchInfluencerDetails = async () => {
       if (!selectedCampaign) return;
 
-      // 1. Filter hirings for this specific campaign
-      // Note: Ensure IDs are compared as same type (numbers)
       const relevantHirings = previousHirings.filter(
         (h) => Number(h.campaign_id) === Number(selectedCampaign.id)
       );
@@ -857,22 +865,41 @@ function CampaignDashboardContent() {
                   </p>
 
                   <div className="flex items-center gap-2 mb-4">
-  {Array.isArray(campaign.deliverables) &&
-  campaign.deliverables.length > 0
-    ? Array.from(new Set(campaign.deliverables.filter(Boolean))).map(
-        (item, idx) => {
-          const { icon, className } = getPlatformConfig(item);
-          return (
-            <div
-              key={idx}
-              className={`w-4 h-4 rounded flex items-center justify-center ${className}`}
-            >
-              {icon}
-            </div>
-          );
-        }
-      )
-    : null}
+  {Array.isArray(campaign.deliverables) && campaign.deliverables.length > 0
+    ? 
+      Array.from(new Set(
+        campaign.deliverables
+          .filter(Boolean)
+          .map(d => {
+            const lower = d.toLowerCase();
+            if (lower.includes('instagram')) return 'instagram';
+            if (lower.includes('tiktok')) return 'tiktok';
+            if (lower.includes('youtube')) return 'youtube';
+            if (lower.includes('facebook')) return 'facebook';
+            if (lower.includes('linkedin')) return 'linkedin';
+            if (lower.includes('twitter')) return 'twitter';
+            if (lower.includes('whatsapp')) return 'whatsapp';
+            if (lower.includes('blog')) return 'blog';
+            if (lower.includes('podcast')) return 'podcast';
+            return d;
+          })
+      )).map((platform, idx) => {
+        const { icon, className } = getPlatformConfig(platform);
+        return (
+          <div
+            key={idx}
+            className={`w-6 h-6 rounded flex items-center justify-center ${className} bg-gray-50 border`}
+            title={platform.charAt(0).toUpperCase() + platform.slice(1)}
+          >
+            {icon}
+          </div>
+        );
+      })
+    : (
+      <div className="w-6 h-6 rounded flex items-center justify-center text-gray-400 bg-gray-100 border">
+        <FaQuestionCircle className="w-4 h-4" />
+      </div>
+    )}
 
   {/* Assigned creators avatars */}
   <div className="flex -space-x-2 ml-2">
