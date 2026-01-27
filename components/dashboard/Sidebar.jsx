@@ -32,7 +32,7 @@ export function Sidebar({ links = [], setShowSideBar }) {
               width={160}
               height={45}
               src={"/images/logo.png"}
-              alt="logo"
+              alt=""
             />
           </Link>
         </div>

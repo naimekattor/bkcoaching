@@ -148,6 +148,7 @@ export default function BrandPage() {
             logo: bp.logo ?? undefined,
             businessType: getCleanCategory(bp.business_type) ?? undefined,
             website: bp.website ?? undefined,
+            designation: bp.business_type ?? "",
             socialLinks: {
               instagram: platforms.includes("instagram") ? "#" : undefined,
               tiktok: platforms.includes("tiktok") ? "#" : undefined,

@@ -345,7 +345,7 @@ const displayName =
 const isBrand = isBrandDashboard;
 
   return (
-    <div className="bg-white px-4 sm:px-8 py-5 border-b border-gray-100">
+    <div className="bg-white px-4 sm:px-8 py-5 ">
       <div className="flex items-center justify-between">
         {/* --- CONTEXT SWITCHER (DESKTOP) --- */}
         <div className="mr-6 hidden md:flex items-center">

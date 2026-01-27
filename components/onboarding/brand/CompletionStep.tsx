@@ -15,6 +15,7 @@ interface CompletionStepProps {
 interface OnboardingData {
   businessName?: string;
   website?: string;
+  designation:string;
   timeZone?: string;
   bio?: string;
   businessTypes?: string[];
@@ -46,6 +47,7 @@ const transformProfileDataForAPI = (data: OnboardingData) => {
     brand_profile: {
       business_name: data.businessName,
       website: data.website,
+      designation:data.designation,
       timezone: data.timeZone,
       short_bio: data.bio,
       business_type: Array.isArray(data.businessTypes)

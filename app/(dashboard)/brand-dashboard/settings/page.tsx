@@ -1,7 +1,14 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { Paperclip, X, Globe, Mail, Building2, ChevronDown } from "lucide-react";
+import {
+  Paperclip,
+  X,
+  Globe,
+  Mail,
+  Building2,
+  ChevronDown,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,7 +26,12 @@ import { uploadToCloudinary } from "@/lib/fileUpload";
 import { apiClient } from "@/lib/apiClient";
 import { toast } from "react-toastify";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 type BrandProfile = Partial<{
   business_name: string | null;
@@ -62,15 +74,18 @@ type FormDataState = {
 const timeZones = [
   {
     value: "America/New_York",
-    label: "Eastern Standard Time – EST (UTC−5) / Eastern Daylight Time – EDT (UTC−4)",
+    label:
+      "Eastern Standard Time – EST (UTC−5) / Eastern Daylight Time – EDT (UTC−4)",
   },
   {
     value: "America/Chicago",
-    label: "Central Standard Time – CST (UTC−6) / Central Daylight Time – CDT (UTC−5)",
+    label:
+      "Central Standard Time – CST (UTC−6) / Central Daylight Time – CDT (UTC−5)",
   },
   {
     value: "America/Denver",
-    label: "Mountain Standard Time – MST (UTC−7) / Mountain Daylight Time – MDT (UTC−6)",
+    label:
+      "Mountain Standard Time – MST (UTC−7) / Mountain Daylight Time – MDT (UTC−6)",
   },
   {
     value: "America/Phoenix",
@@ -78,18 +93,19 @@ const timeZones = [
   },
   {
     value: "America/Los_Angeles",
-    label: "Pacific Standard Time – PST (UTC−8) / Pacific Daylight Time – PDT (UTC−7)",
+    label:
+      "Pacific Standard Time – PST (UTC−8) / Pacific Daylight Time – PDT (UTC−7)",
   },
   {
     value: "America/Anchorage",
-    label: "Alaska Standard Time – AKST (UTC−9) / Alaska Daylight Time – AKDT (UTC−8)",
+    label:
+      "Alaska Standard Time – AKST (UTC−9) / Alaska Daylight Time – AKDT (UTC−8)",
   },
   {
     value: "Pacific/Honolulu",
     label: "Hawaii Standard Time – HST (UTC−10)",
   },
 ];
-
 
 const businessTypes = [
   "Beauty & Skincare Brands – makeup, skincare, haircare",
@@ -110,21 +126,17 @@ const businessTypes = [
   "Other",
 ];
 
-
-
 const splitBusinessTypes = (value: string): string[] => {
   if (!value) return [];
-  // Splits by comma + space, but only if the next character starts a new category 
+  // Splits by comma + space, but only if the next character starts a new category
   // (starts with Uppercase and contains & or –)
-  return value
-    .split(/,\s(?=[A-Z][^,]*(?:&|–))/)
-    .map((s) => s.trim());
+  return value.split(/,\s(?=[A-Z][^,]*(?:&|–))/).map((s) => s.trim());
 };
 
 export default function BrandSetupPage() {
-  const { user,setUser } = useAuthStore();
+  const { user, setUser } = useAuthStore();
   console.log(user);
-  
+
   const profile = (user?.brand_profile as BrandProfile | undefined) ?? {};
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -148,16 +160,16 @@ export default function BrandSetupPage() {
   });
 
   const [saving, setSaving] = useState(false);
-const toggleBusinessType = (type: string) => {
-  setFormData((prev) => {
-    const isSelected = prev.business_type.includes(type);
-    const updatedTypes = isSelected
-      ? prev.business_type.filter((t) => t !== type)
-      : [...prev.business_type, type];
-    
-    return { ...prev, business_type: updatedTypes };
-  });
-};
+  const toggleBusinessType = (type: string) => {
+    setFormData((prev) => {
+      const isSelected = prev.business_type.includes(type);
+      const updatedTypes = isSelected
+        ? prev.business_type.filter((t) => t !== type)
+        : [...prev.business_type, type];
+
+      return { ...prev, business_type: updatedTypes };
+    });
+  };
   // Load data from user.brand_profile
   useEffect(() => {
     if (!profile || Object.keys(profile).length === 0) return;
@@ -170,7 +182,9 @@ const toggleBusinessType = (type: string) => {
       mission: profile.mission || "",
       designation: profile.designation || "",
       logo: profile.logo || null,
-      business_type: profile.business_type ? splitBusinessTypes(profile.business_type) : [],
+      business_type: profile.business_type
+        ? splitBusinessTypes(profile.business_type)
+        : [],
       website: profile.website || "",
       timezone: profile.timezone || "",
       description: profile.description || "",
@@ -185,7 +199,7 @@ const toggleBusinessType = (type: string) => {
 
   const handleInputChange = <K extends keyof FormDataState>(
     field: K,
-    value: FormDataState[K]
+    value: FormDataState[K],
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -217,9 +231,10 @@ const toggleBusinessType = (type: string) => {
         mission: formData.mission || null,
         designation: formData.designation || null,
         logo: formData.logo || null,
-        business_type: formData.business_type.length > 0 
-        ? formData.business_type.join(", ") 
-        : null,
+        business_type:
+          formData.business_type.length > 0
+            ? formData.business_type.join(", ")
+            : null,
         website: formData.website || null,
         timezone: formData.timezone || null,
         description: formData.description || null,
@@ -233,16 +248,15 @@ const toggleBusinessType = (type: string) => {
     };
 
     try {
-    const res=  await apiClient("user_service/update_user_profile/", {
+      const res = await apiClient("user_service/update_user_profile/", {
         method: "PATCH",
         auth: true,
         body: JSON.stringify(payload),
       });
-      if (res.code==200) {
+      if (res.code == 200) {
         setUser(res?.data);
         toast.success("Brand profile updated!");
       }
-      
     } catch (err) {
       toast.error("Update failed");
       console.error(err);
@@ -252,7 +266,7 @@ const toggleBusinessType = (type: string) => {
   };
 
   return (
-    <div className="min-h-screen  py-10">
+    <div className="min-h-screen bg-gray-50/40 py-8  ">
       <div className="">
         {/* Header */}
         <div className="mb-10">
@@ -265,11 +279,10 @@ const toggleBusinessType = (type: string) => {
           </p>
         </div>
 
-        <Card className="shadow-lg border-0">
+        <Card className="border-0">
           <CardContent className=" space-y-12">
-
             {/* Basic Profile Information */}
-            <section className="space-y-6">
+            <section className="space-y-6 px-2">
               {/* <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
                   <Globe className="w-5 h-5 text-primary" />
@@ -279,15 +292,62 @@ const toggleBusinessType = (type: string) => {
                 </h2>
               </div> */}
 
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
+                {/* Logo Upload */}
                 <div className="space-y-2">
-                  <Label htmlFor="business_name" className="text-base font-medium">
+                  <Label className="text-base font-medium">Business Logo</Label>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleLogoUpload}
+                    className="hidden"
+                    accept="image/*"
+                  />
+                  {formData.logo ? (
+                    <div className="relative group w-24 h-24">
+                      <Image
+                        src={formData.logo}
+                        alt="Logo Preview"
+                        fill
+                        className="rounded-lg border border-gray-200 object-contain bg-white p-2"
+                      />
+
+                      <Button
+                        size="icon"
+                        className="absolute -top-1 -right-5 h-7 w-7 bg-red-500 text-white
+               opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={() => handleInputChange("logo", null)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <div
+                      className="border-2 border-dashed rounded-xl p-6 sm:p-8 text-center cursor-pointer hover:border-gray-400 transition-colors"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      <Paperclip className="mx-auto h-10 w-10 text-gray-400 mb-2" />
+                      <p className="text-sm font-medium text-gray-700">
+                        Click to upload logo
+                      </p>
+                      <p className="text-xs text-gray-500">PNG, JPG</p>
+                    </div>
+                  )}
+                </div>
+                <div></div>
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="business_name"
+                    className="text-base font-medium"
+                  >
                     Business Name
                   </Label>
                   <Input
                     id="business_name"
                     value={formData.business_name}
-                    onChange={(e) => handleInputChange("business_name", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("business_name", e.target.value)
+                    }
                     placeholder="Enter business name"
                     className="h-11"
                   />
@@ -305,18 +365,51 @@ const toggleBusinessType = (type: string) => {
                     className="h-11"
                   />
                 </div> */}
+                
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="designation"
+                    className="text-base font-medium"
+                  >
+                    Title
+                  </Label>
+                  <Input
+                    id="designation"
+                    value={formData.designation}
+                    onChange={(e) =>
+                      handleInputChange("designation", e.target.value)
+                    }
+                    placeholder="example: owner
+"
+                    className="h-11"
+                  />
+                </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="short_bio" className="text-base font-medium">
-                    Short Bio
+                    Short Bio (250 characters)
                   </Label>
                   <Input
                     id="short_bio"
+                    maxLength={250}
                     value={formData.short_bio}
-                    onChange={(e) => handleInputChange("short_bio", e.target.value)}
-                    placeholder="Your business Bio"
+                    onChange={(e) =>
+                      handleInputChange("short_bio", e.target.value)
+                    }
+                    placeholder="Brief description of your business and what you do..."
                     className="h-11"
                   />
+                  <div className="flex justify-end mt-1">
+                    <span
+                      className={`text-xs ${
+                        formData.short_bio.length >= 250
+                          ? "text-red-500 font-semibold"
+                          : "text-gray-400"
+                      }`}
+                    >
+                      {formData.short_bio.length}/250 characters
+                    </span>
+                  </div>
                 </div>
 
                 <div className="space-y-2">
@@ -326,124 +419,13 @@ const toggleBusinessType = (type: string) => {
                   <Input
                     id="mission"
                     value={formData.mission}
-                    onChange={(e) => handleInputChange("mission", e.target.value)}
-                    placeholder="Your Mission"
+                    onChange={(e) =>
+                      handleInputChange("mission", e.target.value)
+                    }
+                    placeholder="Your Business Mission"
                     className="h-11"
                   />
                 </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="designation" className="text-base font-medium">
-                    Designation
-                  </Label>
-                  <Input
-                    id="designation"
-                    value={formData.designation}
-                    onChange={(e) => handleInputChange("designation", e.target.value)}
-                    placeholder="Your Designation"
-                    className="h-11"
-                  />
-                </div>
-
-                {/* Logo Upload */}
-                <div className="space-y-2">
-                  <Label className="text-base font-medium">Logo</Label>
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleLogoUpload}
-                    className="hidden"
-                    accept="image/*"
-                  />
-                  {formData.logo ? (
-                    <div className="relative group">
-                      <Image
-                        src={formData.logo}
-                        alt="Logo Preview"
-                        width={100}
-                        height={100}
-                        className="rounded-lg border border-gray-200 object-contain bg-white p-1"
-                      />
-                      <Button
-                        
-                        size="icon"
-                        className="absolute bg-red-400 -top-2 -right-2 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
-                        onClick={() => handleInputChange("logo", null)}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ) : (
-                    <div
-                      className="border-2 border-dashed rounded-xl p-8 text-center cursor-pointer hover:border-gray-400 transition-colors"
-                      onClick={() => fileInputRef.current?.click()}
-                    >
-                      <Paperclip className="mx-auto h-10 w-10 text-gray-400 mb-2" />
-                      <p className="text-sm font-medium text-gray-700">Click to upload logo</p>
-                      <p className="text-xs text-gray-500">PNG, JPG</p>
-                    </div>
-                  )}
-                </div>
-
-                <div className="space-y-4 md:col-span-2">
-  <Label className="text-base font-medium">Business Types</Label>
-  <Card className="border-none shadow-sm bg-white border border-gray-100">
-    <CardContent className="p-0 space-y-4">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="outline"
-            className="w-full justify-between h-12 text-left font-normal border-gray-300 hover:bg-white focus:ring-2 focus:ring-primary/20"
-          >
-            <span className={formData.business_type.length ? "text-gray-900" : "text-muted-foreground"}>
-              {formData.business_type.length
-                ? `${formData.business_type.length} categories selected`
-                : "Select your business categories..."}
-            </span>
-            <ChevronDown className="h-4 w-4 text-gray-500 opacity-50" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent 
-          className="w-[var(--radix-dropdown-menu-trigger-width)] max-h-[400px] overflow-y-auto p-1"
-          align="start"
-        >
-          {businessTypes.map((type) => (
-            <DropdownMenuCheckboxItem
-              key={type}
-              checked={formData.business_type.includes(type)}
-               onCheckedChange={() => toggleBusinessType(type)}
-              // Prevents the dropdown from closing after every single click
-              onSelect={(e) => e.preventDefault()}
-              className="cursor-pointer py-3 px-3 border-b border-gray-50 last:border-0"
-            >
-              <span className="text-sm leading-relaxed">{type}</span>
-            </DropdownMenuCheckboxItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
-
-      {formData.business_type.length > 0 && (
-        <div className="flex flex-wrap gap-2 p-4 bg-gray-50 rounded-xl border border-gray-100">
-          {formData.business_type.map((type) => (
-            <span
-              key={type}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-medium text-gray-700 shadow-sm transition-all hover:border-gray-300"
-            >
-              {type}
-              <button
-                type="button"
-                onClick={() => handleInputChange("business_type", formData.business_type.filter((t) => t !== type))}
-                className="hover:bg-gray-100 p-0.5 rounded-full text-gray-400 hover:text-red-500 transition-colors"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            </span>
-          ))}
-        </div>
-      )}
-    </CardContent>
-  </Card>
-</div>
 
                 <div className="space-y-2">
                   <Label htmlFor="website" className="text-base font-medium">
@@ -452,7 +434,9 @@ const toggleBusinessType = (type: string) => {
                   <Input
                     id="website"
                     value={formData.website}
-                    onChange={(e) => handleInputChange("website", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("website", e.target.value)
+                    }
                     placeholder="https://yourbrand.com"
                     className="h-11"
                   />
@@ -462,21 +446,105 @@ const toggleBusinessType = (type: string) => {
                   <Label htmlFor="timezone" className="text-base font-medium">
                     Time Zone
                   </Label>
-                  <Select value={formData.timezone} onValueChange={(v) => handleInputChange("timezone", v)}>
+                  <Select
+                    value={formData.timezone}
+                    onValueChange={(v) => handleInputChange("timezone", v)}
+                  >
                     <SelectTrigger id="timezone" className="h-11">
                       <SelectValue placeholder="Select time zone" />
                     </SelectTrigger>
                     <SelectContent>
                       {timeZones.map((tz) => (
-                        <SelectItem key={tz.value} value={tz.value}>{tz.label}</SelectItem>
+                        <SelectItem key={tz.value} value={tz.value}>
+                          {tz.label}
+                        </SelectItem>
                       ))}
                       <SelectItem value="Other">Other</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
+
+                <div className="space-y-4 md:col-span-2">
+                  <Label className="text-base font-medium">
+                    Business Types
+                  </Label>
+                  <Card className="border-none border border-gray-100">
+                    <CardContent className="p-0 space-y-4">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className="w-full justify-between h-12 text-left font-normal border-gray-300 hover:bg-white focus:ring-2 focus:ring-primary/20"
+                          >
+                            <span
+                              className={
+                                formData.business_type.length
+                                  ? "text-gray-900"
+                                  : "text-muted-foreground"
+                              }
+                            >
+                              {formData.business_type.length
+                                ? `${formData.business_type.length} categories selected`
+                                : "Select your business categories..."}
+                            </span>
+                            <ChevronDown className="h-4 w-4 text-gray-500 opacity-50" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          className="w-[var(--radix-dropdown-menu-trigger-width)] max-h-[400px] overflow-y-auto p-1"
+                          align="start"
+                        >
+                          {businessTypes.map((type) => (
+                            <DropdownMenuCheckboxItem
+                              key={type}
+                              checked={formData.business_type.includes(type)}
+                              onCheckedChange={() => toggleBusinessType(type)}
+                              // Prevents the dropdown from closing after every single click
+                              onSelect={(e) => e.preventDefault()}
+                              className="cursor-pointer py-3 px-3 border-b border-gray-50 last:border-0"
+                            >
+                              <span className="text-sm leading-relaxed">
+                                {type}
+                              </span>
+                            </DropdownMenuCheckboxItem>
+                          ))}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+
+                      {formData.business_type.length > 0 && (
+                        <div className="flex flex-wrap gap-2 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                          {formData.business_type.map((type) => (
+                            <span
+                              key={type}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-medium text-gray-700 shadow-sm transition-all hover:border-gray-300"
+                            >
+                              {type}
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleInputChange(
+                                    "business_type",
+                                    formData.business_type.filter(
+                                      (t) => t !== type,
+                                    ),
+                                  )
+                                }
+                                className="hover:bg-gray-100 p-0.5 rounded-full text-gray-400 hover:text-red-500 transition-colors"
+                              >
+                                <X className="h-3.5 w-3.5" />
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
+
+                
               </div>
 
-              <div className="space-y-2 md:col-span-2">
+              {/* <div className="space-y-2 md:col-span-2">
                 <Label htmlFor="description" className="text-base font-medium">
                   Business Profile Description
                 </Label>
@@ -487,12 +555,8 @@ const toggleBusinessType = (type: string) => {
                   placeholder="Describe your brand briefly..."
                   className="min-h-32 resize-none"
                 />
-              </div>
+              </div> */}
             </section>
-
-            
-
-            
 
             {/* Action Buttons */}
             <div className="flex justify-end gap-4 pt-6 border-t border-gray-200">

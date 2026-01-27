@@ -140,7 +140,7 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
           Tell us about your business
         </h1>
         <p className="text-muted-foreground">
-          This helps us match you with the most relevant creators for your brand
+          This helps us match you with the most relevant influencers for your brand
         </p>
       </div>
 
@@ -166,6 +166,36 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
                   }))
                 }
                 placeholder="Your company name"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="designation">Title *</Label>
+              <Input
+                id="designation"
+                value={onboardingData.designation}
+                onChange={(e) =>
+                  setOnboardingData((prev) => ({
+                    ...prev,
+                    designation: e.target.value,
+                  }))
+                }
+                placeholder="example: owner
+"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="businessName">Mission *</Label>
+              <Input
+                id="mission"
+                value={onboardingData.mission}
+                onChange={(e) =>
+                  setOnboardingData((prev) => ({
+                    ...prev,
+                    mission: e.target.value,
+                  }))
+                }
+                placeholder="Your Business Mission
+"
               />
             </div>
 
@@ -339,7 +369,7 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
             </p>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 gap-3 max-h-96 overflow-y-auto">
+            <div className="grid grid-cols-1 gap-3  overflow-y-auto">
               {businessTypes.map((type) => (
                 <div key={type} className="flex items-center space-x-2">
                   <Checkbox

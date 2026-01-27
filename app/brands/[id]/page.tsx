@@ -88,12 +88,13 @@ export default function BrandProfilePage() {
         const normalised: Brand = {
           id: String(raw.id ?? id),
           name: raw.business_name || "Unnamed Brand",
-          // Fallback handled in UI, but safe empty string here
           description: raw.short_bio || "", 
           logo: raw.logo || undefined,
+          designation: raw.designation || "",
+          mission: raw.mission || "",
           verified: raw.is_verified ?? false,
           location: raw.timezone || "",
-          website: raw.website || "", // Ensure empty string if null
+          website: raw.website || "", 
           email: raw.email || "",
           phone: raw.phone || "",
           socialLinks: {
@@ -103,7 +104,6 @@ export default function BrandProfilePage() {
             linkedin: raw?.linkedin_profile,
             twitter: raw?.x_handle,
           },
-          mission: raw.mission || "",
           businessType: raw.business_type?.split(' – ')[0] || "",
           contactPerson: {
             name: raw.business_name || "",

@@ -154,7 +154,7 @@ const WorkflowStep = ({ onNext, onBack }: WorkflowStepProps) => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Clock className="w-5 h-5" />
-              Response Time
+              Response Time *
             </CardTitle>
             <p className="text-sm text-muted-foreground">
               How quickly do you typically respond to messages?

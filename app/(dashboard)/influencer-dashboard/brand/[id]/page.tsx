@@ -18,6 +18,9 @@ import {
   Video,
   ImageIcon,
   Loader2,
+  Clock,
+  Building,
+  Briefcase,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -114,9 +117,10 @@ export default function BrandProfilePage() {
           userId: res?.data?.data?.user?.id ? String(res?.data?.data?.user?.id) : undefined,
           name: raw.business_name || res?.data?.data?.user?.first_name || "No Name",
           description: raw.short_bio ?? "",
+          designation: raw.designation ?? "",
           logo: raw.logo ?? undefined,
           verified: raw.is_verified ?? false,
-          location: raw.timezone ?? "",
+          location: raw.timezone,
           website: raw.website ?? "user.com",
           email: raw.email ?? "",
           phone: raw.phone ?? "",
@@ -200,7 +204,7 @@ const router=useRouter();
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
           <button
-            onClick={()=>router.back()}
+            onClick={() => router.back()}
             className="text-gray-400 hover:text-gray-600 cursor-pointer"
           >
             <ArrowLeft className="w-5 h-5" />
@@ -210,68 +214,91 @@ const router=useRouter();
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Brand Header Card */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
-            <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
-              <div className="flex items-center gap-4">
-                {brand.logo ? (
-  <div className="w-16 h-16 p-2 bg-gray-50 rounded-lg flex items-center justify-center overflow-hidden">
-    <Image
-      src={brand.logo}
-      alt={brand.name}
-      width={64}
-      height={64}
-      className="w-full h-full object-contain"
-      unoptimized
-    />
-  </div>
-) : (
-  <div className="w-16 h-16 bg-primary rounded-lg flex items-center justify-center text-white text-2xl font-bold">
-    {brand.name.charAt(0).toUpperCase()}
-  </div>
-)}
+          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+    {/* Brand identity section */}
+    <div className="flex items-center gap-5">
+      {/* Logo / Fallback */}
+      {brand.logo ? (
+        <div className="relative flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden bg-gray-50 border border-gray-100">
+          <Image
+            src={brand.logo}
+            alt={`${brand.name} logo`}
+            fill
+            className="object-contain p-2"
+            sizes="64px"
+            unoptimized // keep as in original
+          />
+        </div>
+      ) : (
+        <div className="flex-shrink-0 w-16 h-16 rounded-xl bg-primary flex items-center justify-center text-white text-2xl font-bold">
+          {brand.name.charAt(0).toUpperCase()}
+        </div>
+      )}
 
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <h1 className="text-2xl font-bold text-gray-900">
-                      {brand.name}
-                    </h1>
-                    {brand.verified && (
-                      <div className="flex items-center gap-1 bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-medium">
-                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                        Verified
-                      </div>
-                    )}
-                  </div>
-                  <p className="text-gray-600 mb-2">{brand.description}</p>
-                  <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
-                    {brand.website && (
-                      <div className="flex items-center gap-1">
-                        <Globe className="w-4 h-4" />
-                        <a
-                          href={brand.website}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {brand.website.replace(/^https?:\/\//, "")}
-                        </a>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
+      {/* Brand details */}
+      <div className="min-w-0">
+        <div className="flex items-center gap-2.5 mb-1.5">
+          <h1 className="text-2xl font-bold text-gray-900 truncate">
+            {brand.name}
+          </h1>
+          {brand.verified && (
+            <div className="flex items-center gap-1.5 bg-green-100 text-green-700 px-2.5 py-0.5 rounded-full text-xs font-medium border border-green-200">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              Verified
+            </div>
+          )}
+        </div>
 
-              <div className="flex gap-3">
-                <Link
-                  href={`/influencer-dashboard/messages?id=${brand?.userId}`}
-                >
-                  <button className="bg-yellow-500 cursor-pointer hover:bg-[var(--secondaryhover)] text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2">
-                    <MessageCircle className="w-4 h-4" />
-                    Message
-                  </button>
-                </Link>
-              </div>
+        {/* Designation badge */}
+        {brand.designation && (
+          <div className="mb-3">
+            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-3 py-1.5 rounded-lg text-sm font-semibold border border-blue-100">
+              <Briefcase className="w-4 h-4" />
+              {brand.designation}
             </div>
           </div>
+        )}
+
+        {/* Metadata row */}
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-gray-500">
+          {brand.website && (
+            <div className="flex items-center gap-1.5">
+              <Globe className="w-4 h-4 flex-shrink-0" />
+              <a
+                href={brand.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-600 hover:text-gray-900 hover:underline transition-colors"
+              >
+                {brand.website.replace(/^https?:\/\/(www\.)?/, '')}
+              </a>
+            </div>
+          )}
+
+          {brand.location && (
+            <div className="flex items-center gap-1.5">
+              <Clock className="w-4 h-4 flex-shrink-0" />
+              <span>{brand.location}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+
+    {/* Action buttons */}
+    <div className="flex items-center gap-3 self-start md:self-center">
+      <Link href={`/influencer-dashboard/messages?id=${brand?.userId}`}>
+        <button className="inline-flex items-center gap-2 px-5 py-2.5 bg-yellow-500 hover:bg-yellow-600 text-white font-medium rounded-lg transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2">
+          <MessageCircle className="w-4 h-4" />
+          Message
+        </button>
+      </Link>
+
+      {/* You can add more buttons later if needed */}
+    </div>
+  </div>
+</div>
           {/* About */}
           <div className="bg-white rounded-lg border border-gray-200 p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">

@@ -2,6 +2,7 @@ export interface Brand {
   id?: string | number;
   userId?: string;
   name: string;
+  designation:string;
   description?: string;
   logo?: string;
   verified?: boolean;

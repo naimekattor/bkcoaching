@@ -414,6 +414,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
         <Label htmlFor="whatsapp_handle">Followers</Label>
         <Input
           id="twitter_follower"
+          type="number"
           value={onboardingDataInfluencer.twitter_follower}
           onChange={(e) =>
             setOnboardingDataInfluencer((prev) => ({
@@ -445,6 +446,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
         <Label htmlFor="whatsapp_handle">Followers</Label>
         <Input
           id="twitter_follower"
+          type="number"
           value={onboardingDataInfluencer.podcast_follower}
           onChange={(e) =>
             setOnboardingDataInfluencer((prev) => ({
@@ -476,6 +478,7 @@ const ProfileSetupStep = ({ onNext, onBack }: ProfileSetupStepProps) => {
         <Label htmlFor="whatsapp_handle">Average Status Views / Group Size</Label>
         <Input
           id="twitter_follower"
+          type="number"
           value={onboardingDataInfluencer.whatsapp_follower}
           onChange={(e) =>
             setOnboardingDataInfluencer((prev) => ({

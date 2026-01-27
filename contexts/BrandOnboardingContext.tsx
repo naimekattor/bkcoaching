@@ -9,6 +9,8 @@ import { uploadToCloudinary, FileUploadResponse } from "@/lib/fileUpload";
 interface BrandOnboardingData {
   // From BusinessInfoStep
   businessName: string;
+  designation:string;
+  mission:string;
   website: string;
   timeZone: string;
   bio: string;
@@ -51,6 +53,8 @@ const BrandOnboardingContext = createContext<
 >(undefined);
 const initialState: BrandOnboardingData = {
   businessName: "",
+  designation:"",
+  mission:"",
   website: "",
   bio: "",
   businessTypes: [],
