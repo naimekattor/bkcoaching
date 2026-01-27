@@ -181,24 +181,33 @@ const SentProposal = () => {
 
   if (!proposals.length)
     return (
-  <div className="border-1 rounded-md">
-  <div className="flex items-center justify-between mb-6  border-gray-300 py-6 px-4">
-        <div className="">
-          <h2 className="text-xl font-bold text-primary">My Campaigns</h2>
-          <p className="text-sm text-gray-500">Proposals grouped by campaign</p>
+      <div className="border-1 rounded-md">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 border-gray-300 py-6 px-4">
+  <div>
+    <h2 className="text-xl font-bold text-primary">My Campaigns</h2>
+    <p className="text-sm text-gray-500">
+      Proposals grouped by campaign
+    </p>
+  </div>
+
+  <Link
+    href="/brand-dashboard/campaigns?create=true"
+    className="flex items-center justify-center gap-1.5 
+               bg-secondary hover:bg-[var(--secondaryhover)] 
+               text-slate-800 text-sm px-4 py-2 
+               rounded-lg transition-all font-semibold 
+               shadow-sm active:scale-95
+               w-full sm:w-auto"
+  >
+    <Plus className="w-4 h-4" />
+    Create new
+  </Link>
+</div>
+
+        <div className="p-12 text-center  ">
+          <FileText size={36} className="mx-auto text-gray-400 mb-3" />
+          <p className="text-gray-500">No proposals sent yet</p>
         </div>
-        <Link
-          href="/brand-dashboard/campaigns?create=true"
-          className="flex items-center gap-1.5 bg-secondary hover:bg-[var(--secondaryhover)] text-slate-800 text-sm px-4 py-2 rounded-lg transition-all font-semibold shadow-sm active:scale-95"
-        >
-          <Plus className="w-4 h-4" />
-          Create new
-        </Link>
-      </div>
-      <div className="p-12 text-center  ">
-        <FileText size={36} className="mx-auto text-gray-400 mb-3" />
-        <p className="text-gray-500">No proposals sent yet</p>
-      </div>
       </div>
     );
 
