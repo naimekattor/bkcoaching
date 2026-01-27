@@ -65,7 +65,7 @@ console.log(planName);
 
   // Determine current state
   const hasAccess = authChecked && isAuthenticated && !!planName?.trim();
-const isLocked = authChecked && !isAuthenticated; // not logged in
+const isLocked = authChecked && !isAuthenticated; 
 const needsUpgrade = authChecked && isAuthenticated && !planName?.trim();
 console.log("needsUpgrade:",needsUpgrade,"isLocked:",isLocked,"hasAccess:",hasAccess);
 

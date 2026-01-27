@@ -48,7 +48,7 @@ function BrandSubscriptionRequiredContent() {
             View Brand Plans
           </Link>
           <Link
-            href="/dashboard"
+            href="/brand-dashboard"
             className="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
           >
             Go to My Dashboard
