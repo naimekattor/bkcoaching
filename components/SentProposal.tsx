@@ -185,9 +185,9 @@ const SentProposal = () => {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 border-gray-300 py-6 px-4">
   <div>
     <h2 className="text-xl font-bold text-primary">My Campaigns</h2>
-    <p className="text-sm text-gray-500">
+    {/* <p className="text-sm text-gray-500">
       Proposals grouped by campaign
-    </p>
+    </p> */}
   </div>
 
   <Link
