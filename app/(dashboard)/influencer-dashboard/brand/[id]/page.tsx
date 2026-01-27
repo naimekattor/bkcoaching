@@ -304,7 +304,11 @@ const router=useRouter();
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               About the Brand
             </h2>
-            <p className="text-gray-600 mb-6">{brand.description}</p>
+            <div>
+                <h3 className="font-medium text-gray-900 mb-2">Business Bio</h3>
+                 <p className="text-gray-600 mb-6">{brand.description}</p>
+              </div>
+           
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>

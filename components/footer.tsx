@@ -117,7 +117,7 @@ export default function Footer() {
               href="/brands"
               className="hover:text-gray-900 transition-colors"
             >
-              For Brands
+               Brands
             </Link>
             <span className="text-gray-400 hidden sm:inline">|</span>
 
@@ -125,7 +125,7 @@ export default function Footer() {
               href="/microinfluencers"
               className="hover:text-gray-900 transition-colors"
             >
-              For Influencers
+               Influencers
             </Link>
             <span className="text-gray-400 hidden sm:inline">|</span>
 

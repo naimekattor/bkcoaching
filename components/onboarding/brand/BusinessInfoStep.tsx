@@ -93,7 +93,7 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
   };
 
   const isValid =
-    onboardingData.businessName && onboardingData.timeZone && onboardingData.bio && onboardingData.logoUrl &&  onboardingData.businessTypes.length > 0;
+    onboardingData.businessName && onboardingData.website && onboardingData.timeZone && onboardingData.bio && onboardingData.logoUrl &&  onboardingData.businessTypes.length > 0;
 
   const handleClick = () => {
     fileInputRef.current?.click();
@@ -200,7 +200,7 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="website">Website</Label>
+              <Label htmlFor="website">Website *</Label>
               <div className="relative">
                 <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input

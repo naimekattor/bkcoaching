@@ -93,7 +93,7 @@ if (role === "both") {
     redirectPath = "/influencer-onboarding";
   } else {
     // Both complete
-    redirectPath = "/dashboard"; // unified dashboard
+    redirectPath = "/influencer-dashboard"; 
   }
 }
 

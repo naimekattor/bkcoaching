@@ -459,44 +459,53 @@ const avatarLetter = initial.toUpperCase();
 
           {/* --- Stats Cards --- */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-            {[
-              {
-                value: campaigns.length,
-                label: "Total Campaigns",
-                icon: "📊",
-                bgColor: "bg-secondary",
-                textColor: "text-primary",
-              },
-              {
-                value: `$${totalEarnings}`,
-                label: "Earnings",
-                icon: "💰",
-                bgColor: "bg-green-100",
-                textColor: "text-green-700",
-              },
-              {
-                value: unReadMessage.length,
-                label: "New Messages",
-                icon: "✉️",
-                bgColor: "bg-[#fefce9]",
-                textColor: "text-primary",
-              },
-            ].map((item, index) => (
-              <div
-                key={index}
-                className={`rounded-xl p-5 flex flex-col items-center justify-center gap-2 ${item.bgColor}`}
-              >
-                <div className={`text-3xl font-bold ${item.textColor}`}>
-                  {item.value}
-                </div>
-                <div
-                  className={`text-sm font-medium ${item.textColor} flex items-center gap-1`}
-                >
-                  <span>{item.icon}</span> {item.label}
-                </div>
-              </div>
-            ))}
-          </div>
+  {[
+    {
+      value: campaigns.length,
+      label: "Total Campaigns",
+      icon: "📊",
+      bgColor: "bg-secondary",
+      textColor: "text-primary",
+      href: "/influencer-dashboard/campaigns",
+    },
+    {
+      value: `$${totalEarnings}`,
+      label: "Earnings",
+      icon: "💰",
+      bgColor: "bg-green-100",
+      textColor: "text-green-700",
+    },
+    {
+      value: unReadMessage.length,
+      label: "New Messages",
+      icon: "✉️",
+      bgColor: "bg-[#fefce9]",
+      textColor: "text-primary",
+    },
+  ].map((item, index) => {
+    const CardContent = (
+      <div
+        className={`rounded-xl p-5 flex flex-col items-center justify-center gap-2 ${item.bgColor}`}
+      >
+        <div className={`text-3xl font-bold ${item.textColor}`}>
+          {item.value}
+        </div>
+        <div className={`text-sm font-medium ${item.textColor} flex items-center gap-1`}>
+          <span>{item.icon}</span> {item.label}
+        </div>
+      </div>
+    );
+
+    return item.href ? (
+      <Link key={index} href={item.href} className="block">
+        {CardContent}
+      </Link>
+    ) : (
+      <div key={index}>{CardContent}</div>
+    );
+  })}
+</div>
+
         </div>
 
         <div className="pt-4">
