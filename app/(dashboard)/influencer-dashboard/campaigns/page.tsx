@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Search,
   DollarSign,
@@ -14,6 +14,7 @@ import {
   ArrowRight,
   Target,
   Clock,
+  ChevronDown,
 } from "lucide-react";
 import { StatCard } from "@/components/cards/stat-card";
 import Image from "next/image";
@@ -24,6 +25,7 @@ import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 
 // --- Interfaces ---
+type AnalyticsSection = "active" | "invitations" | null;
 
 interface Attachment {
   id: number;
@@ -145,6 +147,9 @@ export default function CampaignsPage() {
     action: "accept" | "reject" | null;
   }>({ id: null, action: null });
   const [brandMap, setBrandMap] = useState<Record<number, any>>({});
+
+const [openSection, setOpenSection] = useState<AnalyticsSection>(null);
+const analyticsRef = useRef<HTMLDivElement | null>(null);
 
   const router = useRouter();
   const ITEMS_PER_PAGE = 9;
@@ -466,13 +471,25 @@ export default function CampaignsPage() {
     return `${s} - ${e}`;
   };
 
+
+  const handleSectionClick = (section: AnalyticsSection) => {
+  setOpenSection((prev) => (prev === section ? null : section));
+
+  setTimeout(() => {
+    analyticsRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }, 100);
+};
+
   return (
     <div className="">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-2">
           Campaign Management
         </h1>
-        <p className="text-gray-600">
+        <p className="text-gray-600 hidden md:block">
           Collaborate with campaigns
         </p>
         <h2 className="text-xl font-bold text-slate-700 mt-4">Analytics</h2>
@@ -484,7 +501,14 @@ export default function CampaignsPage() {
           title="Active Campaigns"
           value={activeCampaigns.length.toString()}
           subtitle="Currently running"
-          icon={<Megaphone className="w-8 h-8 text-primary" />}
+          icon={<div className="flex items-center gap-2">
+      <Megaphone className="w-8 h-8 text-primary" />
+      <ChevronDown className="w-4 h-4 text-gray-400 md:hidden" />
+    </div>}
+          onClick={()=>handleSectionClick("active")}
+          className="shadow-sm
+    active:scale-[0.98]
+    active:bg-gray-50"
         />
         <StatCard
           title="Completed"
@@ -496,7 +520,15 @@ export default function CampaignsPage() {
           title="Invitations"
           value={invitations.length.toString()}
           subtitle="Pending offers"
-          icon={<Paperclip className="w-8 h-8 text-primary" />}
+          icon={<div className="flex items-center gap-2">
+      <Paperclip className="w-8 h-8 text-primary" />
+      <ChevronDown className="w-4 h-4 text-gray-400 md:hidden" />
+    </div>}
+          onClick={() => handleSectionClick("invitations")}
+          className="shadow-sm
+    active:scale-[0.98]
+    active:bg-gray-50"
+    
         />
         <StatCard
           title="Total Earnings"
@@ -505,9 +537,11 @@ export default function CampaignsPage() {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      <div ref={analyticsRef} className={`grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6  `}>
         {/* 1. Campaign Invitations */}
-        <div className="border rounded-lg p-4 h-[400px] flex flex-col">
+        {
+          (openSection === "invitations" || window.innerWidth >= 1024) && (
+<div className={`border rounded-lg p-4 h-[400px] flex flex-col `}>
           <h2 className="text-lg font-semibold mb-4">
             Campaign Invitations ({invitations.length})
           </h2>
@@ -552,9 +586,11 @@ export default function CampaignsPage() {
             )}
           </div>
         </div>
-
-        {/* 2. My Active Campaigns */}
-        <div className="border rounded-lg p-4 h-[400px] flex flex-col">
+          )
+        }
+        
+{(openSection === "active" || window.innerWidth >= 1024) && (
+  <div className="border rounded-lg p-4 h-[400px] flex flex-col">
           <h2 className="text-lg font-semibold mb-4">
             My Active Campaigns ({activeCampaigns.length})
           </h2>
@@ -620,6 +656,9 @@ export default function CampaignsPage() {
             )}
           </div>
         </div>
+)}
+        {/* 2. My Active Campaigns */}
+        
       </div>
 
       {/* Search and Filters for Marketplace */}

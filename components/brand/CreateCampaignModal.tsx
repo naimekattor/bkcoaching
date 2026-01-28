@@ -560,8 +560,8 @@ const getMissingFields = () => {
                   <span
                     className={`text-xs ${
                       formData.campaign_description.length >= 500
-                        ? "text-red-500 font-semibold" // Red if limit reached
-                        : "text-gray-400" // Grey otherwise
+                        ? "text-red-500 font-semibold" 
+                        : "text-gray-400" 
                     }`}
                   >
                     {formData.campaign_description.length}/500 characters

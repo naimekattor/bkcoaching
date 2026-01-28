@@ -446,7 +446,7 @@ const avatarLetter = initial.toUpperCase();
           className="flex items-center gap-1.5 bg-secondary hover:bg-[var(--secondaryhover)] text-slate-800 text-sm px-4 py-2 rounded-lg transition-all font-semibold shadow-sm active:scale-95"
         >
           <Search className="w-4 h-4" />
-          Search Campaign
+          Search Campaigns
         </Link>
               <Link
                 href="/influencer-dashboard/settings"
@@ -532,7 +532,7 @@ const avatarLetter = initial.toUpperCase();
                   />
                 </svg>
                 <h2 className="text-xl font-bold text-gray-900">
-                  Brands That Sent You Proposals{" "}
+                  Proposals Received{" "}
                   <span className="text-sm font-normal text-gray-500">
                     ({campaigns.length})
                   </span>
@@ -543,11 +543,11 @@ const avatarLetter = initial.toUpperCase();
               <div className="space-y-4 overflow-y-auto flex-grow pr-2 custom-scrollbar">
                 {loadingCampaigns ? (
                   <div className="text-center py-10 text-gray-500">
-                    Loading campaigns...
+                    Loading proposal...
                   </div>
                 ) : campaigns.length === 0 ? (
                   <div className="text-center py-10 text-gray-500">
-                    No campaigns found.
+                    No proposal found.
                   </div>
                 ) : (
                   campaigns.map((campaign) => (
