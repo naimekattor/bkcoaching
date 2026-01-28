@@ -49,6 +49,9 @@ export default function Footer() {
             <p className="text-sm text-gray-600 italic mt-4">
               Free for the first 100 users
             </p>
+            <p className="text-sm text-gray-600  mt-4">
+              Just follow us on instagram <Link className=" cursor-pointer" target="_blank" href={"https://www.instagram.com/thesocialmarketofficial"}>@thesocialmarketofficial</Link> and DM Us for the code
+            </p>
           </div>
         )}
 

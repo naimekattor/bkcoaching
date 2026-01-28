@@ -540,8 +540,8 @@ const analyticsRef = useRef<HTMLDivElement | null>(null);
       <div ref={analyticsRef} className={`grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6  `}>
         {/* 1. Campaign Invitations */}
         {
-          (openSection === "invitations" || window.innerWidth >= 1024) && (
-<div className={`border rounded-lg p-4 h-[400px] flex flex-col `}>
+<div className={`border rounded-lg p-4 h-[400px] flex flex-col  ${openSection === "invitations" ? "block" : "hidden"}
+    lg:block `}>
           <h2 className="text-lg font-semibold mb-4">
             Campaign Invitations ({invitations.length})
           </h2>
@@ -586,11 +586,12 @@ const analyticsRef = useRef<HTMLDivElement | null>(null);
             )}
           </div>
         </div>
-          )
+          
         }
         
-{(openSection === "active" || window.innerWidth >= 1024) && (
-  <div className="border rounded-lg p-4 h-[400px] flex flex-col">
+{
+  <div className={`border rounded-lg p-4 h-[400px] flex flex-col ${openSection === "active" ? "block" : "hidden"}
+    lg:block`}>
           <h2 className="text-lg font-semibold mb-4">
             My Active Campaigns ({activeCampaigns.length})
           </h2>
@@ -656,7 +657,7 @@ const analyticsRef = useRef<HTMLDivElement | null>(null);
             )}
           </div>
         </div>
-)}
+}
         {/* 2. My Active Campaigns */}
         
       </div>
@@ -1077,7 +1078,7 @@ const analyticsRef = useRef<HTMLDivElement | null>(null);
                           brandMap[selectedCampaign.owner_id]?.user?.first_name}
                       </a>
                     ) : (
-                      <span className="text-gray-400">Loading...</span>
+                      <span className="text-gray-400">Not Exist</span>
                     )}
                   </p>
                   <div className="flex flex-wrap items-baseline gap-1 mb-2">

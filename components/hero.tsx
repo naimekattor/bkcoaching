@@ -27,8 +27,8 @@ const Hero = () => {
           <div className="lg:col-span-2 space-y-8 flex-1">
             <div className="space-y-4">
               {/* Eyebrow */}
-              <p className="text-sm font-medium text-primary/70 tracking-wide uppercase">
-                Real People. Real Influence. Real Growth
+              <p className="text-sm font-medium text-primary/70 tracking-wide ">
+                Collabs Are Easier Here
               </p>
 
               {/* Headline */}
@@ -61,7 +61,7 @@ const Hero = () => {
                 className="bg-secondary cursor-pointer hover:bg-[var(--secondaryhover)] text-primary font-semibold px-8 py-4 rounded-lg transition-colors duration-200 text-lg"
                 onClick={handleSignupRoute}
               >
-                Sign up for free
+                Start Here
               </button>
             </div>
           </div>

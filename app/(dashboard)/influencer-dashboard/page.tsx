@@ -581,7 +581,7 @@ const avatarLetter = initial.toUpperCase();
                                 brandMap[campaign.owner_id]?.user?.first_name}
                             </a>
                           ) : (
-                            <span className="text-gray-400">Loading...</span>
+                            <span className="text-gray-400">Not Exist</span>
                           )}
                         </p>
 
@@ -787,7 +787,7 @@ const avatarLetter = initial.toUpperCase();
                           brandMap[selectedCampaign.owner_id]?.user?.first_name}
                       </a>
                     ) : (
-                      <span className="text-gray-400">Loading...</span>
+                      <span className="text-gray-400">Not Exist</span>
                     )}
                   </p>
                   <div className="flex flex-wrap items-baseline gap-1">

@@ -195,7 +195,10 @@ const [collaboration, setCollaboration] = useState<Collaboration | null>(null);
         const normalised: MicroInfluencer = {
           id: String(profile.id ?? id),
           userId: res?.data?.user?.id ? String(res?.data?.user?.id) : undefined,
-          name: str(profile.display_name, res?.data?.user?.first_name),
+name:
+  profile?.display_name?.trim() ||
+  res?.data?.user?.first_name?.trim() ||
+  "Unknown",
           description: str(profile.short_bio, ""),
           logo:
             profile.profile_picture && profile.profile_picture !== "null"
@@ -219,7 +222,7 @@ const [collaboration, setCollaboration] = useState<Collaboration | null>(null);
           businessType: str(profile.niche || profile.category, "—"), // fallback to niche or category
 
           contactPerson: {
-            name: str(profile.display_name),
+            name: profile?.display_name ?? "Unknown",
             title: str(profile.role || profile.title, "Influencer"),
           },
 
