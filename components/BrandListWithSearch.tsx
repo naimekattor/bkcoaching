@@ -22,10 +22,9 @@ type BrandData = {
 };
 interface BrandListWithSearchProps {
   brands: BrandData[];
-  planName: string;
 }
 
-export default function BrandListWithSearch({ brands, planName }: BrandListWithSearchProps) {
+export default function BrandListWithSearch({ brands }: BrandListWithSearchProps) {
   const [searchTerm, setSearchTerm] = useState("");
 
   // Filter logic
@@ -98,7 +97,7 @@ export default function BrandListWithSearch({ brands, planName }: BrandListWithS
         <div className="space-y-12">
           {filteredBrands.length > 0 ? (
             filteredBrands.map((brand) => (
-              <BrandCard key={brand.id} {...brand} planName={planName}/>
+              <BrandCard key={brand.id} {...brand} />
             ))
           ) : (
             <div className="text-center py-20 bg-gray-50 rounded-2xl border border-dashed border-gray-200">

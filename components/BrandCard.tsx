@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { FaLock } from "react-icons/fa";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { apiClient } from "@/lib/apiClient";
 
 type Brand = {
   id: number;
@@ -41,7 +43,6 @@ export default function BrandCard({
   image,
   logo,
   userId,
-  planName,
   service,
   rating,
   reviews,
@@ -50,7 +51,10 @@ export default function BrandCard({
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 const [authChecked, setAuthChecked] = useState(false);
+const [planName, setPlanName] = useState<string | null>(null);
+const [planChecked, setPlanChecked] = useState(false);
 
+const {user}=useAuthStore();
   // Check for JWT token in localStorage
   useEffect(() => {
   if (typeof window !== "undefined") {
@@ -59,14 +63,48 @@ const [authChecked, setAuthChecked] = useState(false);
     setAuthChecked(true);
   }
 }, []);
+useEffect(() => {
+  const fetchPlan = async () => {
+    try {
+      const res = await apiClient(
+        "subscription_service/get_user_subscription_information/",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
 
+      setPlanName(res?.data?.plan_name ?? null);
+    } catch (err) {
+      setPlanName(null);
+    } finally {
+      setPlanChecked(true);
+    }
+  };
+
+  fetchPlan();
+}, []);
 console.log(planName);
+
+const signedUpAs = (user as any)?.signed_up_as;
+
+const hasValidPlan =
+  (signedUpAs === "influencer" &&
+    (planName === "Influencer" || planName === "Both")) ||
+  (signedUpAs === "both" && planName === "Both");
 
 
   // Determine current state
-  const hasAccess = authChecked && isAuthenticated && !!planName?.trim();
-const isLocked = authChecked && !isAuthenticated; 
-const needsUpgrade = authChecked && isAuthenticated && !planName?.trim();
+  const hasAccess = authChecked &&
+  isAuthenticated &&
+  hasValidPlan;
+const isLocked = authChecked &&
+  !isAuthenticated; 
+const needsUpgrade = authChecked &&
+  isAuthenticated &&
+  !hasValidPlan;
 console.log("needsUpgrade:",needsUpgrade,"isLocked:",isLocked,"hasAccess:",hasAccess);
 
 

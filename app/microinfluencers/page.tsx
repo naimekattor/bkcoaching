@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { apiClient } from "@/lib/apiClient";
 import { Loader } from "lucide-react";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 interface UserDetails {
   id: number;
@@ -73,7 +74,9 @@ export default function InfluencersPage() {
   const [isMember, setIsMember] = useState(false);        // ← changed initial value
   const [planName, setPlanName] = useState<string | null>(null);
   const [planChecked, setPlanChecked] = useState(false);
-
+  const {user}=useAuthStore();
+  console.log(user);
+  
   // Check if user is logged in
   useEffect(() => {
     const token = localStorage.getItem("access_token");
@@ -91,13 +94,15 @@ export default function InfluencersPage() {
 
     const fetchUserPlan = async () => {
       try {
-        const res = await apiClient("user_service/get_user_subscription_information/", {
+        const res = await apiClient("subscription_service/get_user_subscription_information/", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
         });
         setPlanName(res?.data?.plan_name || null);
+        console.log(res?.data?.plan_name);
+        
       } catch (error) {
         console.error("Failed to fetch user plan", error);
         setPlanName(null);
@@ -137,9 +142,17 @@ export default function InfluencersPage() {
     );
   });
 
+  // Get the signed_up_as value from the user object if available
+  const signedUpAs = (user as any)?.signed_up_as;
+
+const hasValidPlan =
+  (signedUpAs === "brand" &&
+    (planName === "Businesses" || planName === "Both")) ||
+  (signedUpAs === "both" && planName === "Both");
+
   // Access logic ─ only changed part
-  const hasAccess    = planChecked && isMember && !!planName?.trim();
-  const needsUpgrade = planChecked && isMember && !planName?.trim();
+  const hasAccess    = planChecked && isMember && hasValidPlan;
+  const needsUpgrade = planChecked && isMember && !hasValidPlan;
   const isLocked     = !isMember;
 
   return (

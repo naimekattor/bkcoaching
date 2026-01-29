@@ -16,7 +16,7 @@ function DashboardPageContent() {
 
   const [error, setError] = useState<string | null>(null);
   const [statusParam, setStatusParam] = useState<string | null>(null);
-  const {user}=useAuthStore();
+  const {user,setUser}=useAuthStore();
 
   useEffect(() => {
     const s = searchParams.get("status");
@@ -65,6 +65,7 @@ function DashboardPageContent() {
         }
 
         const userData = res?.data;
+        setUser(userData);
 
         console.log("User Data Received:", userData);
         Cookies.set(
