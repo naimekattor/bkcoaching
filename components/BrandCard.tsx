@@ -93,7 +93,7 @@ const signedUpAs = (user as any)?.signed_up_as;
 const hasValidPlan =
   (signedUpAs === "influencer" &&
     (planName === "Influencer" || planName === "Both")) ||
-  (signedUpAs === "both" && planName === "Both");
+  (planName === "Both");
 
 
   // Determine current state

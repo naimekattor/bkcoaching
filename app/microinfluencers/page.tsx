@@ -148,12 +148,15 @@ export default function InfluencersPage() {
 const hasValidPlan =
   (signedUpAs === "brand" &&
     (planName === "Businesses" || planName === "Both")) ||
-  (signedUpAs === "both" && planName === "Both");
+  (planName === "Both");
 
   // Access logic ─ only changed part
   const hasAccess    = planChecked && isMember && hasValidPlan;
   const needsUpgrade = planChecked && isMember && !hasValidPlan;
   const isLocked     = !isMember;
+
+  console.log("hasAccess:", hasAccess, "needsUpgrade:", needsUpgrade, "isLocked:", isLocked);
+  
 
   return (
     <div className="min-h-screen bg-gray-50/50">

@@ -145,7 +145,12 @@ export default function SubscriptionPage() {
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
                 <div>
                   <p className="text-4xl font-bold text-gray-900">
-                    {planData.plan_name || "Unknown Plan"}
+                    {planData?.plan_name === "Micro-Influencer"
+  ? "Influencer"
+  : planData?.plan_name === "Businesses"
+  ? "Brand"
+  : planData?.plan_name || "Unknown Plan"}
+
                   </p>
                   {planData.current_period_end && (
                     <p className="mt-3 text-base text-gray-600">
