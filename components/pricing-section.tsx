@@ -220,6 +220,7 @@ const isLoading =
     : filteredPlans.length === 2
     ? "md:grid-cols-2"
     : "md:grid-cols-3";
+const isSinglePlan = filteredPlans.length === 1;
 
   // --- Loading State ---
   if (isLoading) {
@@ -287,7 +288,8 @@ const isLoading =
         </div>
 
         {/* Pricing Cards Grid */}
-        <div className={`grid  grid-cols-1 ${gridCols}  gap-8 max-w-7xl mx-auto`}>
+        <div className={`grid  grid-cols-1 ${gridCols}  gap-8 max-w-7xl mx-auto ${
+    isSinglePlan ? "place-items-center" : ""}`}>
           {filteredPlans.map((plan) => {
             const price = getPriceForInterval(plan.prices);
             const savings = isYearly ? calculateSavings(plan.prices) : null;
