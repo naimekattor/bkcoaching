@@ -134,7 +134,7 @@ const BusinessInfoStep = ({ onNext, onBack }: BusinessInfoStepProps) => {
 
   return (
     <div className="space-y-8">
-      <PageHeaderWithSwitcher role="brands" />
+      <PageHeaderWithSwitcher role="brand" />
       <div className="text-center space-y-4">
         <h1 className="text-3xl font-bold text-primary">
           Tell us about your business

@@ -95,13 +95,13 @@
 //     return NextResponse.redirect(url);
 //   }
 //     if (pathname.startsWith("/brand-dashboard")) {
-//       const hasValidBrandPlan = isActive && (planName === "Businesses" || planName === "Both");
+//       const hasValidBrandPlan = isActive && (planName === "Brand" || planName === "Both");
 
 //        if (!hasValidBrandPlan) {
 //       url.pathname = "/brand-subscription-required";
 //       if (!isActive) {
 //         url.searchParams.set("reason", "subscription_inactive");
-//       } else if (planName === "Micro-Influencer") {
+//       } else if (planName === "Influencer") {
 //         url.searchParams.set("reason", "wrong_plan_type");
 //       } else {
 //         url.searchParams.set("reason", "no_subscription");
@@ -124,13 +124,13 @@
 //     if (pathname.startsWith("/influencer-dashboard")) {
       
     
-//       const hasValidInfluencerPlan = isActive && (planName === "Micro-Influencer" || planName === "Both");
+//       const hasValidInfluencerPlan = isActive && (planName === "Influencer" || planName === "Both");
 
 //       if (!hasValidInfluencerPlan) {
 //       url.pathname = "/influencer-subscription-required";
 //       if (!isActive) {
 //         url.searchParams.set("reason", "subscription_inactive");
-//       } else if (planName === "Businesses") {
+//       } else if (planName === "Brand") {
 //         url.searchParams.set("reason", "wrong_plan_type");
 //       } else {
 //         url.searchParams.set("reason", "no_subscription");
@@ -306,13 +306,13 @@ export async function middleware(request: NextRequest) {
 
     /* ---------------- BRAND DASHBOARD ---------------- */
     if (pathname.startsWith("/brand-dashboard")) {
-      const hasValidBrandPlan = isActive && (planName === "Businesses" || planName === "Both");
+      const hasValidBrandPlan = isActive && (planName === "Brand" || planName === "Both");
 
       if (!hasValidBrandPlan) {
         url.pathname = "/brand-subscription-required";
         if (!isActive) {
           url.searchParams.set("reason", "subscription_inactive");
-        } else if (planName === "Micro-Influencer") {
+        } else if (planName === "Influencer") {
           url.searchParams.set("reason", "wrong_plan_type");
         } else {
           url.searchParams.set("reason", "no_subscription");
@@ -323,13 +323,13 @@ export async function middleware(request: NextRequest) {
 
     /* ------------- INFLUENCER DASHBOARD -------------- */
     if (pathname.startsWith("/influencer-dashboard")) {
-      const hasValidInfluencerPlan = isActive && (planName === "Micro-Influencer" || planName === "Both");
+      const hasValidInfluencerPlan = isActive && (planName === "Influencer" || planName === "Both");
 
       if (!hasValidInfluencerPlan) {
         url.pathname = "/influencer-subscription-required";
         if (!isActive) {
           url.searchParams.set("reason", "subscription_inactive");
-        } else if (planName === "Businesses") {
+        } else if (planName === "Brand") {
           url.searchParams.set("reason", "wrong_plan_type");
         } else {
           url.searchParams.set("reason", "no_subscription");

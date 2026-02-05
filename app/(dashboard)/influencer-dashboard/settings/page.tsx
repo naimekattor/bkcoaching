@@ -760,7 +760,7 @@ export default function ProfilePage() {
 
         {/* Footer Actions */}
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200 z-10 md:static md:bg-transparent md:border-none md:p-0">
-          <div className="max-w-5xl mx-auto flex items-center justify-end gap-3">
+          <div className="max-w-7xl mx-auto flex items-center justify-end gap-3">
             <Button
               variant="outline"
               size="lg"

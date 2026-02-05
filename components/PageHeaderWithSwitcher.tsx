@@ -1,13 +1,13 @@
 import Link from "next/link";
 
 interface PageHeaderWithSwitcherProps {
-  role: "brands" | "micro-influencers";
+  role: "brand" | "influencers";
 }
 
 export default function PageHeaderWithSwitcher({
   role,
 }: PageHeaderWithSwitcherProps) {
-  const isBrand = role === "brands";
+  const isBrand = role === "brand";
 
   return (
     <div className="text-center space-y-2 mb-8">

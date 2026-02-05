@@ -18,6 +18,8 @@ async function getPlans() {
 }
 const page = async() => {
   const data = await getPlans();
+  console.log(data);
+  
   return (
     <div>
       <Hero />
