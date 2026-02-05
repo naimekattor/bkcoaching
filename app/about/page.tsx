@@ -92,7 +92,7 @@ export default function AboutPage() {
                   <span className="font-semibold text-[16px]">
                     The Social Market.
                   </span>{" "}
-                  started forming. A space where brands and micro-influencers
+                  started forming. A space where brands and influencers
                   can easily find each other, collaborate, and grow—organically
                   . Welcome to{" "}
                   <span className="font-semibold text-[16px]">
@@ -117,7 +117,7 @@ export default function AboutPage() {
                 width={833}
                 height={519}
                 src={"/images/about-hero1.png"}
-                alt="Two stylish women representing micro-influencers"
+                alt="Two stylish women representing influencers"
                 className="w-full h-[619px] max-w-md mx-auto lg:max-w-full"
                 priority
               />

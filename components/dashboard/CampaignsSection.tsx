@@ -19,7 +19,7 @@ export function CampaignsSection({ allCampaigns = [] as DashboardCampaign[] }: C
           <div className="p-2 bg-primary/10 rounded-lg">
             <Layout className="w-5 h-5 text-primary" />
           </div>
-          <h3 className="text-xl font-bold text-slate-700">My Campaigns</h3>
+          <h3 className="text-xl font-bold text-slate-700">My Sent Proposals</h3>
         </div>
         
         <Link

@@ -24,7 +24,7 @@ interface Price {
 
 interface Plan {
   product_id: string;
-  name: string; // "Micro-Influencer" | "Businesses" | "Both"
+  name: string; // "Influencer" | "Brand" | "Both"
   description: string;
   prices: Price[];
 }
@@ -133,8 +133,8 @@ const isLoading =
   .filter((plan) => {
     // If user already has a plan, apply upgrade logic
     if (currPlanName) {
-      // If user has "Businesses" or "Micro-Influencer", show only "Both" plan
-      if (currPlanName === "Businesses" || currPlanName === "Micro-Influencer") {
+      // If user has "Brand" or "Influencer", show only "Both" plan
+      if (currPlanName === "Brand" || currPlanName === "Influencer") {
         return plan.name === "Both";
       }
       // If user has "Both", show all plans (existing logic)
@@ -145,11 +145,11 @@ const isLoading =
 
     // If no existing plan (signup flow), filter by user type
     if (userData?.signed_up_as === "influencer") {
-      return plan.name === "Micro-Influencer" || plan.name === "Both";
+      return plan.name === "Influencer" || plan.name === "Both";
     }
 
     if (userData?.signed_up_as === "brand") {
-      return plan.name === "Businesses" || plan.name === "Both";
+      return plan.name === "Brand" || plan.name === "Both";
     }
 
     // fallback (public pricing or unknown plan)
@@ -213,6 +213,13 @@ const isLoading =
       toast("Failed to create checkout session");
     }
   };
+
+  const gridCols =
+  filteredPlans.length === 1
+    ? "md:grid-cols-1"
+    : filteredPlans.length === 2
+    ? "md:grid-cols-2"
+    : "md:grid-cols-3";
 
   // --- Loading State ---
   if (isLoading) {
@@ -280,15 +287,15 @@ const isLoading =
         </div>
 
         {/* Pricing Cards Grid */}
-        <div className={`${userData?"md:grid-cols-2": "md:grid-cols-3"} grid  grid-cols-1 gap-8 max-w-5xl mx-auto`}>
+        <div className={`grid  grid-cols-1 ${gridCols}  gap-8 max-w-7xl mx-auto`}>
           {filteredPlans.map((plan) => {
             const price = getPriceForInterval(plan.prices);
             const savings = isYearly ? calculateSavings(plan.prices) : null;
 
             // UI Title Mapping
             const titleMap: Record<string, string> = {
-              "Micro-Influencer": "Continue as an Influencer",
-              Businesses: "Continue as a Brand",
+              Influencer: "Continue as an Influencer",
+              Brand: "Continue as a Brand",
               Both: "Influencer + Brand Account",
             };
 

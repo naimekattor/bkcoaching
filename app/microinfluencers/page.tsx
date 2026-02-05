@@ -147,7 +147,7 @@ export default function InfluencersPage() {
 
 const hasValidPlan =
   (signedUpAs === "brand" &&
-    (planName === "Businesses" || planName === "Both")) ||
+    (planName === "Brand" || planName === "Both")) ||
   (planName === "Both");
 
   // Access logic ─ only changed part
@@ -262,10 +262,10 @@ const hasValidPlan =
                             ? "Premium Profile"
                             : "Locked Profile"}
                         </h3>
-                        <div className="flex items-center gap-2 mt-1 text-sm text-gray-500">
+                        {/* <div className="flex items-center gap-2 mt-1 text-sm text-gray-500">
                           <FaMapMarkerAlt className="text-gray-400 w-3 h-3" />
                           {profile?.timezone || "Location Not Specified"}
-                        </div>
+                        </div> */}
                       </div>
                       <div className="flex flex-col items-end">
                         <div className="flex text-yellow-400 text-sm">

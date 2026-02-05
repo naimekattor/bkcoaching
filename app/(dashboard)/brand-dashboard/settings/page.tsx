@@ -275,7 +275,7 @@ export default function BrandSetupPage() {
             Brand Profile Setup
           </h1>
           <p className="mt-2 text-lg text-gray-600">
-            Complete your brand profile to connect with micro-influencers
+            Complete your brand profile to connect with influencers
           </p>
         </div>
 

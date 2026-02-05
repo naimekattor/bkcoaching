@@ -31,7 +31,7 @@ const WelcomeStep = ({ onNext }: WelcomeStepProps) => {
 
   return (
     <div className="text-center space-y-8">
-      <PageHeaderWithSwitcher role="micro-influencers" />
+      <PageHeaderWithSwitcher role="influencers" />
       <div className="space-y-4">
         {/* <div className="w-20 h-20 rounded-full bg-secondary/10 flex items-center justify-center mx-auto">
           <Star className="w-10 h-10 text-secondary" />

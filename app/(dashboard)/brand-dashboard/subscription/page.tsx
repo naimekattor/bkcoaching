@@ -145,9 +145,9 @@ export default function SubscriptionPage() {
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
                 <div>
                   <p className="text-4xl font-bold text-gray-900">
-                    {planData?.plan_name === "Micro-Influencer"
+                    {planData?.plan_name === "Influencer"
   ? "Influencer"
-  : planData?.plan_name === "Businesses"
+  : planData?.plan_name === "Brand"
   ? "Brand"
   : planData?.plan_name || "Unknown Plan"}
 
