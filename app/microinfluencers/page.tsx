@@ -367,7 +367,7 @@ const hasValidPlan =
                   className="w-full h-12 text-base font-semibold border-2 border-primary text-white hover:bg-primary hover:text-white"
                   onClick={() => {
                     setShowAuthModal(false);
-                    router.push("/auth/signup?role=influencer&returnTo=/influencer-onboarding?step=1");
+                    router.push("/auth/signup?role=influencer&returnTo=/influencer-onboarding");
                   }}
                 >
                   Sign up as Influencer
@@ -377,7 +377,7 @@ const hasValidPlan =
                   className="w-full h-12 text-base font-semibold border-2 border-primary  text-primary hover:bg-primary hover:text-white"
                   onClick={() => {
                     setShowAuthModal(false);
-                    router.push("/auth/signup?role=brand&returnTo=/brand-onboarding?step=1");
+                    router.push("/auth/signup?role=brand&returnTo=/brand-onboarding");
                   }}
                 >
                   Sign up as Brand
@@ -389,7 +389,7 @@ const hasValidPlan =
                   className="w-full h-12 text-base font-semibold border-2 border-primary text-primary hover:bg-primary hover:text-white"
                   onClick={() => {
                     setShowAuthModal(false);
-                    router.push("/auth/signup?role=both&returnTo=/brand-onboarding?step=1");
+                    router.push("/auth/signup?role=both&returnTo=/brand-onboarding");
                   }}
                 >
                   Sign up as Both

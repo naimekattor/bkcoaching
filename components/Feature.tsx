@@ -10,7 +10,7 @@ const Feature = () => {
 
       <div className="grid md:grid-cols-2 gap-8 container mx-auto">
         {/* For Brands Card */}
-        <Link href={"/auth/signup?role=brand&returnTo=/brand-onboarding?step=1"}>
+        <Link href={"/auth/signup?role=brand&returnTo=/brand-onboarding"}>
           <div className="bg-white rounded-2xl shadow-lg flex flex-col justify-between  gap-4  overflow-hidden h-full">
             <div className=" bg-primary text-white text-center py-6">
               <h3 className="text-2xl font-bold">For Brands</h3>
@@ -121,7 +121,7 @@ const Feature = () => {
         </Link>
 
         {/* For Influencer Card */}
-        <Link href={"/auth/signup?role=influencer&returnTo=/influencer-onboarding?step=1"}>
+        <Link href={"/auth/signup?role=influencer&returnTo=/influencer-onboarding"}>
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden  flex flex-col justify-between h-full">
             <div className="bg-primary text-white text-center py-6">
               <h3 className="text-2xl font-bold">For Influencer</h3>

@@ -92,7 +92,7 @@ const Hero = () => {
           <div className="flex flex-col gap-3 pt-4">
             <Button
               onClick={() => {
-                router.push("/auth/signup?role=influencer&returnTo=/influencer-onboarding?step=1");
+                router.push("/auth/signup?role=influencer&returnTo=/influencer-onboarding");
                 
               }}
             >
@@ -100,7 +100,7 @@ const Hero = () => {
             </Button>
             <Button
               onClick={() => {
-                router.push("/auth/signup?role=brand&returnTo=/brand-onboarding?step=1");
+                router.push("/auth/signup?role=brand&returnTo=/brand-onboarding");
                 
               }}
             >
@@ -108,7 +108,7 @@ const Hero = () => {
             </Button>
             <Button
               onClick={() => {
-                router.push("/auth/signup?role=both&returnTo=/brand-onboarding?step=1");
+                router.push("/auth/signup?role=both&returnTo=/brand-onboarding");
                
               }}
             >

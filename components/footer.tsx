@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -17,16 +17,20 @@ export default function Footer() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const pathName = usePathname();
   const router = useRouter();
+  const [token,setToken]=useState<string | null>(null);
   //console.log(pathName);
   const handleSignupRoute = () => {
     setShowAuthModal(true);
   };
 
+  useEffect(()=>{
+    setToken(localStorage.getItem("access_token"));
+  },[]);
+
   return (
     <footer className="">
       {/* CTA Section */}
-      {pathName !== "/influencer-onboarding" &&
-        pathName !== "/brand-onboarding" && (
+      {!token && (
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 text-center">
             <h2 className="text-2xl md:text-3xl font-semibold text-primary mb-6">
               Ready to grow smarter?
@@ -69,7 +73,7 @@ export default function Footer() {
           <div className="flex flex-col gap-3 pt-4">
             <Button
               onClick={() => {
-                router.push("/auth/signup?role=influencer&returnTo=/influencer-onboarding?step=1");
+                router.push("/auth/signup?role=influencer&returnTo=/influencer-onboarding");
                 
               }}
             >
@@ -77,7 +81,7 @@ export default function Footer() {
             </Button>
             <Button
               onClick={() => {
-                router.push("/auth/signup?role=brand&returnTo=/brand-onboarding?step=1");
+                router.push("/auth/signup?role=brand&returnTo=/brand-onboarding");
                 
               }}
             >
@@ -85,7 +89,7 @@ export default function Footer() {
             </Button>
             <Button
               onClick={() => {
-                router.push("/auth/signup?role=both&returnTo=/brand-onboarding?step=1");
+                router.push("/auth/signup?role=both&returnTo=/brand-onboarding");
                
               }}
             >
