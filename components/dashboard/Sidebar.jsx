@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { LogOut } from "lucide-react";
 import { useChatStore } from "@/stores/chatStore";
+import { signOut } from "next-auth/react";
 
 export function Sidebar({ links = [], setShowSideBar }) {
   const pathname = usePathname() || "";
@@ -13,9 +14,14 @@ export function Sidebar({ links = [], setShowSideBar }) {
   const { user, logout } = useAuthStore();
     const unreadCount = useChatStore((state) => state.unreadCount);
     console.log("unreadCount from context",unreadCount);
+ 
     
 
-  const handleLogOut = () => {
+  const handleLogOut = async() => {
+        await signOut({
+          redirect: true,
+          callbackUrl: "/",
+        });
     logout();
     router.push("/");
   };

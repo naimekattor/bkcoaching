@@ -63,8 +63,7 @@ const isLoading =
 
   const fetchUser = async () => {
     const accessToken = localStorage.getItem("access_token");
-    const sessionToken=session?.accessToken;
-    const token=(accessToken || sessionToken) ?? null;
+    const token=(accessToken ) ?? null;
     setToken(token);
 
     if (!token) {
@@ -83,7 +82,6 @@ const isLoading =
         console.log(res.data);
         
       } else {
-        // Token might be invalid → clear it
         localStorage.removeItem("access_token");
         setToken(null);
       }

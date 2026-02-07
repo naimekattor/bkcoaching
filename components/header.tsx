@@ -51,8 +51,7 @@ const Header = () => {
 }, [session]);
   const fetchUser = async () => {
     const accessToken = localStorage.getItem("access_token");
-    const sessionToken=session?.accessToken;
-    const token=(accessToken || sessionToken) ?? null;
+    const token=(accessToken ) ?? null;
     setToken(token);
 
     

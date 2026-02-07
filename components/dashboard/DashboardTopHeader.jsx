@@ -327,6 +327,7 @@ const DashboardTopHeader = () => {
       redirect: true,
       callbackUrl: "/",
     });
+    logout();
   };
 
 
