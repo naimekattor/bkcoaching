@@ -18,6 +18,7 @@ import { X, LogOut, LayoutDashboard, Loader2 } from "lucide-react";
 import { apiClient } from "@/lib/apiClient"; 
 import {  usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 const navigationLinks = [
   { name: "Home", href: "/" },
@@ -38,91 +39,54 @@ interface UserData {
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [token, setToken] = useState<string | null>(null);
-  const [userData, setUserData] = useState<UserData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const pathName=usePathname();
-  const {data:session}=useSession();
+  const { token, user: userData, logout: storeLogout } = useAuthStore();
+  const pathName = usePathname();
+  const { data: session, status: sessionStatus } = useSession();
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-  if (session?.accessToken) {
-    fetchUser(); 
-  }
-}, [session]);
-  const fetchUser = async () => {
-    const accessToken = localStorage.getItem("access_token");
-    const token=(accessToken ) ?? null;
-    setToken(token);
-
-    
-
-    if (!token) {
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const res = await apiClient("user_service/get_user_info/", {
-        method: "GET",
-        auth: true,
-      });
-
-      if (res.status === "success") {
-        setUserData(res.data);
-      } else {
-        // Token might be invalid → clear it
-        localStorage.removeItem("access_token");
-        setToken(null);
-      }
-    } catch (err) {
-      console.error("Failed to fetch user:", err);
-      localStorage.removeItem("access_token");
-      setToken(null);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchUser();
-
-    const handleStorageChange = () => fetchUser();
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
+    setIsMounted(true);
   }, []);
 
-  const handleLogout =async () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("user"); 
-    setToken(null);
-    setUserData(null);
-    document.cookie = "access_token=; path=/; max-age=0;";
-    await signOut({
-    redirect: true,
-    callbackUrl: "/",
-  });
+  const handleLogout = async () => {
+    try {
+      // 1. Clear Zustand/localStorage first via Store
+      storeLogout();
+      
+      // 2. Then sign out from NextAuth
+      await signOut({
+        redirect: true,
+        callbackUrl: "/",
+      });
+    } catch (err) {
+      console.error("Logout error:", err);
+      window.location.href = "/";
+    }
   };
 
   const getDashboardLink = () => {
     if (!userData) return "/";
-    return userData.signed_up_as === "influencer"
+    const role = (userData as any).signed_up_as || (userData as any).user?.signed_up_as;
+    return role === "influencer"
       ? "/influencer-dashboard"
       : "/brand-dashboard";
   };
 
   const getProfilePic = () => {
-    if (userData?.signed_up_as === "influencer") {
-      return userData.influencer_profile?.profile_picture || null;
+    const role = (userData as any).signed_up_as || (userData as any).user?.signed_up_as;
+    if (role === "influencer") {
+      return (userData as any).influencer_profile?.profile_picture || (userData as any).user?.influencer_profile?.profile_picture || null;
     }
-    return userData?.brand_profile?.logo || null;
+    return (userData as any).brand_profile?.logo || (userData as any).user?.brand_profile?.logo || null;
   };
 
   const getDisplayName = () => {
     if (!userData) return "User";
-    if (userData.signed_up_as === "influencer") {
-      return userData.influencer_profile?.display_name || userData.user.first_name;
+    const role = (userData as any).signed_up_as || (userData as any).user?.signed_up_as;
+    if (role === "influencer") {
+      return (userData as any).influencer_profile?.display_name || (userData as any).user?.first_name || (userData as any).first_name || "Influencer";
     }
-    return userData.brand_profile?.display_name || userData.user.first_name;
+    return (userData as any).brand_profile?.business_name || (userData as any).brand_profile?.display_name || (userData as any).user?.first_name || (userData as any).first_name || "Brand";
   };
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -130,7 +94,8 @@ console.log("Header mounted");
 
   // Desktop Auth Section
   const DesktopAuthSection = () => {
-    if (loading) {
+    // Prevent hydration mismatch by not rendering auth section until mounted
+    if (!isMounted || sessionStatus === "loading") {
       return <Loader2 className="h-5 w-5 animate-spin text-white" />;
     }
 
@@ -163,7 +128,7 @@ console.log("Header mounted");
           width={48}
           height={48}
           className={`w-full h-full transition-all ${
-            userData?.signed_up_as === "brand"
+            (userData as any)?.signed_up_as === "brand" || (userData as any)?.user?.signed_up_as === "brand"
               ? "object-contain"
               : "object-cover"
           }`}
@@ -184,7 +149,7 @@ console.log("Header mounted");
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1">
               <p className="text-sm font-medium">{getDisplayName()}</p>
-              <p className="text-xs text-muted-foreground">{userData.user.email}</p>
+              <p className="text-xs text-muted-foreground">{(userData as any).user?.email || (userData as any).email}</p>
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
@@ -205,7 +170,7 @@ console.log("Header mounted");
 
   // Mobile Auth Section
   const MobileAuthSection = () => {
-    if (loading) return null;
+    if (!isMounted || sessionStatus === "loading") return null;
 
     if (!token || !userData) {
       return (
@@ -240,7 +205,7 @@ console.log("Header mounted");
 
           <div>
             <p className="text-lg font-semibold text-primary">{getDisplayName()}</p>
-            <p className="text-sm text-primary">{userData.user.email}</p>
+            <p className="text-sm text-primary">{(userData as any).user?.email || (userData as any).email}</p>
           </div>
         </div>
 

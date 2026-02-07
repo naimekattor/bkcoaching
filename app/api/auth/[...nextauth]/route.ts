@@ -3,6 +3,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { JWT } from "next-auth/jwt";
 import { cookies } from "next/headers";
 import AppleProvider from "next-auth/providers/apple";
+import CredentialsProvider from "next-auth/providers/credentials";
 
 // Extend NextAuth types
 declare module "next-auth" {
@@ -22,7 +23,7 @@ declare module "next-auth/jwt" {
     backendAccessToken?: string;
     backendRefreshToken?: string;
     role?: string;
-    provider?: string; 
+    provider?: string;
   }
 }
 
@@ -36,15 +37,62 @@ export const authOptions: NextAuthOptions = {
       },
     }),
     AppleProvider({
-    clientId: process.env.APPLE_CLIENT_ID!, 
-    clientSecret: process.env.APPLE_CLIENT_SECRET!,
-    authorization: {
+      clientId: process.env.APPLE_CLIENT_ID!,
+      clientSecret: process.env.APPLE_CLIENT_SECRET!,
+      authorization: {
         params: {
           scope: "name email",
-          response_mode: "form_post", 
+          response_mode: "form_post",
         },
       },
-  }),
+    }),
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "text" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Email and password required");
+        }
+
+        try {
+          const backendUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}user_service/login/`;
+          const response = await fetch(backendUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Accept": "application/json",
+            },
+            body: JSON.stringify({
+              email: credentials.email,
+              password: credentials.password,
+            }),
+          });
+
+          const data = await response.json();
+
+          if (!response.ok || data.status !== "success") {
+            throw new Error(data.message || "Invalid credentials");
+          }
+
+          const userData = data.data;
+          // Returning the user object with tokens
+          return {
+            id: userData.user?.id || userData.id || "",
+            email: credentials.email,
+            name: `${userData.user?.first_name || ""} ${userData.user?.last_name || ""}`.trim(),
+            accessToken: userData.access_token,
+            refreshToken: userData.refresh_token,
+            role: userData.user?.signed_up_as || "influencer", // Assuming a default
+          };
+        } catch (error: any) {
+          console.error("❌ Credentials Login Error:", error.message);
+          throw new Error(error.message || "Failed to log in");
+        }
+      },
+    }),
   ],
   session: { strategy: "jwt" },
   secret: process.env.NEXTAUTH_SECRET,
@@ -97,7 +145,7 @@ export const authOptions: NextAuthOptions = {
     //         signed_up_as: role,
     //         provider: account.provider,
     //       };
-          
+
     //       // Handle Google (has name in profile)
     //       if (account.provider === "google" && profile) {
     //         const googleProfile = profile as any;
@@ -154,7 +202,8 @@ export const authOptions: NextAuthOptions = {
 
     //   return token;
     // },
-async jwt({ token, account, profile, user }) {
+    async jwt({ token, account, profile, user }) {
+      // SOCIAL PROVIDERS (Google, Apple)
       if (account && (account.provider === "google" || account.provider === "apple")) {
         try {
           const cookieStore = await cookies();
@@ -162,28 +211,25 @@ async jwt({ token, account, profile, user }) {
           token.provider = account.provider;
 
           const email = user?.email || token.email;
-          // Email is mandatory
           if (!email) {
             console.error("❌ Social login failed: email missing");
-            return token; // DO NOT throw
+            return token;
           }
+
           let payload: any = {
             email,
             signed_up_as: role,
             provider: account.provider,
           };
 
-          // Handle Google (has name in profile)
           if (account.provider === "google" && profile) {
             const googleProfile = profile as any;
             payload.first_name = googleProfile.given_name || googleProfile.name?.split(" ")[0] || "";
             payload.last_name = googleProfile.family_name || googleProfile.name?.split(" ")[1] || "";
           }
-          // ---------------- APPLE ----------------
+
           if (account.provider === "apple") {
             payload.apple_id = profile?.sub || token.sub;
-
-            // Name only exists on FIRST login
             if (user?.name) {
               const parts = user.name.split(" ");
               payload.first_name = parts[0] || "";
@@ -195,7 +241,6 @@ async jwt({ token, account, profile, user }) {
           }
 
           console.log("🚀 Payload sending to Backend:", JSON.stringify(payload, null, 2));
-
           const backendUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}user_service/social_signup_signin/`;
 
           const response = await fetch(backendUrl, {
@@ -211,7 +256,6 @@ async jwt({ token, account, profile, user }) {
 
           if (!response.ok) {
             console.error("❌ Backend Error Status:", response.status);
-            console.error("❌ Backend Error Body:", JSON.stringify(data, null, 2));
             throw new Error(data.message || "Backend rejected social login");
           }
 
@@ -232,12 +276,19 @@ async jwt({ token, account, profile, user }) {
           throw error;
         }
       }
+      // CREDENTIALS PROVIDER
+      else if (user && (user as any).accessToken) {
+        token.backendAccessToken = (user as any).accessToken;
+        token.backendRefreshToken = (user as any).refreshToken;
+        token.role = (user as any).role;
+      }
 
       return token;
     },
-    async session({ session, token }: { session: Session; token: JWT }) {
+    async session({ session, token }: { session: any; token: JWT }) {
       if (token.backendAccessToken) {
         session.accessToken = token.backendAccessToken;
+        session.refreshToken = token.backendRefreshToken; // Add refresh token to session
         if (session.user) {
           session.user.role = token.role;
         }

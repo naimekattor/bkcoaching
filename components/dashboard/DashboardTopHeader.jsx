@@ -320,14 +320,19 @@ const DashboardTopHeader = () => {
   //   }
   // };
   const handleLogout = async () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("user");
-    document.cookie = "access_token=; path=/; max-age=0;";
-    await signOut({
-      redirect: true,
-      callbackUrl: "/",
-    });
-    logout();
+    try {
+      // 1. Clear Zustand/localStorage first
+      logout();
+      
+      // 2. Then sign out from NextAuth
+      await signOut({
+        redirect: true,
+        callbackUrl: "/",
+      });
+    } catch (err) {
+      console.error("Logout error:", err);
+      window.location.href = "/";
+    }
   };
 
 

@@ -17,13 +17,20 @@ export function Sidebar({ links = [], setShowSideBar }) {
  
     
 
-  const handleLogOut = async() => {
-        await signOut({
-          redirect: true,
-          callbackUrl: "/",
-        });
-    logout();
-    router.push("/");
+  const handleLogOut = async () => {
+    try {
+      // 1. Clear Zustand/localStorage first
+      logout();
+      
+      // 2. Then sign out from NextAuth
+      await signOut({
+        redirect: true,
+        callbackUrl: "/",
+      });
+    } catch (err) {
+      console.error("Logout error:", err);
+      window.location.href = "/";
+    }
   };
   return (
     <div

@@ -40,24 +40,24 @@ function LoginPageContent() {
     setLoading(true);
 
     try {
-      const res = await login({ ...formData });
-      setAuthFromResponse(res);
+      const result = await signIn("credentials", {
+        email: formData.email,
+        password: formData.password,
+        redirect: false,
+      });
 
-      if (res.status !== "success") {
-        setErrors({ general: res.message || "Login failed" });
-        throw new Error(res.message ?? "Login failed");
-        
+      if (result?.error) {
+        setErrors({ general: result.error });
+        throw new Error(result.error);
       }
-      else if (returnTo) {
-        router.push(returnTo)
-      }else{
+
+      if (returnTo) {
+        router.push(returnTo);
+      } else {
         router.push("/home_dashboard");
       }
-
-      
     } catch (error: unknown) {
-      const message =
-        error instanceof Error ? error.message : "Login failed";
+      const message = error instanceof Error ? error.message : "Login failed";
       setErrors({ general: message });
     } finally {
       setLoading(false);
