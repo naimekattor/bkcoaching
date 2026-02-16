@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { toast } from "react-toastify";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useSession } from "next-auth/react";
+import LoginRequiredModal from "./LoginRequiredModal";
 interface UserData {
   id: number;
   user: { email: string; first_name: string; last_name: string };
@@ -52,11 +53,10 @@ export function PricingSection({
   const [token, setToken] = useState<string | null>(null);
     const [userData, setUserData] = useState<UserData | null>(null);
     const[currPlanName,setCurrPlanName]=useState();
+    const [showAuthModal, setShowAuthModal] = useState(false);
 const isLoading =
-  // No plans at all yet → still loading
   plans.length === 0 ||
 
-  // We are logged in (have token) BUT don't know user type / current plan yet
   (token !== null && userData === null && currPlanName === undefined);
   
   const { data: session, status: sessionStatus } = useSession(); 
@@ -193,6 +193,13 @@ const isLoading =
 
 
   const handleCheckout = async (priceId: string) => {
+
+     const token = localStorage.getItem("access_token");
+
+  if (!token) {
+    setShowAuthModal(true);
+    return;
+  }
     try {
       const res = await apiClient(
         "subscription_service/create_checkout_session/",
@@ -362,6 +369,11 @@ const isSinglePlan = filteredPlans.length === 1;
           })}
         </div>
       </div>
+    <LoginRequiredModal
+  open={showAuthModal}
+  onClose={() => setShowAuthModal(false)}
+/>
+
     </section>
   );
 }
