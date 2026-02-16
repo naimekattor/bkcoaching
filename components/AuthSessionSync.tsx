@@ -15,7 +15,7 @@ interface ExtendedSession extends Session {
 
 export default function AuthSessionSync() {
   const { data: session, status } = useSession() as {
-    data: ExtendedSession | null;
+    data: (ExtendedSession & { refreshToken?: string }) | null;
     status: "loading" | "authenticated" | "unauthenticated";
   };
   const {
@@ -28,27 +28,38 @@ export default function AuthSessionSync() {
   console.log("🔐 AuthSessionSync - Status:", status, "Has accessToken:", !!session?.accessToken);
 
   useEffect(() => {
-  //    if (status === "unauthenticated") {
-  //   console.log("Clearing Zustand auth state (unauthenticated)");
-  //   setToken(null);
-  //   setRefreshToken(null);
-  //   setUser(null);
-  //   return;
-  // }
-    // Check if the session is authenticated and has the access token
+    // Sync session to Zustand when authenticated
     if (status === "authenticated" && session?.accessToken) {
-      // Sync only if the Zustand token is not already set, to avoid loops
-      if (session.accessToken !== zustandToken) {
-        console.log("Syncing NextAuth session to Zustand store...");
-        console.log("Setting token:", session.accessToken?.substring(0, 20) + "...");
-        setToken(session.accessToken);
+      const currentAccessToken = session.accessToken;
+      const currentRefreshToken = (session as any).refreshToken || session.refresh_token;
 
-        if (session.refresh_token) {
-          setRefreshToken(session.refresh_token);
+      if (currentAccessToken !== zustandToken) {
+        console.log("🔄 Syncing NextAuth session to Zustand store...");
+        setToken(currentAccessToken);
+
+        if (currentRefreshToken) {
+          console.log("🔄 Syncing Refresh Token...");
+          setRefreshToken(currentRefreshToken);
         }
+
         if (session.user) {
           setUser(session.user);
         }
+      }
+    }
+
+    // Optional: Clear Zustand if NextAuth is explicitly unauthenticated
+    // Only do this if we had a token before and NOT on an auth page
+    // This allows manual tokens during signup/verification to persist
+    if (status === "unauthenticated" && zustandToken) {
+      const isAuthRoute = window.location.pathname.startsWith('/auth');
+      if (!isAuthRoute) {
+        console.log("⚠️ NextAuth unauthenticated - Clearing Zustand state");
+        setToken(null);
+        setRefreshToken(null);
+        setUser(null);
+      } else {
+        console.log("ℹ️ NextAuth unauthenticated but on auth route - Preserving local tokens");
       }
     }
   }, [session, status, setToken, setRefreshToken, setUser, zustandToken]);

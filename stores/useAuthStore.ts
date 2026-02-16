@@ -86,7 +86,7 @@ export const useAuthStore = create<AuthState>()(
       localStorage.removeItem("refresh_token");
       localStorage.removeItem("user");
       Cookies.remove("access_token");
-  Cookies.remove("refresh_token");
+      Cookies.remove("refresh_token");
       set({ token: null, refreshToken: null, user: null });
 
     },
